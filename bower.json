@@ -3,6 +3,6 @@
     "version": "1.0.0",
     "main": "./autocompBase.js",
     "dependencies": {
-        "prototypejs": "latest"
+        "prototypejs": "/home/plynch/project/prototypejs-bower"
     }
 }
