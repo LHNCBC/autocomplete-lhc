@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "main": "./autocompBase.js",
   "dependencies": {
-    "prototypejs-bower": "/home/plynch/project/prototypejs-bower",
+    "prototypejs-bower": "git://github.com/plynchnlm/prototypejs-bower.git#1.7.0",
     "scriptaculous-bower": "/home/plynch/project/scriptaculous-bower"
   }
 }
