@@ -1,9 +1,9 @@
 {
   "name": "autocomp-lhc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "./autocompBase.js",
   "dependencies": {
     "prototypejs-bower": "git://github.com/plynchnlm/prototypejs-bower.git#1.7.0",
-    "scriptaculous-bower": "/home/plynch/project/scriptaculous-bower"
+    "scriptaculous-bower": "git://github.com/plynchnlm/scriptaculous-bower.git#1.8.1"
   }
 }
