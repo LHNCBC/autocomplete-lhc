@@ -651,7 +651,6 @@ tmp = {
    *  A method that gets called when the field gains the focus.
    */
   onFocus: function() {
-console.log("%%% in search onFocus");
     // Ignore blur events on the completionOptionsScroller.
     if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
       Def.Autocompleter.completionOptionsScrollerClicked_ = false;
@@ -683,12 +682,10 @@ console.log("%%% in search onFocus");
    * @param event the DOM event object
    */
   onBlur: function(event) {
-console.log("%%% in search onBlur for "+this.element.id+", class="+this.element.className);
     // Do nothing if we're refocusing the field.
     if (!this.refocusInProgress_ && !Def.Autocompleter.completionOptionsScrollerClicked_) {
       Def.Autocompleter.Base.prototype.onBlur.apply(this, [event]);
       if (!this.searchInProgress) {
-        console.log('%%% in search onBlur, setting active to false');
         this.active = false;
       }
     }

@@ -202,7 +202,7 @@ Object.extend(Def.Autocompleter.Base, {
           Def.Autocompleter.completionOptionsScrollerClicked_ = true;
           if ($(Def.Autocompleter.currentAutoCompField_) != -1) {
             var field = $(Def.Autocompleter.currentAutoCompField_);
-            setTimeout(function(){console.log('%%% refocusing field '+field.id); field.focus()}, 1);
+            setTimeout(function(){field.focus()}, 1);
           }
         }
       }.bind(this));
@@ -781,7 +781,6 @@ tmp = {
    *  of the two methods.)
    */
   setInvalidValIndicator: function(invalid) {
-console.log("%%% setInvalidValIndicator called with "+invalid+", class="+this.element.className);
     if (invalid) {
       Def.Autocompleter.setOffAlarm(this.element);
       if (!this.invalidStatus_){
@@ -791,13 +790,11 @@ console.log("%%% setInvalidValIndicator called with "+invalid+", class="+this.el
     }
     else {
       if (this.invalidStatus_){
-console.log("%%% removing invalid class")
         this.element.removeClassName('invalid');
         this.element.setAttribute('invalid', false);
       }
     }
     this.invalidStatus_ = invalid;
-console.log("%%% leaving setInvalidValIndicator")
   },
 
 
@@ -1198,7 +1195,6 @@ console.log("%%% leaving setInvalidValIndicator")
    *  and the item was on the list), and false if not.
    */
   attemptSelection: function() {
-console.log("%%% in attemptSelection");
     var canSelect = false;
 
     var valTyped = this.preFieldFillVal_ === null ? this.element.value :
@@ -1270,7 +1266,6 @@ console.log("%%% in attemptSelection");
     // blank required fields will be brought to the user's attention.
     if (Def.Autocompleter.getFieldVal(this.element) === '') {
       this.setMatchStatusIndicator(true);
-console.log("%%% turning off invalid status for "+this.element.id+", class ="+this.element.className);
       this.setInvalidValIndicator(false);
       // Send a list selection event for this case.
       if (Def.Autocompleter.Event.callbacks_ !== null)
@@ -1309,7 +1304,6 @@ console.log("%%% turning off invalid status for "+this.element.id+", class ="+th
    * @param event the DOM event object for the change event
    */
   onChange: function (event) {
-console.log("%%% in base onChange for "+this.element.id);
     // The field might have a tool tip if it is empty, so do not access
     // element.value directly.
     var elemVal = Def.Autocompleter.getFieldVal(this.element);
@@ -1340,7 +1334,6 @@ console.log("%%% in base onChange for "+this.element.id);
    * @param event the DOM event object for the blur event
    */
   onBlur: function(event) {
-console.log("%%% in base onBlur for "+this.element.id);
     // Ignore blur events on the completionOptionsScroller.
     if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
       Def.Autocompleter.completionOptionsScrollerClicked_ = false;
