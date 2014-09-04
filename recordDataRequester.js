@@ -28,12 +28,12 @@ var tmp = {
    *  The code field (if present) associated with formField_
    */
   codeField_: null,
-  
+
   /**
    *  The URL for getting additional data.
    */
   dataURL_: null,
-  
+
   /**
    *  This is an array of target field names (e.g. patient_name) of fields whose
    *  values should be sent along with the formField's value when sending the
@@ -41,7 +41,7 @@ var tmp = {
    *  ajax request, in the form fieldname=fieldvalue.
    */
   dataReqInput_: null,
-  
+
   /**
    *  This is an array of target field names (e.g. patient_name) of fields whose
    *  values will be filled in following a data request.
@@ -57,14 +57,14 @@ var tmp = {
   /**
    *  A hash of dataReqOutput_ values (target field names) to
    *  arrays of the corresponding field objects.
-   *  
+   *
    *  Note that there can be more than one output field per target field
    *  name, as in the fetch rule form.  This would usually be when writing
    *  a value for a field in a horizontal table, where multiple lines exist and
    *  the field in each line must be updated.
    */
   outputFieldsHash_: null,
-  
+
   /**
    *  It is important for the assignListData method to know whether this
    *  RecordDataRequester (RDR) has been previously used to fetch data.
@@ -178,7 +178,7 @@ var tmp = {
       this.dataReqInput_, this.dataReqOutput_, this.outputToSameGroup_);
   },
 
-  
+
   /**
    *  Starts a request for the additional data needed for the field.  When
    *  the request completes, a callback function in this class
@@ -215,8 +215,8 @@ var tmp = {
     // and we don't want to wipe out the entered values.
     if  (!listDataOnly)
       this.clearDataOutputFields();
-    
-    // We can no longer cache the assignment of onComplete, which now 
+
+    // We can no longer cache the assignment of onComplete, which now
     // depends on the input parameter.  (We could cache the bound versions
     // of the functions, but I am not sure if it is worth it.)
     this.dataRequestOptions_.onComplete = listDataOnly ?
@@ -229,11 +229,11 @@ var tmp = {
     this.lastFieldVal_ = Def.Autocompleter.getFieldVal(this.formField_);
 
   }, // end requestData
-  
-  
+
+
   /**
    *  Under certain conditions, this method will set the lists of any
-   *  output fields that have prefetched autocompleters.  The use case 
+   *  output fields that have prefetched autocompleters.  The use case
    *  for this method is where a prefetched autocompleter for some field,
    *  field B, is initially
    *  defined without a list, because its list is based on another field,
@@ -257,7 +257,7 @@ var tmp = {
      if (this.noPriorDataReq_ && Def.Autocompleter.getFieldVal(this.formField_) !== '')
        this.requestData(true);
    },
-  
+
 
   /**
    *  Returns the data retrieved for the given field on the last data
@@ -278,7 +278,7 @@ var tmp = {
     return rtn;
   },
 
-  
+
   /**
    *  This gets called when the data request comes back (after the user
    *  has made a selection from the list).
@@ -327,14 +327,14 @@ var tmp = {
    *  Clears the fields specified as output fields at construction.  If the
    *  field has an associated prefetched list, the list will be cleared as
    *  well.  I'm not sure yet if that is what we will always want to happen.
-   *  At the moment, when a list field gets assigned a value from a 
+   *  At the moment, when a list field gets assigned a value from a
    *  data request, the value is the list's list, not the field value.
    */
   clearDataOutputFields: function() {
 
     if (!this.inputFieldsHash_)
       this.initFieldsHash();
-    
+
     var updatedFields = [];
     var outputFieldsHash = this.getOutputFieldsHash();
     for (var i=0, max=this.dataReqOutput_.length; i<max;  ++i) {
@@ -355,7 +355,7 @@ var tmp = {
             updatedFields.push(field);
           }
         }
-      }  
+      }
     }
 
     Def.Autocompleter.Event.notifyObservers(null, 'RDR_CLEARING', updatedFields);
@@ -490,12 +490,12 @@ var tmp = {
       } // end do for each key in the hash
     } // end if this rdr has a list
   }, // end processUpdateList
-  
+
   /* ***********************************************************************
    * Functions below this line are not intended to be called directly (except by
    * test code.)
    */
-  
+
   /**
    *  Initializes input/outputFieldsHash_.
    */
@@ -529,8 +529,8 @@ var tmp = {
     return this.outputToSameGroup_ ? this.outputFieldsHash_ :
        this.constructOutputFieldsHash();
   },
-  
-  
+
+
   /**
    *  Constructs  a hash of output target field names to arrays of matching
    *  fields.
@@ -565,7 +565,7 @@ var tmp = {
    *  (The "true" value is used by assignListData()).  No field values
    *  are changed when this is true.  The purpose is just to update lists.
    */
-  assignDataToFields: function(dataHash, listDataOnly) { 
+  assignDataToFields: function(dataHash, listDataOnly) {
     if (!this.inputFieldsHash_)
       this.initFieldsHash();
 
@@ -637,10 +637,11 @@ var tmp = {
 
 
     Def.Autocompleter.Event.notifyObservers(null, 'RDR_ASSIGNMENT',
-      {updatedFields: updatedFields, updatedFieldIDToVal: updatedFieldIDToVal});
+      {updatedFields: updatedFields, updatedFieldIDToVal: updatedFieldIDToVal,
+       listField: this.formField_});
   }, // end assignDataToFields
-  
-  
+
+
   /**
    *  Constructs and returns the CGI parameter string for the URL used
    *  to make the data request.
@@ -658,14 +659,14 @@ var tmp = {
       rtn = 'code_val=' + encodeURIComponent(codeVal);
     else
       rtn = 'field_val=' + encodeURIComponent(Def.Autocompleter.getFieldVal(this.formField_));
-    
+
     if (this.dataReqInput_) {
       for (var i=0, max=this.dataReqInput_.size(); i<max; ++i) {
         var inputTargetFieldName = this.dataReqInput_[i];
         var inputField = this.inputFieldsHash_[inputTargetFieldName];
         if (inputField === undefined || inputField === null)
           throw 'Could not find field for '+inputTargetFieldName;
-  
+
         rtn += '&' + inputTargetFieldName +
                '=' + encodeURIComponent(Def.Autocompleter.getFieldVal(inputField));
       }
@@ -673,8 +674,8 @@ var tmp = {
     // Lastly add authenticity_token for csrf protection
     rtn += '&authenticity_token='+ encodeURIComponent(window._token) || '';
     return rtn;
-  } 
-     
+  }
+
 };
 
 Object.extend(Def.RecordDataRequester.prototype, tmp);
@@ -695,7 +696,7 @@ Object.extend(Def.RecordDataRequester, {
    *  This hash is created as the RecordDataRequesters are created.
    */
   outputFieldNameToRDRFieldName_: {},
-  
+
   /**
    *  Returns the RDR for the given field ID, or null if none can be located.
    * @param outputFieldID the field ID of the output field for the

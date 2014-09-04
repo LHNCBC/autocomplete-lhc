@@ -1,4 +1,4 @@
-/* 
+/*
  *  This contains code for the custom "events" the autocompleter generates.
  *  Other code can use one of the "observe" methods to register to be notified
  *  when a certain type of event occurs.
@@ -151,6 +151,7 @@ Def.Autocompleter.Event = {
    *  - updatedFields: an array of DOM field elements for the fields that
    *    were cleared
    *  - updatedFieldIDToVal: a hash of field IDs to the updated values
+   *  - listField - the field whose list had the record data requester.
    */
   observeRDRAssignment: function(callback) {
     this.storeCallback(null, 'RDR_ASSIGNMENT', callback);
