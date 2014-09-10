@@ -1304,28 +1304,30 @@ tmp = {
    * @param event the DOM event object for the change event
    */
   onChange: function (event) {
-    // The field might have a tool tip if it is empty, so do not access
-    // element.value directly.
-    var elemVal = Def.Autocompleter.getFieldVal(this.element);
+    if (!Def.Autocompleter.completionOptionsScrollerClicked_) {
+      // The field might have a tool tip if it is empty, so do not access
+      // element.value directly.
+      var elemVal = Def.Autocompleter.getFieldVal(this.element);
 
-    // We used to only process the change if this.enabled_ was true.  However,
-    // if the list field is changed by a RecordDataRequester, it will not
-    // be active and might have an empty list.
+      // We used to only process the change if this.enabled_ was true.  However,
+      // if the list field is changed by a RecordDataRequester, it will not
+      // be active and might have an empty list.
 
-    // If the user has changed the value since the last entry/selection,
-    // try to use the value to select an item from the list.
-    // Don't attempt to make a selection if the user has cleared the field.
-    if (this.uneditedValue !== elemVal && (elemVal === "" ||
-            !this.attemptSelection())) {
-      if (elemVal === "")
-        this.fieldValIsListVal_ = false;
-      this.handleNonListEntry();
+      // If the user has changed the value since the last entry/selection,
+      // try to use the value to select an item from the list.
+      // Don't attempt to make a selection if the user has cleared the field.
+      if (this.uneditedValue !== elemVal && (elemVal === "" ||
+              !this.attemptSelection())) {
+        if (elemVal === "")
+          this.fieldValIsListVal_ = false;
+        this.handleNonListEntry();
+      }
+
+      // Note that attemptSelection might have changed the element value, so
+      // we call getFieldVal again.
+      this.uneditedValue = Def.Autocompleter.getFieldVal(this.element);
+      this.valueOnChange_ = this.uneditedValue;
     }
-
-    // Note that attemptSelection might have changed the element value, so
-    // we call getFieldVal again.
-    this.uneditedValue = Def.Autocompleter.getFieldVal(this.element);
-    this.valueOnChange_ = this.uneditedValue;
   },
 
 

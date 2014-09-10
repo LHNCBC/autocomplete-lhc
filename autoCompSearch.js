@@ -25,7 +25,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
 
 /**
- *  An Ajax completer that provides list options when the user clicks 
+ *  An Ajax completer that provides list options when the user clicks
  *  on a search button.
  */
 Def.Autocompleter.Search = Class.create();
@@ -75,7 +75,7 @@ ctmp = {
    * The superclass.
    */
   superclass: Def.Autocompleter.Base.prototype,
-  
+
   /**
    *  If the list items returned by the AJAX search call consist of multiple
    *  strings (fields) each, this is the string used to join together each list
@@ -118,7 +118,7 @@ tmp = {
    *  is to use it.
    */
   useResultCache_: true,
-  
+
   /**
    *  The data for the suggestion list that appears when the user leaves a
    *  non-matching field value in a field for which matching values are not
@@ -161,7 +161,7 @@ tmp = {
 
     if (!Def.Autocompleter.Base.classInit_)
       Def.Autocompleter.Base.classInit();
-    
+
     // Call the Scriptaculous class' initialize method.  We do this via the
     // "apply" function, which lets us specify the "this" object plus an array
     // of arguments to pass in to the method.
@@ -169,17 +169,17 @@ tmp = {
      [fieldID, 'completionOptions', url,
      {frequency: 0.01, minChars: 2, partialChars: 2,
       onHide: function(element, update) {
-        $('searchCount').style.display = 'none';        
-        $('moreResults').style.display = 'none';        
+        $('searchCount').style.display = 'none';
+        $('moreResults').style.display = 'none';
         Def.Autocompleter.Base.prototype.hideList.apply(this);
       }.bind(this),
-      
 
-      onShow: function(element, update) { 
+
+      onShow: function(element, update) {
         // Make the search count display before adjusting the list position.
         $('searchCount').style.display='block';
-        $('moreResults').style.display = 'block';        
-  
+        $('moreResults').style.display = 'block';
+
         Def.Autocompleter.Base.prototype.showList.apply(this);
       }.bind(this)
     }]);
@@ -200,7 +200,7 @@ tmp = {
 
     if (options['useResultCache']!==null && options['useResultCache']===false)
       this.useResultCache_ = false; // default is true-- see declaration
-   
+
     // Do not use the synchronous request option.  On Windows and Firefox,
     // if you use synchronous, and hit control+enter to run a search, the
     // Firefox Downloads window opens.  I don't know why.  See my post
@@ -218,7 +218,7 @@ tmp = {
     this.buttonID = buttonID;
     // buttonID might be "null", see line 3 of _search_field_autocomp.rhtml.
     if (buttonID && buttonID !== 'null') {
-      // We need to use mousedown for the button.  We cannot wait for a 
+      // We need to use mousedown for the button.  We cannot wait for a
       // mouseup or click event because we have no idea how long that might
       // take, and we need to handle the blur event (which could be the result
       // or a click or of something else.)  Handling the mousedown event
@@ -230,7 +230,7 @@ tmp = {
       Event.observe(buttonID, 'keypress', this.buttonKeyPress.bind(this));
     }
   },
-  
+
 
   /**
    *  A copy constructor, for a new field (e.g. another field in a new row
@@ -245,14 +245,14 @@ tmp = {
     opts['dataRequester'] = dataReq;
     return new Def.Autocompleter.Search(fieldID, this.url, opts);
   },
-   
-   
+
+
   /**
    *  Initializes the itemToCode_ map.
    */
   initItemToCode: Def.Autocompleter.Prefetch.prototype.initItemToCode,
 
-  
+
   /**
    *  Runs the search (asynchronously).  This gets called when the search
    *  button is clicked.  When the search completes, onComplete
@@ -348,8 +348,8 @@ tmp = {
          this.element.value !== this.uneditedValue &&
          this.element.value.trim() !== ''));
   },
-  
-  
+
+
   /**
    *  This gets called when the user presses a key on the search button.
    * @param event the key event
@@ -360,7 +360,7 @@ tmp = {
     }
   },
 
-  
+
   /**
    *  Processes a returned set of choices in preparation for building
    *  the HTML for the update (choices) area.
@@ -378,8 +378,8 @@ tmp = {
       listItems = this.sortResults(listItemData, codes);
     return listItems;
   },
-  
-  
+
+
   /**
    *  Builds and returns the HTML for the selection area.
    * @param responseData the array of data received from by onComplete.
@@ -390,7 +390,7 @@ tmp = {
     var highlighting = responseData[4];
     var listItems = this.processChoices(listItemData, codes, highlighting);
     this.rawList_ = listItems; // used by initItemToCode
-    
+
     var output;
     if (listItemData.length > 0) {
       output = '<ul><li>' + listItems.join('</li><li>') + '</li></ul>';
@@ -537,8 +537,8 @@ tmp = {
       listItems[0] = topItem;
     return listItems;
   },
-  
-  
+
+
   /**
    *  Returns a list of sorted search result items based on the returned
    *  data from the AJAX search request.  In the process, it also initializes
@@ -583,12 +583,12 @@ tmp = {
     // in the order of the sorted taglessItems array.
     for (i=0; i<numItems; ++i)
       listItems[i]= taglessItemToOriginal[taglessItems[i]];
-    
+
     this.itemToCode_ = itemToCodeMap;
     return listItems;
   },
-  
-  
+
+
   /**
    *  This gets called to show the list.
    */
@@ -605,7 +605,7 @@ tmp = {
       this.options.onShow(this.element, this.update);
     }
   },
-  
+
 
   /**
    *  This to hide the list. (e.g. after a selection).
@@ -615,7 +615,7 @@ tmp = {
       Def.Autocompleter.Search.superclass.hide.apply(this);
     }
   },
-  
+
 
   /**
    *  Handles the click on the search button.
@@ -628,16 +628,16 @@ tmp = {
     // than the minimum number of characters.
     if (this.observer)
       clearTimeout(this.observer);
-    
+
     // This runs on mouse down, and we stop the event so the focus never
     // leaves the field.
     this.searchInProgress = true;
-    
-    this.runSearch(); 
+
+    this.runSearch();
     Event.stop(event);
   },
-  
-  
+
+
   /**
    *  This gets called when the "See more items" link is clicked.
    * @param event the click event on the link
@@ -675,8 +675,8 @@ tmp = {
       this.hasFocus = true;
     }
   },
-  
-  
+
+
   /**
    *  This gets called when the field loses focus.
    * @param event the DOM event object
@@ -859,10 +859,10 @@ tmp = {
     this.setMatchStatusIndicator(true);
     this.uneditedValue = this.element.value;
     this.fieldValIsListVal_ = true;
-    
+
     this.propagateFieldChanges();
 
-    Def.Autocompleter.Event.notifyObservers(this.element, 'SUGGESTION_USED', 
+    Def.Autocompleter.Event.notifyObservers(this.element, 'SUGGESTION_USED',
                                         {suggestion_used: this.element.value});
     // Also send a list selection notification (so that that event can be
     // used as a change event for the field).  Also, the suggestion was from
