@@ -489,6 +489,13 @@ tmp = {
     // Turn off autocomplete listeners  when we don't have a list
     this.enabled_ = listItems.length > 0;
 
+    // Add a class to the field if there is more than 1 item in the list
+    // (so that CSS can add a small arrow-shaped background image).
+    if (listItems.length > 1)
+      this.element.addClassName('ac_multiple');
+    else
+      this.element.removeClassName('ac_multiple')
+
     // If the field has focus, call onFocus to re-render and decide what
     // to do about displaying the list.
     if (this.hasFocus || document.activeElement === this.element)
