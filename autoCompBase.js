@@ -1292,8 +1292,19 @@ tmp = {
       }
       else {
         // See if we can find some suggestions for what the user typed.
-        if (this.findSuggestions)
-          this.findSuggestions();
+        if (this.findSuggestions) {
+          // Use a timeout to let the event that triggered this call finish,
+          // before we bring up a dialog box which might change the focus
+          // state and interfere with subsequent event handlers after this one.
+          // (This was to fix issue 4569, in which the drug use status field's
+          // list showed up on top of the dialog box, even though the field
+          // had lost focus.  What happened there is that the showing of the
+          // dialog box came before the navigation code's attempt to focus
+          // the status field, and then when focus() was called the dialog
+          // somehow called blur() on the field (perhaps using event capturing)
+          // before the autocompleter's focus event handler ran.)
+          setTimeout(function() {this.findSuggestions();}.bind(this), 1);
+        }
       }
     }
   },

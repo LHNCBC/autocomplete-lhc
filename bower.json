@@ -1,6 +1,6 @@
 {
   "name": "autocomp-lhc",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "./autoCompBase.js",
   "dependencies": {
     "prototypejs-bower": "git://github.com/plynchnlm/prototypejs-bower.git#1.7.0",
