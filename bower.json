@@ -6,4 +6,5 @@
     "prototypejs-bower": "git://github.com/plynchnlm/prototypejs-bower.git#1.7.0",
     "scriptaculous-bower": "git://github.com/plynchnlm/scriptaculous-bower.git#1.8.1"
   }
+  ignore: ["cshrc.autocomp", "bin", "packages"]
 }
