@@ -8,8 +8,11 @@
 ps -ef | grep selenium-server | grep -v grep > /dev/null
 if [ $? != 0 ]
 then
-  echo Please start the selenium server with "webdriver-manager start"
-  echo before running this file.
+  echo 'Please start the selenium server with "webdriver-manager start"'
+  echo 'before running this file.  If you have not run that before,'
+  echo 'you will need to run "webdriver-manager update" first.  If'
+  echo 'webdriver-manager is not in your path, please make sure'
+  echo 'you have run "npm install" from the autocomp directory.'
   exit
 fi
 
