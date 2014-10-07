@@ -18,10 +18,11 @@ fi
 
 # Start node.js to serve a page that uses autocomp
 test_dir=`dirname $0`
-node $test_dir/app.js &
+cd $test_dir
+node app.js &
 
 # Now run the tests
-protractor $test_dir/conf.js
+protractor ./conf.js
 
 # Shut down node.js (%1 = background job 1)
 kill %1
