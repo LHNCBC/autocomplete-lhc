@@ -1,7 +1,18 @@
 {
   "name": "autocomp-lhc",
   "version": "1.0.8",
-  "main": "./autoCompBase.js",
+  "main": [
+     "autoCompBase.js",
+     "autoCompEvents.js",
+     "autoCompPrefetch.js",
+     "autoCompSearch.js",
+     "dialog.js",
+     "effectScroll.js",
+     "event.simulate.js",
+     "observable.js",
+     "recordDataRequester.js",
+     "suggestionDialog.js"
+   ],
   "dependencies": {
     "prototypejs-bower": "git://github.com/plynchnlm/prototypejs-bower.git#1.7.0",
     "scriptaculous-bower": "git://github.com/plynchnlm/scriptaculous-bower.git#1.8.1"

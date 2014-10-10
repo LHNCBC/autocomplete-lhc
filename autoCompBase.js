@@ -502,8 +502,7 @@ tmp = {
    * @param li a list item DOM element.
    */
   listItemValue: function(li) {
-    // For the base class, just return the inner HTML.
-    return htmlDecode(li.innerHTML);
+    return li.textContent; // decodes escaped HTML elements
   },
 
 

@@ -5,6 +5,9 @@
  *  area.)  This kind of dialog is useful in situations that do not require
  *  a response from the user.
  */
+if (typeof Def === 'undefined')
+  Def = {};
+
 Def.NoticeDialog = Class.create({});
 
 var instanceMembers = {

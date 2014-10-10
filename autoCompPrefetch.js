@@ -933,7 +933,6 @@ tmp = {
   /**
    *  Returns the value of a list item (minus any sequence number an
    *  separator.)
-   *  IE convers the span tag froom lower case to upper case
    * @param li the list item DOM element.
    */
   listItemValue: function(li) {
