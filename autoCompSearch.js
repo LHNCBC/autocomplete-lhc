@@ -262,7 +262,7 @@ tmp = {
     // Cancel the previous search/AJAX request, if there is one pending.
     // This might free up a thread for the browser, but it does not help
     // the server any.
-    if (this.lastAjaxRequest_)
+    if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
       this.lastAjaxRequest_.transport.abort();
 
     this.searchInProgress = true;
@@ -275,17 +275,17 @@ tmp = {
       results = this.getCachedResults(searchStr,
                           Def.Autocompleter.Search.RESULT_CACHE_SEARCH_RESULTS);
       if (results)
-        this.onComplete(results);
+        this.onComplete(results, true);
     }
     if (!results) { // i.e. if it wasn't cached
       // Run the search
-      this.options.parameters = {};
-      this.options.parameters['terms'] = searchStr;
-      // authencity_token for CSRF security check added
-      this.options.parameters.authenticity_token = window._token || '';
+      var options = {parameters: {}};
+      options.parameters.authenticity_token = window._token || '';
+      options.parameters.terms = searchStr;
+      options.onComplete = this.options.onComplete;
       this.changed = false;
       this.hasFocus = true;
-      this.lastAjaxRequest_ = new Ajax.Request(this.url, this.options);
+      this.lastAjaxRequest_ = new Ajax.Request(this.url, options);
     }
   },
 
@@ -406,23 +406,24 @@ tmp = {
    *  This gets called when an Ajax request returns.  (See Prototype's
    *  Ajax.Request and callback sections.)
    * @param response the AJAX response object
+   * @param fromCache whether "response" is from the cache (optional).
    */
-  onComplete: function(response) {
+  onComplete: function(response, fromCache) {
     if (this.lastAjaxRequest_ === response.request) {
       this.lastAjaxRequest_ = null;
     }
     if (response.status === 200) { // 200 is the "OK" status
-      // Cache the results
       var reqOptions = response.request.options;
       var searchStr = reqOptions.parameters['terms'];
       var autocomp = reqOptions.parameters['autocomp'];
       var searchAC = Def.Autocompleter.Search;
-      var resultCacheIndex = autocomp ?
-        searchAC.RESULT_CACHE_AUTOCOMP_RESULTS :
-        searchAC.RESULT_CACHE_SEARCH_RESULTS;
 
-      if (this.useResultCache_)
+      if (!fromCache && this.useResultCache_) {
+        var resultCacheIndex = autocomp ?
+          searchAC.RESULT_CACHE_AUTOCOMP_RESULTS :
+          searchAC.RESULT_CACHE_SEARCH_RESULTS;
         this.storeCachedResults(searchStr, resultCacheIndex, response);
+      }
 
       // The search string is a truncated version of the field value for
       // autocompletion requests.  Compute what the search string would be
@@ -736,7 +737,7 @@ tmp = {
    *  parameters that are posted.
    */
   getUpdatedChoices: function() {
-    if (this.lastAjaxRequest_)
+    if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
       this.lastAjaxRequest_.transport.abort();
 
     this.searchStartTime = new Date().getTime() ;
@@ -755,16 +756,16 @@ tmp = {
       results = this.getCachedResults(fieldVal,
                                   autocompSearch.RESULT_CACHE_AUTOCOMP_RESULTS);
       if (results)
-        this.onComplete(results);
+        this.onComplete(results, true);
     }
     if (!results) {
       // Run the search
-      this.options.parameters = {};
-      this.options.parameters['terms']=fieldVal;
-      this.options.parameters['autocomp']=1;
-      // authencity_token for CSRF security check added
-      this.options.parameters.authenticity_token = window._token || '';
-      this.lastAjaxRequest_ = new Ajax.Request(this.url, this.options);
+      var options = {parameters: {}};
+      options.parameters.authenticity_token = window._token || '';
+      options.parameters.terms = fieldVal;
+      options.parameters.autocomp = 1;
+      options.onComplete = this.options.onComplete;
+      this.lastAjaxRequest_ = new Ajax.Request(this.url, options);
     }
   },
 
