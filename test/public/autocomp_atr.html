@@ -21,20 +21,20 @@
     <div class="field ansList">
 
     <label for="fe_race_or_ethnicity" id="fe_race_or_ethnicity_lbl">
-    A Prefetch CNE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" class="ansList" id="fe_race_or_ethnicity" name="fe[race_or_ethnicity]" tipValue="Select Race" type="text" />
+    A Prefetch CNE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" class="ansList" id="fe_race_or_ethnicity" name="race_or_ethnicity" tipValue="Select Race" type="text" />
     <img alt="Help" class="help eventsHandled" onclick="Def.Popups.openHelp(this, &#39;Enter or select your race/ethnicity.&#39;); event.stopPropagation();" src="/assets/blank-34e817e9328cba6fecf591bcb94d0397.gif" />
     </div>
     <div class="field ansList">
 
     <label for="fe_prefetch_cwe" id="fe_prefetch_cwe_lbl">
-    A Prefetch CWE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" class="ansList" id="fe_prefetch_cwe" name="fe[prefetch_cwe]" tipValue="Select Race" type="text" />
+    A Prefetch CWE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" class="ansList" id="fe_prefetch_cwe" name="prefetch_cwe" tipValue="Select Race" type="text" />
     <img alt="Help" class="help eventsHandled" onclick="Def.Popups.openHelp(this, &#39;Enter or select your race/ethnicity.&#39;); event.stopPropagation();" src="/assets/blank-34e817e9328cba6fecf591bcb94d0397.gif" />
     </div>
     <div class="field search_field">
 
     <label for="fe_search_cne" id="fe_search_cne_lbl">
     A search CNE autocompleter:&nbsp;&nbsp;</label>
-  <input autocomplete="off" class="search_field" id="fe_search_cne" name="fe[search_cne]" style="width: 25em" tipValue="begin typing problem name.." type="text" />
+  <input autocomplete="off" class="search_field" id="fe_search_cne" name="search_cne" style="width: 25em" tipValue="begin typing problem name.." type="text" />
 
 
     </div>
@@ -42,21 +42,21 @@
 
     <label for="fe_search_cwe" id="fe_search_cwe_lbl">
     A search CWE autocompleter:&nbsp;&nbsp;</label>
-  <input autocomplete="off" class="search_field" id="fe_search_cwe" name="fe[search_cwe]" style="width: 25em" tipValue="begin typing problem name.." type="text" />
+  <input autocomplete="off" class="search_field" id="fe_search_cwe" name="search_cwe" style="width: 25em" tipValue="begin typing problem name.." type="text" />
 
 
     </div>
     <div class="field ansList">
 
     <label for="fe_table_prefetch_cne" id="fe_table_prefetch_cne_lbl">
-    A TablePrefetch autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" class="ansList" id="fe_table_prefetch_cne" name="fe[table_prefetch_cne]" tipValue="Select Race" type="text" />
+    A TablePrefetch autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" class="ansList" id="fe_table_prefetch_cne" name="table_prefetch_cne" tipValue="Select Race" type="text" />
     <img alt="Help" class="help eventsHandled" onclick="Def.Popups.openHelp(this, &#39;Enter or select your race/ethnicity.&#39;); event.stopPropagation();" src="/assets/blank-34e817e9328cba6fecf591bcb94d0397.gif" />
     </div>
     <div class="field search_field">
 
     <label for="fe_search_button_cne" id="fe_search_button_cne_lbl">
     A search CNE autocompleter with a button:&nbsp;&nbsp;</label>
-  <input autocomplete="off" class="search_field" id="fe_search_button_cne" name="fe[search_button_cne]" style="width: 25em" tipValue="begin typing problem name.." type="text" /><img alt="Magnifier" class="searchButton" id="fe_search_button_cne_button" src="/icons/magnifier.png" />
+  <input autocomplete="off" class="search_field" id="fe_search_button_cne" name="search_button_cne" style="width: 25em" tipValue="begin typing problem name.." type="text" /><img alt="Magnifier" class="searchButton" id="fe_search_button_cne_button" src="/icons/magnifier.png" />
 
 
 
@@ -65,7 +65,7 @@
 
     <label for="fe_table_search_cne" id="fe_table_search_cne_lbl">
     A TableSearch CNE autocompleter with a button:&nbsp;&nbsp;</label>
-  <input autocomplete="off" class="search_field" id="fe_table_search_cne" name="fe[table_search_cne]" style="width: 25em" tipValue="begin typing problem name.." type="text" />
+  <input autocomplete="off" class="search_field" id="fe_table_search_cne" name="table_search_cne" style="width: 25em" tipValue="begin typing problem name.." type="text" />
 
 
 
@@ -87,14 +87,21 @@
   <script src="/assets/prototype.js?body=1"></script>
 <script src="/assets/effects.js?body=1"></script>
 <script src="/assets/controls.js?body=1"></script>
+<script src="/assets/jquery.min.js"></script>
+<script src="/assets/jquery.ui.core.js"></script>
+<script src="/assets/jquery.ui.widget.js"></script>
+<script src="/assets/jquery.ui.button.js"></script>
+<script src="/assets/jquery.ui.dialog.js"></script>
 <script src="/assets/autocomp/dialog.js?body=1"></script>
 <script src="/assets/autocomp/observable.js?body=1"></script>
 <script src="/assets/autocomp/recordDataRequester.js?body=1"></script>
+<script src="/assets/autocomp/fieldAlarms.js"></script>
 <script src="/assets/autocomp/autoCompBase.js?body=1"></script>
 <script src="/assets/autocomp/suggestionDialog.js?body=1"></script>
 <script src="/assets/autocomp/autoCompPrefetch.js?body=1"></script>
 <script src="/assets/autocomp/autoCompSearch.js?body=1"></script>
 <script src="/assets/autocomp/autoCompEvents.js?body=1"></script>
+<script src="/assets/autocomp/effectScroll.js"></script>
 <script src="/assets/autocomp/event.simulate.js?body=1"></script>
 <script src="/assets/angular.min.js"></script>
  <!-- end of cache "part3"-->
