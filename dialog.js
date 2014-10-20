@@ -30,7 +30,7 @@ var instanceMembers = {
     options['autoOpen'] = false;
     options['modal'] = true;
     options['close'] = function() {}
-    this.dialog_ = $J('<div></div>').dialog(options);
+    this.dialog_ = jQuery('<div></div>').dialog(options);
   },
 
 
@@ -54,14 +54,14 @@ var instanceMembers = {
       var containerNode = this.dialog_[0].parentNode.parentNode;
       this.backgroundListener_ =
         function() {this.dialog_.dialog('close')}.bindAsEventListener(this);
-      $J(containerNode).delegate('.ui-widget-overlay', 'click',
+      jQuery(containerNode).delegate('.ui-widget-overlay', 'click',
         this.backgroundListener_);
 
       // When the dialog closes, we need to unregister the event handler, or we
       // will create multiple copies of them.  Note that below we are using
       // JQuery's bind (not Prototype's), defined on the dialog_ array.
       this.dialog_.bind('dialogclose', function() {
-        $J(containerNode).undelegate('.ui-widget-overlay', 'click',
+        jQuery(containerNode).undelegate('.ui-widget-overlay', 'click',
           this.backgroundListener_);
       }.bindAsEventListener(this));
 
@@ -84,7 +84,7 @@ var instanceMembers = {
    */
   hide: function() {
     var containerNode = this.dialog_[0].parentNode.parentNode;
-    $J(containerNode).undelegate('.ui-widget-overlay', 'click',
+    jQuery(containerNode).undelegate('.ui-widget-overlay', 'click',
       this.backgroundListener_);
     this.dialog_.dialog('close');
   },

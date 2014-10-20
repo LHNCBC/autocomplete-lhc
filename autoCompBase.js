@@ -124,11 +124,11 @@ Def.Autocompleter = { // Namespace for DEF autocompletion stuff
 
 
   /**
-   *  Sets off an alarm when a field is in an invalid state.  (The default
-   *  implementation does nothing.)
+   *  Sets off an alarm when a field is in an invalid state.
    * @param field the field that is invalid
    */
   setOffAlarm: function(field) {
+     Def.FieldAlarms.setOffAlarm(field);
   },
 
 
@@ -136,6 +136,7 @@ Def.Autocompleter = { // Namespace for DEF autocompletion stuff
    *  Cancels the alarm started by setOffAlarm.
    */
   cancelAlarm: function(field) {
+     Def.FieldAlarms.cancelAlarm(field);
   },
 
 
@@ -680,7 +681,9 @@ tmp = {
    * @param event the event object from the keypress event
    */
   onKeyPress: function(event) {
+console.log("%%% In autoCompBase.onKeyPress");
     if (this.enabled_) {
+console.log("%%% list is enabled");
       // Note:  Normal (i.e. not search or navigation) key strokes are handled
       // by Scriptaculous, which defers processing until a short time later
       // (specified by 'frequency').  This is important, because we are
@@ -707,6 +710,7 @@ tmp = {
           (charCode===Event.KEY_RETURN || charCode===Event.KEY_TAB))) {
         // This is a completion key event, the autocompleter is active, and an
         // item is selected.
+console.log("%%% base calling autocompKeyPress");
         this.autocompKeyPress(event); // might stop event
         this.preFieldFillVal_ = null;
       }
@@ -730,6 +734,7 @@ tmp = {
                  charCode !== 17) { // 17 = control
           this.preFieldFillVal_ = null;  // reset on key strokes in field
         }
+console.log("%%% base calling autocompKeyPress -2");
         this.autocompKeyPress(event);
       }
     }
@@ -1314,6 +1319,7 @@ tmp = {
    * @param event the DOM event object for the change event
    */
   onChange: function (event) {
+console.log("%%% in base onChange");
     if (!Def.Autocompleter.completionOptionsScrollerClicked_) {
       // The field might have a tool tip if it is empty, so do not access
       // element.value directly.

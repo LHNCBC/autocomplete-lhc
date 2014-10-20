@@ -37,7 +37,7 @@ var instanceMembers = {
       'is not on our standard list of possible values.'+
       '<div id="suggestionList" style="margin-top: 1em; margin-bottom: 1em">'+
       '</div>');
-    $('suggestionFieldVal').innerHTML = htmlEncode(element.value);
+    $('suggestionFieldVal').innerHTML = element.value.escapeHTML();
   },
 
 

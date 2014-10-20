@@ -385,6 +385,7 @@ tmp = {
    * @param responseData the array of data received from by onComplete.
    */
   buildUpdateHTML: function(responseData) {
+console.log("%%% buildUpdateHTML with " +responseData);
     var codes = responseData[1];
     var listItemData = responseData[3];
     var highlighting = responseData[4];
@@ -727,6 +728,7 @@ tmp = {
         break; // ignore it
       default:
         // Call the base class method
+console.log("%%% calling scriptaculous onKeyPress");
         Autocompleter.Base.prototype.onKeyPress.apply(this, [event]);
     }
   },
