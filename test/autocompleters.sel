@@ -54,7 +54,7 @@
 
 # Test for list selection callbacks
 | storeExpression | javascript{a={}} | callbackData |
-| assertExpression | javascript{storedVars['callbackData']['input_method']} | undefined |
+| assertExpression | javascript{storedVars['callbackData']['input_method']} | null |
 # Set up a callback on a search field
 | assertExpression | javascript{Def.Autocompleter.Event.observeListSelections('search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
 | fireEvent | fe_search_cwe | focus |
@@ -115,7 +115,7 @@
 | assertExpression | javascript{storedVars['callbackData']['used_list']} | false |
 | assertExpression | javascript{storedVars['callbackData']['list'].length} | 0 |
 | assertExpression | javascript{storedVars['callbackData']['on_list']} | false |
-| waitForExpression | javascript{storedVars['suggestionData']['suggestion_list'].length===0} | true |
+| waitForExpression | javascript{s=storedVars.suggestionData.suggestion_list; s && s.length} | 0 |
 # Wait for the suggestion list to appear, and then hide it to avoid causing
 # problems for subsequent tests.
 | waitForVisible | suggestionList | |
@@ -172,13 +172,15 @@
 # Try using the suggestion box, and setting up a event listener
 | assertExpression | javascript{Def.Autocompleter.Event.observeSuggestionUsed('search_cwe', function(data){storedVars['suggestionUsed']=data}); 1} | 1|
 | storeExpression | javascript{a={}} | suggestionUsed |
-| click | css=#suggestionList a:first |
+# | click | css=#suggestionList a:first | # Selenium didn't like the :first
+# selector for some reason.
+| click | css=#suggestionList ul li a:nth-of-type(1) |
 | waitForExpression | javascript{storedVars['suggestionUsed']['field_id']} | fe_search_cwe |
 | waitForNotVisible | suggestionList |
 
 # Test of a Prefetch CNE autocompleter
 | fireEvent | fe_race_or_ethnicity | focus |
-| waitForExpression | javascript{!isHiddenOrDisabled($('completionOptions'))} | true |
+| waitForVisible | completionOptions | |
 | waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 7 |
 | typeKeys | fe_race_or_ethnicity | a |
 | waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 3 |
@@ -190,22 +192,22 @@
 # refocus the field and try a selection by clicking
 | fireEvent | fe_race_or_ethnicity | focus |
 | mouseDown | css=span#completionOptions > ul > li:first-child |
-| assertValue | fe_race_or_ethnicity | American Indian or Alaska Native |
+| waitForValue | fe_race_or_ethnicity | American Indian or Alaska Native |
 # (refocus, because clicking on an item now moves the focus)
 | fireEvent | fe_race_or_ethnicity | focus |
 
 # Test an invalid value
 | typeKeys | fe_race_or_ethnicity | z |
 | waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | true |
-| verifyExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
+| assertExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
 
 # Try to leave the field with an invalid value
 | keyDown | fe_race_or_ethnicity | \9 |
 | fireEvent | fe_race_or_ethnicity | change |
 | waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | true |
-| verifyExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | true |
+| assertExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | true |
 | waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | true |
-| assertValue | fe_race_or_ethnicity | *z |
+| assertValue | fe_race_or_ethnicity | American Indian or Alaska Nativez |
 | waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 7 |
 
 # Make a second attempt to leave the field.  It should be successful, but the
@@ -213,8 +215,8 @@
 | keyDown | fe_race_or_ethnicity | \9 |
 | waitForValue | fe_race_or_ethnicity | |
 | waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | false |
-| verifyExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | false |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
+| assertExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | false |
 
 # Now pick a valid value and make sure the match/invalid indicators clear.
 | fireEvent | fe_race_or_ethnicity | focus |
@@ -239,11 +241,10 @@
 
 # Type an invalid value
 | typeKeys | fe_prefetch_cwe | Aardvark |
-| pause | 500 |
+| waitForExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | true |
 | keyDown | fe_prefetch_cwe | \9 |
-| pause | 500 |
 | waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('invalid')} | false |
-| verifyValue | fe_prefetch_cwe | Aardvark |
+| assertValue | fe_prefetch_cwe | Aardvark |
 
 # Confirm that the no_match indicator is still present
 | verifyExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | true |
@@ -257,21 +258,20 @@
 | typeKeys | fe_search_cne | asdf |
 | waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 0 |
 | waitForExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | true |
-| verifyExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | false |
+| assertExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | false |
 
 # Try to leave the field with an invalid value
 | keyDown | fe_search_cne | \9 |
 | waitForExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | true |
-| verifyExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | true |
+| assertExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | true |
 | waitForExpression | javascript{$('fe_search_cne').autocomp.hasFocus} | true |
 | assertValue | fe_search_cne | asdf |
 
 # Make a second attempt to leave the field.  It should be successful, but the
 #field value should be cleared.
-| pause | 200 |
 | keyDown | fe_search_cne | \9 |
 | waitForValue | fe_search_cne | |
-| verifyExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | false |
+| waitForExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | false |
 | waitForExpression | javascript{$('fe_search_cne').autocomp.hasFocus} | false |
 
 # Now pick a valid value
@@ -305,7 +305,7 @@
 | keyDown | fe_search_button_cne | \9 |
 | fireEvent | fe_search_button_cne | change |
 | waitForExpression | javascript{$('fe_search_button_cne').hasClassName('invalid')} | true |
-| verifyExpression | javascript{$('fe_search_button_cne').hasClassName('no_match')} | true |
+| assertExpression | javascript{$('fe_search_button_cne').hasClassName('no_match')} | true |
 | waitForExpression | javascript{$('fe_search_button_cne').autocomp.hasFocus} | true |
 | waitForExpression | javascript{$('fe_search_button_cne').autocomp.refocusInProgress_} | false |
 | assertValue | fe_search_button_cne | asdfghijk |
@@ -334,7 +334,7 @@
 | type | fe_search_button_cne |
 | typeKeys | fe_search_button_cne | ab |
 # The list should be showing at this point.
-| mouseDown | fe_search_button_cne_button |
+| click | fe_search_button_cne_button |
 # Check to see that we got results, but don't be picky about how many.  This
 # table gets updated often.  We should have more than 7 items (the non-expanded
 # list size).
@@ -356,5 +356,4 @@
 | click | fe_prefetch_cwe |
 | typeKeys | fe_prefetch_cwe | zzzz |
 | keyDown | fe_prefetch_cwe | \9 |
-| pause | 100 |
-| assertExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | false |
+| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | false |
