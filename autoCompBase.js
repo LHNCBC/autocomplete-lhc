@@ -701,13 +701,22 @@ console.log("%%% list is enabled");
         // also an autocompleter.
         this.autocompKeyPress(event); // might stop event
       }
+      else if (this.active && charCode===Event.KEY_TAB) {
+        // Change the Scriptaculous behavior and allow tab keys to move
+        // to the next field following a selection.
+        if (this.index>=0)
+          this.selectEntry();
+        if (this.observer)
+          clearTimeout(this.observer);
+        this.preFieldFillVal_ = null;
+      }
       // Note:  The next two clauses were originally combined into one with
       // an "else if (this.active)".  In firefox, this resulted in the window
       // somehow getting the event, and in the case of a return key, the form
       // being submitted.  (At least, the form was submitted.)  This may
       // indicate a race condition, and more investigation would be a good idea.
-      else if (this.active && (this.index>=0 && !event.shiftKey &&
-          (charCode===Event.KEY_RETURN || charCode===Event.KEY_TAB))) {
+      else if (this.active && this.index>=0 && !event.shiftKey &&
+               charCode===Event.KEY_RETURN) {
         // This is a completion key event, the autocompleter is active, and an
         // item is selected.
 console.log("%%% base calling autocompKeyPress");
@@ -1352,6 +1361,7 @@ console.log("%%% in base onChange");
    * @param event the DOM event object for the blur event
    */
   onBlur: function(event) {
+console.log("%%% in base onBlur for "+this.element.id);
     // Ignore blur events on the completionOptionsScroller.
     if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
       Def.Autocompleter.completionOptionsScrollerClicked_ = false;
