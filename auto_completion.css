@@ -60,6 +60,12 @@ body {
 }
 
 
+.ansList:focus, .search_field:focus {
+  background-color: #FFF8C6;
+}
+
+
+/* Class "auto_complete" is the completion options div */
 .auto_complete  {
   width: auto;
   /* border is reset in javascript splitAutoComp.js */
@@ -70,7 +76,6 @@ body {
   overflow: auto;
   overflow-x: hidden;
 }
-
 
 .auto_complete > ul {
   margin: 0;
