@@ -202,7 +202,7 @@ li.suggestion {
   margin:0;
 }
 
-.search_field, .search_field:focus {
+input.search_field, textarea.search_field {
   background-image: url("./list_bullets_gray_10_10.png") !important;
   background-repeat: no-repeat;
   background-position: right 2px center;
