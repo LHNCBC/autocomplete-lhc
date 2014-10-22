@@ -641,7 +641,6 @@ tmp = {
   autocompKeyPress: function(event) {
     if(this.active) {
       switch(event.keyCode) {
-        case Event.KEY_TAB:
         case Event.KEY_RETURN:
           if (event.ctrlKey) {
             this.handleSeeMoreItems(event);
@@ -652,7 +651,7 @@ tmp = {
           else {
             // Only try to select an entry if the index is not -1 (to which
             // it is set when the field first gets the focus).
-            if (this.index !== -1) {
+            if (this.index >= 0) {
               Event.stop(event);
               this.selectEntry();
               this.hide(); // this didn't used to be necessary.
@@ -933,7 +932,6 @@ tmp = {
   /**
    *  Returns the value of a list item (minus any sequence number an
    *  separator.)
-   *  IE convers the span tag froom lower case to upper case
    * @param li the list item DOM element.
    */
   listItemValue: function(li) {

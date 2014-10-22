@@ -40,7 +40,6 @@ Def.Observable = {
           // Also get the callbacks that apply to all fields
           var allFieldEventCallbacks = eventCallbacks[null];
           var allCallbacks = [fieldEventCallbacks, allFieldEventCallbacks];
-
           for (var j=0, maxJ=allCallbacks.length; j<maxJ; ++j) {
             var callbackArray = allCallbacks[j];
             if (callbackArray !== undefined) {

@@ -1,6 +1,7 @@
 exports.config = {
   seleniumAddress: 'http://localhost:4444/wd/hub',
-  specs: ['spec.js'],
+  realtimeFailure: true,
+  specs: ['sel_spec.js'],
   capabilities: {
     browserName: 'firefox'
   }

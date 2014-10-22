@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" ng-app>
+ <head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+   <title>Test Form for Autocompleters</title>
+   <link href="/assets/autocomp/auto_completion.css" media="screen" rel="stylesheet" />
+   <link href="/assets/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen"
+rel="stylesheet" />
+ </head>
+
+
+ <body>
+
+<div id="content">
+
+
+<form accept-charset="UTF-8" action="/form/test/autocompleter_test" id="main_form" method="post"><div style="display:none"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="4XpZSGtuYxu0XILttGJcsAWGIEL5Fk+xI0kNA8rQ/co=" /></div>
+
+    <div id="form_title">
+      <div id="main_title">Test Form for Autocompleters</div>
+    </div>
+
+    <div class="field ansList">
+
+    <label for="fe_race_or_ethnicity" id="fe_race_or_ethnicity_lbl">
+    A Prefetch CNE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" class="ansList" id="fe_race_or_ethnicity" name="race_or_ethnicity" tipValue="Select Race" type="text" />
+    </div>
+    <div class="field ansList">
+
+    <label for="fe_prefetch_cwe" id="fe_prefetch_cwe_lbl">
+    A Prefetch CWE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" class="ansList" id="fe_prefetch_cwe" name="prefetch_cwe" tipValue="Select Race" type="text" />
+    </div>
+    <div class="field search_field">
+
+    <label for="fe_search_cne" id="fe_search_cne_lbl">
+    A search CNE autocompleter:&nbsp;&nbsp;</label>
+  <input autocomplete="off" class="search_field" id="fe_search_cne" name="search_cne" style="width: 25em" tipValue="begin typing problem name.." type="text" />
+
+
+    </div>
+    <div class="field search_field">
+
+    <label for="fe_search_cwe" id="fe_search_cwe_lbl">
+    A search CWE autocompleter:&nbsp;&nbsp;</label>
+  <input autocomplete="off" class="search_field" id="fe_search_cwe" name="search_cwe" style="width: 25em" tipValue="begin typing problem name.." type="text" />
+
+
+    </div>
+    <div class="field ansList">
+
+    <label for="fe_table_prefetch_cne" id="fe_table_prefetch_cne_lbl">
+    A multi-field Prefetch autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" class="ansList" id="fe_table_prefetch_cne" name="table_prefetch_cne" tipValue="Select Race" type="text" />
+    </div>
+    <div class="field search_field">
+
+    <label for="fe_search_button_cne" id="fe_search_button_cne_lbl">
+    A search CNE autocompleter with a button:&nbsp;&nbsp;</label>
+  <input autocomplete="off" class="search_field" id="fe_search_button_cne"
+  name="search_button_cne" style="width: 25em" tipValue="begin typing problem
+  name.." type="text" /><img alt="Magnifier" class="searchButton"
+  id="fe_search_button_cne_button" src="/assets/autocomp/magnifier.png" />
+
+
+
+    </div>
+    <div class="field search_field">
+
+    <label for="fe_table_search_cne" id="fe_table_search_cne_lbl">
+    A multi-field Search CNE autocompleter:&nbsp;&nbsp;</label>
+  <input autocomplete="off" class="search_field" id="fe_table_search_cne" name="table_search_cne" style="width: 25em" tipValue="begin typing problem name.." type="text" />
+
+
+
+    </div>
+    <button class="rounded" id="fe_save" name="fe[save]" type="submit" value="1"><span>Save</span></button>
+
+</form>
+    <br>
+
+  </div>
+
+  <div id="blinder" >
+  </div>
+
+  <!-- Notice displayed while a user-initiated save is being performed.-->
+
+  <script src="/assets/prototype.js?body=1"></script>
+<script src="/assets/effects.js?body=1"></script>
+<script src="/assets/controls.js?body=1"></script>
+<script src="/assets/jquery.min.js"></script>
+<script src="/assets/jquery-ui/ui/jquery.ui.core.js"></script>
+<script src="/assets/jquery-ui/ui/jquery.ui.widget.js"></script>
+<script src="/assets/jquery-ui/ui/jquery.ui.button.js"></script>
+<script src="/assets/jquery-ui/ui/jquery.ui.dialog.js"></script>
+<script src="/assets/autocomp/dialog.js?body=1"></script>
+<script src="/assets/autocomp/observable.js?body=1"></script>
+<script src="/assets/autocomp/recordDataRequester.js?body=1"></script>
+<script src="/assets/autocomp/fieldAlarms.js"></script>
+<script src="/assets/autocomp/autoCompBase.js?body=1"></script>
+<script src="/assets/autocomp/suggestionDialog.js?body=1"></script>
+<script src="/assets/autocomp/autoCompPrefetch.js?body=1"></script>
+<script src="/assets/autocomp/autoCompSearch.js?body=1"></script>
+<script src="/assets/autocomp/autoCompEvents.js?body=1"></script>
+<script src="/assets/autocomp/effectScroll.js"></script>
+<script src="/assets/autocomp/event.simulate.js?body=1"></script>
+<script src="/assets/autocomp/moveToNextFieldAfterSelection.js"></script>
+<script src="/assets/angular.min.js"></script>
+ <!-- end of cache "part3"-->
+
+ </div> <!-- end content -->
+ <!-- need to reload generated js file when its content changed -->
+  <!-- include both generated and form-specific javascript files if they exist -->
+ <script src="/assets/gnd_autocompleter_test.js?body=1"></script>
+	</script>
+
+ <div id="spacer"></div>
+
+</body>
+</html>

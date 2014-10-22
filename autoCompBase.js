@@ -124,11 +124,11 @@ Def.Autocompleter = { // Namespace for DEF autocompletion stuff
 
 
   /**
-   *  Sets off an alarm when a field is in an invalid state.  (The default
-   *  implementation does nothing.)
+   *  Sets off an alarm when a field is in an invalid state.
    * @param field the field that is invalid
    */
   setOffAlarm: function(field) {
+     Def.FieldAlarms.setOffAlarm(field);
   },
 
 
@@ -136,6 +136,7 @@ Def.Autocompleter = { // Namespace for DEF autocompletion stuff
    *  Cancels the alarm started by setOffAlarm.
    */
   cancelAlarm: function(field) {
+     Def.FieldAlarms.cancelAlarm(field);
   },
 
 
@@ -502,8 +503,7 @@ tmp = {
    * @param li a list item DOM element.
    */
   listItemValue: function(li) {
-    // For the base class, just return the inner HTML.
-    return htmlDecode(li.innerHTML);
+    return li.textContent; // decodes escaped HTML elements
   },
 
 
@@ -699,13 +699,22 @@ tmp = {
         // also an autocompleter.
         this.autocompKeyPress(event); // might stop event
       }
+      else if (this.active && charCode===Event.KEY_TAB) {
+        // Change the Scriptaculous behavior and allow tab keys to move
+        // to the next field following a selection.
+        if (this.index>=0)
+          this.selectEntry();
+        if (this.observer)
+          clearTimeout(this.observer);
+        this.preFieldFillVal_ = null;
+      }
       // Note:  The next two clauses were originally combined into one with
       // an "else if (this.active)".  In firefox, this resulted in the window
       // somehow getting the event, and in the case of a return key, the form
       // being submitted.  (At least, the form was submitted.)  This may
       // indicate a race condition, and more investigation would be a good idea.
-      else if (this.active && (this.index>=0 && !event.shiftKey &&
-          (charCode===Event.KEY_RETURN || charCode===Event.KEY_TAB))) {
+      else if (this.active && this.index>=0 && !event.shiftKey &&
+               charCode===Event.KEY_RETURN) {
         // This is a completion key event, the autocompleter is active, and an
         // item is selected.
         this.autocompKeyPress(event); // might stop event

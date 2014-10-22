@@ -1,0 +1,359 @@
+| open | http://localhost:3000/autocomp_atr.html |
+
+# Tests for callbacks. Start with a test for list expansions
+| storeExpression | javascript{0} | callbackCount |
+# Set up a callback on a search field
+| assertExpression | javascript{Def.Autocompleter.Event.observeListExpansions('search_cne', function(){++storedVars['callbackCount']}); 1} | 1|
+# Bring up a list with a "see more" link
+| fireEvent | fe_search_cne | focus |
+| typeKeys | fe_search_cne | ar |
+| waitForVisible | moreResults | |
+| assertExpression | javascript{storedVars['callbackCount']} | 0 |
+# Click on the "see more" link, and confirm the callback was called.
+| click | moreResults |
+| waitForExpression | javascript{storedVars['callbackCount']} | 1 |
+# Bring the "see more" link back, and this time use control+return to activate it
+| waitForNotVisible | moreResults | |
+| type | fe_search_cne | |
+| typeKeys | fe_search_cne | ar |
+| waitForVisible | moreResults | |
+| controlKeyDown | | |
+| assertExpression | javascript{storedVars['callbackCount']} | 1 |
+| typeKeys | fe_search_cne | \13 |
+| controlKeyUp | | |
+| waitForNotVisible | moreResults | |
+| waitForExpression | javascript{storedVars['callbackCount']} | 2 |
+
+# Now try the same tests on a prefetched list field.  The prefetched list fields
+# on this form are not long enough for "see more", so we reset the number of
+# items that triggers that.
+| assertExpression | javascript{Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD = 2} | 2 |
+# Set up the callback
+| assertExpression | javascript{Def.Autocompleter.Event.observeListExpansions('race_or_ethnicity', function(){++storedVars['callbackCount']}); 1} | 1|
+# Focus the prefetched list field
+| fireEvent | fe_search_cne | blur |
+| fireEvent | fe_race_or_ethnicity | focus |
+| waitForVisible | moreResults | |
+| assertExpression | javascript{storedVars['callbackCount']} | 2 |
+# Click on "see more" and confirm the callback was called.
+| click | moreResults |
+| waitForNotVisible | moreResults | |
+| waitForExpression | javascript{storedVars['callbackCount']} | 3 |
+# Now bring the "see more" back and try again using control return
+| fireEvent | fe_race_or_ethnicity | blur |
+| fireEvent | fe_race_or_ethnicity | focus |
+| waitForVisible | moreResults | |
+| controlKeyDown | | |
+| assertExpression | javascript{storedVars['callbackCount']} | 3 |
+| typeKeys | fe_race_or_ethnicity | \13 |
+| controlKeyUp | | |
+| waitForNotVisible | moreResults | |
+| waitForExpression | javascript{storedVars['callbackCount']} | 4 |
+# Reset the number of items needed for "see more" to its normal value
+| assertExpression | javascript{Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD = 7} | 7 |
+
+# Test for list selection callbacks
+| storeExpression | javascript{a={}} | callbackData |
+| assertExpression | javascript{storedVars['callbackData']['input_method']} | null |
+# Set up a callback on a search field
+| assertExpression | javascript{Def.Autocompleter.Event.observeListSelections('search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
+| fireEvent | fe_search_cwe | focus |
+| typeText | fe_search_cwe | knee |
+# Select the first value using the down arrow (40 = down arrow)
+| waitForVisible | moreResults |
+| keyDown | fe_search_cwe | \40 |
+| keyDown | fe_search_cwe | \9 |
+| waitForExpression | javascript{storedVars['callbackData']['input_method']} | arrows |
+| assertExpression | javascript{storedVars['callbackData']['val_typed_in']} | knee |
+| assertExpression | javascript{storedVars['callbackData']['final_val']} | Knee pain |
+| assertExpression | javascript{storedVars['callbackData']['used_list']} | true |
+| assertExpression | javascript{storedVars['callbackData']['list'].length} | 7 |
+| assertExpression | javascript{storedVars['callbackData']['on_list']} | true |
+
+# Another test for the list selection callback-- try typing in the complete value
+# without using the list.
+| storeExpression | javascript{a={}} | callbackData |
+| type | fe_search_cwe | |
+| fireEvent | fe_search_cwe | focus |
+| typeText | fe_search_cwe | Knee Pain |
+| waitForVisible | searchResults |
+| keyDown | fe_search_cwe | \9 |
+| waitForExpression | javascript{storedVars['callbackData']['input_method']} | typed |
+| assertExpression | javascript{storedVars['callbackData']['val_typed_in']} | Knee Pain |
+| assertExpression | javascript{storedVars['callbackData']['final_val']} | Knee pain |
+| assertExpression | javascript{storedVars['callbackData']['used_list']} | false |
+| assertExpression | javascript{storedVars['callbackData']['list'].length} | 1 |
+| assertExpression | javascript{storedVars['callbackData']['on_list']} | true |
+
+# Another test for the list selection callback-- try clicking on a list item
+| storeExpression | javascript{a={}} | callbackData |
+| type | fe_search_cwe | |
+| fireEvent | fe_search_cwe | focus |
+| typeText | fe_search_cwe | knee |
+| waitForVisible | searchResults |
+| mouseDown | css=span#completionOptions > ul > li:first-child |
+| waitForExpression | javascript{storedVars['callbackData']['input_method']} | clicked |
+| assertExpression | javascript{storedVars['callbackData']['val_typed_in']} | knee |
+| assertExpression | javascript{storedVars['callbackData']['final_val']} | Knee pain |
+| assertExpression | javascript{storedVars['callbackData']['used_list']} | true |
+| assertExpression | javascript{storedVars['callbackData']['list'].length} | 7 |
+| assertExpression | javascript{storedVars['callbackData']['on_list']} | true |
+
+# Another test for the list selection callback-- try typing in a non-list value
+| storeExpression | javascript{a={}} | callbackData |
+| type | fe_search_cwe | |
+| fireEvent | fe_search_cwe | focus |
+# Because this test brings up the suggestion box, I will take the opportunity
+# test the callback for that event.
+| storeExpression | javascript{a={}} | suggestionData |
+| assertExpression | javascript{Def.Autocompleter.Event.observeSuggestionsShown('search_cwe', function(data){storedVars['suggestionData']=data}); 1} | 1|
+| typeKeys | fe_search_cwe | zzz |
+| keyDown | fe_search_cwe | \9 |
+| waitForExpression | javascript{storedVars['callbackData']['input_method']} | typed |
+| assertExpression | javascript{storedVars['callbackData']['val_typed_in']} | zzz |
+| assertExpression | javascript{storedVars['callbackData']['final_val']} | zzz |
+| assertExpression | javascript{storedVars['callbackData']['used_list']} | false |
+| assertExpression | javascript{storedVars['callbackData']['list'].length} | 0 |
+| assertExpression | javascript{storedVars['callbackData']['on_list']} | false |
+| waitForExpression | javascript{s=storedVars.suggestionData.suggestion_list; s && s.length} | 0 |
+# Wait for the suggestion list to appear, and then hide it to avoid causing
+# problems for subsequent tests.
+| waitForVisible | suggestionList | |
+| assertExpression | javascript{Def.Autocompleter.SuggestionDialog.getSuggestionDialog().hide(); 1} | 1 |
+
+# Test the focus callback
+| storeExpression | javascript{a={}} | callbackData |
+| assertExpression | javascript{Def.Autocompleter.Event.observeFocusEvents('search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
+| type | fe_search_cwe | abc |
+| fireEvent | fe_search_cwe | focus |
+| waitForExpression | javascript{storedVars['callbackData']['start_val']} | abc |
+# Test we got the field ID.  This should be in every event, but we are just testing
+# it once here, because the code inserts it at a place where it gets run for all
+# events.
+| assertExpression | javascript{storedVars['callbackData']['field_id']} | fe_search_cwe |
+
+# Test the cancel callback
+| storeExpression | javascript{a={}} | callbackData |
+| assertExpression | javascript{Def.Autocompleter.Event.observeCancelList('search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
+| type | fe_search_cwe | |
+| fireEvent | fe_search_cwe | focus |
+| typeKeys | fe_search_cwe | ab |
+| waitForVisible | searchResults | |
+# down arrow (\40)
+| keyDown | fe_search_cwe | \40 |
+| waitForNotValue | fe_search_cwe | ab |
+# escape key (\27)
+| keyDown | fe_search_cwe | \27 |
+| waitForExpression | javascript{storedVars['callbackData']['restored_value']} | ab |
+
+# Reset fields back to blank for the subsequent tests
+| type | fe_race_or_ethnicity | |
+| type | fe_search_cne | |
+| type | fe_search_cwe | |
+
+# Test that if you type something in a search field that doesn't match a list
+# value, and then hit control+return, and then try to leave the field, you get
+# the suggestion box.
+| assertNotVisible | moreResults | |
+| assertNotVisible | suggestionList | |
+| fireEvent | fe_search_cwe | focus |
+| type | fe_search_cwe | a |
+| typeKeys | fe_search_cwe | r |
+| waitForVisible | searchResults | |
+| controlKeyDown | | |
+| typeKeys | fe_search_cwe | \13 |
+| controlKeyUp | | |
+| waitForNotVisible | moreResults | |
+| waitForVisible | searchResults | |
+| waitForNotVisible | moreResults | |
+| typeKeys | fe_search_cwe | \9 |
+| waitForVisible | suggestionList | |
+| waitForExpression | javascript{storedVars['suggestionData']['suggestion_list'].length>0} | true |
+# Try using the suggestion box, and setting up a event listener
+| assertExpression | javascript{Def.Autocompleter.Event.observeSuggestionUsed('search_cwe', function(data){storedVars['suggestionUsed']=data}); 1} | 1|
+| storeExpression | javascript{a={}} | suggestionUsed |
+# | click | css=#suggestionList a:first | # Selenium didn't like the :first
+# selector for some reason.
+| click | css=#suggestionList ul li a:nth-of-type(1) |
+| waitForExpression | javascript{storedVars['suggestionUsed']['field_id']} | fe_search_cwe |
+| waitForNotVisible | suggestionList |
+
+# Test of a Prefetch CNE autocompleter
+| fireEvent | fe_race_or_ethnicity | focus |
+| waitForVisible | completionOptions | |
+| waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 7 |
+| typeKeys | fe_race_or_ethnicity | a |
+| waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 3 |
+# (40 = down arrow)
+| keyDown | fe_race_or_ethnicity | \40 |
+| keyDown | fe_race_or_ethnicity | \9 |
+| waitForValue | fe_race_or_ethnicity | Asian |
+
+# refocus the field and try a selection by clicking
+| fireEvent | fe_race_or_ethnicity | focus |
+| mouseDown | css=span#completionOptions > ul > li:first-child |
+| waitForValue | fe_race_or_ethnicity | American Indian or Alaska Native |
+# (refocus, because clicking on an item now moves the focus)
+| fireEvent | fe_race_or_ethnicity | focus |
+
+# Test an invalid value
+| typeKeys | fe_race_or_ethnicity | z |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | true |
+| assertExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
+
+# Try to leave the field with an invalid value
+| keyDown | fe_race_or_ethnicity | \9 |
+| fireEvent | fe_race_or_ethnicity | change |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | true |
+| assertExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | true |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | true |
+| assertValue | fe_race_or_ethnicity | American Indian or Alaska Nativez |
+| waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 7 |
+
+# Make a second attempt to leave the field.  It should be successful, but the
+# field value should be cleared.
+| keyDown | fe_race_or_ethnicity | \9 |
+| waitForValue | fe_race_or_ethnicity | |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | false |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
+| assertExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | false |
+
+# Now pick a valid value and make sure the match/invalid indicators clear.
+| fireEvent | fe_race_or_ethnicity | focus |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | true |
+| type | fe_race_or_ethnicity | Asia |
+| typeKeys | fe_race_or_ethnicity | n |
+# (Test that if you type in the full value of a list item, the no_match
+# indicator does not get set.)
+| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | false |
+| waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 1 |
+# For some reason, tab (\9) no longer causes change & blur events (as of Firefox 19), and manually
+# firing a change event here causes the focus to return to the field.
+#| keyDown | fe_race_or_ethnicity | \9 |
+| fireEvent | fe_race_or_ethnicity | change |
+| fireEvent | fe_race_or_ethnicity | blur |
+| waitForValue | fe_race_or_ethnicity | Asian |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | false |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
+| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | false |
+# Test of a Prefetch CWE autocompleter
+| click | fe_prefetch_cwe |
+
+# Type an invalid value
+| typeKeys | fe_prefetch_cwe | Aardvark |
+| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | true |
+| keyDown | fe_prefetch_cwe | \9 |
+| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('invalid')} | false |
+| assertValue | fe_prefetch_cwe | Aardvark |
+
+# Confirm that the no_match indicator is still present
+| assertExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | true |
+| waitForExpression | javascript{$('fe_prefetch_cwe').autocomp.hasFocus} | false |
+
+# Tests for a search CNE field
+| fireEvent | fe_search_cne | focus |
+| waitForExpression | javascript{$('fe_search_cne').autocomp.hasFocus} | true |
+
+# Test an invalid value
+| typeKeys | fe_search_cne | asdf |
+| waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 0 |
+| waitForExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | true |
+| assertExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | false |
+
+# Try to leave the field with an invalid value
+| keyDown | fe_search_cne | \9 |
+| waitForExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | true |
+| assertExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | true |
+| waitForExpression | javascript{$('fe_search_cne').autocomp.hasFocus} | true |
+| assertValue | fe_search_cne | asdf |
+
+# Make a second attempt to leave the field.  It should be successful, but the
+#field value should be cleared.
+| keyDown | fe_search_cne | \9 |
+| waitForValue | fe_search_cne | |
+| waitForExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | false |
+| waitForExpression | javascript{$('fe_search_cne').autocomp.hasFocus} | false |
+
+# Now pick a valid value
+| fireEvent | fe_search_cne | focus |
+| waitForExpression | javascript{$('fe_search_cne').autocomp.hasFocus} | true |
+| typeKeys | fe_search_cne | pickw |
+| waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 1 |
+| keyDown | fe_search_cne | \40 |
+| keyDown | fe_search_cne | \9 |
+| waitForValue | fe_search_cne | Pickwickian syndrome |
+| waitForExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | false |
+| assertExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | false |
+| waitForExpression | javascript{$('fe_search_cne').autocomp.hasFocus} | false |
+
+# Tests for a CNE Search autocompleter with a button
+| fireEvent | fe_search_button_cne | focus |
+| waitForExpression | javascript{$('fe_search_button_cne').autocomp.hasFocus} | true |
+| typeKeys | fe_search_button_cne | car |
+| waitForVisible | completionOptions | |
+| keyDown | fe_search_button_cne | \40 |
+| keyDown | fe_search_button_cne | \9 |
+| type | fe_search_button_cne |
+| fireEvent | fe_search_button_cne | focus |
+| type | fe_search_button_cne |
+| typeKeys | fe_search_button_cne | asdfghijk |
+| waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 0 |
+| waitForExpression | javascript{$('fe_search_button_cne').hasClassName('no_match')} | true |
+| waitForExpression | javascript{$('fe_search_button_cne').hasClassName('invalid')} | false |
+
+# Try to leave the field with an invalid value
+| keyDown | fe_search_button_cne | \9 |
+| fireEvent | fe_search_button_cne | change |
+| waitForExpression | javascript{$('fe_search_button_cne').hasClassName('invalid')} | true |
+| assertExpression | javascript{$('fe_search_button_cne').hasClassName('no_match')} | true |
+| waitForExpression | javascript{$('fe_search_button_cne').autocomp.hasFocus} | true |
+| waitForExpression | javascript{$('fe_search_button_cne').autocomp.refocusInProgress_} | false |
+| assertValue | fe_search_button_cne | asdfghijk |
+
+# Make a second attempt to leave the field.  It should be successful, but the
+#field value should be cleared.
+| keyDown | fe_search_button_cne | \9 |
+| waitForValue | fe_search_button_cne | |
+| assertExpression | javascript{$('fe_search_button_cne').hasClassName('invalid')} | false |
+
+# Now pick a valid value
+| click | fe_search_button_cne |
+| waitForExpression | javascript{$('fe_search_button_cne').autocomp.hasFocus} | true |
+| typeKeys | fe_search_button_cne | pickw |
+| waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 1 |
+| keyDown | fe_search_button_cne | \40 |
+| keyDown | fe_search_button_cne | \9 |
+| waitForValue | fe_search_button_cne | Pickwickian syndrome |
+| waitForExpression | javascript{$('fe_search_button_cne').hasClassName('invalid')} | false |
+| waitForExpression | javascript{$('fe_search_button_cne').hasClassName('no_match')} | false |
+| waitForExpression | javascript{$('fe_search_button_cne').autocomp.hasFocus} | false |
+
+# Try clicking on the button to do a search
+| click | fe_search_button_cne |
+| waitForExpression | javascript{$('fe_search_button_cne').autocomp.hasFocus} | true |
+| type | fe_search_button_cne |
+| typeKeys | fe_search_button_cne | ab |
+# The list should be showing at this point.
+| click | fe_search_button_cne_button |
+# Check to see that we got results, but don't be picky about how many.  This
+# table gets updated often.  We should have more than 7 items (the non-expanded
+# list size).
+| waitForExpression | javascript{$('fe_search_button_cne').autocomp.entryCount>20} | true |
+| waitForExpression | javascript{$('fe_search_button_cne').autocomp.hasFocus} | true |
+| keyDown | fe_search_button_cne | \40 |
+| keyDown | fe_search_button_cne | \9 |
+| waitForValue | fe_search_button_cne | Abscess |
+
+# Tests for disabled autocompleters.  Tests beyond this point mess with
+# the autocompleters' lists.
+| type | fe_prefetch_cwe |
+| click | fe_prefetch_cwe |
+| typeKeys | fe_prefetch_cwe | 1 |
+| keyDown | fe_prefetch_cwe | \40 |
+| keyDown | fe_prefetch_cwe | \9 |
+| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | false |
+| assertExpression | javascript{$('fe_prefetch_cwe').autocomp.setList([],[]); 1} | 1 |
+| click | fe_prefetch_cwe |
+| typeKeys | fe_prefetch_cwe | zzzz |
+| keyDown | fe_prefetch_cwe | \9 |
+| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | false |

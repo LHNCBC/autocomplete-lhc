@@ -1,0 +1,1 @@
+../../../bower_components/scriptaculous-bower/effects.js
