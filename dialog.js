@@ -88,6 +88,14 @@ var instanceMembers = {
 
 
   /**
+   *  Returns true if the dialog is currently open.
+   */
+  isOpen: function() {
+    return this.dialog_.dialog('isOpen');
+  },
+
+
+  /**
    *  Sets the HTML content of the dialog.
    * @param html the html for the dialog's content.
    */
