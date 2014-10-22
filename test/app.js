@@ -3,6 +3,6 @@ var connect = require('connect'),
     http = require('http');
 
 connect()
-    .use(connect.static('public'))
-    .use(connect.directory('public'))
+    .use(connect.static('.'))
+    .use(connect.directory('.'))
     .listen(3000);

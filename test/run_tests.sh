@@ -18,11 +18,22 @@ fi
 
 # Start node.js to serve a page that uses autocomp
 test_dir=`dirname $0`
+# Move to the autocomp directory (containing "test");
 cd $test_dir
-node app.js &
+cd ..
+node test/app.js &
+
+# The test server is now running with its document root in the "autocomp"
+# directory.  We need to copy the "bonk.mp3" file there because the
+# autocompleter code expects that to be in the document root.
+if [ ! -e bonk.mp3 ]
+then
+  echo Copying bonk.mp3 into the document root for the tests.
+  cp soundmanager/bonk.mp3 bonk.mp3
+fi
 
 # Now run the tests
-protractor ./conf.js
+cd test; protractor ./conf.js
 
 # Shut down node.js (%1 = background job 1)
 kill %1

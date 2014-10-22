@@ -97,7 +97,7 @@ ATR = {
         expectedVal = '\'' + expectedVal.replace(/\'/g, "\\'") + '\'';
       browser.wait(function() {
         return ATR.CommandUtil.remoteEval(expression + '==' + expectedVal);
-      }, ATR.TIMEOUT*10);
+      }, ATR.TIMEOUT);
     },
 
 

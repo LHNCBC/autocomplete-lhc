@@ -4,8 +4,8 @@
    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
    <title>Test Form for Autocompleters</title>
-   <link href="/assets/autocomp/auto_completion.css" media="screen" rel="stylesheet" />
-   <link href="/assets/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen"
+   <link href="/auto_completion.css" media="screen" rel="stylesheet" />
+   <link href="/bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen"
 rel="stylesheet" />
  </head>
 
@@ -59,7 +59,7 @@ rel="stylesheet" />
   <input autocomplete="off" class="search_field" id="fe_search_button_cne"
   name="search_button_cne" style="width: 25em" tipValue="begin typing problem
   name.." type="text" /><img alt="Magnifier" class="searchButton"
-  id="fe_search_button_cne_button" src="/assets/autocomp/magnifier.png" />
+  id="fe_search_button_cne_button" src="//magnifier.png" />
 
 
 
@@ -85,33 +85,32 @@ rel="stylesheet" />
 
   <!-- Notice displayed while a user-initiated save is being performed.-->
 
-  <script src="/assets/prototype.js?body=1"></script>
-<script src="/assets/effects.js?body=1"></script>
-<script src="/assets/controls.js?body=1"></script>
-<script src="/assets/jquery.min.js"></script>
-<script src="/assets/jquery-ui/ui/jquery.ui.core.js"></script>
-<script src="/assets/jquery-ui/ui/jquery.ui.widget.js"></script>
-<script src="/assets/jquery-ui/ui/jquery.ui.button.js"></script>
-<script src="/assets/jquery-ui/ui/jquery.ui.dialog.js"></script>
-<script src="/assets/autocomp/dialog.js?body=1"></script>
-<script src="/assets/autocomp/observable.js?body=1"></script>
-<script src="/assets/autocomp/recordDataRequester.js?body=1"></script>
-<script src="/assets/autocomp/fieldAlarms.js"></script>
-<script src="/assets/autocomp/autoCompBase.js?body=1"></script>
-<script src="/assets/autocomp/suggestionDialog.js?body=1"></script>
-<script src="/assets/autocomp/autoCompPrefetch.js?body=1"></script>
-<script src="/assets/autocomp/autoCompSearch.js?body=1"></script>
-<script src="/assets/autocomp/autoCompEvents.js?body=1"></script>
-<script src="/assets/autocomp/effectScroll.js"></script>
-<script src="/assets/autocomp/event.simulate.js?body=1"></script>
-<script src="/assets/autocomp/moveToNextFieldAfterSelection.js"></script>
-<script src="/assets/angular.min.js"></script>
+  <script src="/bower_components/prototypejs-bower/prototype.js"></script>
+<script src="/bower_components/scriptaculous-bower/effects.js"></script>
+<script src="/bower_components/scriptaculous-bower/controls.js"></script>
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/bower_components/jquery-ui/ui/jquery.ui.core.js"></script>
+<script src="/bower_components/jquery-ui/ui/jquery.ui.widget.js"></script>
+<script src="/bower_components/jquery-ui/ui/jquery.ui.button.js"></script>
+<script src="/bower_components/jquery-ui/ui/jquery.ui.dialog.js"></script>
+<script src="/dialog.js?body=1"></script>
+<script src="/observable.js?body=1"></script>
+<script src="/recordDataRequester.js?body=1"></script>
+<script src="/fieldAlarms.js"></script>
+<script src="/autoCompBase.js?body=1"></script>
+<script src="/suggestionDialog.js?body=1"></script>
+<script src="/autoCompPrefetch.js?body=1"></script>
+<script src="/autoCompSearch.js?body=1"></script>
+<script src="/autoCompEvents.js?body=1"></script>
+<script src="/effectScroll.js"></script>
+<script src="/event.simulate.js?body=1"></script>
+<script src="/node_modules/protractor/testapp/lib/angular_v1.2.9/angular.min.js"></script>
  <!-- end of cache "part3"-->
 
  </div> <!-- end content -->
  <!-- need to reload generated js file when its content changed -->
   <!-- include both generated and form-specific javascript files if they exist -->
- <script src="/assets/gnd_autocompleter_test.js?body=1"></script>
+ <script src="/test/gnd_autocompleter_test.js?body=1"></script>
 	</script>
 
  <div id="spacer"></div>

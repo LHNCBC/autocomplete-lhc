@@ -1,1 +1,0 @@
-../../../bower_components/prototypejs-bower/prototype.js
