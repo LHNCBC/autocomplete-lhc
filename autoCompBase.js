@@ -681,9 +681,7 @@ tmp = {
    * @param event the event object from the keypress event
    */
   onKeyPress: function(event) {
-console.log("%%% In autoCompBase.onKeyPress");
     if (this.enabled_) {
-console.log("%%% list is enabled");
       // Note:  Normal (i.e. not search or navigation) key strokes are handled
       // by Scriptaculous, which defers processing until a short time later
       // (specified by 'frequency').  This is important, because we are
@@ -719,7 +717,6 @@ console.log("%%% list is enabled");
                charCode===Event.KEY_RETURN) {
         // This is a completion key event, the autocompleter is active, and an
         // item is selected.
-console.log("%%% base calling autocompKeyPress");
         this.autocompKeyPress(event); // might stop event
         this.preFieldFillVal_ = null;
       }
@@ -743,7 +740,6 @@ console.log("%%% base calling autocompKeyPress");
                  charCode !== 17) { // 17 = control
           this.preFieldFillVal_ = null;  // reset on key strokes in field
         }
-console.log("%%% base calling autocompKeyPress -2");
         this.autocompKeyPress(event);
       }
     }
@@ -1328,7 +1324,6 @@ console.log("%%% base calling autocompKeyPress -2");
    * @param event the DOM event object for the change event
    */
   onChange: function (event) {
-console.log("%%% in base onChange");
     if (!Def.Autocompleter.completionOptionsScrollerClicked_) {
       // The field might have a tool tip if it is empty, so do not access
       // element.value directly.
@@ -1361,7 +1356,6 @@ console.log("%%% in base onChange");
    * @param event the DOM event object for the blur event
    */
   onBlur: function(event) {
-console.log("%%% in base onBlur for "+this.element.id);
     // Ignore blur events on the completionOptionsScroller.
     if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
       Def.Autocompleter.completionOptionsScrollerClicked_ = false;

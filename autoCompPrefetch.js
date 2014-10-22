@@ -811,7 +811,6 @@ tmp = {
    *  A method that gets called when the field gains the focus.
    */
   onFocus: function() {
-console.log("%%% in prefetch onFocus for " + this.element.id);
     // Ignore blur events on the completionOptionsScroller.
     if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
       Def.Autocompleter.completionOptionsScrollerClicked_ = false;

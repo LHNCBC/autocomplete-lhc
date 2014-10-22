@@ -49,7 +49,6 @@ Ajax.Request = function(url, options) {
   var fd_id = url.match(/fd_id=(\d+)/)[1];
   var terms = params.terms || params.field_val; // suggest uses field_val
   var responseText = mockData_[fd_id][resultType][terms];
-console.log("%%% responseText = "+responseText);
   if (!responseText) {
     if (params.suggest === '1')
       responseText = '[[],[]]';

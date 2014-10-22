@@ -28,14 +28,10 @@ Def.Observable = {
    *  relevant "observe..." method for the details of what callbacks can expect.
    */
   notifyObservers: function(field, eventType, data) {
-console.log("%%% in notify Observers");
     if (this.callbacks_ !== null) {
-console.log("%%% callbacks is not null");
       data['field_id'] = field ? field.id : null;
       setTimeout(function() {
         var eventCallbacks = this.callbacks_[eventType];
-console.log("%%% eventType = "+eventType);
-console.log("%%% eventCallbacks = " + eventCallbacks);
         if (eventCallbacks !== undefined) {
           if (field !== null) {
             var key = this.lookupKey(field);
@@ -44,14 +40,10 @@ console.log("%%% eventCallbacks = " + eventCallbacks);
           // Also get the callbacks that apply to all fields
           var allFieldEventCallbacks = eventCallbacks[null];
           var allCallbacks = [fieldEventCallbacks, allFieldEventCallbacks];
-console.log("%%% callback length is "+allCallbacks.length);
           for (var j=0, maxJ=allCallbacks.length; j<maxJ; ++j) {
             var callbackArray = allCallbacks[j];
-console.log("%%% callbackArray = " +callbackArray);
             if (callbackArray !== undefined) {
-console.log("%%% callbackArray.length = " +callbackArray.length);
               for (var i=0, c=callbackArray.length; i<c; ++i) {
-console.log("%%% calling " + callbackArray[i]);
                 callbackArray[i].call(this, data);
               }
             }
