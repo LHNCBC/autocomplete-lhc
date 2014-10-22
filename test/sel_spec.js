@@ -97,7 +97,7 @@ ATR = {
         expectedVal = '\'' + expectedVal.replace(/\'/g, "\\'") + '\'';
       browser.wait(function() {
         return ATR.CommandUtil.remoteEval(expression + '==' + expectedVal);
-      }, ATR.TIMEOUT);
+      }, ATR.TIMEOUT*10);
     },
 
 
@@ -187,6 +187,8 @@ ATR = {
      * @param fieldID the ID of the element that should be visible.
      */
     waitForVisible: function(fieldID) {
+      // This implementation does not really wait.  See waitForValue
+      // for an example of that if this needs to change.
       var elem = element(by.id(fieldID)).getWebElement();
       expect(elem.isDisplayed()).toBeTruthy();
     },

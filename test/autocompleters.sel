@@ -241,13 +241,13 @@
 
 # Type an invalid value
 | typeKeys | fe_prefetch_cwe | Aardvark |
-| waitForExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | true |
+| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | true |
 | keyDown | fe_prefetch_cwe | \9 |
 | waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('invalid')} | false |
 | assertValue | fe_prefetch_cwe | Aardvark |
 
 # Confirm that the no_match indicator is still present
-| verifyExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | true |
+| assertExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | true |
 | waitForExpression | javascript{$('fe_prefetch_cwe').autocomp.hasFocus} | false |
 
 # Tests for a search CNE field
@@ -283,14 +283,14 @@
 | keyDown | fe_search_cne | \9 |
 | waitForValue | fe_search_cne | Pickwickian syndrome |
 | waitForExpression | javascript{$('fe_search_cne').hasClassName('invalid')} | false |
-| verifyExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | false |
+| assertExpression | javascript{$('fe_search_cne').hasClassName('no_match')} | false |
 | waitForExpression | javascript{$('fe_search_cne').autocomp.hasFocus} | false |
 
 # Tests for a CNE Search autocompleter with a button
 | fireEvent | fe_search_button_cne | focus |
 | waitForExpression | javascript{$('fe_search_button_cne').autocomp.hasFocus} | true |
 | typeKeys | fe_search_button_cne | car |
-| waitForExpression | javascript{isHiddenOrDisabled($('completionOptions'))} | false |
+| waitForVisible | completionOptions | |
 | keyDown | fe_search_button_cne | \40 |
 | keyDown | fe_search_button_cne | \9 |
 | type | fe_search_button_cne |
