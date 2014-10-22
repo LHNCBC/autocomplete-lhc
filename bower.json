@@ -1,6 +1,6 @@
 {
   "name": "autocomp-lhc",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": [
     "bower_components/prototypejs-bower/prototype.js",
     "bower_components/scriptaculous-bower/effects.js",
