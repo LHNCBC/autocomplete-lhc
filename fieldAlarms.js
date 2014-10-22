@@ -1,4 +1,4 @@
-if (!Def)
+if (typeof Def === 'undefined')
   Def = {};
 
 Def.FieldAlarms = {
