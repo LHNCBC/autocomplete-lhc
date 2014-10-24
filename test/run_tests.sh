@@ -33,7 +33,7 @@ then
 fi
 
 # Now run the tests
-cd test; protractor ./conf.js
+cd test/protractor; protractor ./conf.js
 
 echo 'Running unit tests.  Check the result in the browser, and quit'
 echo 'the browser when finished.'

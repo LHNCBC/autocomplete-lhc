@@ -1,3 +1,5 @@
+// A simple web server to serve the test files.
+//
 // Based on http://stackoverflow.com/a/12019645/360782
 var connect = require('connect'),
     http = require('http');
