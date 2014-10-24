@@ -465,12 +465,12 @@ tmp = {
     // have padding in front to help with the sorting.  However, once we are
     // putting them into the list, we don't need to sort them further.
     this.listIsOriginal_ = false;
-    this.rawList_ = new Array(listItems.length);
+    var numItems = listItems.length;
+    this.rawList_ = new Array(numItems);
     for (var r=0, max=listItems.length; r<max; ++r) {
       this.rawList_[r] = listItems[r].trim();
     }
 
-    var numItems = listItems.size();
     var displayList = new Array(numItems);
     for (var i=0; i<numItems; ++i) {
       displayList[i] = (this.rawList_[i]).escapeHTML();
