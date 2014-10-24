@@ -635,7 +635,7 @@ var testFunctions = {
 
 };
 
-// new Test.Unit.Runner(testFunctions, "testlog");
+new Test.Unit.Runner(testFunctions, "testlog");
 
 
 /**

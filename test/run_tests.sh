@@ -35,5 +35,9 @@ fi
 # Now run the tests
 cd test; protractor ./conf.js
 
+echo 'Running unit tests.  Check the result in the browser, and quit'
+echo 'the browser when finished.'
+firefox http://localhost:3000/test/scriptaculous_unit/autoComp_test.html
+
 # Shut down node.js (%1 = background job 1)
 kill %1
