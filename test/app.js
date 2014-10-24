@@ -6,7 +6,8 @@ var connect = require('connect'),
 
 connect()
     .use(function(req, resp, next) {
-        if(req.connection.remoteAddress !== '127.0.0.1') {
+        var remoteIP = req.connection.remoteAddress;
+        if(remoteIP !== '127.0.0.1' && remoteIP !== '::1') {
           resp.statusCode = 403; // forbidden
           resp.end('403 Forbidden');
         }
