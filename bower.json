@@ -20,9 +20,9 @@
     "suggestionDialog.js"
    ],
   "dependencies": {
-    "jquery-ui": "1.10.1",
-    "prototypejs-bower": "git://github.com/plynchnlm/prototypejs-bower.git#1.7.0",
-    "scriptaculous-bower": "git://github.com/plynchnlm/scriptaculous-bower.git#1.8.1"
+    "jquery-ui": "^1.10.1",
+    "prototypejs-bower": "^1.7.0",
+    "scriptaculous-bower": "^1.8.1"
   },
   "ignore": ["cshrc.autocomp", "bin", "packages"]
 }
