@@ -1,6 +1,6 @@
 {
   "name": "phr_autocomp",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "main": [
     "bower_components/prototypejs-bower/prototype.js",
     "bower_components/scriptaculous-bower/effects.js",
