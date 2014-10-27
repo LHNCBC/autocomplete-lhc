@@ -1,5 +1,5 @@
 {
-  "name": "autocomp-lhc",
+  "name": "phr_autocomp",
   "version": "1.0.9",
   "main": [
     "bower_components/prototypejs-bower/prototype.js",
