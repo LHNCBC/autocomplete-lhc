@@ -24,5 +24,5 @@
     "prototypejs-bower": "^1.7.0",
     "scriptaculous-bower": "^1.8.1"
   },
-  "ignore": ["cshrc.autocomp", "bin", "packages"]
+  "ignore": ["cshrc.autocomp", "bin", "packages", "package.json", "test"]
 }
