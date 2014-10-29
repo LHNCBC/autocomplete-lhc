@@ -31,7 +31,7 @@ Def.Autocompleter.Event = {
    *  idea is that there might be multiple fields (perhaps of an unknown number)
    *  that are related for which the callback should receive notifications.
    * @param callback the function to be called when the list is expanded.
-   *  The function will be called with an the following arguments:
+   *  The function will be called with a hash argument with the following keys:
    *  1) val_typed_in (what the user actually typed in);
    *  2) final_val (the final value for the field);
    *  3) final_val_from_list (boolean indicating whether or not final was
