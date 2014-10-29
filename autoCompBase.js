@@ -1083,6 +1083,11 @@ tmp = {
         // back down.  (The browser does that automatically when the page
         // shrinks.)
         var spacerDiv = $('spacer');
+        if (!spacerDiv) {
+          spacerDiv = document.createElement('div');
+          spacerDiv.setAttribute('id', 'spacer');
+          document.body.appendChild(spacerDiv);
+        }
         var spacerCoords = spacerDiv.viewportOffset();
         var bottomOfSpacer = spacerCoords[1] + spacerDiv.offsetHeight;
         if (bottomOfListContainer > bottomOfSpacer) {
