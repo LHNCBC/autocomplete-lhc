@@ -22,7 +22,7 @@
    ],
   "dependencies": {
     "jquery-ui": "^1.10.1",
-    "jquery-noConflict" : "file:///proj/git/jquery_noConflict.git"
+    "jquery-noConflict" : "file:///proj/git/jquery_noConflict.git",
     "prototypejs-bower": "^1.7.0",
     "scriptaculous-bower": "#master"
   },
