@@ -24,7 +24,7 @@
   "dependencies": {
     "jquery-ui": "^1.10.1",
     "prototypejs-bower": "^1.7.0",
-    "scriptaculous-bower": "^1.8.1"
+    "scriptaculous-bower": "#master"
   },
   "ignore": ["cshrc.autocomp", "bin", "packages", "package.json", "test"]
 }
