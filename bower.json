@@ -2,7 +2,6 @@
   "name": "phr_autocomp",
   "version": "1.0.11",
   "main": [
-    "../prototypejs-bower/prototype.js",
     "../scriptaculous-bower/effects.js",
     "../scriptaculous-bower/controls.js",
     "../jquery/dist/jquery.min.js",
