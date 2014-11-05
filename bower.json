@@ -4,7 +4,6 @@
   "main": [
     "../scriptaculous-bower/effects.js",
     "../scriptaculous-bower/controls.js",
-    "../jquery/dist/jquery.min.js",
     "../jquery-ui/ui/core.js",
     "../jquery-ui/ui/widget.js",
     "../jquery-ui/ui/button.js",
