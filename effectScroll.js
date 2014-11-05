@@ -26,9 +26,9 @@ Object.extend(Object.extend(Effect.Scroll.prototype, Effect.Base.prototype), {
     this.start(Object.extend({x: 0, y: 0}, arguments[1] || {}));
   },
   setup: function() {
-    var scrollOffsets = (this.element == window) 
-                ? document.viewport.getScrollOffsets() 
-                : Element._returnOffset(this.element.scrollLeft, this.element.scrollTop) ;
+    var scrollOffsets = (this.element == window)
+                ? document.viewport.getScrollOffsets()
+                : {left: this.element.scrollLeft, top: this.element.scrollTop} ;
     this.originalScrollLeft = scrollOffsets.left;
     this.originalScrollTop  = scrollOffsets.top;
   },
