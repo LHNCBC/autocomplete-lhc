@@ -1,8 +1,14 @@
 // A simple web server to serve the test files.
+// Start with:  node app.js
+// and browse to port 3000 from localhost.
 //
 // Based on http://stackoverflow.com/a/12019645/360782
 var connect = require('connect'),
     http = require('http');
+
+// Set the document root to the package directory, which is the
+// parent of the directory containing this script.
+var docRoot = __dirname + '/..';
 
 connect()
     .use(function(req, resp, next) {
@@ -15,6 +21,6 @@ connect()
           next();
         }
       })
-    .use(connect.static('.'))
-    .use(connect.directory('.'))
+    .use(connect.static(docRoot))
+    .use(connect.directory(docRoot))
     .listen(3000);
