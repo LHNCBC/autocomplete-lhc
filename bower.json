@@ -2,6 +2,7 @@
   "name": "phr_autocomp",
   "version": "1.0.11",
   "main": [
+    "auto_completion.css",
     "../scriptaculous-bower/effects.js",
     "../scriptaculous-bower/controls.js",
     "../jquery-ui/ui/core.js",
