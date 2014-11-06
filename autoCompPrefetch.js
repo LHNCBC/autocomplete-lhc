@@ -188,6 +188,7 @@ tmp = {
     this.originalCodes_ = codes;
     this.options.minChars = 0; // do autocompletion even if the field is blank
     this.splitAutocomp_ = false;
+    this.element.addClassName('ansList');
   },
 
 

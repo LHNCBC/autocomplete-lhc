@@ -229,6 +229,7 @@ tmp = {
       Event.observe(buttonID, 'mousedown', this.buttonClick.bind(this));
       Event.observe(buttonID, 'keypress', this.buttonKeyPress.bind(this));
     }
+    this.element.addClassName('search_field');
   },
 
 
