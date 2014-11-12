@@ -1302,7 +1302,7 @@ tmp = {
         setTimeout(function() {
           this.element.focus();
           this.element.select(); // select the text
-        }.bind(this), 10);
+        }.bind(this), 1);
       }
       else {
         // See if we can find some suggestions for what the user typed.
