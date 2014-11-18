@@ -1,6 +1,6 @@
 {
   "name": "phr_autocomp",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "main": [
     "auto_completion.css",
     "../scriptaculous-bower/effects.js",
@@ -9,6 +9,7 @@
     "../jquery-ui/ui/widget.js",
     "../jquery-ui/ui/button.js",
     "../jquery-ui/ui/dialog.js",
+    "prototype_ext.js",
     "effectScroll.js",
     "event.simulate.js",
     "observable.js",

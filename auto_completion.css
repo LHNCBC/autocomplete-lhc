@@ -3,16 +3,6 @@
  */
 
 /**
- *  The following setting on body is needed as a workaround for a bug
- *  in PrototypeJS 1.7.  See
- *  https://github.com/sstephenson/prototype/issues/250
- */
-body {
-  position: relative;
-}
-
-
-/**
  *  Style for the section containing the search count and the results list.
  */
 #searchResults {
@@ -90,7 +80,7 @@ body {
   padding: 3px 10px 3px 10px;
 }
 .auto_complete > ul > li:last-child {
-	border: 0;
+  border: 0;
 }
 
 
