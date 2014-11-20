@@ -14,10 +14,8 @@ list item.  (See recordDataRequester.js.)
 1. Numbered list items (optional).
 1. Two-column lists when there is not enough space on the page to show the list
 in a single column.
-1. Tab moves to the next field after a list selection.
-1. Only allows the selection one list item from the list.  (Okay, maybe that is
-not a improvement.  We did not need it, so we removed it.  We might add it back
-some day.)
+1. For now, only allows the selection one list item from the list.  (We are
+planning to add an improved multi-selection interface.)
 1. Support for list suggestions in the search (AJAX) autocompleter, when the user does
 not pick an item in the list.
 1. Can require that an entry in the field match the list.
@@ -29,9 +27,8 @@ list item
 focus (along with showing the list).
 1. A "see more" link on the search autocompleter which provides an expanded list
 of items.
-1. Buttons (optional) for search autocompleters to make the show an expanded
+1. Search buttons (optional) for search autocompleters to make them show an expanded
 results list.  (Without a button, the user can click on the "see more" link.)
 1. A results cache for the search autocompleter, so that repeats of AJAX calls
 for the same list items are not necessary.
-
 
