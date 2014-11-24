@@ -25,7 +25,7 @@
   "dependencies": {
     "jquery-ui": "^1.10.1",
     "jquery-noConflict" : "file:///proj/git/jquery_noConflict.git",
-    "prototypejs-bower": "1.7.0",
+    "prototypejs-bower": "1.7.2",
     "scriptaculous-bower": "#master"
   },
   "ignore": ["cshrc.autocomp", "bin", "packages", "package.json", "test"]

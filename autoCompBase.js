@@ -998,11 +998,12 @@ tmp = {
     var positionedElement = this.listContainer;
 
     // First put the list below the field as a single column list.
-    Element.clonePosition(positionedElement, element, {
-      setHeight: false,
-      setWidth: false,
-      offsetTop: element.offsetHeight
-    });
+    // Element.clonePosition does not work in Prototype 1.7.2 when the parent
+    // element is document.body.  This is yet another of many position bugs in
+    // the 1.7.x Prototype, so I am switching to JQuery.
+    var elemPos = jQuery(element).offset();
+    positionedElement.style.left = elemPos.left + 'px';
+    positionedElement.style.top = elemPos.top + element.offsetHeight + 'px';
 
     update.style.width = 'auto';
     this.listContainer.style.width = ''; // reset it
@@ -1011,15 +1012,10 @@ tmp = {
     var scrolledContainer = document.documentElement;
     var viewPortHeight = scrolledContainer.clientHeight;
     this.update.removeClassName('multi_col');
-    // The height returned by viewPortOffset appears to be off by a few pixels.
-    // I'm not sure why; maybe some padding/margin setting somewhere?
-    // Couldn't find the reason.  Anyway, that is why I am adding something to
-    // it below.
     var posElVPCoords = positionedElement.viewportOffset();
-    var posElVPVertOffset = posElVPCoords[1] + 12;
-    var maxListContainerBottom = viewPortHeight;
-    var bottomOfListContainer = positionedElement.offsetHeight +
-      posElVPVertOffset;
+    var posElVPVertOffset = posElVPCoords[1];
+    var maxListContainerBottom = viewPortHeight; // bottom edge of viewport
+    var bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
     // If this list is not completely on the page, try making it a multi-column
     // list.
     if (bottomOfListContainer > maxListContainerBottom) {
@@ -1040,8 +1036,7 @@ tmp = {
         else {
           this.listContainer.style.width = newListWidth + 'px';
           this.update.addClassName('multi_col');
-          bottomOfListContainer = positionedElement.offsetHeight +
-            posElVPVertOffset;
+          bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
         }
       }
       // If the multi-column list is still not on the page, try scrolling the
@@ -1052,7 +1047,7 @@ tmp = {
           this.lastScrollEffect_.cancel();
 
         var scrollDownAmount =
-          bottomOfListContainer - maxListContainerBottom + 10;
+          bottomOfListContainer - maxListContainerBottom;
         var elementTop = element.viewportOffset()[1];
         var headerBar = $('fe_form_header_0_expcol');
         var topNavBarHeight = headerBar ? headerBar.offsetHeight : 0;
@@ -1067,8 +1062,7 @@ tmp = {
           this.setListHeight(viewPortHeight - element.offsetHeight -
             topNavBarHeight - this.listContainer.offsetHeight +
             this.update.offsetHeight - 15);
-          bottomOfListContainer = positionedElement.offsetHeight +
-            posElVPVertOffset;
+          bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
         }
 
         this.lastScrollEffect_ = new Effect.Scroll(scrolledContainer,
