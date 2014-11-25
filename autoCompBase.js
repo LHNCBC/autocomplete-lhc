@@ -740,7 +740,12 @@ tmp = {
                  charCode !== 17) { // 17 = control
           this.preFieldFillVal_ = null;  // reset on key strokes in field
         }
-        this.autocompKeyPress(event);
+        // Ignore events that are only a shift or control key.  If we allow a
+        // shift key to get processed (and e.g. show the list) then shift-tab
+        // to a previous field can have trouble, because the autocompleter will
+        // still be scrolling the page to show the list.
+        if (charCode !== 16 && charCode !== 17) // 16 & 17 = shift & control
+          this.autocompKeyPress(event);
       }
     }
   },
