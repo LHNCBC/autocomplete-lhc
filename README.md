@@ -1,4 +1,4 @@
-# phr_autocomp
+# autocomp-phr
 
 This is a package of JavaScript autocompleters based on PrototypeJS and
 Scriptaculous.  These were originally developed to meet the requirements of the
