@@ -8,6 +8,7 @@ under open-source licenses (as noted):
   * Scriptaculous' Test.Unit module for JavaScript unit testing (MIT License)
   * bonk.mp3 sound from SoundManager 2 (BSD License)
   * [Event.Simulate](https://github.com/kangax/protolicious/blob/5b56fdafcd7d7662c9d648534225039b2e78e371/event.simulate.js)  (MIT License)
+  * magnifier.png from the [Silk](http://www.famfamfam.com/lab/icons/silk/) icon set (Creative Commons Attribution 2.5 License)
 
 Redistribution and use in source and binary forms, with or without modification, are permitted for commercial and non-commercial purposes and products alike, provided that the following conditions are met:
 
