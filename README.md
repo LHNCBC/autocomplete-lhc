@@ -3,9 +3,7 @@
 This is a package of JavaScript autocompleters based on PrototypeJS and
 Scriptaculous.  These were originally developed to meet the requirements of the
 [NLM PHR project]
-(http://lhncbc.nlm.nih.gov/project/nlm-personal-health-record-phr).  It is released under an
-MIT-style license.  See [LICENSE.md](LICENSE.md).
-
+(http://lhncbc.nlm.nih.gov/project/nlm-personal-health-record-phr).
 Changes from the Scriptaculous autocompleters:
 
 1. Supports coded-value lists
@@ -32,3 +30,11 @@ results list.  (Without a button, the user can click on the "see more" link.)
 1. A results cache for the search autocompleter, so that repeats of AJAX calls
 for the same list items are not necessary.
 
+
+This software, autocomp-phr, was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH).
+
+Please cite as: http://lhncbc.nlm.nih.gov/project/nlm-personal-health-record-phr
+
+This software is distributed under a BSD-style open-source license.  See [LICENSE.md](LICENSE.md).
+
+No warranty or indemnification for damages resulting from claims brought by third parties whose proprietary rights may be infringed by your usage of this software are provided by any of the owners.
