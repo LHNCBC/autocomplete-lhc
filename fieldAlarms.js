@@ -9,7 +9,7 @@ Def.FieldAlarms = {
    **/
   setOffAlarm: function(field) {
     if (this.bonk === undefined)
-      this.bonk = new Audio('/bonk.mp3')
+      this.bonk = new Audio('/soundmanager/bonk.mp3')
     // Reset the play position back the the beginning, if the sound has
     // been loaded sufficiently.
     if (this.bonk.readyState >= 2)

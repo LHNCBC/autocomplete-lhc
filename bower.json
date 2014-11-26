@@ -3,6 +3,7 @@
   "version": "1.0.15",
   "main": [
     "auto_completion.css",
+    "soundmanager/bonk.mp3",
     "../scriptaculous-bower/effects.js",
     "../scriptaculous-bower/controls.js",
     "../jquery-ui/ui/core.js",
