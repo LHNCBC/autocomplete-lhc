@@ -1,6 +1,6 @@
 {
   "name": "phr_autocomp",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "main": [
     "auto_completion.css",
     "soundmanager/bonk.mp3",
@@ -10,7 +10,6 @@
     "../jquery-ui/ui/widget.js",
     "../jquery-ui/ui/button.js",
     "../jquery-ui/ui/dialog.js",
-    "prototype_ext.js",
     "effectScroll.js",
     "event.simulate.js",
     "observable.js",
