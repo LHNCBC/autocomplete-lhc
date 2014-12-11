@@ -135,12 +135,11 @@ tmp = {
    *     parameter requires that the codes parameter also be supplied.</li>
    *    <li>defaultValue - Either the code or the item text of the default value
    *     for this list's field.</li>
+   *    <li>maxSelect - (default 1) The maximum number of items that can be
+   *     selected.  Use '*' for unlimited.</li>
    *  </ul>
    */
   initialize: function(id, listItems, options) {
-    if (!options)
-      options = {};
-    this.constructorOpts_ = options;
     var addSeqNum = options['addSeqNum'];
     this.add_seqnum = addSeqNum===undefined ? true : addSeqNum;
 
@@ -179,8 +178,7 @@ tmp = {
     var matchListValue = options['matchListValue'];
     if (matchListValue === null)
       matchListValue = false;
-    this.defAutocompleterBaseInit(matchListValue,
-      options['dataRequester'], options['suggestionMode']);
+    this.defAutocompleterBaseInit(matchListValue, options);
     this.initHeadings(options);
     var codes = options['codes'];
     this.setList(listItems, codes);

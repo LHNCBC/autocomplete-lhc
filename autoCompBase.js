@@ -363,13 +363,34 @@ tmp = {
    *  "pick the shortest match", and a value of 2 means that the suggestion
    *  is based on statistics, and that we will rely on the server to return
    *  the best item as the first item in the list.
+   * @param options A hash of optional parameters.  For the allowed keys see the
+   *  subclasses.  The base class uses the following keys:
+   *  <ul>
+   *    <li>dataRequester - A DataRecordRequester for getting additional data
+   *     after the user makes a selection from the completion list.  This may be
+   *     null, in which case no request for additional data is made.</li>
+   *    <li>suggestionMode - an integer specifying what type of suggestion
+   *     should be offered based on what the user has typed.  If this is not
+   *     specified, the default is 0, which is no suggestsions.  A value of 1
+   *     suggestion means "pick the shortest match", and a value of 2 means that
+   *     the is based on statistics, and that we will rely on the server to
+   *     return the best item as the first item in the list.</li>
+   *    <li>maxSelect - (default 1) The maximum number of items that can be
+   *     selected.  Use '*' for unlimited.</li>
+   *  </ul>
    */
-  defAutocompleterBaseInit: function(matchListValue, dataRequester,
-     suggestionMode) {
+  defAutocompleterBaseInit: function(matchListValue, options) {
 
     if (suggestionMode === undefined || suggestionMode === null)
       suggestionMode = 0;
     this.suggestionMode_ = suggestionMode;
+
+    if (!options)
+      options = {};
+    this.constructorOpts_ = options;
+
+    var dataRequester = options.dataRequester;
+    var suggestionMode = options.suggestionMode;
 
     if (!Def.Autocompleter.Base.classInit_)
       Def.Autocompleter.Base.classInit();
