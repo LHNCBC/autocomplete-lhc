@@ -410,7 +410,7 @@ var testFunctions = {
       assertEqual('&lt;i&gt;hi&lt;/i&gt;', prefetch.options.array[0],
         'prefetch');
       assertEqual('<i>hi</i>', prefetch.element.value, 'prefetch');
-      assertEqual('two', prefetch.getItemCode(), 'prefetch');
+      assertEqual('two', prefetch.getSelectedCodes()[0], 'prefetch');
 
       // A search autocompleter.
       // Search autocompleters call processChoices prior to constructing
@@ -518,7 +518,7 @@ var testFunctions = {
      */
     testSelectByCode: function() {with(this) {
       fe_other_list_field_autoComp.selectByCode('oa');
-      assertEqual('oa', fe_other_list_field_autoComp.getItemCode());
+      assertEqual('oa', fe_other_list_field_autoComp.getSelectedCodes()[0]);
       assertEqual('oranges and apples', $('fe_other_list_field').value);
       wait(1, function() {
         listSelectionItemData_.item_code = '';
@@ -529,6 +529,32 @@ var testFunctions = {
         });
       });
     }},
+
+
+    /**
+     *  Tests selectItemCode and getItemCodes.
+     */
+    testSelectItemCode: function() {with(this) {
+      // Test a multiselect list
+      fe_other_list_field_autoComp.constructorOpts_.maxSelect = 2;
+      fe_other_list_field_autoComp.element.value = 'apples';
+      var newCode = fe_other_list_field_autoComp.selectItemCode();
+      assertEqual('a', newCode);
+      assertEnumEqual(['a'], fe_other_list_field_autoComp.getSelectedCodes());
+      fe_other_list_field_autoComp.element.value = 'bananas';
+      fe_other_list_field_autoComp.selectItemCode();
+      assertEnumEqual(['a', 'b'], fe_other_list_field_autoComp.getSelectedCodes().sort());
+
+      // Test a non-multiselect list
+      fe_other_list_field_autoComp.constructorOpts_.maxSelect = 1;
+      fe_other_list_field_autoComp.element.value = 'apples';
+      fe_other_list_field_autoComp.selectItemCode();
+      assertEnumEqual(['a'], fe_other_list_field_autoComp.getSelectedCodes());
+      fe_other_list_field_autoComp.element.value = 'bananas';
+      fe_other_list_field_autoComp.selectItemCode();
+      assertEnumEqual(['b'], fe_other_list_field_autoComp.getSelectedCodes());
+    }},
+
 
     // ---------------- Tests for the Prefetch class --------------
     /**

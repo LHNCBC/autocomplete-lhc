@@ -256,9 +256,9 @@ tmp = {
   itemToCode_: null,
 
   /**
-   *  The code of the current item, or null if there is no code.
+   *  The codes of the currently selected items, stored as keys on a hash.
    */
-  itemCode_: null,
+  selectedCodes_: {},
 
   /**
    *  Whether the field value is required to be one from the list.
@@ -387,6 +387,8 @@ tmp = {
 
     if (!options)
       options = {};
+    if (options.maxSelect === undefined)
+      options.maxSelect = 1;
     this.constructorOpts_ = options;
 
     var dataRequester = options.dataRequester;
@@ -449,21 +451,27 @@ tmp = {
 
 
   /**
-   *  Returns the code for the current item, or undefined if there is no code.
+   *  Returns the codes for the currently selected items or an empty array if there are none.
    */
-  getItemCode: function() {
-    return this.itemCode_;
+  getSelectedCodes: function() {
+    return Object.keys(this.selectedCodes_);
   },
 
 
   /**
-   *  Sets the code for the current item, using itemToCode_ (which is
+   *  Adds the code for the current item to the list of selected codes.  If this is not a multi-select
+   *  list, the newly selected code will replace the others., using itemToCode_ (which is
    *  initialized if needed.)
+   * @return the code for the current item, if known; otherwise undefined
    */
-  setItemCode: function() {
+  selectItemCode: function() {
     if (!this.itemToCode_)
       this.initItemToCode();
-    this.itemCode_ = this.itemToCode_[this.element.value];
+    var newCode = this.itemToCode_[this.element.value];
+    if (this.constructorOpts_.maxSelect === 1)
+      this.selectedCodes_ = {};
+    this.selectedCodes_[newCode] = 1;
+    return newCode;
   },
 
 
@@ -1214,11 +1222,11 @@ tmp = {
       this.preFieldFillVal_ === null ? 'typed' : 'arrows';
 
     var usedList = inputMethod !== 'typed' && onList;
-    this.setItemCode();
+    var newCode = this.selectItemCode();
     Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
       {input_method: inputMethod, val_typed_in: valTyped,
        final_val: this.element.value, used_list: usedList,
-       list: this.rawList_, on_list: onList, item_code: this.itemCode_});
+       list: this.rawList_, on_list: onList, item_code: newCode});
   },
 
 
