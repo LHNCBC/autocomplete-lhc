@@ -140,6 +140,8 @@ tmp = {
    *  </ul>
    */
   initialize: function(id, listItems, options) {
+    if (!options)
+      options = {};
     var addSeqNum = options['addSeqNum'];
     this.add_seqnum = addSeqNum===undefined ? true : addSeqNum;
 
