@@ -7,11 +7,8 @@
 // These autocompleters are based on the Autocompleter.Base class defined
 // in the Script.aculo.us controls.js file.
 
-if (typeof Def === 'undefined') {
+if (typeof Def === 'undefined')
   Def = {};
-  Def.$ = $; // local copy of prototypejs
-  Def.jQuery = jQuery; // local reference of jQuery
-}
 
 
 // Wrap the definitions in a function to protect our version of global variables
@@ -395,6 +392,8 @@ if (typeof Def === 'undefined') {
         options = {};
       if (options.maxSelect === undefined)
         options.maxSelect = 1;
+      if (options.maxSelect === '*')
+        options.maxSelect = Infinity;
       this.constructorOpts_ = options;
 
       var dataRequester = options.dataRequester;
@@ -407,9 +406,12 @@ if (typeof Def === 'undefined') {
 
       this.recDataRequester_ = dataRequester;
 
-      // If this is a multiselect list, put the field into a div.
+      // If this is a multiselect list, put the field into a span.
       if (options.maxSelect > 1) {
-
+        var fieldDiv = jQuery('<span class="autocomp_selected"></span>')[0];
+        var fieldParent = this.element.parentNode;
+        fieldParent.replaceChild(fieldDiv, this.element);
+        fieldDiv.appendChild(this.element);
       }
 
       // Set up event handler functions.
