@@ -159,7 +159,6 @@ tmp = {
   initialize: function(fieldID, url, options) {
     if (!options)
       options = {};
-    this.constructorOpts_ = options;
 
     if (!Def.Autocompleter.Base.classInit_)
       Def.Autocompleter.Base.classInit();
