@@ -556,6 +556,24 @@ var testFunctions = {
     }},
 
 
+    /**
+     *  Tests for multi-select.
+     */
+    testMultiSelect: function() {with(this) {
+      var list = ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'];
+      var codes = ['a', 'oa', 'pa', 'b'];
+      var field = AutoCompTestUtil.createInputElement();
+      var autoComp = new Def.Autocompleter.Prefetch(field.id,
+        list, {'addSeqNum': false, 'codes': codes, 'matchListValue': true,
+        maxSelect: '*'});
+
+      // Confirm that the autocompleter div wrapper is around the field now.
+      var parentElem = field.parentNode;
+      assertEqual('SPAN', parentElem.tagName);
+      assert(Element.hasClassName(parentElem, 'autocomp_selected'));
+    }},
+
+
     // ---------------- Tests for the Prefetch class --------------
     /**
      *  Tests listItemValue.
