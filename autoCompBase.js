@@ -374,7 +374,7 @@ if (typeof Def === 'undefined')
      *     null, in which case no request for additional data is made.</li>
      *    <li>suggestionMode - an integer specifying what type of suggestion
      *     should be offered based on what the user has typed.  If this is not
-     *     specified, the default is 0, which is no suggestsions.  A value of 1
+     *     specified, the default is 0, which is no suggestions.  A value of 1
      *     suggestion means "pick the shortest match", and a value of 2 means that
      *     the is based on statistics, and that we will rely on the server to
      *     return the best item as the first item in the list.</li>
