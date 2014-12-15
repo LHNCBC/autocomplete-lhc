@@ -1621,4 +1621,5 @@ if (typeof Def === 'undefined')
   };  // end Def.Autocompleter.Base class
 
   Object.extend(Def.Autocompleter.Base.prototype, tmp);
+  tmp = null;
 })($, jQuery, Def);
