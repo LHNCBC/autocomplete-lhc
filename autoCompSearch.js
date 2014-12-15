@@ -140,7 +140,7 @@ tmp = {
    *    <li>buttonID - the ID of the button (if there is one)</li>
    *    <li>autocomp - a boolean that controls whether the field should
    *     also autocomplete as the user types</li>
-   *    <li>dataRequester - A DataRecordRequester for getting additional data
+   *    <li>dataRequester - A RecordDataRequester for getting additional data
    *     after the user makes a selection from the completion list.  This may be
    *     null, in which case no request for additional data is made.</li>
    *    <li>suggestionMode - an integer specifying what type of suggestion
