@@ -152,12 +152,13 @@ tmp = {
    *    <li>useResultCache - (default: true) Whether or not the results
    *     should be cached.  The same cache is used for all fields that share
    *     the same target_field name.</li>
+   *    <li>maxSelect - (default 1) The maximum number of items that can be
+   *     selected.  Use '*' for unlimited.</li>
    *  </ul>
    */
   initialize: function(fieldID, url, options) {
     if (!options)
       options = {};
-    this.constructorOpts_ = options;
 
     if (!Def.Autocompleter.Base.classInit_)
       Def.Autocompleter.Base.classInit();
@@ -187,8 +188,7 @@ tmp = {
     var matchListValue = options['matchListValue'];
     if (matchListValue === null)
       matchListValue = false;
-    this.defAutocompleterBaseInit(matchListValue, options['dataRequester'],
-       options['suggestionMode']);
+    this.defAutocompleterBaseInit(matchListValue, options);
 
     this.autocomp = options['autocomp'];
     if (!this.autocomp) {

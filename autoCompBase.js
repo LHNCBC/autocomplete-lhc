@@ -256,9 +256,9 @@ tmp = {
   itemToCode_: null,
 
   /**
-   *  The code of the current item, or null if there is no code.
+   *  The codes of the currently selected items, stored as keys on a hash.
    */
-  itemCode_: null,
+  selectedCodes_: {},
 
   /**
    *  Whether the field value is required to be one from the list.
@@ -363,13 +363,36 @@ tmp = {
    *  "pick the shortest match", and a value of 2 means that the suggestion
    *  is based on statistics, and that we will rely on the server to return
    *  the best item as the first item in the list.
+   * @param options A hash of optional parameters.  For the allowed keys see the
+   *  subclasses.  The base class uses the following keys:
+   *  <ul>
+   *    <li>dataRequester - A DataRecordRequester for getting additional data
+   *     after the user makes a selection from the completion list.  This may be
+   *     null, in which case no request for additional data is made.</li>
+   *    <li>suggestionMode - an integer specifying what type of suggestion
+   *     should be offered based on what the user has typed.  If this is not
+   *     specified, the default is 0, which is no suggestsions.  A value of 1
+   *     suggestion means "pick the shortest match", and a value of 2 means that
+   *     the is based on statistics, and that we will rely on the server to
+   *     return the best item as the first item in the list.</li>
+   *    <li>maxSelect - (default 1) The maximum number of items that can be
+   *     selected.  Use '*' for unlimited.</li>
+   *  </ul>
    */
-  defAutocompleterBaseInit: function(matchListValue, dataRequester,
-     suggestionMode) {
+  defAutocompleterBaseInit: function(matchListValue, options) {
 
     if (suggestionMode === undefined || suggestionMode === null)
       suggestionMode = 0;
     this.suggestionMode_ = suggestionMode;
+
+    if (!options)
+      options = {};
+    if (options.maxSelect === undefined)
+      options.maxSelect = 1;
+    this.constructorOpts_ = options;
+
+    var dataRequester = options.dataRequester;
+    var suggestionMode = options.suggestionMode;
 
     if (!Def.Autocompleter.Base.classInit_)
       Def.Autocompleter.Base.classInit();
@@ -428,21 +451,27 @@ tmp = {
 
 
   /**
-   *  Returns the code for the current item, or undefined if there is no code.
+   *  Returns the codes for the currently selected items or an empty array if there are none.
    */
-  getItemCode: function() {
-    return this.itemCode_;
+  getSelectedCodes: function() {
+    return Object.keys(this.selectedCodes_);
   },
 
 
   /**
-   *  Sets the code for the current item, using itemToCode_ (which is
+   *  Adds the code for the current item to the list of selected codes.  If this is not a multi-select
+   *  list, the newly selected code will replace the others., using itemToCode_ (which is
    *  initialized if needed.)
+   * @return the code for the current item, if known; otherwise undefined
    */
-  setItemCode: function() {
+  selectItemCode: function() {
     if (!this.itemToCode_)
       this.initItemToCode();
-    this.itemCode_ = this.itemToCode_[this.element.value];
+    var newCode = this.itemToCode_[this.element.value];
+    if (this.constructorOpts_.maxSelect === 1)
+      this.selectedCodes_ = {};
+    this.selectedCodes_[newCode] = 1;
+    return newCode;
   },
 
 
@@ -1193,11 +1222,11 @@ tmp = {
       this.preFieldFillVal_ === null ? 'typed' : 'arrows';
 
     var usedList = inputMethod !== 'typed' && onList;
-    this.setItemCode();
+    var newCode = this.selectItemCode();
     Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
       {input_method: inputMethod, val_typed_in: valTyped,
        final_val: this.element.value, used_list: usedList,
-       list: this.rawList_, on_list: onList, item_code: this.itemCode_});
+       list: this.rawList_, on_list: onList, item_code: newCode});
   },
 
 

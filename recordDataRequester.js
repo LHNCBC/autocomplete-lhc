@@ -654,7 +654,9 @@ var tmp = {
     // has a value.  If there isn't a code field value, include formField_'s
     // value.
     var rtn = null;
-    var codeVal = this.formField_.autocomp.getItemCode();
+    // Get the code value, assuming there is at most one (i.e. a non-multiselect
+    // list, which is the use case for RecordDataRequester).
+    var codeVal = this.formField_.autocomp.getSelectedCodes()[0];
     if (codeVal !== null && codeVal !== undefined)
       rtn = 'code_val=' + encodeURIComponent(codeVal);
     else
