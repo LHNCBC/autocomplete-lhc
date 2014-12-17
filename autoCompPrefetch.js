@@ -402,8 +402,11 @@
             } // while we haven't found a match at a word boundary
           } // if it didn't match the item number
 
-          if (itemText && (totalCount <= maxReturn ||
-                           (instance.numHeadings_>0 && useFullList))) {
+          // For multi-select lists, filter out currently selected items.
+          // Then, only add it if we haven't exceeded the limit.
+          if ((!instance.multiSelect_ || !instance.isSelected(itemText)) &&
+              itemText && (totalCount <= maxReturn ||
+                            (instance.numHeadings_>0 && useFullList))) {
             if (lastHeading && !foundItemForLastHeading) {
               foundItemForLastHeading = true;
               rtnBuffer.push('<li class="heading">');
@@ -513,6 +516,7 @@
     setFieldToListValue: function(newVal) {
       var field = this.element;
       field.value = newVal;
+      this.storeSelectedItem();
       // Set this value as the "unedited value", so that when we send a change
       // event below, the autocompleter does not try to select the value from the
       // list (which can fail if the list is not active, e.g. when the value
@@ -656,7 +660,8 @@
               if (this.index >= 0) {
                 Event.stop(event);
                 this.selectEntry();
-                this.hide(); // this didn't used to be necessary.
+                if (!this.multiSelect_)
+                  this.hide(); // this didn't used to be necessary.
               }
             }
             return;

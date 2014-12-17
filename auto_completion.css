@@ -198,7 +198,8 @@ input.search_field, textarea.search_field {
 .autocomp_selected {
   border: 1px solid gray;
   padding: 1px;
+  display: inline-block;
 }
 .autocomp_selected input, .autocomp_selected textarea {
-  border: none;
+  border-width: 1px;
 }

@@ -532,26 +532,25 @@ var testFunctions = {
 
 
     /**
-     *  Tests selectItemCode and getItemCodes.
+     *  Tests storeSelectedItem and getSelectedCodes.
      */
-    testSelectItemCode: function() {with(this) {
+    testGetSelectedCodes: function() {with(this) {
       // Test a multiselect list
       fe_other_list_field_autoComp.constructorOpts_.maxSelect = 2;
       fe_other_list_field_autoComp.element.value = 'apples';
-      var newCode = fe_other_list_field_autoComp.selectItemCode();
-      assertEqual('a', newCode);
+      fe_other_list_field_autoComp.storeSelectedItem();
       assertEnumEqual(['a'], fe_other_list_field_autoComp.getSelectedCodes());
       fe_other_list_field_autoComp.element.value = 'bananas';
-      fe_other_list_field_autoComp.selectItemCode();
+      fe_other_list_field_autoComp.storeSelectedItem();
       assertEnumEqual(['a', 'b'], fe_other_list_field_autoComp.getSelectedCodes().sort());
 
       // Test a non-multiselect list
       fe_other_list_field_autoComp.constructorOpts_.maxSelect = 1;
       fe_other_list_field_autoComp.element.value = 'apples';
-      fe_other_list_field_autoComp.selectItemCode();
+      fe_other_list_field_autoComp.storeSelectedItem();
       assertEnumEqual(['a'], fe_other_list_field_autoComp.getSelectedCodes());
       fe_other_list_field_autoComp.element.value = 'bananas';
-      fe_other_list_field_autoComp.selectItemCode();
+      fe_other_list_field_autoComp.storeSelectedItem();
       assertEnumEqual(['b'], fe_other_list_field_autoComp.getSelectedCodes());
     }},
 
@@ -571,6 +570,27 @@ var testFunctions = {
       var parentElem = field.parentNode;
       assertEqual('SPAN', parentElem.tagName);
       assert(Element.hasClassName(parentElem, 'autocomp_selected'));
+
+      // Set a field value and see what happens when we select it.
+      // Try a value in the list first.
+      autoComp.onFocus();
+      var listItems = jQuery('#completionOptions li');
+      assertEqual(4, listItems.length);
+      field.value = 'apples';
+      autoComp.onChange();
+      // The value should be moved out of the field and into the selected item area.
+      assertEqual('', field.value);
+      assertEqual('apples', Element.down(parentElem, 'li').textContent);
+      // The value we just picked should be filtered out of the list that is
+      // displayed.
+      listItems = jQuery('#completionOptions li');
+      assertEqual(3, listItems.length);
+      var foundItem = false;
+      for (var i=0; i<3 && !foundItem; ++i)
+        foundItem = ('apples' === listItems.textContent);
+      assert(!foundItem);
+      // The list should still be visible (so the user can pick more items)
+      assert(jQuery('#searchResults')[0].style.visibility !== 'hidden');
     }},
 
 
@@ -715,7 +735,7 @@ AutoCompTestUtil = {
     while ($(id) != null)
       id += ++idCtr;
     rtnEle.setAttribute('id', id);
-    document.body.appendChild(rtnEle);
+    document.forms[0].appendChild(rtnEle);
     return rtnEle;
   },
 
