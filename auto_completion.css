@@ -218,6 +218,7 @@ input.search_field, textarea.search_field {
 }
 .autocomp_selected li > button {
   border: 0;
+  background-color: #DDD;
   font-weight: 800;
   padding-left: 0.25em;
   padding-right: 0.25em;
