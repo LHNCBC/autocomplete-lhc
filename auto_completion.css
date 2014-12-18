@@ -178,20 +178,7 @@ li.suggestion {
 }
 
 
-.fillInBlanks {
-  background-color:#D8EBFC;
-  width:500px;
-  height:150px;
-  position:absolute;
-  left:20px;
-  overflow:hidden;
-  z-index:10;
-  border-color:#73A0C8;
-  border-style:solid;
-  border-width:4px;
-  margin:0;
-}
-
+/* Background images in list fields with items */
 input.search_field, textarea.search_field {
   background-image: url("./list_bullets_gray_10_10.png") !important;
   background-repeat: no-repeat;
@@ -204,4 +191,41 @@ input.search_field, textarea.search_field {
   background-repeat: no-repeat;
   background-position: right 2px center;
   padding-right: 14px !important;
+}
+
+
+/* The element showing selected items for multi-select lists */
+.autocomp_selected {
+  border: 1px solid gray;
+  padding: 1px;
+  display: inline-block;
+}
+.autocomp_selected input, .autocomp_selected textarea {
+  border-width: 1px;
+}
+.autocomp_selected ul {
+  list-style-type: none;
+  margin: 0.5em 0 0.5em 0.25em;
+}
+.autocomp_selected li {
+  display: inline;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #DDD;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  margin-right: 0.5em;
+}
+.autocomp_selected li > button {
+  border: 0;
+  background-color: #DDD;
+  font-weight: 800;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  /* keep the button from having the full height of the containing item */
+  line-height: 0.9em;
+  padding-bottom: 0.1em;
+}
+.autocomp_selected li > button:hover {
+  background-color: #999;
 }

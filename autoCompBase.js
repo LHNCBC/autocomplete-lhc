@@ -261,7 +261,14 @@ if (typeof Def === 'undefined')
     /**
      *  The codes of the currently selected items, stored as keys on a hash.
      */
-    selectedCodes_: {},
+    selectedCodes_: null,
+
+    /**
+     *  The currently selected items' display strings, stored as keys on a hash.
+     *  Some might not have codes, and so there might be more entries here than in
+     *  selectedCodes_.
+     */
+    selectedItems_: null,
 
     /**
      *  Whether the field value is required to be one from the list.
@@ -350,6 +357,11 @@ if (typeof Def === 'undefined')
      */
     lastScrollEffect_: null,
 
+    /**
+     *  Whether or not multiple items can be selected from the list.
+     */
+    multiSelect_: false,
+
 
     /**
      *  An initialization method for the base Def.Autocompleter class.  This
@@ -374,7 +386,7 @@ if (typeof Def === 'undefined')
      *     null, in which case no request for additional data is made.</li>
      *    <li>suggestionMode - an integer specifying what type of suggestion
      *     should be offered based on what the user has typed.  If this is not
-     *     specified, the default is 0, which is no suggestsions.  A value of 1
+     *     specified, the default is 0, which is no suggestions.  A value of 1
      *     suggestion means "pick the shortest match", and a value of 2 means that
      *     the is based on statistics, and that we will rely on the server to
      *     return the best item as the first item in the list.</li>
@@ -394,7 +406,11 @@ if (typeof Def === 'undefined')
         options.maxSelect = 1;
       if (options.maxSelect === '*')
         options.maxSelect = Infinity;
+      this.multiSelect_ = options.maxSelect !== 1;
       this.constructorOpts_ = options;
+
+      this.selectedCodes_ = {};
+      this.selectedItems_ = {};
 
       var dataRequester = options.dataRequester;
       var suggestionMode = options.suggestionMode;
@@ -408,10 +424,11 @@ if (typeof Def === 'undefined')
 
       // If this is a multiselect list, put the field into a span.
       if (options.maxSelect > 1) {
-        var fieldDiv = jQuery('<span class="autocomp_selected"></span>')[0];
+        var fieldDiv = jQuery('<span class="autocomp_selected"><ul></ul></span>')[0];
         var fieldParent = this.element.parentNode;
         fieldParent.replaceChild(fieldDiv, this.element);
         fieldDiv.appendChild(this.element);
+        this.selectedList = fieldDiv.down();
       }
 
       // Set up event handler functions.
@@ -471,19 +488,73 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Adds the code for the current item to the list of selected codes.  If this is not a multi-select
-     *  list, the newly selected code will replace the others., using itemToCode_ (which is
-     *  initialized if needed.)
-     * @return the code for the current item, if known; otherwise undefined
+     *  Adds the code for the current item in the field to the list of selected
+     *  codes, and does the same for the item text.  If this is not a multi-select
+     *  list, the newly selected code will replace the others, using itemToCode_
+     *  (which is initialized if needed.)
      */
-    selectItemCode: function() {
+    storeSelectedItem: function() {
+      var itemText = this.element.value;
+      var newCode = this.getItemCode(itemText);
+      if (newCode !== null) {
+        if (this.constructorOpts_.maxSelect === 1)
+          this.selectedCodes_ = {};
+        this.selectedCodes_[newCode] = 1;
+      }
+      this.selectedItems_[itemText] = 1;
+    },
+
+
+    /**
+     *  Returns the code for the given item text, or null if there isn't one.
+     */
+    getItemCode: function(itemText) {
       if (!this.itemToCode_)
         this.initItemToCode();
       var newCode = this.itemToCode_[this.element.value];
-      if (this.constructorOpts_.maxSelect === 1)
-        this.selectedCodes_ = {};
-      this.selectedCodes_[newCode] = 1;
+      if (newCode === undefined)
+        newCode = null;
       return newCode;
+    },
+
+
+    /**
+     *  Moves the current field string to the selected area.  After this,
+     *  the field will be blank.
+     */
+    moveEntryToSelectedArea: function() {
+      var li = jQuery('<li><button type="button">x</button>'+this.element.value+
+                      '</li>')[0];
+      this.selectedList.appendChild(li);
+      var span = li.childNodes[0];
+      jQuery(span).click(jQuery.proxy(this.removeSelection, this));
+      this.element.value = '';
+      this.uneditedValue = '';
+      this.onFocus(); // show the list again
+    },
+
+
+    /**
+     *  For a multi-select list, this is an event handler that removes an item
+     *  from the selected area.
+     * @param event the click event on the item to be removed.
+     */
+    removeSelection: function(event) {
+      var li = event.target.parentNode;
+      li.parentNode.removeChild(li);
+      var itemText = li.childNodes[1].textContent;
+      var itemCode = this.itemToCode_[itemText];
+      delete this.selectedCodes_[itemCode];
+      delete this.selectedItems_[itemText];
+    },
+
+
+    /**
+     *  Returns true if the given text is one of the list items that
+     *  has already been selected (for multi-select lists).
+     */
+    isSelected: function(itemText) {
+      return this.selectedItems_ && this.selectedItems_[itemText] !== undefined;
     },
 
 
@@ -1234,7 +1305,7 @@ if (typeof Def === 'undefined')
         this.preFieldFillVal_ === null ? 'typed' : 'arrows';
 
       var usedList = inputMethod !== 'typed' && onList;
-      var newCode = this.selectItemCode();
+      var newCode = this.getItemCode(valTyped);
       Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
         {input_method: inputMethod, val_typed_in: valTyped,
          final_val: this.element.value, used_list: usedList,
@@ -1272,6 +1343,7 @@ if (typeof Def === 'undefined')
         this.fieldValIsListVal_ = canSelect;
         if (canSelect) {
           Autocompleter.Base.prototype.selectEntry.apply(this);
+          this.storeSelectedItem();
 
           // Queue the list selection event before doing further processing,
           // which might trigger other events (i.e. the duplication warning event.)
@@ -1283,9 +1355,14 @@ if (typeof Def === 'undefined')
           this.setMatchStatusIndicator(true);
           this.setInvalidValIndicator(false);
           this.propagateFieldChanges();
+          if (this.constructorOpts_.maxSelect !== 1)
+            this.moveEntryToSelectedArea();
         }
-        this.active = false;
-        this.hide();
+        // Don't hide the list if this is a multi-select list.
+        if (!this.multiSelect_) {
+          this.active = false;
+          this.hide();
+        }
       }
 
       if (!canSelect && Def.Autocompleter.Event.callbacks_ !== null)
@@ -1499,6 +1576,9 @@ if (typeof Def === 'undefined')
         // Refocus the field.
         Event.stop(event);
         this.element.focus();
+        // Reshow the list if this is a multi-select list.
+        if (this.multiSelect_)
+          this.showList();
       }
     },
 
@@ -1621,4 +1701,5 @@ if (typeof Def === 'undefined')
   };  // end Def.Autocompleter.Base class
 
   Object.extend(Def.Autocompleter.Base.prototype, tmp);
+  tmp = null;
 })($, jQuery, Def);
