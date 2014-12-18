@@ -523,13 +523,29 @@ if (typeof Def === 'undefined')
      *  the field will be blank.
      */
     moveEntryToSelectedArea: function() {
-      var li = document.createElement('li');
-      var text = document.createTextNode(this.element.value);
-      li.appendChild(text);
+      var li = jQuery('<li><button type="button">x</button>'+this.element.value+
+                      '</li>')[0];
       this.selectedList.appendChild(li);
+      var span = li.childNodes[0];
+      jQuery(span).click(jQuery.proxy(this.removeSelection, this));
       this.element.value = '';
       this.uneditedValue = '';
       this.onFocus(); // show the list again
+    },
+
+
+    /**
+     *  For a multi-select list, this is an event handler that removes an item
+     *  from the selected area.
+     * @param event the click event on the item to be removed.
+     */
+    removeSelection: function(event) {
+      var li = event.target.parentNode;
+      li.parentNode.removeChild(li);
+      var itemText = li.childNodes[1].textContent;
+      var itemCode = this.itemToCode_[itemText];
+      delete this.selectedCodes_[itemCode];
+      delete this.selectedItems_[itemText];
     },
 
 
@@ -1560,6 +1576,9 @@ if (typeof Def === 'undefined')
         // Refocus the field.
         Event.stop(event);
         this.element.focus();
+        // Reshow the list if this is a multi-select list.
+        if (this.multiSelect_)
+          this.showList();
       }
     },
 

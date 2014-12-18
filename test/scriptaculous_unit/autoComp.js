@@ -566,31 +566,77 @@ var testFunctions = {
         list, {'addSeqNum': false, 'codes': codes, 'matchListValue': true,
         maxSelect: '*'});
 
-      // Confirm that the autocompleter div wrapper is around the field now.
-      var parentElem = field.parentNode;
-      assertEqual('SPAN', parentElem.tagName);
-      assert(Element.hasClassName(parentElem, 'autocomp_selected'));
+      // Confirm that the autocompleter wrapper is around the field now.
+      var fieldWrapper = field.parentNode;
+      assertEqual('SPAN', fieldWrapper.tagName);
+      assert(Element.hasClassName(fieldWrapper, 'autocomp_selected'));
 
       // Set a field value and see what happens when we select it.
       // Try a value in the list first.
       autoComp.onFocus();
-      var listItems = jQuery('#completionOptions li');
-      assertEqual(4, listItems.length);
+      var listTag = jQuery('#completionOptions ul')[0];
+      var listItems = listTag.childNodes;
+      assertEqual(4, listItems.length, 'item count before selection');
       field.value = 'apples';
       autoComp.onChange();
       // The value should be moved out of the field and into the selected item area.
       assertEqual('', field.value);
-      assertEqual('apples', Element.down(parentElem, 'li').textContent);
+      var selectedItem = Element.down(fieldWrapper, 'li');
+      assertEqual('apples', selectedItem.childNodes[1].textContent);
       // The value we just picked should be filtered out of the list that is
       // displayed.
-      listItems = jQuery('#completionOptions li');
-      assertEqual(3, listItems.length);
+      // (Get listTag again.  I do not understand why, but at this point listTag
+      // has no parent; it seems to have been replaced with a new ul in the
+      // DOM, though my code is only calling appendChild on it.)
+      listTag = jQuery('#completionOptions ul')[0];
+      listItems = listTag.childNodes;
+      assertEqual(3, listItems.length, 'after selection, too many items in list');
       var foundItem = false;
       for (var i=0; i<3 && !foundItem; ++i)
-        foundItem = ('apples' === listItems.textContent);
-      assert(!foundItem);
+        foundItem = ('apples' === listItems[i].textContent);
+      assert(!foundItem, 'found item in list after selection');
       // The list should still be visible (so the user can pick more items)
       assert(jQuery('#searchResults')[0].style.visibility !== 'hidden');
+
+      // Also select an item by clicking in the list
+      Event.simulate(listItems[0], 'mousedown');
+      // The value should not be in the field.
+      assertEqual('', field.value);
+      var selectedItem = jQuery(fieldWrapper).find('li')[1];
+      // It should be in the seleted area.
+      assert(selectedItem, 'item was not in the selected area');
+      assertEqual('oranges and apples', selectedItem.childNodes[1].textContent);
+      // The value we just picked should be filtered out of the list that is
+      // displayed.
+      listTag = jQuery('#completionOptions ul')[0];
+      listItems = listTag.childNodes;
+      assertEqual(2, listItems.length);
+      var foundItem = false;
+      for (var i=0; i<listItems.length && !foundItem; ++i)
+        foundItem = ('oranges and apples' === listItems[i].textContent);
+      assert(!foundItem, 'found item in list after selection, 2');
+      // The list should still be visible (so the user can pick more items)
+      assert(jQuery('#searchResults')[0].style.visibility !== 'hidden',
+        'after click, list is hidden');
+
+      // Unselect the first item
+      var selectedItem = fieldWrapper.childNodes[0].childNodes[0];
+      assert(selectedItem.parentNode !== null, 'precondition not met');
+      var button = selectedItem.childNodes[0];
+      jQuery(button).click();
+      assert(selectedItem.parentNode === null,
+        'selected item not removed from selection area');
+      jQuery(autoComp.field).click();
+      autoComp.onFocus();
+      listItems = jQuery('#completionOptions li');
+      assertEqual(3, listItems.length, 'after unselecting item and clicking in field');
+      // Make sure the item is back in the list
+      var foundItem = false;
+      for (var i=0; i<listItems.length && !foundItem; ++i)
+        foundItem = ('apples' === listItems[i].textContent);
+      assert(foundItem, 'apples not returned to list');
+      // Make sure it is not in the selected codes
+      assert(!autoComp.getSelectedCodes()['a']);
     }},
 
 
