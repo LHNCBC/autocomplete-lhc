@@ -12,8 +12,8 @@ list item.  (See recordDataRequester.js.)
 1. Numbered list items (optional).
 1. Two-column lists when there is not enough space on the page to show the list
 in a single column.
-1. For now, only allows the selection one list item from the list.  (We are
-planning to add an improved multi-selection interface.)
+1. Partial support for multi-select lists.  (Multi-select lists
+do not currently support entry of text not on the list.)
 1. Support for list suggestions in the search (AJAX) autocompleter, when the user does
 not pick an item in the list.
 1. Can require that an entry in the field match the list.
