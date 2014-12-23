@@ -53,7 +53,7 @@ if (typeof angular !== 'undefined') {
                 // In this case just make up an ID.
                 if (!Def.Autocompleter.lastGeneratedID_)
                   Def.Autocompleter.lastGeneratedID_ = 0;
-                pElem.id = ++Def.Autocompleter.lastGeneratedID_;
+                pElem.id = 'ac' + ++Def.Autocompleter.lastGeneratedID_;
               }
 
               new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
