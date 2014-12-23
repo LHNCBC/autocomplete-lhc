@@ -50,22 +50,10 @@ if (typeof angular !== 'undefined') {
               // The autocompleter uses the ID attribute of the element. If pElem
               // does not have an ID, give it one.
               if (pElem.id === '') {
-                if (pElem.name === '') {
-                  // In this case just make up an ID.
-                  if (!Def.Autocompleter.lastGeneratedID_)
-                    Def.Autocompleter.lastGeneratedID_ = 0;
-                  pElem.id = ++Def.Autocompleter.lastGeneratedID_;
-                }
-                else {
-                  // Use the name attribute.  This might not be unique, so we need
-                  // to check.
-                  var id = pElem.name, ctr = 0;
-                  while ($(id)) {
-                    ctr += 1;
-                    id = pElem.name + ctr;
-                  }
-                  pElem.id = id;
-                }
+                // In this case just make up an ID.
+                if (!Def.Autocompleter.lastGeneratedID_)
+                  Def.Autocompleter.lastGeneratedID_ = 0;
+                pElem.id = ++Def.Autocompleter.lastGeneratedID_;
               }
 
               new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
