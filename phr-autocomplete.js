@@ -65,8 +65,8 @@ if (typeof angular !== 'undefined') {
                   controller.$setViewValue(item);
                 });
               });
-            }
-          }; // if controller
+            } // if controller
+          };
           // Run initWiget once after the name attribute has been filled in
           scope.$watch({}, initWidget, true); // i.e. run once
         }
