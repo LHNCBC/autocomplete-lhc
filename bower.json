@@ -20,7 +20,8 @@
     "suggestionDialog.js",
     "autoCompPrefetch.js",
     "autoCompSearch.js",
-    "autoCompEvents.js"
+    "autoCompEvents.js",
+    "phr-autocomplete.js"
    ],
   "dependencies": {
     "jquery-ui": "^1.10.1",
