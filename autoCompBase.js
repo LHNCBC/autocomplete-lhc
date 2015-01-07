@@ -43,8 +43,9 @@ if (typeof Def === 'undefined')
 
 
     /*
-     *  Returns value of the given form element.  (This may be overridden for
+     *  Returns value of the given form field element.  (This may be overridden for
      *  special handling of values.)
+     * @param field the form field from which the value is needed.
      */
     getFieldVal: function(field) {
       return field.value;
@@ -1567,8 +1568,8 @@ if (typeof Def === 'undefined')
      */
     onMouseDown: function(event) {
       // Call the superclass' method.
-      var li_element = Event.findElement(event, 'LI');
-      var listItemClicked = !this.indexToHeadingLevel_[li_element.autocompleteIndex];
+      var liElement = Event.findElement(event, 'LI');
+      var listItemClicked = !this.indexToHeadingLevel_[liElement.autocompleteIndex];
       if (listItemClicked) {
         this.clickSelectionInProgress_ = true;
         Autocompleter.Base.prototype.onClick.apply(this, [event]);
