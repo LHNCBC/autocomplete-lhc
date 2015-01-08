@@ -29,5 +29,8 @@
     "prototypejs-bower": "1.7.2",
     "scriptaculous-bower": "#master"
   },
+  "devDependencies": {
+    "angular": "~1.3.1"
+  },
   "ignore": ["cshrc.autocomp", "bin", "packages", "package.json", "test"]
 }
