@@ -20,13 +20,17 @@
     "suggestionDialog.js",
     "autoCompPrefetch.js",
     "autoCompSearch.js",
-    "autoCompEvents.js"
+    "autoCompEvents.js",
+    "phr-autocomplete.js"
    ],
   "dependencies": {
     "jquery-ui": "^1.10.1",
     "jquery-no-conflict-exec" : "#master",
     "prototypejs-bower": "1.7.2",
     "scriptaculous-bower": "#master"
+  },
+  "devDependencies": {
+    "angular": "~1.3.1"
   },
   "ignore": ["cshrc.autocomp", "bin", "packages", "package.json", "test"]
 }

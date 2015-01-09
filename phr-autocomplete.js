@@ -11,10 +11,15 @@ if (typeof angular !== 'undefined') {
       options = {};
       angular.extend(options, phrAutocompleteConfig);
       return {
+        scope: {
+          modelData: '=ngModel'
+        },
         require:'?ngModel',
         link:function (scope, element, attrs, controller) {
           var getOptions = function () {
-            return angular.extend({}, phrAutocompleteConfig, scope.$eval(attrs.phrAutocomplete));
+            // Because we created our own scope, we have to evaluate
+            // attrs.phrAutocomplete in the parent scope.
+            return angular.extend({}, phrAutocompleteConfig, scope.$parent.$eval(attrs.phrAutocomplete));
           };
 
           var initWidget = function () {
@@ -42,8 +47,6 @@ if (typeof angular !== 'undefined') {
               if (defaultIndex >= 0) {
                 itemLabel = itemText[defaultIndex];
                 phrAutoOpts.defaultValue = itemLabel;
-                element.val(itemLabel);
-                controller.$setViewValue(itemTextToItem[itemLabel]);
               }
 
               var pElem = element[0];
@@ -56,7 +59,7 @@ if (typeof angular !== 'undefined') {
                 pElem.id = 'ac' + ++Def.Autocompleter.lastGeneratedID_;
               }
 
-              new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
+              var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
               Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
                 scope.$apply(function() {
                   var finalVal = eventData.final_val;
@@ -65,8 +68,32 @@ if (typeof angular !== 'undefined') {
                   controller.$setViewValue(item);
                 });
               });
+
+              // Add a parser to convert from the field value to the object
+              // containing value and (e.g.) code.
+              controller.$parsers.push(function(value) {
+                var rtn = value;
+                if (typeof value === 'string') {
+                  rtn = itemTextToItem[value];
+                }
+                return rtn;
+              });
+              // Also add a formatter to get the display string if the model is
+              // changed.
+              controller.$formatters.push(function(value) {
+                var rtn = value;
+                if (typeof value === 'object')
+                  rtn = value.label;
+                return rtn;
+              });
+
+              // if we have a default value, go ahead and select it
+              if (defaultIndex >=0) {
+                scope.modelData = opts.source[defaultIndex];
+              }
             } // if controller
           };
+
           // Run initWiget once after the name attribute has been filled in
           scope.$watch({}, initWidget, true); // i.e. run once
         }
