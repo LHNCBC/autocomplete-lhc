@@ -11,10 +11,15 @@ if (typeof angular !== 'undefined') {
       options = {};
       angular.extend(options, phrAutocompleteConfig);
       return {
+        scope: {
+          modelData: '=ngModel'
+        },
         require:'?ngModel',
         link:function (scope, element, attrs, controller) {
           var getOptions = function () {
-            return angular.extend({}, phrAutocompleteConfig, scope.$eval(attrs.phrAutocomplete));
+            // Because we created our own scope, we have to evaluate
+            // attrs.phrAutocomplete in the parent scope.
+            return angular.extend({}, phrAutocompleteConfig, scope.$parent.$eval(attrs.phrAutocomplete));
           };
 
           var initWidget = function () {
@@ -84,7 +89,7 @@ if (typeof angular !== 'undefined') {
 
               // if we have a default value, go ahead and select it
               if (defaultIndex >=0) {
-                scope[attrs.ngModel] = opts.source[defaultIndex];
+                scope.modelData = opts.source[defaultIndex];
               }
             } // if controller
           };
