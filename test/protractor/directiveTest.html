@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <title>autocomp-phr directive test</title>
+   <link href="/auto_completion.css" media="screen" rel="stylesheet" />
+   <link href="/bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen"
+    rel="stylesheet" />
+  </head>
+  <body ng-app="someApp">
+    <div ng-controller="testPageController">
+      <input name="list1"
+        ng-required="false" placeholder="Select or type a value"
+        ng-model-options="{ updateOn: 'change' }" ng-model="listFieldVal"
+        phr-autocomplete="list1Opts">
+      <br>
+      Selected code: <input readonly id="code" name="code" ng-model="listFieldVal.code">
+    </div>
+    <script src="/bower_components/prototypejs-bower/prototype.js"></script>
+    <script src="/bower_components/scriptaculous-bower/effects.js"></script>
+    <script src="/bower_components/scriptaculous-bower/controls.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/jquery-no-conflict-exec/jquery-no-conflict.js"></script>
+    <script src="/bower_components/jquery-ui/ui/core.js"></script>
+    <script src="/bower_components/jquery-ui/ui/widget.js"></script>
+    <script src="/bower_components/jquery-ui/ui/button.js"></script>
+    <script src="/bower_components/jquery-ui/ui/dialog.js"></script>
+    <script src="/dialog.js"></script>
+    <script src="/observable.js"></script>
+    <script src="/recordDataRequester.js"></script>
+    <script src="/fieldAlarms.js"></script>
+    <script src="/autoCompBase.js"></script>
+    <script src="/suggestionDialog.js"></script>
+    <script src="/autoCompPrefetch.js"></script>
+    <script src="/autoCompSearch.js"></script>
+    <script src="/autoCompEvents.js"></script>
+    <script src="/effectScroll.js"></script>
+    <script src="/event.simulate.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/phr-autocomplete.js"></script>
+    <script>
+      angular.module('someApp', ['someModule', 'autocompPhr']);
+      var someMod = angular.module('someModule', []).directive('newTestDirective', function() {
+        return {link: function($scope, element, attrs, controller) {
+          element[0].innerHTML += 'orange';
+        }}
+      });
+
+      someMod.controller('testPageController', ['$scope', function ($scope) {
+        $scope.list1Opts = {
+          // source is the list of item data
+          source: [
+            {label: 'Green', // label is the display string
+             code: 'G' // item objects can contain any other data too
+            },
+            {label: 'Blue', code: 'B'}
+          ],
+          preSelected: 1 // index of the item you want selected as a default
+        }
+      }]);
+    </script>
+  </body>
+</html>
