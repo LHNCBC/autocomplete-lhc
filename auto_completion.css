@@ -132,10 +132,14 @@ li.suggestion {
  * any value in the list.  (The redundancy here is for overriding another
  * background setting on input[type='text'].)
  */
-.no_match, input[type='text'].no_match {
-  background-color: #F8DA74 !important;
-  color: black !important;
+.ansList.no_match, input[type='text'].ansList.no_match {
+  background-color: #F8DA74;
+  color: black;
   font-style: italic;
+}
+
+.ansList.invalid {
+  border: 2px solid #F00;
 }
 
 
@@ -206,6 +210,7 @@ input.search_field, textarea.search_field {
 .autocomp_selected ul {
   list-style-type: none;
   margin: 0.5em 0 0.5em 0.25em;
+  padding-left: 0;
 }
 .autocomp_selected li {
   display: inline;
