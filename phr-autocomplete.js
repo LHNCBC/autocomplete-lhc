@@ -57,7 +57,7 @@ if (typeof angular !== 'undefined') {
                   var finalVal = eventData.final_val;
                   var item = itemTextToItem[finalVal] ||
                     {value: finalVal, id: finalVal, label: finalVal};
-                  controller.$setViewValue(item);
+                  scope.modelData = item;
                 });
               });
 
