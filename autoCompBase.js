@@ -524,7 +524,7 @@ if (typeof Def === 'undefined')
      *  the field will be blank.
      */
     moveEntryToSelectedArea: function() {
-      var li = jQuery('<li><button type="button">x</button>'+this.element.value+
+      var li = jQuery('<li><button type="button">&times;</button>'+this.element.value+
                       '</li>')[0];
       this.selectedList.appendChild(li);
       var span = li.childNodes[0];
