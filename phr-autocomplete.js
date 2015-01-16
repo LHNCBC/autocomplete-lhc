@@ -30,6 +30,7 @@ if (typeof angular !== 'undefined') {
               var itemText = [];
               var itemTextToItem = {};
               var itemLabel;
+              // "source" = list item data.
               for (var i=0, len=phrAutoOpts.source.length; i<len; ++i) {
                 var item = phrAutoOpts.source[i];
                 itemLabel = item.label;
@@ -46,6 +47,10 @@ if (typeof angular !== 'undefined') {
                   Def.Autocompleter.lastGeneratedID_ = 0;
                 pElem.id = 'ac' + ++Def.Autocompleter.lastGeneratedID_;
               }
+              // If it also does not have a name, use the ID.  We use the name
+              // to register a listener below.
+              if (pElem.name === '')
+                pElem.name = pElem.id;
 
               // Assign the placeholder value if there is one.
               if (phrAutoOpts.placeholder)
