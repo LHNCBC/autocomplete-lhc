@@ -44,12 +44,12 @@ describe('directive', function() {
   var codeField = $('#code');
   var searchResults = $('#searchResults');
   var multiField = $('#ac2');
-
-  beforeEach(function() {
+  function openDirectiveTestPage() {
     browser.get('http://localhost:3000/test/protractor/directiveTest.html');
-  });
+  }
 
   it('should create an area on the page for the list', function() {
+    openDirectiveTestPage();
     expect(searchResults).not.toBeNull();
   });
   it('should assign an ID to the autocompleting field', function() {
