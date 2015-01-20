@@ -82,8 +82,12 @@ if (typeof angular !== 'undefined') {
               // changed.
               controller.$formatters.push(function(value) {
                 var rtn = value;
-                if (typeof value === 'object')
-                  rtn = value.label;
+                if (phrAutoOpts.maxSelect == '1') {
+                  if (typeof value === 'object')
+                    rtn = value.label;
+                }
+                else
+                  rtn = '';
                 return rtn;
               });
 

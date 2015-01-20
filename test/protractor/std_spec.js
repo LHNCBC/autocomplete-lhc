@@ -93,6 +93,14 @@ describe('directive', function() {
     it('should be blank (without a default setting)', function() {
       expect(multiField.getAttribute('value')).toEqual('');
     });
+
+    it ('should leave the field empty after a selection', function() {
+      multiField.click();
+      expect(searchResults.isDisplayed()).toBeTruthy();
+      var item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.getAttribute('value')).toEqual('');
+    });
   });
 
   describe('CNE lists', function() {
