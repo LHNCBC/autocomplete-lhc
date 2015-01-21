@@ -11,10 +11,10 @@ if (typeof angular !== 'undefined') {
       options = {};
       angular.extend(options, phrAutocompleteConfig);
       return {
+        require:'?ngModel',
         scope: {
           modelData: '=ngModel'
         },
-        require:'?ngModel',
         link:function (scope, element, attrs, controller) {
           var getOptions = function () {
             // Because we created our own scope, we have to evaluate
@@ -23,30 +23,19 @@ if (typeof angular !== 'undefined') {
           };
 
           var initWidget = function () {
-            var opts = getOptions();
+            var phrAutoOpts = getOptions();
 
             // If we have a controller (i.e. ngModelController) then wire it up
             if (controller) {
               var itemText = [];
               var itemTextToItem = {};
               var itemLabel;
-              for (var i=0, len=opts.source.length; i<len; ++i) {
-                var item = opts.source[i];
+              // "source" = list item data.
+              for (var i=0, len=phrAutoOpts.source.length; i<len; ++i) {
+                var item = phrAutoOpts.source[i];
                 itemLabel = item.label;
                 itemText[i] = itemLabel;
                 itemTextToItem[itemLabel] = item;
-              }
-              var phrAutoOpts = {matchListValue: !opts.allowFreeText}
-
-              // Set the default value, if there is one
-              var defaultIndex = -1;
-              if (opts.selectFirst)
-                defaultIndex = 0;
-              else if (opts.preSelected !== undefined)
-                defaultIndex = opts.preSelected;
-              if (defaultIndex >= 0) {
-                itemLabel = itemText[defaultIndex];
-                phrAutoOpts.defaultValue = itemLabel;
               }
 
               var pElem = element[0];
@@ -58,14 +47,41 @@ if (typeof angular !== 'undefined') {
                   Def.Autocompleter.lastGeneratedID_ = 0;
                 pElem.id = 'ac' + ++Def.Autocompleter.lastGeneratedID_;
               }
+              // If it also does not have a name, use the ID.  We use the name
+              // to register a listener below.
+              if (pElem.name === '')
+                pElem.name = pElem.id;
+
+              // Assign the placeholder value if there is one.
+              if (phrAutoOpts.placeholder)
+                attrs.$set('placeholder', phrAutoOpts.placeholder);
 
               var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
               Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
                 scope.$apply(function() {
-                  var finalVal = eventData.final_val;
-                  var item = itemTextToItem[finalVal] ||
-                    {value: finalVal, id: finalVal, label: finalVal};
-                  controller.$setViewValue(item);
+                  if (!ac.multiSelect_) {
+                    var finalVal = eventData.final_val;
+                    var item = itemTextToItem[finalVal] ||
+                      {value: finalVal, id: finalVal, label: finalVal};
+                    scope.modelData = item;
+                  }
+                  else {
+                    if (typeof scope.modelData !== 'object')
+                      scope.modelData = [];
+                    var selectedItems = scope.modelData;
+                    if (eventData.removed) {
+                      // The item was removed
+                      var removedVal = eventData.final_val;
+                      for (var i=0, len=selectedItems.length; i<len; ++i) {
+                        if (removedVal === selectedItems[i].label) {
+                          selectedItems.splice(i, 1);
+                          break;
+                        }
+                      }
+                    }
+                    else
+                      selectedItems.push(itemTextToItem[eventData.final_val]);
+                  }
                 });
               });
 
@@ -75,21 +91,28 @@ if (typeof angular !== 'undefined') {
                 var rtn = value;
                 if (typeof value === 'string') {
                   rtn = itemTextToItem[value];
+                  if (rtn === undefined && phrAutoOpts.matchListValue === false)
+                    rtn = null; // undefined means invalid, but in this case a non-match is okay
                 }
+
                 return rtn;
               });
               // Also add a formatter to get the display string if the model is
               // changed.
               controller.$formatters.push(function(value) {
                 var rtn = value;
-                if (typeof value === 'object')
-                  rtn = value.label;
+                if (!ac.multiSelect_) {
+                  if (typeof value === 'object')
+                    rtn = value.label;
+                }
+                else
+                  rtn = '';
                 return rtn;
               });
 
               // if we have a default value, go ahead and select it
-              if (defaultIndex >=0) {
-                scope.modelData = opts.source[defaultIndex];
+              if (phrAutoOpts.defaultValue !== undefined) {
+                scope.modelData = itemTextToItem[phrAutoOpts.defaultValue];
               }
             } // if controller
           };

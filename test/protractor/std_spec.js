@@ -1,3 +1,6 @@
+helpers = require('./test_helpers.js');
+var hasClass = helpers.hasClass;
+
 describe('autocomp', function() {
   it('should not show the list in response to a shift or control key being held down',
      function() {
@@ -17,6 +20,22 @@ describe('autocomp', function() {
     inputElem.sendKeys(protractor.Key.BACKSPACE);
     expect(searchResults.isDisplayed()).toBeTruthy();
   });
+
+  describe('CNE lists', function() {
+    var cneList = $('#fe_multi_sel_cne');
+    it('should warn user about invalid values', function() {
+      expect(hasClass(cneList, 'no_match')).toBe(false);
+      expect(hasClass(cneList, 'invalid')).toBe(false);
+
+      cneList.click();
+      cneList.sendKeys('zzz');
+      cneList.sendKeys(protractor.Key.TAB); // shift focus from field
+      expect(hasClass(cneList, 'no_match')).toBe(true);
+      expect(hasClass(cneList, 'invalid')).toBe(true);
+      // Focus should be returned to the field
+      expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual('fe_multi_sel_cne');
+    });
+  });
 });
 
 
@@ -24,12 +43,13 @@ describe('directive', function() {
   var inputElem = $('#ac1');
   var codeField = $('#code');
   var searchResults = $('#searchResults');
-
-  beforeEach(function() {
+  var multiField = $('#ac2');
+  function openDirectiveTestPage() {
     browser.get('http://localhost:3000/test/protractor/directiveTest.html');
-  });
+  }
 
   it('should create an area on the page for the list', function() {
+    openDirectiveTestPage();
     expect(searchResults).not.toBeNull();
   });
   it('should assign an ID to the autocompleting field', function() {
@@ -55,5 +75,66 @@ describe('directive', function() {
     codeField.click();
     expect(inputElem.getAttribute("value")).toEqual('Green');
     expect(codeField.getAttribute("value")).toEqual('G');
+  });
+  it('should add the placeholder attribute when provided', function() {
+    expect(inputElem.getAttribute("placeholder")).toEqual('Select or type a value');
+  });
+
+  describe('multi-select lists', function() {
+    it('should have an empty selection area initially (without a default setting)',
+       function() {
+      expect(multiField.isPresent()).toBe(true);
+      var list = multiField.element(by.xpath('../ul'));
+      expect(list.isPresent()).toBe(true);
+      var listItems = list.element(by.xpath('li'));
+      expect(listItems.isPresent()).toBe(false);
+    });
+
+    it('should be blank (without a default setting)', function() {
+      expect(multiField.getAttribute('value')).toEqual('');
+    });
+
+    it ('should leave the field empty after a selection', function() {
+      multiField.click();
+      expect(searchResults.isDisplayed()).toBeTruthy();
+      var item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.getAttribute('value')).toEqual('');
+    });
+
+    it('should store mutiple values on the data model', function() {
+      openDirectiveTestPage();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(null);
+      multiField.click();
+      expect(searchResults.isDisplayed()).toBeTruthy();
+      var item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual([{label: 'Green', code: 'G'}]);
+      // Now add a second item.
+      var item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(
+        [{label: 'Green', code: 'G'}, {label: 'Blue', code: 'B'}]);
+      // Now remove the first item
+      var button = element.all(by.css('button:first-child')).first().click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(
+        [{label: 'Blue', code: 'B'}]);
+    });
+  });
+
+  describe('CNE lists', function() {
+    var cneListID = 'ac2';
+    var cneList = $('#'+cneListID);
+    it('should warn user about invalid values', function() {
+      expect(hasClass(cneList, 'no_match')).toBe(false);
+      expect(hasClass(cneList, 'invalid')).toBe(false);
+
+      cneList.click();
+      cneList.sendKeys('zzz');
+      cneList.sendKeys(protractor.Key.TAB); // shift focus from field
+      expect(hasClass(cneList, 'no_match')).toBe(true);
+      expect(hasClass(cneList, 'invalid')).toBe(true);
+      expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(cneListID);
+    });
   });
 });

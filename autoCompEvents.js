@@ -44,6 +44,11 @@
      *     autocompleters, this is the data passed into the constructor (e.g.
      *     an item code), and for search autocompleters is the data returned
      *     from the server along with the item.
+     *  7) removed - For multi-select lists, this indicates whether the
+     *     selection was actual an unselection, removing the named item from the
+     *     list of selected items.  When true, final_val is the removed value
+     *     (although for multi-select fields the field is blank afterward).
+     *  (Optional; default false)
      */
     observeListSelections: function(fieldKey, callback) {
       this.storeCallback(fieldKey, 'LIST_SEL', callback);

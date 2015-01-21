@@ -7,12 +7,18 @@
   </head>
   <body ng-app="someApp">
     <div ng-controller="testPageController">
-      <input name="list1"
-        ng-required="false" placeholder="Select or type a value"
-        ng-model-options="{ updateOn: 'change' }" ng-model="listFieldVal"
+      <input name="list1" type="text"
+        ng-required="false"
+        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal"
         phr-autocomplete="list1Opts">
       <br>
       Selected code: <input readonly id="code" name="code" ng-model="listFieldVal.code">
+      <p>
+      <input name="list2" type="text"
+        ng-required="false" placeholder="Select or type a value"
+        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
+        phr-autocomplete="multilistOpts">
+      <input name="nonlist" type="text">
     </div>
     <script src="/bower_components/prototypejs-bower/prototype.js"></script>
     <script src="/bower_components/scriptaculous-bower/effects.js"></script>
@@ -53,8 +59,22 @@
             },
             {label: 'Blue', code: 'B'}
           ],
-          preSelected: 1 // index of the item you want selected as a default
-        }
+          placeholder: "Select or type a value",
+          defaultValue: 'Blue' // label the item you want selected as a default
+        };
+
+        $scope.multilistOpts = {
+          source: [
+            {label: 'Green', // label is the display string
+             code: 'G' // item objects can contain any other data too
+            },
+            {label: 'Blue', code: 'B'},
+            {label: 'Red', code: 'R'}
+          ],
+          matchListValue: true,
+          maxSelect: '*',
+          placeholder: 'Select one or more'
+        };
       }]);
     </script>
   </body>
