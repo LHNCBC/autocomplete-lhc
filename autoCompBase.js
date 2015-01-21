@@ -489,6 +489,14 @@ if (typeof Def === 'undefined')
 
 
     /**
+     *  Returns the display strings for the currently selected items or an empty array if there are none.
+     */
+    getSelectedItems: function() {
+      return Object.keys(this.selectedItems_);
+    },
+
+
+     /**
      *  Adds the code for the current item in the field to the list of selected
      *  codes, and does the same for the item text.  If this is not a multi-select
      *  list, the newly selected code will replace the others, using itemToCode_
@@ -547,6 +555,7 @@ if (typeof Def === 'undefined')
       var itemCode = this.itemToCode_[itemText];
       delete this.selectedCodes_[itemCode];
       delete this.selectedItems_[itemText];
+      this.listSelectionNotification(itemText, true, true);
     },
 
 
@@ -1300,17 +1309,32 @@ if (typeof Def === 'undefined')
      * @param valTyped The value the user actually typed in the field (which might
      *  have just been the first few characters of the final list value).
      * @param onList whether the final value was on the list
+     * @param removed For multi-select lists, this indicates whether the
+     *  selection was actual an unselection, removing the named item from the
+     *  list of selected items.  When true, valTyped is the removed value.
+     *  (Optional; default false)
      */
-    listSelectionNotification: function(valTyped, onList) {
+    listSelectionNotification: function(valTyped, onList, removed) {
+      var finalVal;
+      if (removed === undefined)
+        removed = false;
+      else if (removed) {
+        // For this case, we are passing in the removed value via valTyped
+        finalVal = valTyped;
+        valTyped = '';
+      }
+      if (finalVal === undefined)
+        finalVal = this.element.value;
       var inputMethod = this.clickSelectionInProgress_ ? 'clicked' :
         this.preFieldFillVal_ === null ? 'typed' : 'arrows';
 
       var usedList = inputMethod !== 'typed' && onList;
       var newCode = this.getItemCode(valTyped);
+
       Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
         {input_method: inputMethod, val_typed_in: valTyped,
-         final_val: this.element.value, used_list: usedList,
-         list: this.rawList_, on_list: onList, item_code: newCode});
+         final_val: finalVal, used_list: usedList,
+         list: this.rawList_, on_list: onList, item_code: newCode, removed: removed});
     },
 
 

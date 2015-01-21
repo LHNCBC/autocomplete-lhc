@@ -59,10 +59,29 @@ if (typeof angular !== 'undefined') {
               var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
               Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
                 scope.$apply(function() {
-                  var finalVal = eventData.final_val;
-                  var item = itemTextToItem[finalVal] ||
-                    {value: finalVal, id: finalVal, label: finalVal};
-                  scope.modelData = item;
+                  if (!ac.multiSelect_) {
+                    var finalVal = eventData.final_val;
+                    var item = itemTextToItem[finalVal] ||
+                      {value: finalVal, id: finalVal, label: finalVal};
+                    scope.modelData = item;
+                  }
+                  else {
+                    if (typeof scope.modelData !== 'object')
+                      scope.modelData = [];
+                    var selectedItems = scope.modelData;
+                    if (eventData.removed) {
+                      // The item was removed
+                      var removedVal = eventData.final_val;
+                      for (var i=0, len=selectedItems.length; i<len; ++i) {
+                        if (removedVal === selectedItems[i].label) {
+                          selectedItems.splice(i, 1);
+                          break;
+                        }
+                      }
+                    }
+                    else
+                      selectedItems.push(itemTextToItem[eventData.final_val]);
+                  }
                 });
               });
 
@@ -82,7 +101,7 @@ if (typeof angular !== 'undefined') {
               // changed.
               controller.$formatters.push(function(value) {
                 var rtn = value;
-                if (phrAutoOpts.maxSelect == '1') {
+                if (!ac.multiSelect_) {
                   if (typeof value === 'object')
                     rtn = value.label;
                 }

@@ -101,6 +101,25 @@ describe('directive', function() {
       item.click();
       expect(multiField.getAttribute('value')).toEqual('');
     });
+
+    it('should store mutiple values on the data model', function() {
+      openDirectiveTestPage();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(null);
+      multiField.click();
+      expect(searchResults.isDisplayed()).toBeTruthy();
+      var item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual([{label: 'Green', code: 'G'}]);
+      // Now add a second item.
+      var item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(
+        [{label: 'Green', code: 'G'}, {label: 'Blue', code: 'B'}]);
+      // Now remove the first item
+      var button = element.all(by.css('button:first-child')).first().click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(
+        [{label: 'Blue', code: 'B'}]);
+    });
   });
 
   describe('CNE lists', function() {
