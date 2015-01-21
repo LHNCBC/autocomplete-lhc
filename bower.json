@@ -1,6 +1,6 @@
 {
   "name": "autocomp-phr",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "main": [
     "auto_completion.css",
     "soundmanager/bonk.mp3",
