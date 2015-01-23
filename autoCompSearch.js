@@ -132,12 +132,54 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     /**
      *  The constructor.  (See Prototype's Class.create method.)
      * @param fieldID the ID of the field for which the list is displayed
-     * @param url for getting the completion list
+     * @param url for getting the completion list.  The website answering the
+     *  URL is expected to understand the following parameters:
+     *  <ul>
+     *    <li>terms - the text from the field.  This should be used to find
+     *     matching list items.</li>
+     *    <li>autocomp - whether this is an autocompletion event, or a request
+     *     for a large list of search results (e.g. by using the "see more" link
+     *     on the list).  If autocomp==1, that means this is an autocompletion
+     *     request and the server should return a short list (e.g. 7 items) as
+     *     quickly as possible.</li>
+     *    <li>authenticity_token - (optional) This is an anti-CSRF parameter.
+     *     If the page has a value in window._token, it will get sent in this
+     *     parameter.</li>
+     *    <li>suggest - (optional) If the suggestionMode (see the options
+     *     parameter) is not 0, user input that does not match a list value
+     *     will trigger a request for suggestions that are close to what the
+     *     user typed.  A "suggest" parameter value of "1" means the request
+     *     is for suggestions.</li>
+     *    <li>field_val - When "suggest"==1, this contains the value the user
+     *     typed.</li>
+     *  </ul>
+     *  The URL's response should be an array.  For a non-suggestion request
+     *  (suggest != '1'), it should have the following elements:
+     *  <ul>
+     *    <li>position 0 - the total search result count (including the ones not
+     *     returned, if autocomp==1).</li>
+     *    <li>position 1 - the list of codes for the list items (if the items are
+     *     coded)</li>
+     *    <li>position 2 - null (unused)</li>
+     *    <li>position 3 - the list item data; each item is an array of display
+     *     string fields which will be joined together.  (At a mimimum, each item
+     *     should be an array of one string.)</li>
+     *    <li>position 4 - if present, this indicates that display strings
+     *     (position 3) contain span tags for highlighting matched sub-strings.
+     *     (This affects the routine used to sort the strings.)</li>
+     *  </ul>
+     *  For a suggest request, the response should have the following elements:
+     *  <ul>
+     *    <li>position 0 - the list of codes for the suggested items (if the
+     *     items have codes)</li>
+     *    <li>position 1 - the list of display strings (an array of strings, not
+     *     of arrays) for the suggested items.</li>
+     *  </ul>
      * @param options A hash of optional parameters.  The allowed keys and their
      *  values are:
      *  <ul>
      *    <li>matchListValue - Whether the field value is required to be one from
-     *      the list (default: false)</li>
+     *     the list (default: false)</li>
      *    <li>buttonID - the ID of the button (if there is one)</li>
      *    <li>autocomp - a boolean that controls whether the field should
      *     also autocomplete as the user types</li>

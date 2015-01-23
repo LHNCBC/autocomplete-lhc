@@ -14,8 +14,8 @@
 //
 // For "prefetched lists", opts can contain:
 // 1) source - (required) This is the list item data.  It should be an array,
-//    and each element in the array should have a "label" property which is the
-//    display string the user sees.  The object containing that label property
+//    and each element in the array should have a "text" property which is the
+//    display string the user sees.  The object containing that text property
 //    is what will get stored on the model you have associated via ng-model
 //    (selectedVal, in the example above).
 // 2) maxSelect - (default: 1) the maximum number of items that can be selected
@@ -43,28 +43,137 @@ if (typeof angular !== 'undefined') {
           modelData: '=ngModel' // the ng-model attribute on the tag
         },
         link:function (scope, element, attrs, controller) {
-          var getOptions = function () {
-            return angular.extend({}, phrAutocompleteConfig, );
-          };
+
+          /**
+           *  Sets up a prefetched list on the field.
+           * @param pElem the element on which the autocompleter is to run
+           * @param phrAutoOpts the options from the directive attribute
+           */
+          function prefetchList(pElem, phrAutoOpts) {
+            var itemText = [];
+            var itemTextToItem = {};
+            var itemLabel;
+            // "source" = list item data.
+            for (var i=0, len=phrAutoOpts.source.length; i<len; ++i) {
+              var item = phrAutoOpts.source[i];
+              itemLabel = item.text;
+              itemText[i] = itemLabel;
+              itemTextToItem[itemLabel] = item;
+            }
+
+            var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
+            Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
+              scope.$apply(function() {
+                if (!ac.multiSelect_) {
+                  var finalVal = eventData.final_val;
+                  var item = itemTextToItem[finalVal] ||
+                    {text: finalVal};
+                  scope.modelData = item;
+                }
+                else {
+                  if (typeof scope.modelData !== 'object')
+                    scope.modelData = [];
+                  var selectedItems = scope.modelData;
+                  if (eventData.removed) {
+                    // The item was removed
+                    var removedVal = eventData.final_val;
+                    for (var i=0, len=selectedItems.length; i<len; ++i) {
+                      if (removedVal === selectedItems[i].text) {
+                        selectedItems.splice(i, 1);
+                        break;
+                      }
+                    }
+                  }
+                  else
+                    selectedItems.push(itemTextToItem[eventData.final_val]);
+                }
+              });
+            });
+
+            // Add a parser to convert from the field value to the object
+            // containing value and (e.g.) code.
+            controller.$parsers.push(function(value) {
+              var rtn = value;
+              if (typeof value === 'string') {
+                rtn = itemTextToItem[value];
+                if (rtn === undefined && phrAutoOpts.matchListValue === false)
+                  rtn = null; // undefined means invalid, but in this case a non-match is okay
+              }
+
+              return rtn;
+            });
+
+            // if we have a default value, go ahead and select it
+            if (phrAutoOpts.defaultValue !== undefined) {
+              scope.modelData = itemTextToItem[phrAutoOpts.defaultValue];
+            }
+
+            return ac;
+          }
+
+
+          /**
+           *  Sets up a prefetched list on the field.
+           * @param pElem the element on which the autocompleter is to run
+           * @param phrAutoOpts the options from the directive attribute
+           */
+          function searchList(pElem, phrAutoOpts) {
+            var ac = new Def.Autocompleter.Search(pElem.id, phrAutoOpts.url, phrAutoOpts);
+            Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
+              scope.$apply(function() {
+                var item;
+                if (!ac.multiSelect_) {
+                  item = eventData.final_val;
+                  scope.modelData = {text: item, code: ac.getItemCode(item)};
+                }
+                else {
+                  if (typeof scope.modelData !== 'object')
+                    scope.modelData = [];
+                  var selectedItems = scope.modelData;
+                  if (eventData.removed) {
+                    // The item was removed
+                    var removedVal = eventData.final_val;
+                    for (var i=0, len=selectedItems.length; i<len; ++i) {
+                      if (removedVal === selectedItems[i].text) {
+                        selectedItems.splice(i, 1);
+                        break;
+                      }
+                    }
+                  }
+                  else
+                    selectedItems.push({text: item, code: ac.getItemCode(item)});
+                }
+              });
+            });
+
+            // Add a parser to convert from the field value to the object
+            // containing value and (e.g.) code.
+            controller.$parsers.push(function(value) {
+              var rtn = value;
+              if (typeof value === 'string') {
+                var code = ac.getItemCode(value);
+                if (code === null && phrAutoOpts.matchListValue === true)
+                  rtn = undefined; // the signal that value is invalid
+                else
+                  rtn = {text: value, code: code};
+              }
+              return rtn;
+            });
+
+            return ac;
+          }
+
 
           var initWidget = function () {
             // Because we created our own scope, we have to evaluate
             // attrs.phrAutocomplete in the parent scope.
             var phrAutoOpts = scope.$parent.$eval(attrs.phrAutocomplete);
 
-            // If we have a controller (i.e. ngModelController) then wire it up
-            if (controller) {
-              var itemText = [];
-              var itemTextToItem = {};
-              var itemLabel;
-              // "source" = list item data.
-              for (var i=0, len=phrAutoOpts.source.length; i<len; ++i) {
-                var item = phrAutoOpts.source[i];
-                itemLabel = item.label;
-                itemText[i] = itemLabel;
-                itemTextToItem[itemLabel] = item;
-              }
+            // Assign the placeholder value if there is one.
+            if (phrAutoOpts.placeholder)
+              attrs.$set('placeholder', phrAutoOpts.placeholder);
 
+           if (controller) { // ngModelController, from the "require"
               var pElem = element[0];
               // The autocompleter uses the ID attribute of the element. If pElem
               // does not have an ID, give it one.
@@ -79,68 +188,21 @@ if (typeof angular !== 'undefined') {
               if (pElem.name === '')
                 pElem.name = pElem.id;
 
-              // Assign the placeholder value if there is one.
-              if (phrAutoOpts.placeholder)
-                attrs.$set('placeholder', phrAutoOpts.placeholder);
+              var ac = phrAutoOpts.url ? searchList(pElem, phrAutoOpts) :
+                prefetchList(pElem, phrAutoOpts);
 
-              var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
-              Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
-                scope.$apply(function() {
-                  if (!ac.multiSelect_) {
-                    var finalVal = eventData.final_val;
-                    var item = itemTextToItem[finalVal] ||
-                      {value: finalVal, id: finalVal, label: finalVal};
-                    scope.modelData = item;
-                  }
-                  else {
-                    if (typeof scope.modelData !== 'object')
-                      scope.modelData = [];
-                    var selectedItems = scope.modelData;
-                    if (eventData.removed) {
-                      // The item was removed
-                      var removedVal = eventData.final_val;
-                      for (var i=0, len=selectedItems.length; i<len; ++i) {
-                        if (removedVal === selectedItems[i].label) {
-                          selectedItems.splice(i, 1);
-                          break;
-                        }
-                      }
-                    }
-                    else
-                      selectedItems.push(itemTextToItem[eventData.final_val]);
-                  }
-                });
-              });
-
-              // Add a parser to convert from the field value to the object
-              // containing value and (e.g.) code.
-              controller.$parsers.push(function(value) {
-                var rtn = value;
-                if (typeof value === 'string') {
-                  rtn = itemTextToItem[value];
-                  if (rtn === undefined && phrAutoOpts.matchListValue === false)
-                    rtn = null; // undefined means invalid, but in this case a non-match is okay
-                }
-
-                return rtn;
-              });
               // Also add a formatter to get the display string if the model is
               // changed.
               controller.$formatters.push(function(value) {
                 var rtn = value;
                 if (!ac.multiSelect_) {
                   if (typeof value === 'object')
-                    rtn = value.label;
+                    rtn = value.text;
                 }
                 else
                   rtn = '';
                 return rtn;
               });
-
-              // if we have a default value, go ahead and select it
-              if (phrAutoOpts.defaultValue !== undefined) {
-                scope.modelData = itemTextToItem[phrAutoOpts.defaultValue];
-              }
             } // if controller
           };
 

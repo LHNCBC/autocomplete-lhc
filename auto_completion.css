@@ -132,13 +132,13 @@ li.suggestion {
  * any value in the list.  (The redundancy here is for overriding another
  * background setting on input[type='text'].)
  */
-.ansList.no_match, input[type='text'].ansList.no_match {
+.ansList.no_match, input[type='text'].ansList.no_match, .search_field.no_match {
   background-color: #F8DA74;
   color: black;
   font-style: italic;
 }
 
-.ansList.invalid {
+.ansList.invalid, .search_field.invalid {
   border: 2px solid #F00;
 }
 

@@ -35,6 +35,26 @@ describe('autocomp', function() {
       // Focus should be returned to the field
       expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual('fe_multi_sel_cne');
     });
+
+    it('should not send a list selection event for non-matching values', function() {
+      var singleCNEFieldName = 'race_or_ethnicity'
+      var singleCNE = $('#fe_'+singleCNEFieldName);
+      browser.driver.executeScript(function() {
+        window.callCount = 0;
+        Def.Autocompleter.Event.observeListSelections('race_or_ethnicity', function(eventData) {
+          ++callCount;
+        });
+      });
+      expect(browser.driver.executeScript('return window.callCount')).toBe(0);
+      singleCNE.click();
+      singleCNE.sendKeys('zzz');
+      expect(singleCNE.getAttribute('value')).toBe('zzz');
+      singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
+      expect(singleCNE.getAttribute('value')).toBe('zzz');
+      singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field, field should clear
+      expect(singleCNE.getAttribute('value')).toBe('');
+      expect(browser.driver.executeScript('return window.callCount')).toBe(0);
+    });
   });
 });
 
@@ -80,7 +100,7 @@ describe('directive', function() {
     expect(inputElem.getAttribute("placeholder")).toEqual('Select or type a value');
   });
 
-  describe('multi-select lists', function() {
+  describe(': multi-select lists', function() {
     it('should have an empty selection area initially (without a default setting)',
        function() {
       expect(multiField.isPresent()).toBe(true);
@@ -109,20 +129,20 @@ describe('directive', function() {
       expect(searchResults.isDisplayed()).toBeTruthy();
       var item = $('#searchResults li:first-child');
       item.click();
-      expect(multiField.evaluate('listFieldVal2')).toEqual([{label: 'Green', code: 'G'}]);
+      expect(multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
       // Now add a second item.
       var item = $('#searchResults li:first-child');
       item.click();
       expect(multiField.evaluate('listFieldVal2')).toEqual(
-        [{label: 'Green', code: 'G'}, {label: 'Blue', code: 'B'}]);
+        [{text: 'Green', code: 'G'}, {text: 'Blue', code: 'B'}]);
       // Now remove the first item
       var button = element.all(by.css('button:first-child')).first().click();
       expect(multiField.evaluate('listFieldVal2')).toEqual(
-        [{label: 'Blue', code: 'B'}]);
+        [{text: 'Blue', code: 'B'}]);
     });
   });
 
-  describe('CNE lists', function() {
+  describe(': CNE lists', function() {
     var cneListID = 'ac2';
     var cneList = $('#'+cneListID);
     it('should warn user about invalid values', function() {
@@ -134,7 +154,18 @@ describe('directive', function() {
       cneList.sendKeys(protractor.Key.TAB); // shift focus from field
       expect(hasClass(cneList, 'no_match')).toBe(true);
       expect(hasClass(cneList, 'invalid')).toBe(true);
+      // Focus should be back in the field
       expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(cneListID);
+    });
+  });
+
+  describe(': search lists', function() {
+    var searchList = $('#list3');
+    it('should show a result list when the user types', function() {
+      searchList.click();
+      expect(searchResults.isDisplayed()).toBeFalsy();
+      searchList.sendKeys('ar');
+      expect(searchResults.isDisplayed()).toBeTruthy();
     });
   });
 });

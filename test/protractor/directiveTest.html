@@ -7,6 +7,7 @@
   </head>
   <body ng-app="someApp">
     <div ng-controller="testPageController">
+      Prefetch list:
       <input name="list1" type="text"
         ng-required="false"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal"
@@ -14,10 +15,18 @@
       <br>
       Selected code: <input readonly id="code" name="code" ng-model="listFieldVal.code">
       <p>
+      Multi-select prefetch list:
       <input name="list2" type="text"
         ng-required="false" placeholder="Select or type a value"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
         phr-autocomplete="multilistOpts">
+      <p>
+      "Search" list:
+      <input name="list3" id="list3" type="text"
+        ng-required="false" placeholder="Select or type a value"
+        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal3"
+        phr-autocomplete="searchListOpts">
+      <p>
       <input name="nonlist" type="text">
     </div>
     <script src="/bower_components/prototypejs-bower/prototype.js"></script>
@@ -42,6 +51,7 @@
     <script src="/event.simulate.js"></script>
     <script src="/bower_components/angular/angular.js"></script>
     <script src="/phr-autocomplete.js"></script>
+    <script src="/test/protractor/ajaxMock.js"></script>
     <script>
       angular.module('someApp', ['someModule', 'autocompPhr']);
       var someMod = angular.module('someModule', []).directive('newTestDirective', function() {
@@ -54,10 +64,10 @@
         $scope.list1Opts = {
           // source is the list of item data
           source: [
-            {label: 'Green', // label is the display string
+            {text: 'Green', // label is the display string
              code: 'G' // item objects can contain any other data too
             },
-            {label: 'Blue', code: 'B'}
+            {text: 'Blue', code: 'B'}
           ],
           placeholder: "Select or type a value",
           defaultValue: 'Blue' // label the item you want selected as a default
@@ -65,15 +75,22 @@
 
         $scope.multilistOpts = {
           source: [
-            {label: 'Green', // label is the display string
+            {text: 'Green', // label is the display string
              code: 'G' // item objects can contain any other data too
             },
-            {label: 'Blue', code: 'B'},
-            {label: 'Red', code: 'R'}
+            {text: 'Blue', code: 'B'},
+            {text: 'Red', code: 'R'}
           ],
           matchListValue: true,
           maxSelect: '*',
           placeholder: 'Select one or more'
+        };
+
+        $scope.searchListOpts = {
+          url: '/form/get_search_res_list?fd_id=1284',
+          matchListValue: true,
+          autocomp: true,
+          suggestionMode: 0
         };
       }]);
     </script>
