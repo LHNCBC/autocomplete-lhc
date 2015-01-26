@@ -2,6 +2,7 @@ helpers = require('./test_helpers.js');
 var hasClass = helpers.hasClass;
 
 describe('autocomp', function() {
+  var searchResults = $('#searchResults');
   it('should not show the list in response to a shift or control key being held down',
      function() {
     browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
@@ -51,9 +52,35 @@ describe('autocomp', function() {
       expect(singleCNE.getAttribute('value')).toBe('zzz');
       singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
       expect(singleCNE.getAttribute('value')).toBe('zzz');
+      expect(browser.driver.executeScript('return window.callCount')).toBe(0);
       singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field, field should clear
       expect(singleCNE.getAttribute('value')).toBe('');
       expect(browser.driver.executeScript('return window.callCount')).toBe(0);
+
+      // However, we do want it to send an event if the final, cleared value is
+      // a change from what was originally in the field.
+      // Select a valid list item, then enter something invalid and tab until
+      // the field clears.  There should be a list selection event for that
+      // case, to signal the field was cleared.
+      singleCNE.click();
+      var item = $('#searchResults li:first-child');
+      item.click();
+      // For that selection, there should have been one event sent.
+      expect(browser.driver.executeScript('return window.callCount')).toBe(1);
+      // Tab away and refocus
+      singleCNE.sendKeys(protractor.Key.TAB);
+      browser.driver.switchTo().activeElement().sendKeys(
+        protractor.Key.chord(protractor.Key.SHIFT, protractor.Key.TAB));
+      // Now try entering an invalid value again.
+      singleCNE.sendKeys('zzz');
+      expect(singleCNE.getAttribute('value')).toBe('zzz');
+      singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
+      expect(singleCNE.getAttribute('value')).toBe('zzz');
+      singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field, field should clear
+      expect(singleCNE.getAttribute('value')).toBe('');
+      // Now we should have had another call, because the end result is that the
+      // field was cleared.
+      expect(browser.driver.executeScript('return window.callCount')).toBe(2);
     });
   });
 });

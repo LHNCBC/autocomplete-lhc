@@ -1485,8 +1485,9 @@ if (typeof Def === 'undefined')
 
         // Note that attemptSelection might have changed the element value, so
         // we call getFieldVal again.
-        this.uneditedValue = Def.Autocompleter.getFieldVal(this.element);
-        this.valueOnChange_ = this.uneditedValue;
+        this.valueOnChange_ = Def.Autocompleter.getFieldVal(this.element);
+        if (!this.refocusInProgress_)  // if not refocusing (for an invalid value)
+          this.uneditedValue = this.valueOnChange_;
       }
     },
 
@@ -1533,6 +1534,10 @@ if (typeof Def === 'undefined')
             // Also clear the match status flag, because a blank value is okay
             // (except for required fields when the form submits).
             this.setMatchStatusIndicator(true);
+            // If the field was not originally blank, send a list selection
+            // event.
+            if (this.uneditedValue != '')
+              this.listSelectionNotification('', false);
           }
           else {
             // If the user retyped a non-list value that was in the field, and that
