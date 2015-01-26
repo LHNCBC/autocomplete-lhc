@@ -13,7 +13,7 @@ if (! $?PROJECT_DIR) then
   setenv PROJECT_DIR ~/autocomp
 endif
 
-set path = ($PROJECT_DIR/bin $PROJECT_DIR/node_modules/.bin /bin /usr/bin /usr/local/bin /usr/sbin /sbin /etc)
+set path = ($PROJECT_DIR/bin $PROJECT_DIR/node_modules/.bin /bin /usr/local/bin /usr/bin /usr/sbin /sbin /etc)
 setenv EDITOR /usr/bin/vim
 setenv TESTOPTS "--v --seed 1"
 
