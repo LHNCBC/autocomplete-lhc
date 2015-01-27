@@ -2,6 +2,7 @@ helpers = require('./test_helpers.js');
 var hasClass = helpers.hasClass;
 
 describe('autocomp', function() {
+  var searchResults = $('#searchResults');
   it('should not show the list in response to a shift or control key being held down',
      function() {
     browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
@@ -34,6 +35,52 @@ describe('autocomp', function() {
       expect(hasClass(cneList, 'invalid')).toBe(true);
       // Focus should be returned to the field
       expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual('fe_multi_sel_cne');
+    });
+
+    it('should not send a list selection event for non-matching values', function() {
+      var singleCNEFieldName = 'race_or_ethnicity'
+      var singleCNE = $('#fe_'+singleCNEFieldName);
+      browser.driver.executeScript(function() {
+        window.callCount = 0;
+        Def.Autocompleter.Event.observeListSelections('race_or_ethnicity', function(eventData) {
+          ++callCount;
+        });
+      });
+      expect(browser.driver.executeScript('return window.callCount')).toBe(0);
+      singleCNE.click();
+      singleCNE.sendKeys('zzz');
+      expect(singleCNE.getAttribute('value')).toBe('zzz');
+      singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
+      expect(singleCNE.getAttribute('value')).toBe('zzz');
+      expect(browser.driver.executeScript('return window.callCount')).toBe(0);
+      singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field, field should clear
+      expect(singleCNE.getAttribute('value')).toBe('');
+      expect(browser.driver.executeScript('return window.callCount')).toBe(0);
+
+      // However, we do want it to send an event if the final, cleared value is
+      // a change from what was originally in the field.
+      // Select a valid list item, then enter something invalid and tab until
+      // the field clears.  There should be a list selection event for that
+      // case, to signal the field was cleared.
+      singleCNE.click();
+      var item = $('#searchResults li:first-child');
+      item.click();
+      // For that selection, there should have been one event sent.
+      expect(browser.driver.executeScript('return window.callCount')).toBe(1);
+      // Tab away and refocus
+      singleCNE.sendKeys(protractor.Key.TAB);
+      browser.driver.switchTo().activeElement().sendKeys(
+        protractor.Key.chord(protractor.Key.SHIFT, protractor.Key.TAB));
+      // Now try entering an invalid value again.
+      singleCNE.sendKeys('zzz');
+      expect(singleCNE.getAttribute('value')).toBe('zzz');
+      singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
+      expect(singleCNE.getAttribute('value')).toBe('zzz');
+      singleCNE.sendKeys(protractor.Key.TAB); // shift focus from field, field should clear
+      expect(singleCNE.getAttribute('value')).toBe('');
+      // Now we should have had another call, because the end result is that the
+      // field was cleared.
+      expect(browser.driver.executeScript('return window.callCount')).toBe(2);
     });
   });
 });
@@ -80,7 +127,7 @@ describe('directive', function() {
     expect(inputElem.getAttribute("placeholder")).toEqual('Select or type a value');
   });
 
-  describe('multi-select lists', function() {
+  describe(': multi-select lists', function() {
     it('should have an empty selection area initially (without a default setting)',
        function() {
       expect(multiField.isPresent()).toBe(true);
@@ -109,20 +156,20 @@ describe('directive', function() {
       expect(searchResults.isDisplayed()).toBeTruthy();
       var item = $('#searchResults li:first-child');
       item.click();
-      expect(multiField.evaluate('listFieldVal2')).toEqual([{label: 'Green', code: 'G'}]);
+      expect(multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
       // Now add a second item.
       var item = $('#searchResults li:first-child');
       item.click();
       expect(multiField.evaluate('listFieldVal2')).toEqual(
-        [{label: 'Green', code: 'G'}, {label: 'Blue', code: 'B'}]);
+        [{text: 'Green', code: 'G'}, {text: 'Blue', code: 'B'}]);
       // Now remove the first item
       var button = element.all(by.css('button:first-child')).first().click();
       expect(multiField.evaluate('listFieldVal2')).toEqual(
-        [{label: 'Blue', code: 'B'}]);
+        [{text: 'Blue', code: 'B'}]);
     });
   });
 
-  describe('CNE lists', function() {
+  describe(': CNE lists', function() {
     var cneListID = 'ac2';
     var cneList = $('#'+cneListID);
     it('should warn user about invalid values', function() {
@@ -134,7 +181,18 @@ describe('directive', function() {
       cneList.sendKeys(protractor.Key.TAB); // shift focus from field
       expect(hasClass(cneList, 'no_match')).toBe(true);
       expect(hasClass(cneList, 'invalid')).toBe(true);
+      // Focus should be back in the field
       expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(cneListID);
+    });
+  });
+
+  describe(': search lists', function() {
+    var searchList = $('#list3');
+    it('should show a result list when the user types', function() {
+      searchList.click();
+      expect(searchResults.isDisplayed()).toBeFalsy();
+      searchList.sendKeys('ar');
+      expect(searchResults.isDisplayed()).toBeTruthy();
     });
   });
 });

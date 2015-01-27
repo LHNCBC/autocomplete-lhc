@@ -370,15 +370,6 @@ if (typeof Def === 'undefined')
      *  Scriptaculous autocompleter base class.
      * @param matchListValue Whether the field value is required to be one from
      *  the list
-     * @param dataRequester A DataRecordRequester for getting additional data
-     *  after the user makes a selection from the completion list.  This may be
-     *  null, in which case no request for additional data is made.
-     * @param suggestionMode an integer specifying what type of suggestion should
-     *  be offered based on what the user has typed.  If this is not specified,
-     *  the default is 0, which is no suggestions.  A value of 1 means
-     *  "pick the shortest match", and a value of 2 means that the suggestion
-     *  is based on statistics, and that we will rely on the server to return
-     *  the best item as the first item in the list.
      * @param options A hash of optional parameters.  For the allowed keys see the
      *  subclasses.  The base class uses the following keys:
      *  <ul>
@@ -1390,7 +1381,9 @@ if (typeof Def === 'undefined')
         }
       }
 
-      if (!canSelect && Def.Autocompleter.Event.callbacks_ !== null)
+      // Send a list selection notification for non-matching values too, but
+      // only if non-matching values are allowed.
+      if (!canSelect && !this.matchListValue_ && Def.Autocompleter.Event.callbacks_ !== null)
         this.listSelectionNotification(valTyped, false);
 
       return canSelect;
@@ -1492,8 +1485,9 @@ if (typeof Def === 'undefined')
 
         // Note that attemptSelection might have changed the element value, so
         // we call getFieldVal again.
-        this.uneditedValue = Def.Autocompleter.getFieldVal(this.element);
-        this.valueOnChange_ = this.uneditedValue;
+        this.valueOnChange_ = Def.Autocompleter.getFieldVal(this.element);
+        if (!this.refocusInProgress_)  // if not refocusing (for an invalid value)
+          this.uneditedValue = this.valueOnChange_;
       }
     },
 
@@ -1540,6 +1534,10 @@ if (typeof Def === 'undefined')
             // Also clear the match status flag, because a blank value is okay
             // (except for required fields when the form submits).
             this.setMatchStatusIndicator(true);
+            // If the field was not originally blank, send a list selection
+            // event.
+            if (this.uneditedValue != '')
+              this.listSelectionNotification('', false);
           }
           else {
             // If the user retyped a non-list value that was in the field, and that
