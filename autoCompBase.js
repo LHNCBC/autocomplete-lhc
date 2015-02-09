@@ -423,6 +423,9 @@ if (typeof Def === 'undefined')
         this.selectedList = fieldDiv.down();
       }
 
+      // ARIA markup for screen readers
+      this.element.writeAttribute('role', 'combobox');
+
       // Set up event handler functions.
       this.onHoverListener = this.onHover.bindAsEventListener(this);
       this.onMouseDownListener = this.onMouseDown.bindAsEventListener(this);
