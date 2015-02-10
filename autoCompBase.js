@@ -423,6 +423,15 @@ if (typeof Def === 'undefined')
         this.selectedList = fieldDiv.down();
       }
 
+      // ARIA markup for screen readers
+      // See http://test.cita.illinois.edu/aria/combobox/combobox2.php
+      // for an example that works with JAWS + Firefox.  (It behaves
+      // like a regular combobox, according to a JAWS user.)
+      this.element.writeAttribute('role', 'combobox');
+      // For aria-expanded, I am following the example at:
+      // http://www.w3.org/TR/wai-aria/roles#combobox
+      this.element.writeAttribute('aria-expanded', 'false');
+
       // Set up event handler functions.
       this.onHoverListener = this.onHover.bindAsEventListener(this);
       this.onMouseDownListener = this.onMouseDown.bindAsEventListener(this);
@@ -691,6 +700,7 @@ if (typeof Def === 'undefined')
         if (!hidden) {
           this.listContainer.style.visibility = 'hidden';
           this.listContainer.writeAttribute('aria-hidden', 'true');
+          this.element.writeAttribute('aria-expanded', 'false');
         }
       }
     },
@@ -703,6 +713,7 @@ if (typeof Def === 'undefined')
       var previouslyHidden = this.listContainer.style.visibility !== 'visible';
       this.listContainer.style.visibility = 'visible';
       this.listContainer.writeAttribute('aria-hidden', 'false');
+      this.element.writeAttribute('aria-expanded', 'true');
       if (previouslyHidden && !this.temporaryHide_ && this.entryCount > 0) {
         Def.Autocompleter.screenReaderLog('A list has appeared below the '+
           this.getFieldName()+'.');

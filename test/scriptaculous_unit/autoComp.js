@@ -72,6 +72,25 @@ var testFunctions = {
 
 
     /**
+     *  Tests ARIA markup.
+     */
+    testAriaMarkup: function() {with(this) {
+      var elem = AutoCompTestUtil.createInputElement();
+      var otherAutoComp =
+        new Def.Autocompleter.Prefetch(elem.id,
+           ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
+           {'addSeqNum': false});
+
+      assertEqual('combobox', elem.readAttribute('role'));
+      otherAutoComp.onFocus();
+      otherAutoComp.showList();
+      assertEqual('true', elem.readAttribute('aria-expanded'));
+      otherAutoComp.hideList();
+      assertEqual('false', elem.readAttribute('aria-expanded'));
+    }},
+
+
+    /**
      *  Tests dupItemToCode.
      */
     testDupItemToCode: function() {with(this) {
@@ -776,11 +795,12 @@ AutoCompTestUtil = {
   createInputElement: function() {
     var rtnEle = document.createElement('input');
     rtnEle.setAttribute('type', 'text');
-    var id = 'fe_e';
-    var idCtr = 1;
-    while ($(id) != null)
-      id += ++idCtr;
-    rtnEle.setAttribute('id', id);
+    var idBase = 'fe_e';
+    var idVal = idBase;
+    var idCtr = 0;
+    while ($(idVal) != null)
+      idVal = idBase + ++idCtr;
+    rtnEle.setAttribute('id', idVal);
     document.forms[0].appendChild(rtnEle);
     return rtnEle;
   },
