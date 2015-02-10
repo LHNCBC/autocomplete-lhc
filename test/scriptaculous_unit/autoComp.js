@@ -72,6 +72,25 @@ var testFunctions = {
 
 
     /**
+     *  Test the screen reader log.
+     */
+    testScreenReaderLog: function() {with(this) {
+      // First test the deprected usage.
+      Def.ScreenReaderLog.add('one');
+      assert($('reader_log').textContent.indexOf('one')>=0, 'deprecated test');
+      // Now test the new usage
+      var log = new Def.ScreenReaderLog();
+      log.add('two');
+      assert(log.logElement_.textContent.indexOf('two')>=0, 'current test');
+      // Neither log should have the other's input
+      assertEqual(-1, $('reader_log').textContent.indexOf('two'),
+       'old reader_log has output it should not');
+      assertEqual(-1, log.logElement_.textContent.indexOf('one',
+       'new log has output it should not'));
+    }},
+
+
+    /**
      *  Tests ARIA markup.
      */
     testAriaMarkup: function() {with(this) {
