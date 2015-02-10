@@ -1,10 +1,4 @@
-// License:  This file should be considered to be under the terms of some
-// "non-viral" open source license, which we will specify soon.  Basically,
-// you can use the code as long as you give NLM credit.
-
 // This file contains auto-completer code for the Data Entry Framework project.
-// These autocompleters are for the split style of display, where the
-// auto-completion list appears in a separate area on the right or below.
 
 // These autocompleters are based on the Autocompleter.Base class defined
 // in the Script.aculo.us controls.js file.
