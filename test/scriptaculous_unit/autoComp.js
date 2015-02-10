@@ -72,6 +72,21 @@ var testFunctions = {
 
 
     /**
+     *  Test getFieldName.
+     */
+    testGetFieldName: function() {with(this) {
+      // For an unlabeled field (which is the default case), the field
+      // label should just be "field".
+      var otherAutoComp =
+        new Def.Autocompleter.Prefetch(AutoCompTestUtil.createInputElement().id,
+           ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
+           {'addSeqNum': false});
+
+      assertEqual('field', otherAutoComp.getFieldName());
+    }},
+
+
+    /**
      *  Test the screen reader log.
      */
     testScreenReaderLog: function() {with(this) {

@@ -13,6 +13,7 @@
     "effectScroll.js",
     "event.simulate.js",
     "observable.js",
+    "screenReaderLog.js",
     "recordDataRequester.js",
     "fieldAlarms.js",
     "dialog.js",

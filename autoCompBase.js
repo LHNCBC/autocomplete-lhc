@@ -25,6 +25,10 @@ if (typeof Def === 'undefined')
      */
     USE_STATISTICS: 2,
 
+    /**
+     *  The screen reader log used by the autocompleter.
+     */
+    screenReaderLog_: new Def.ScreenReaderLog(),
 
     /**
      *  Sets global options for customizing behavior of all autocompleters.
@@ -141,11 +145,12 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Logs a message for a screen reader to read.  (This function does not do
-     *  anything unless an implementation is provided via setOptions-- see above.)
+     *  Logs a message for a screen reader to read.  By default, this
+     *  uses an instance of Def.ScreenReaderLog.
      * @param msg the message to log
      */
     screenReaderLog: function(msg) {
+      Def.Autocompleter.screenReaderLog_.add(msg);
     }
   };
 
@@ -722,9 +727,10 @@ if (typeof Def === 'undefined')
      *  or just 'field' if there is no field label.
      */
     getFieldName: function () {
-      if (this.fieldName_ === null) {
+      if (this.fieldName_ === undefined) {
         var fieldLabel = Def.Autocompleter.getFieldLabel(this.element.id);
-        this.fieldName_ = (fieldLabel === null) ? '' : 'field "'+fieldLabel+'"';
+        this.fieldName_ =
+          (fieldLabel === null) ? 'field' : 'field "'+fieldLabel+'"';
       }
       return this.fieldName_;
     },
