@@ -678,7 +678,7 @@
           default:
             // Call the base class method
             this.matchListItemsToField_ = true;
-            Autocompleter.Local.prototype.onKeyPress.apply(this, [event]);
+            this.onKeyPressWrapper.apply(this, [event]);
         }
       }
       else {
@@ -687,8 +687,19 @@
          // mouse, the field will still have focus (though the list will not be
          // active), and the user can keep typing.
          this.matchListItemsToField_ = true;
-         Autocompleter.Local.prototype.onKeyPress.apply(this, [event]);
+         this.onKeyPressWrapper.apply(this, [event]);
       }
+    },
+
+
+    /**
+     *   Calls the base class onkeypress if the control key isn't down.
+     */
+    onKeyPressWrapper: function(event) {
+      // Skip calling the base onkeypress if control key is down, so that the list does not
+      // respon to control + arrow.
+      if (!event.ctrlKey)
+        Autocompleter.Local.prototype.onKeyPress.apply(this, [event]);
     },
 
 
