@@ -678,7 +678,7 @@
           default:
             // Call the base class method
             this.matchListItemsToField_ = true;
-            this.onKeyPressWrapper.apply(this, [event]);
+            this.onKeyPressWrapper(event);
         }
       }
       else {
@@ -687,7 +687,7 @@
          // mouse, the field will still have focus (though the list will not be
          // active), and the user can keep typing.
          this.matchListItemsToField_ = true;
-         this.onKeyPressWrapper.apply(this, [event]);
+         this.onKeyPressWrapper(event);
       }
     },
 
