@@ -3,12 +3,14 @@ var hasClass = helpers.hasClass;
 
 describe('autocomp', function() {
   var searchResults = $('#searchResults');
+  var raceField = $('#fe_race_or_ethnicity');
+  var searchCNE = $('#fe_search_cne');
+
   it('should not show the list in response to a shift or control key being held down',
      function() {
     browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
-    var inputElem = $('#fe_race_or_ethnicity');
+    var inputElem = raceField;
     inputElem.click();
-    var searchResults = $('#searchResults');
     expect(searchResults.isDisplayed()).toBeTruthy();
     inputElem.sendKeys(protractor.Key.ESCAPE);
     expect(searchResults.isDisplayed()).toBeFalsy();
@@ -21,6 +23,31 @@ describe('autocomp', function() {
     inputElem.sendKeys(protractor.Key.BACKSPACE);
     expect(searchResults.isDisplayed()).toBeTruthy();
   });
+
+
+  it('should not shift the selected item when the control key is down',
+     function() {
+    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    raceField.click();
+    expect(searchResults.isDisplayed()).toBeTruthy();
+    raceField.sendKeys(protractor.Key.ARROW_DOWN); // first item
+    raceField.sendKeys(protractor.Key.ARROW_DOWN); // second item
+    expect(raceField.getAttribute('value')).toBe('Asian');
+    raceField.sendKeys(protractor.Key.CONTROL, protractor.Key.ARROW_DOWN);
+    // second item should still be selected
+    expect(raceField.getAttribute('value')).toBe('Asian');
+
+    // Now try a search list
+    searchCNE.click();
+    searchCNE.sendKeys('ar');
+    expect(searchResults.isDisplayed()).toBeTruthy();
+    searchCNE.sendKeys(protractor.Key.ARROW_DOWN); // first item
+    expect(searchCNE.getAttribute('value')).toBe('Arachnoiditis');
+    searchCNE.sendKeys(protractor.Key.CONTROL, protractor.Key.ARROW_DOWN);
+    // First item should still be selected
+    expect(searchCNE.getAttribute('value')).toBe('Arachnoiditis');
+  });
+
 
   describe('CNE lists', function() {
     var cneList = $('#fe_multi_sel_cne');
@@ -38,6 +65,7 @@ describe('autocomp', function() {
     });
 
     it('should not send a list selection event for non-matching values', function() {
+      browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
       var singleCNEFieldName = 'race_or_ethnicity'
       var singleCNE = $('#fe_'+singleCNEFieldName);
       browser.driver.executeScript(function() {
