@@ -151,9 +151,6 @@ describe('directive', function() {
     expect(inputElem.getAttribute("value")).toEqual('Green');
     expect(codeField.getAttribute("value")).toEqual('G');
   });
-  it('should add the placeholder attribute when provided', function() {
-    expect(inputElem.getAttribute("placeholder")).toEqual('Select or type a value');
-  });
 
   describe(': multi-select lists', function() {
     it('should have an empty selection area initially (without a default setting)',

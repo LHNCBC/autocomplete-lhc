@@ -169,11 +169,7 @@ if (typeof angular !== 'undefined') {
             // attrs.phrAutocomplete in the parent scope.
             var phrAutoOpts = scope.$parent.$eval(attrs.phrAutocomplete);
 
-            // Assign the placeholder value if there is one.
-            if (phrAutoOpts.placeholder)
-              attrs.$set('placeholder', phrAutoOpts.placeholder);
-
-           if (controller) { // ngModelController, from the "require"
+            if (controller) { // ngModelController, from the "require"
               var pElem = element[0];
               // The autocompleter uses the ID attribute of the element. If pElem
               // does not have an ID, give it one.
