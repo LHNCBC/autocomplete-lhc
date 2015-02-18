@@ -211,12 +211,26 @@ describe('directive', function() {
       expect(multiField.evaluate('listFieldVal2')).toEqual(
         [{text: 'Blue', code: 'B'},{text: 'Green', code: 'G'}]);
     });
+
+    it('should not show matches for selected items', function() {
+      openDirectiveTestPage();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(null);
+      multiField.click();
+      expect(searchResults.isDisplayed()).toBeTruthy();
+      var item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
+      multiField.sendKeys('Gr');
+      // There should be no matches
+      expect(element(by.css('#searchResults li:first-child')).isPresent()).toBeFalsy();
+    });
   });
 
   describe(': CNE lists', function() {
     var cneListID = 'ac2';
     var cneList = $('#'+cneListID);
     it('should warn user about invalid values', function() {
+      openDirectiveTestPage();
       expect(hasClass(cneList, 'no_match')).toBe(false);
       expect(hasClass(cneList, 'invalid')).toBe(false);
 
