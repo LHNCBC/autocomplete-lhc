@@ -27,6 +27,12 @@
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal3"
         phr-autocomplete="searchListOpts">
       <p>
+      Prefetch list w/ pre-populated model value:
+      <input name="list1b" type="text"
+        ng-required="false"
+        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal1b"
+        phr-autocomplete="list1Opts" id="list1b">
+      <p>
       <input name="nonlist" type="text">
     </div>
     <script src="/bower_components/prototypejs-bower/prototype.js"></script>
@@ -61,6 +67,8 @@
       });
 
       someMod.controller('testPageController', ['$scope', function ($scope) {
+        $scope.listFieldVal1b = 'a pre-populated model value';
+
         $scope.list1Opts = {
           // source is the list of item data
           source: [
