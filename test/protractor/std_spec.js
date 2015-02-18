@@ -141,6 +141,10 @@ describe('directive', function() {
     expect(inputElem.getAttribute("value")).toEqual('Blue');
     expect(codeField.getAttribute("value")).toEqual('B');
   });
+  it('should not load the default item code and value when the model is already populated', function() {
+    var prePopElem = $('#list1b');
+    expect(prePopElem.getAttribute("value")).toEqual('a pre-populated model value');
+  });
   it('should populate the model when an item is selected', function() {
     inputElem.click();
     expect(searchResults.isDisplayed()).toBeTruthy();

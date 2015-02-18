@@ -103,8 +103,10 @@ if (typeof angular !== 'undefined') {
               return rtn;
             });
 
-            // if we have a default value, go ahead and select it
-            if (phrAutoOpts.defaultValue !== undefined) {
+            // if we have a default value, and if the model value is not already
+            // set, go ahead and select the default
+            if (phrAutoOpts.defaultValue !== undefined &&
+                (scope.modelData === undefined || scope.modelData === null)) {
               scope.modelData = itemTextToItem[phrAutoOpts.defaultValue];
             }
 
