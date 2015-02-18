@@ -187,7 +187,7 @@ describe('directive', function() {
       item.click();
       expect(multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
       // Now add a second item.
-      var item = $('#searchResults li:first-child');
+      item = $('#searchResults li:first-child');
       item.click();
       expect(multiField.evaluate('listFieldVal2')).toEqual(
         [{text: 'Green', code: 'G'}, {text: 'Blue', code: 'B'}]);
@@ -195,6 +195,21 @@ describe('directive', function() {
       var button = element.all(by.css('button:first-child')).first().click();
       expect(multiField.evaluate('listFieldVal2')).toEqual(
         [{text: 'Blue', code: 'B'}]);
+      // Add an invalid value.  The existing value should not get lost if we
+      // then add a second valid value.  (Note: multiField is CNE).
+      multiField.sendKeys('zzz');
+      multiField.sendKeys(protractor.Key.TAB); // attempt to leave field
+      expect(hasClass(multiField, 'no_match')).toBe(true);
+      expect(hasClass(multiField, 'invalid')).toBe(true);
+      multiField.sendKeys(protractor.Key.TAB); // shift focus from field (clearing it)
+      expect(multiField.getAttribute('value')).toEqual('');
+      // Add a valid item and check the model.
+      multiField.click();
+      expect(searchResults.isDisplayed()).toBeTruthy();
+      item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(
+        [{text: 'Blue', code: 'B'},{text: 'Green', code: 'G'}]);
     });
   });
 
