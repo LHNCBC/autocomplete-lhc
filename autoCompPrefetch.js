@@ -404,7 +404,7 @@
 
           // For multi-select lists, filter out currently selected items.
           // Then, only add it if we haven't exceeded the limit.
-          if ((!instance.multiSelect_ || !instance.isSelected(itemText)) &&
+          if ((!instance.multiSelect_ || !instance.isSelected(elem)) &&
               itemText && (totalCount <= maxReturn ||
                             (instance.numHeadings_>0 && useFullList))) {
             if (lastHeading && !foundItemForLastHeading) {
