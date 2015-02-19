@@ -72,6 +72,18 @@ var testFunctions = {
 
 
     /**
+     *  Test escape/unescapeAttribute.
+     */
+    testEscapeAttribute: function() {with(this) {
+      var testStr = '&<>"\'';
+      var escapedStr = Def.Autocompleter.Base.escapeAttribute(testStr);
+      var unescapedStr = Def.Autocompleter.Base.unescapeAttribute(escapedStr);
+      assertEqual('&amp;&lt;&gt;&quot;&#39;', escapedStr);
+      assertEqual(testStr, unescapedStr);
+    }},
+
+
+    /**
      *  Test getFieldName.
      */
     testGetFieldName: function() {with(this) {

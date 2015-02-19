@@ -501,7 +501,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
             $('moreResults').style.display ='none';
           }
           // Dan Clark of Freedom Scientific reported that the search count made
-          // the output for JAWS to verbose, so I am commenting out this call.
+          // the output for JAWS too verbose, so I am commenting out this call.
           // this.readSearchCount();
 
           // Now display the counts and the elapsed time
