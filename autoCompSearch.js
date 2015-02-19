@@ -765,7 +765,10 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
           break; // ignore it
         default:
           // Call the base class method
-          Autocompleter.Base.prototype.onKeyPress.apply(this, [event]);
+          // ... but not when the control key is down, so that the list does not
+          // respon to control + arrow.
+          if (!event.ctrlKey)
+            Autocompleter.Base.prototype.onKeyPress.apply(this, [event]);
       }
     },
 

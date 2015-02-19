@@ -850,7 +850,8 @@ if (typeof Def === 'undefined')
             this.active) {
           this.pageOptionsUpOrDown(charCode===Event.KEY_PAGEUP);
         }
-        else if ((charCode===Event.KEY_LEFT || charCode===Event.KEY_RIGHT) &&
+        else if (!event.ctrlKey &&
+         (charCode===Event.KEY_LEFT || charCode===Event.KEY_RIGHT) &&
             this.active && this.index>=0 &&
             this.update.hasClassName('multi_col')) {
           this.moveToOtherColumn(event);

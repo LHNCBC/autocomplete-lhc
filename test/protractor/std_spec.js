@@ -3,12 +3,14 @@ var hasClass = helpers.hasClass;
 
 describe('autocomp', function() {
   var searchResults = $('#searchResults');
+  var raceField = $('#fe_race_or_ethnicity');
+  var searchCNE = $('#fe_search_cne');
+
   it('should not show the list in response to a shift or control key being held down',
      function() {
     browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
-    var inputElem = $('#fe_race_or_ethnicity');
+    var inputElem = raceField;
     inputElem.click();
-    var searchResults = $('#searchResults');
     expect(searchResults.isDisplayed()).toBeTruthy();
     inputElem.sendKeys(protractor.Key.ESCAPE);
     expect(searchResults.isDisplayed()).toBeFalsy();
@@ -21,6 +23,31 @@ describe('autocomp', function() {
     inputElem.sendKeys(protractor.Key.BACKSPACE);
     expect(searchResults.isDisplayed()).toBeTruthy();
   });
+
+
+  it('should not shift the selected item when the control key is down',
+     function() {
+    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    raceField.click();
+    expect(searchResults.isDisplayed()).toBeTruthy();
+    raceField.sendKeys(protractor.Key.ARROW_DOWN); // first item
+    raceField.sendKeys(protractor.Key.ARROW_DOWN); // second item
+    expect(raceField.getAttribute('value')).toBe('Asian');
+    raceField.sendKeys(protractor.Key.CONTROL, protractor.Key.ARROW_DOWN);
+    // second item should still be selected
+    expect(raceField.getAttribute('value')).toBe('Asian');
+
+    // Now try a search list
+    searchCNE.click();
+    searchCNE.sendKeys('ar');
+    expect(searchResults.isDisplayed()).toBeTruthy();
+    searchCNE.sendKeys(protractor.Key.ARROW_DOWN); // first item
+    expect(searchCNE.getAttribute('value')).toBe('Arachnoiditis');
+    searchCNE.sendKeys(protractor.Key.CONTROL, protractor.Key.ARROW_DOWN);
+    // First item should still be selected
+    expect(searchCNE.getAttribute('value')).toBe('Arachnoiditis');
+  });
+
 
   describe('CNE lists', function() {
     var cneList = $('#fe_multi_sel_cne');
@@ -38,6 +65,7 @@ describe('autocomp', function() {
     });
 
     it('should not send a list selection event for non-matching values', function() {
+      browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
       var singleCNEFieldName = 'race_or_ethnicity'
       var singleCNE = $('#fe_'+singleCNEFieldName);
       browser.driver.executeScript(function() {
@@ -113,6 +141,10 @@ describe('directive', function() {
     expect(inputElem.getAttribute("value")).toEqual('Blue');
     expect(codeField.getAttribute("value")).toEqual('B');
   });
+  it('should not load the default item code and value when the model is already populated', function() {
+    var prePopElem = $('#list1b');
+    expect(prePopElem.getAttribute("value")).toEqual('a pre-populated model value');
+  });
   it('should populate the model when an item is selected', function() {
     inputElem.click();
     expect(searchResults.isDisplayed()).toBeTruthy();
@@ -122,9 +154,6 @@ describe('directive', function() {
     codeField.click();
     expect(inputElem.getAttribute("value")).toEqual('Green');
     expect(codeField.getAttribute("value")).toEqual('G');
-  });
-  it('should add the placeholder attribute when provided', function() {
-    expect(inputElem.getAttribute("placeholder")).toEqual('Select or type a value');
   });
 
   describe(': multi-select lists', function() {
@@ -158,7 +187,7 @@ describe('directive', function() {
       item.click();
       expect(multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
       // Now add a second item.
-      var item = $('#searchResults li:first-child');
+      item = $('#searchResults li:first-child');
       item.click();
       expect(multiField.evaluate('listFieldVal2')).toEqual(
         [{text: 'Green', code: 'G'}, {text: 'Blue', code: 'B'}]);
@@ -166,6 +195,34 @@ describe('directive', function() {
       var button = element.all(by.css('button:first-child')).first().click();
       expect(multiField.evaluate('listFieldVal2')).toEqual(
         [{text: 'Blue', code: 'B'}]);
+      // Add an invalid value.  The existing value should not get lost if we
+      // then add a second valid value.  (Note: multiField is CNE).
+      multiField.sendKeys('zzz');
+      multiField.sendKeys(protractor.Key.TAB); // attempt to leave field
+      expect(hasClass(multiField, 'no_match')).toBe(true);
+      expect(hasClass(multiField, 'invalid')).toBe(true);
+      multiField.sendKeys(protractor.Key.TAB); // shift focus from field (clearing it)
+      expect(multiField.getAttribute('value')).toEqual('');
+      // Add a valid item and check the model.
+      multiField.click();
+      expect(searchResults.isDisplayed()).toBeTruthy();
+      item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(
+        [{text: 'Blue', code: 'B'},{text: 'Green', code: 'G'}]);
+    });
+
+    it('should not show matches for selected items', function() {
+      openDirectiveTestPage();
+      expect(multiField.evaluate('listFieldVal2')).toEqual(null);
+      multiField.click();
+      expect(searchResults.isDisplayed()).toBeTruthy();
+      var item = $('#searchResults li:first-child');
+      item.click();
+      expect(multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
+      multiField.sendKeys('Gr');
+      // There should be no matches
+      expect(element(by.css('#searchResults li:first-child')).isPresent()).toBeFalsy();
     });
   });
 
@@ -173,6 +230,7 @@ describe('directive', function() {
     var cneListID = 'ac2';
     var cneList = $('#'+cneListID);
     it('should warn user about invalid values', function() {
+      openDirectiveTestPage();
       expect(hasClass(cneList, 'no_match')).toBe(false);
       expect(hasClass(cneList, 'invalid')).toBe(false);
 

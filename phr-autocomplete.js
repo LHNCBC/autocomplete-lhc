@@ -93,18 +93,16 @@ if (typeof angular !== 'undefined') {
             // Add a parser to convert from the field value to the object
             // containing value and (e.g.) code.
             controller.$parsers.push(function(value) {
-              var rtn = value;
-              if (typeof value === 'string') {
-                rtn = itemTextToItem[value];
-                if (rtn === undefined && phrAutoOpts.matchListValue === false)
-                  rtn = null; // undefined means invalid, but in this case a non-match is okay
-              }
-
-              return rtn;
+              // Just rely on the autocompleter list selection event to manage
+              // model updates.  Here we will just return the model object, to
+              // prevent any change to the model from the parsers.
+              return scope.modelData;
             });
 
-            // if we have a default value, go ahead and select it
-            if (phrAutoOpts.defaultValue !== undefined) {
+            // if we have a default value, and if the model value is not already
+            // set, go ahead and select the default
+            if (phrAutoOpts.defaultValue !== undefined &&
+                (scope.modelData === undefined || scope.modelData === null)) {
               scope.modelData = itemTextToItem[phrAutoOpts.defaultValue];
             }
 
@@ -113,7 +111,7 @@ if (typeof angular !== 'undefined') {
 
 
           /**
-           *  Sets up a prefetched list on the field.
+           *  Sets up a search list on the field.
            * @param pElem the element on which the autocompleter is to run
            * @param phrAutoOpts the options from the directive attribute
            */
@@ -169,11 +167,7 @@ if (typeof angular !== 'undefined') {
             // attrs.phrAutocomplete in the parent scope.
             var phrAutoOpts = scope.$parent.$eval(attrs.phrAutocomplete);
 
-            // Assign the placeholder value if there is one.
-            if (phrAutoOpts.placeholder)
-              attrs.$set('placeholder', phrAutoOpts.placeholder);
-
-           if (controller) { // ngModelController, from the "require"
+            if (controller) { // ngModelController, from the "require"
               var pElem = element[0];
               // The autocompleter uses the ID attribute of the element. If pElem
               // does not have an ID, give it one.
