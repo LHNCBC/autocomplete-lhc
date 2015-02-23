@@ -1,7 +1,3 @@
-// License:  This file should be considered to be under the terms of some
-// "non-viral" open source license, which we will specify soon.  Basically,
-// you can use the code as long as you give NLM credit.
-
 // This file contains auto-completer code for the Data Entry Framework project.
 
 // These autocompleters are based on the Autocompleter.Base class defined
@@ -29,6 +25,10 @@ if (typeof Def === 'undefined')
      */
     USE_STATISTICS: 2,
 
+    /**
+     *  The screen reader log used by the autocompleter.
+     */
+    screenReaderLog_: new Def.ScreenReaderLog(),
 
     /**
      *  Sets global options for customizing behavior of all autocompleters.
@@ -145,11 +145,12 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Logs a message for a screen reader to read.  (This function does not do
-     *  anything unless an implementation is provided via setOptions-- see above.)
+     *  Logs a message for a screen reader to read.  By default, this
+     *  uses an instance of Def.ScreenReaderLog.
      * @param msg the message to log
      */
     screenReaderLog: function(msg) {
+      Def.Autocompleter.screenReaderLog_.add(msg);
     }
   };
 
@@ -227,6 +228,34 @@ if (typeof Def === 'undefined')
       if (al > bl) return 1 ;
       else if (al < bl) return -1 ;
       else return 0 ;
+    },
+
+
+    /**
+     *  Escapes a string for safe use as an HTML attribute.
+     * @param val the string to be escaped
+     * @return the escaped version of val
+     */
+    escapeAttribute: function(val) {
+      // Note:  PrototypeJS' escapeHTML does not escape quotes, and for
+      // attributes quotes need to be escaped.
+      // JQuery does not provide an API for this at all.
+      //   (See:  http://bugs.jquery.com/ticket/11773)
+      // Various implementations are benchmarked here:
+      //   http://jsperf.com/htmlencoderegex
+      // This one is the fastest (at least in Chrome).
+      return val.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g,
+'&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    },
+
+
+    /**
+     *  Reverses escapeAttribute.
+     * @param escapedVal the string to be unescaped
+     * @return the unescaped version of escapedVal
+     */
+    unescapeAttribute: function(escapedVal) {
+      return escapedVal.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, '\'').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     }
   });
 
@@ -532,13 +561,16 @@ if (typeof Def === 'undefined')
      *  the field will be blank.
      */
     moveEntryToSelectedArea: function() {
-      var li = jQuery('<li><button type="button">&times;</button>'+this.element.value+
-                      '</li>')[0];
+      var escapedVal = Def.Autocompleter.Base.escapeAttribute(this.element.value);
+      var li = jQuery('<li><button type="button" alt="'+escapedVal+
+                      '"><span aria-hidden="true">&times;</span></button>'
+                      +escapedVal+'</li>')[0];
       this.selectedList.appendChild(li);
       var span = li.childNodes[0];
       jQuery(span).click(jQuery.proxy(this.removeSelection, this));
       this.element.value = '';
       this.uneditedValue = '';
+      Def.Autocompleter.screenReaderLog('Selected '+escapedVal);
       this.onFocus(); // show the list again
     },
 
@@ -556,6 +588,7 @@ if (typeof Def === 'undefined')
       delete this.selectedCodes_[itemCode];
       delete this.selectedItems_[itemText];
       this.listSelectionNotification(itemText, true, true);
+      Def.Autocompleter.screenReaderLog('Unselected '+itemText);
     },
 
 
@@ -726,9 +759,10 @@ if (typeof Def === 'undefined')
      *  or just 'field' if there is no field label.
      */
     getFieldName: function () {
-      if (this.fieldName_ === null) {
+      if (this.fieldName_ === undefined) {
         var fieldLabel = Def.Autocompleter.getFieldLabel(this.element.id);
-        this.fieldName_ = (fieldLabel === null) ? '' : 'field "'+fieldLabel+'"';
+        this.fieldName_ =
+          (fieldLabel === null) ? 'field' : 'field "'+fieldLabel+'"';
       }
       return this.fieldName_;
     },
@@ -1593,6 +1627,18 @@ if (typeof Def === 'undefined')
       this.preFieldFillVal_ = null;
       Def.Autocompleter.Event.notifyObservers(this.element, 'FOCUS',
         {start_val: this.uneditedValue});
+
+      // If this is a multi-select list, announce any items in the selected
+      // area.
+      if (this.multiSelect_) {
+        var selectedItems = Object.getOwnPropertyNames(this.selectedItems_);
+        var numSelected = selectedItems.length;
+        if (numSelected > 0) {
+          var msg = 'Above this multi-select field are deselection buttons for '+
+            'each selected item.  Currently selected:'+selectedItems.join(', ');
+          Def.Autocompleter.screenReaderLog(msg);
+        }
+      }
     },
 
 

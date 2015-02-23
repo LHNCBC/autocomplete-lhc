@@ -72,6 +72,52 @@ var testFunctions = {
 
 
     /**
+     *  Test escape/unescapeAttribute.
+     */
+    testEscapeAttribute: function() {with(this) {
+      var testStr = '&<>"\'';
+      var escapedStr = Def.Autocompleter.Base.escapeAttribute(testStr);
+      var unescapedStr = Def.Autocompleter.Base.unescapeAttribute(escapedStr);
+      assertEqual('&amp;&lt;&gt;&quot;&#39;', escapedStr);
+      assertEqual(testStr, unescapedStr);
+    }},
+
+
+    /**
+     *  Test getFieldName.
+     */
+    testGetFieldName: function() {with(this) {
+      // For an unlabeled field (which is the default case), the field
+      // label should just be "field".
+      var otherAutoComp =
+        new Def.Autocompleter.Prefetch(AutoCompTestUtil.createInputElement().id,
+           ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
+           {'addSeqNum': false});
+
+      assertEqual('field', otherAutoComp.getFieldName());
+    }},
+
+
+    /**
+     *  Test the screen reader log.
+     */
+    testScreenReaderLog: function() {with(this) {
+      // First test the deprected usage.
+      Def.ScreenReaderLog.add('one');
+      assert($('reader_log').textContent.indexOf('one')>=0, 'deprecated test');
+      // Now test the new usage
+      var log = new Def.ScreenReaderLog();
+      log.add('two');
+      assert(log.logElement_.textContent.indexOf('two')>=0, 'current test');
+      // Neither log should have the other's input
+      assertEqual(-1, $('reader_log').textContent.indexOf('two'),
+       'old reader_log has output it should not');
+      assertEqual(-1, log.logElement_.textContent.indexOf('one',
+       'new log has output it should not'));
+    }},
+
+
+    /**
      *  Tests ARIA markup.
      */
     testAriaMarkup: function() {with(this) {

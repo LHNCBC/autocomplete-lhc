@@ -234,3 +234,13 @@ input.search_field, textarea.search_field {
 .autocomp_selected li > button:hover {
   background-color: #999;
 }
+
+/* For the screen reader log, which should not be visible */
+.screen_reader_only {
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  position: fixed;
+  left: -1000px;
+  top: -1000px;
+}
