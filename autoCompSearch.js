@@ -54,7 +54,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *  an autocompletion request.  If the field value is longer than this,
      *  we will truncate it when sending the request.
      */
-    MAX_VALUE_SIZE_FOR_AUTOCOMP: 20,
+    MAX_VALUE_SIZE_FOR_AUTOCOMP: 25,
 
     /**
      *  A dialog for showing suggestions.
