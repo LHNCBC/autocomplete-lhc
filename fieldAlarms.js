@@ -11,7 +11,7 @@ if (typeof Def === 'undefined')
      **/
     setOffAlarm: function(field) {
       if (this.bonk === undefined)
-        this.bonk = new Audio(this.soundFile_);  // see below for soundFile_
+        this.bonk = new Audio(this.soundData_);  // see bonk.js for soundData_
       // Reset the play position back the the beginning, if the sound has
       // been loaded sufficiently.
       if (this.bonk.readyState >= 2) {
@@ -39,14 +39,4 @@ if (typeof Def === 'undefined')
       this.bonk.currentTime = 0;
     }
   };
-
-
-  // Determine the path to the this script, so we can find the sound file.
-  // See http://ejohn.org/blog/degrading-script-tags/
-  (function() {
-    var scripts = document.getElementsByTagName("script");
-    var thisURL = scripts[scripts.length - 1].src;
-    var path = thisURL.substring(0, thisURL.lastIndexOf('/'));
-    Def.FieldAlarms.soundFile_ = path + '/soundmanager/bonk.mp3'
-  })();
 })($, jQuery, Def);

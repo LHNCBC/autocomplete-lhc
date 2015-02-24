@@ -1,9 +1,8 @@
 {
   "name": "autocomp-phr",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "main": [
     "auto_completion.css",
-    "soundmanager/bonk.mp3",
     "../scriptaculous-bower/effects.js",
     "../scriptaculous-bower/controls.js",
     "../jquery-ui/ui/core.js",
@@ -16,6 +15,7 @@
     "screenReaderLog.js",
     "recordDataRequester.js",
     "fieldAlarms.js",
+    "soundmanager/bonk.js",
     "dialog.js",
     "autoCompBase.js",
     "suggestionDialog.js",
