@@ -534,11 +534,10 @@ if (typeof Def === 'undefined')
     storeSelectedItem: function() {
       var itemText = this.element.value;
       var newCode = this.getItemCode(itemText);
-      if (newCode !== null) {
-        if (this.constructorOpts_.maxSelect === 1)
-          this.selectedCodes_ = {};
+      if (this.constructorOpts_.maxSelect === 1)
+        this.selectedCodes_ = {};
+      if (newCode !== null)
         this.selectedCodes_[newCode] = 1;
-      }
       this.selectedItems_[itemText] = 1;
     },
 
