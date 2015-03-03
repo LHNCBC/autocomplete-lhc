@@ -26,6 +26,18 @@ if (typeof Def === 'undefined')
     USE_STATISTICS: 2,
 
     /**
+     *  The suggestion mode constant that means do not recommend one item from
+     *  the returned list over the others.
+     */
+    NO_COMPLETION_SUGGESTIONS: 0,
+
+    /**
+     *  The suggestion mode constant that means the shortest match should
+     *  recommended over other returned items.
+     */
+    SUGGEST_SHORTEST: 1,
+
+    /**
      *  The screen reader log used by the autocompleter.
      */
     screenReaderLog_: new Def.ScreenReaderLog(),
@@ -374,13 +386,10 @@ if (typeof Def === 'undefined')
 
     /**
      *  An integer specifying what type of suggestion should
-     *  be offered based on what the user has typed.  If this is not specified,
-     *  the default is 0, which is no suggestions.  A value of 1 means
-     *  "pick the shortest match", and a value of 2 means that the suggestion
-     *  is based on statistics, and that we will rely on the server to return
-     *  the best item as the first item in the list.
+     *  be offered based on what the user has typed.  For allowed values,
+     *  see the suggestionMode option in defAutocompleterBaseInit.
      */
-    suggestionMode_: 0,
+    suggestionMode_: this.SUGGEST_SHORTEST,
 
     /**
      *  A reference to the last scroll effect (used in positioning).
@@ -407,19 +416,20 @@ if (typeof Def === 'undefined')
      *     null, in which case no request for additional data is made.</li>
      *    <li>suggestionMode - an integer specifying what type of suggestion
      *     should be offered based on what the user has typed.  If this is not
-     *     specified, the default is 0, which is no suggestions.  A value of 1
-     *     suggestion means "pick the shortest match", and a value of 2 means that
-     *     the is based on statistics, and that we will rely on the server to
-     *     return the best item as the first item in the list.</li>
+     *     specified, the default is [Def.Autocompleter.]SUGGEST_SHORTEST, which
+     *     means "pick the shortest match."  A value of
+     *     NO_COMPLETION_SUGGESTIONS means no suggestions, and a value of
+     *     USE_STATISTICS means that the suggestion is based on statistics, and
+     *     that we will rely on the server to return the best item as the first
+     *     item in the list.</li>
      *    <li>maxSelect - (default 1) The maximum number of items that can be
      *     selected.  Use '*' for unlimited.</li>
      *  </ul>
      */
     defAutocompleterBaseInit: function(matchListValue, options) {
 
-      if (suggestionMode === undefined || suggestionMode === null)
-        suggestionMode = 0;
-      this.suggestionMode_ = suggestionMode;
+      if (options['suggestionMode'] !== undefined)
+        this.suggestionMode_ = options['suggestionMode'];
 
       if (!options)
         options = {};
@@ -997,35 +1007,37 @@ if (typeof Def === 'undefined')
 
         if(this.update.firstChild && this.update.down().childNodes) {
           this.entryCount = this.update.down().childNodes.length;
+          if (this.suggestionMode_ !== Def.Autocompleter.NO_COMPLETION_SUGGESTIONS) {
 
-          // Pick the default item and move it to the top of the list,
-          // but not if the field is being focused, and not if the list
-          // is numbered and the user typed a number, and not if the list uses
-          // headings.
-          var i;
-          if (this.entryCount > 0 && !this.focusInProgress_) {
-            if (this.add_seqnum && this.element.value.match(/^\d+$/)) {
-              // Use the first non-heading entry (whose number should match what was typed)
-              // as the default
-              this.index = 0;
-              for(; this.indexToHeadingLevel_[this.index] &&
-                     this.index < this.entryCount; ++this.index);
-            }
-            else if (this.entryCount > 1 && !this.numHeadings_) {
-              var useStats =
-                this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
-              var index = useStats ? 0 : this.pickDefaultItem();
-              if (index > -1) {
-                var listTag = this.update.firstChild;
-                var listElements = listTag.childNodes;
-                var suggestion = listElements[index];
-                suggestion.addClassName('suggestion');
-                if (index > 0) {
-                  listTag.insertBefore(suggestion, listElements[0]);
+            // Pick the default item and move it to the top of the list,
+            // but not if the field is being focused, and not if the list
+            // is numbered and the user typed a number, and not if the list uses
+            // headings.
+            var i;
+            if (this.entryCount > 0 && !this.focusInProgress_) {
+              if (this.add_seqnum && this.element.value.match(/^\d+$/)) {
+                // Use the first non-heading entry (whose number should match what was typed)
+                // as the default
+                this.index = 0;
+                for(; this.indexToHeadingLevel_[this.index] &&
+                       this.index < this.entryCount; ++this.index);
+              }
+              else if (this.entryCount > 1 && !this.numHeadings_) {
+                var useStats =
+                  this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
+                var index = useStats ? 0 : this.pickDefaultItem();
+                if (index > -1) {
+                  var listTag = this.update.firstChild;
+                  var listElements = listTag.childNodes;
+                  var suggestion = listElements[index];
+                  suggestion.addClassName('suggestion');
+                  if (index > 0) {
+                    listTag.insertBefore(suggestion, listElements[0]);
+                  }
                 }
               }
             }
-          }
+          } // If we are making a suggestion
 
           for (i=0; i < this.entryCount; i++) {
             var entry = this.getEntry(i);

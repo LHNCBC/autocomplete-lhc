@@ -14,17 +14,27 @@ opts['autoFill']=true
 var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('fe_prefetch_cwe', ["Spanish","French","Other"], opts);
 var opts = {};
 opts['matchListValue']=true
-opts['suggestionMode']=0
 opts['autocomp']=true
 var fe_search_cne_autoComp =
   new Def.Autocompleter.Search('fe_search_cne',
-    '/form/get_search_res_list?fd_id=1284', opts);var opts = {};
-opts['matchListValue']=false
-opts['suggestionMode']=0
-opts['autocomp']=true
+    '/form/get_search_res_list?fd_id=1284', opts);
+
+var opts = {'matchListValue': false, 'suggestionMode': 1, 'autocomp': true};
 var fe_search_cwe_autoComp =
   new Def.Autocompleter.Search('fe_search_cwe',
-    '/form/get_search_res_list?fd_id=2163', opts);var opts = {};
+    '/form/get_search_res_list?fd_id=2163', opts);
+
+var opts = {'matchListValue': false, 'suggestionMode': 0, 'autocomp': true};
+var fe_search_cwe_autoComp =
+  new Def.Autocompleter.Search('fe_search0_cwe',
+    '/form/get_search_res_list?fd_id=2163', opts);
+
+var opts = {'matchListValue': false, 'suggestionMode': 2, 'autocomp': true};
+var fe_search_cwe_autoComp =
+  new Def.Autocompleter.Search('fe_search2_cwe',
+    '/form/get_search_res_list?fd_id=2163', opts);
+
+var opts = {};
 opts['matchListValue']=true
 opts['codes']=["LA6155-1","LA6156-9","LA6162-7","LA6214-6","LA6266-6","LA4457-3","LA4489-6"]
 opts['suggestionMode']=0
