@@ -96,7 +96,7 @@
     testInitFieldsHash: function() { with(this) {
       var dataReq = new Def.RecordDataRequester($('fe_trigger_field_1'),
         '/someurl', ['record_id'], ['code', 'pseudonym'], true);
-      // Check that the fields hash has not been intialized yet.
+      // Check that the fields hash has not been initialized yet.
       assertNull(dataReq.inputFieldsHash_);
       assertNull(dataReq.outputFieldsHash_);
       dataReq.initFieldsHash();
@@ -111,7 +111,7 @@
       dataReq = new Def.RecordDataRequester($('fe_trigger_field_1'),
         '/someurl', null, ['code', 'pseudonym'], true);
       dataReq.initFieldsHash();
-      // Check that it has been intiailized
+      // Check that it has been initialized
       assertEqual(0, $H(dataReq.inputFieldsHash_).keys().size());
       assertEqual(2, $H(dataReq.outputFieldsHash_).keys().size());
     }},

@@ -21,19 +21,22 @@ if (typeof Def === 'undefined')
 
     /**
      *  The suggestion mode constant that means rely on the statistics for
-     *  the field's master table.
+     *  the field's master table.  See the suggestionMode option in
+     *  defAutocompleterBaseInit.
      */
     USE_STATISTICS: 2,
 
     /**
      *  The suggestion mode constant that means do not recommend one item from
-     *  the returned list over the others.
+     *  the returned list over the others.  See the suggestionMode option in
+     *  defAutocompleterBaseInit.
      */
     NO_COMPLETION_SUGGESTIONS: 0,
 
     /**
      *  The suggestion mode constant that means the shortest match should
-     *  recommended over other returned items.
+     *  recommended over other returned items.  See the suggestionMode option in
+     *  defAutocompleterBaseInit.
      */
     SUGGEST_SHORTEST: 1,
 
