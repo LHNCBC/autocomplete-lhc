@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>JavaScript unit test file</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="test_unit/unittest.css" type="text/css" />
+</head>
+<body>
+
+<div id="content">
+
+  <div id="header">
+    <h1>JavaScript unit test file</h1>
+    <p>
+      This file tests <strong>recordDataRequester.js</strong>.
+    </p>
+  </div>
+
+  <!-- Log output -->
+  <div id="testlog"> </div>
+
+  <!-- Test content. -->
+  <div id="testcontent">
+    <form>
+      <input type="input" id="fe_record_id_1" name="record_id"/>
+      <input type="input" id="fe_trigger_field_1" name="trigger_field"/>
+      <input type="input" id="fe_code_1" name="code"/>
+      <input type="input" id="fe_name_1" name="name"/>
+      <input type="input" id="fe_pseudonym_1" name="pseudonym" />
+      <input type="input" id="fe_gender_1" name="gender"/>
+      <input type="input" id="fe_gender_C_1"/>
+    </form>
+  </div>
+</div>
+
+  <script src="../../bower_components/prototypejs-bower/prototype.js" type="text/javascript"></script>
+  <script src="../../bower_components/scriptaculous-bower/effects.js" type="text/javascript"></script>
+  <script src="../../bower_components/scriptaculous-bower/controls.js" type="text/javascript"></script>
+  <script src="../../bower_components/jquery/dist/jquery.js" type="text/javascript"></script>
+  <script src="../../bower_components/jquery-no-conflict-exec/jquery-no-conflict.js" type="text/javascript"></script>
+  <script src="../../observable.js" type="text/javascript"></script>
+  <script src="../../event.simulate.js" type="text/javascript"></script>
+  <script src="../../effectScroll.js" type="text/javascript"></script>
+  <script src="../../screenReaderLog.js" type="text/javascript"></script>
+  <script src="../../recordDataRequester.js" type="text/javascript"></script>
+  <script src="../../fieldAlarms.js" type="text/javascript"></script>
+  <script src="../../dialog.js" type="text/javascript"></script>
+  <script src="../../autoCompBase.js" type="text/javascript"></script>
+  <script src="../../suggestionDialog.js" type="text/javascript"></script>
+  <script src="../../autoCompPrefetch.js" type="text/javascript"></script>
+  <script src="../../autoCompSearch.js" type="text/javascript"></script>
+  <script src="../../autoCompEvents.js" type="text/javascript"></script>
+
+  <script src="test_unit/unittest.js" type="text/javascript"></script>
+  <script type="text/javascript">
+      //<![CDATA[
+
+
+       var fe_pseudonym_1_autoComp =
+       new Def.Autocompleter.Prefetch('fe_pseudonym_1',
+         ['Self', 'Father', 'Mother', 'Son 1', 'Son 2', 'Son 3', 'Daughter 1',
+          'Daughter 2', 'Daughter 3'],
+         {'matchListValue': false, 'codes': []});
+      //]]>
+    </script>
+
+    <script type="text/javascript">
+      //<![CDATA[
+       var fe_gender_1_autoComp =
+       new Def.Autocompleter.Prefetch('fe_gender_1', ['Female', 'Male'],
+         {'matchListValue': false, 'codes':['F', 'M']});
+      //]]>
+    </script>
+
+<script type="text/javascript">
+// <![CDATA[
+
+  new Test.Unit.Runner({
+
+    // replace this with your real tests
+
+    setup: function() {
+
+    },
+
+    teardown: function() {
+
+    },
+
+
+
+    /**
+     *  Tests the initialization of the input/outputFieldsHash_.
+     */
+    testInitFieldsHash: function() { with(this) {
+      var dataReq = new Def.RecordDataRequester($('fe_trigger_field_1'),
+        '/someurl', ['record_id'], ['code', 'pseudonym'], true);
+      // Check that the fields hash has not been initialized yet.
+      assertNull(dataReq.inputFieldsHash_);
+      assertNull(dataReq.outputFieldsHash_);
+      dataReq.initFieldsHash();
+      // Check that it has been intiailized
+      assertEqual(1, $H(dataReq.inputFieldsHash_).keys().size());
+      assertEqual(2, $H(dataReq.outputFieldsHash_).keys().size());
+      assertNotNull(dataReq.inputFieldsHash_['record_id']);
+      assertNotNull(dataReq.outputFieldsHash_['code']);
+      assertNotNull(dataReq.outputFieldsHash_['pseudonym']);
+
+      // Check that the dataReqInput parameter can be null.
+      dataReq = new Def.RecordDataRequester($('fe_trigger_field_1'),
+        '/someurl', null, ['code', 'pseudonym'], true);
+      dataReq.initFieldsHash();
+      // Check that it has been initialized
+      assertEqual(0, $H(dataReq.inputFieldsHash_).keys().size());
+      assertEqual(2, $H(dataReq.outputFieldsHash_).keys().size());
+    }},
+
+
+    /**
+     *  Tests the assignment of return data to the fields on the form.
+     */
+    testAssignDataToFields: function() { with(this) {
+      var dataReq = new Def.RecordDataRequester($('fe_trigger_field_1'),
+        '/someurl', null, ['code', 'pseudonym'], true);
+      dataReq.assignDataToFields({code: 45, pseudonym: ['one', 'two']});
+      assertEqual('45', $('fe_code_1').value);
+      assertEnumEqual(['one', 'two'], fe_pseudonym_1_autoComp.rawList_);
+      assertNull(fe_pseudonym_1_autoComp.itemCodes_);
+
+      // Test setting lists and list codes.
+      dataReq.assignDataToFields({pseudonym: [['one', 'two'], ['a', 'b']]});
+      assertEnumEqual(['one', 'two'], fe_pseudonym_1_autoComp.rawList_);
+      assertEnumEqual(['a', 'b'], fe_pseudonym_1_autoComp.itemCodes_);
+
+      // Test what happens when the "true" parameter is set for listDataOnly.
+      $('fe_code_1').value='2';
+      $('fe_pseudonym_1').value='hi';
+      dataReq.assignDataToFields({code: 45, pseudonym: ['one']}, true);
+      assertEqual('2', $('fe_code_1').value);
+      assertEqual('hi', $('fe_pseudonym_1').value);
+
+      // Test that assignment still works when the "outputToSameGroup"
+      // parameter is false.
+      var dataReq = new Def.RecordDataRequester($('fe_trigger_field_1'),
+        '/someurl', null, ['code', 'pseudonym'], false);
+      dataReq.assignDataToFields({code: 46, pseudonym: ['three', 'four']});
+      assertEqual('46', $('fe_code_1').value);
+      assertEnumEqual(['three', 'four'], fe_pseudonym_1_autoComp.rawList_);
+
+    }},
+
+
+    /**
+     *  Tests the clearing of fields.
+     */
+    testClearDataOutputFields: function() { with(this) {
+      // Set the fields' values first.
+      var dataReq = new Def.RecordDataRequester($('fe_trigger_field_1'),
+        '/someurl', null, ['code', 'pseudonym'], true);
+      dataReq.assignDataToFields({code: 45, pseudonym: ['one', 'two']});
+
+      // Now try clearing the fields
+      var dataReq = new Def.RecordDataRequester($('fe_trigger_field_1'),
+        '/someurl', null, ['code', 'pseudonym'], true);
+      dataReq.clearDataOutputFields();
+      assertEqual('', $('fe_code_1').value);
+      assertEnumEqual([], fe_pseudonym_1_autoComp.rawList_);
+      // Check that the rules took the correct action.
+      // Can't do this here -- rules now run asynchronously.
+      //assert(isHiddenOrDisabled($('fe_code_1')),
+      //                          'fe_code_1 is not hidden');
+    }},
+
+
+    /**
+     *  Tests the construction of the CGI parameter string.
+     */
+    testBuildParameterString: function() { with(this) {
+      // Test a field that does not have a code.
+      var dataReq = new Def.RecordDataRequester($('fe_pseudonym_1'),
+        '/someurl', ['record_id', 'trigger_field'], ['code'], true);
+      // Set the field values
+      $('fe_trigger_field_1').value = 'tf val';
+      $('fe_record_id_1').value = '45';
+      $('fe_pseudonym_1').value = 'one two';
+      $('fe_pseudonym_1').autocomp.storeSelectedItem()
+      assertEqual('field_val=one%20two&record_id=45&trigger_field=tf%20val'+
+                  '&authenticity_token=undefined',
+                  dataReq.buildParameterString());
+
+      // Test a field that has a code.
+      dataReq = new Def.RecordDataRequester($('fe_gender_1'),
+        '/someurl', ['record_id', 'trigger_field'], ['code'], true);
+      $('fe_gender_1').value = 'Male';
+      $('fe_gender_C_1').value = 'M';
+      $('fe_gender_1').autocomp.storeSelectedItem()
+      assertEqual('code_val=M&record_id=45&trigger_field=tf%20val'+
+                  '&authenticity_token=undefined',
+                  dataReq.buildParameterString());
+      // Test a field that has a blank code field.
+      $('fe_gender_1').value = 'Not Male';
+      $('fe_gender_C_1').value = '';
+      $('fe_gender_1').autocomp.storeSelectedItem()
+      assertEqual('field_val=Not%20Male&record_id=45&trigger_field=tf%20val'+
+                 '&authenticity_token=undefined',
+                  dataReq.buildParameterString());
+    }},
+
+
+    /**
+     *  Tests getOutputFieldRDR.
+     */
+    testGetOutputFieldRDR: function() { with(this) {
+      // The current implementation of getOutputFieldRDR relies on the
+      // autocompleter being set up as well, so we'll create two autocompleters
+      // and two RDRs.
+      var dataReq = new Def.RecordDataRequester($('fe_trigger_field_1'),
+        '/someurl', null, ['name', 'pseudonym'], true);
+      new Def.Autocompleter.Prefetch('fe_trigger_field_1',
+        ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
+        {'matchListValue': false, 'addSeqNum': false,
+         'codes': ['a', 'oa', 'pa', 'b'], 'dataRequester': dataReq});
+      var dataReq2 = new Def.RecordDataRequester($('fe_gender_1'),
+        '/someurl', ['record_id', 'trigger_field'], ['code'], true);
+      new Def.Autocompleter.Prefetch('fe_gender_1', ['Male', 'Female'],
+       {'matchListValue': false, 'addSeqNum': false, 'codes': ['M', 'F'],
+         'dataRequester': dataReq2});
+
+      assertNotEqual(dataReq, dataReq2);
+      assertEqual(dataReq,
+        Def.RecordDataRequester.getOutputFieldRDR('fe_name_1'), 'fe_name_1');
+      assertEqual(dataReq,
+        Def.RecordDataRequester.getOutputFieldRDR('fe_pseudonym_1'),
+          'fe_pseudonym_1');
+      assertEqual(dataReq2,
+        Def.RecordDataRequester.getOutputFieldRDR('fe_code_1'), 'fe_code_1');
+    }},
+
+
+    /**
+     *  Tests listIsEmpty.
+     */
+    testListIsEmpty: function() { with(this) {
+      var auto = new Def.Autocompleter.Prefetch('fe_trigger_field_1',
+        ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
+        {'matchListValue': false, 'addSeqNum': false,
+         'codes': ['a', 'oa', 'pa', 'b']});
+      assert(!auto.listIsEmpty(), "list should not be empty");
+      auto = new Def.Autocompleter.Prefetch('fe_trigger_field_1', [],
+       {'matchListValue': false, 'addSeqNum': false});
+      assert(auto.listIsEmpty(), "list should be empty");
+    }}
+
+  }, "testlog");
+// ]]>
+</script>
+</body>
+</html>

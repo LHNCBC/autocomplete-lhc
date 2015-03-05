@@ -139,8 +139,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *    <li>authenticity_token - (optional) This is an anti-CSRF parameter.
      *     If the page has a value in window._token, it will get sent in this
      *     parameter.</li>
-     *    <li>suggest - (optional) If the suggestionMode (see the options
-     *     parameter) is not 0, user input that does not match a list value
+     *    <li>suggest - (optional) User input that does not match a list value
      *     will trigger a request for suggestions that are close to what the
      *     user typed.  A "suggest" parameter value of "1" means the request
      *     is for suggestions.</li>
@@ -181,11 +180,8 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *     after the user makes a selection from the completion list.  This may be
      *     null, in which case no request for additional data is made.</li>
      *    <li>suggestionMode - an integer specifying what type of suggestion
-     *     should be offered based on what the user has typed.  If this is not
-     *     specified, the default is 0, which is no suggestsions.  A value of 1
-     *     suggestion means "pick the shortest match", and a value of 2 means that
-     *     the is based on statistics, and that we will rely on the server to
-     *     return the best item as the first item in the list.</li>
+     *     should be offered based on what the user has typed.  For values, see
+     *     defAutocompleterBaseInit in autoCompBase.js.
      *    <li>useResultCache - (default: true) Whether or not the results
      *     should be cached.  The same cache is used for all fields that share
      *     the same target_field name.</li>

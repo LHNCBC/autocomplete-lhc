@@ -122,9 +122,8 @@
      *      list/options.  If unspecified, a default container will be
      *      used.)</li>
      *    <li>suggestionMode - an integer specifying what type of suggestion
-     *      should be offered based on what the user has typed.  If this is not
-     *      specified, the default is 0, which is no suggestsions.  A value of 1
-     *      means "pick the shortest match".</li>
+     *      should be offered based on what the user has typed.  For values, see
+     *      defAutocompleterBaseInit in autoCompBase.js.
      *    <li>itemToHeading - a hash of item codes to codes of item headings,
      *     where both items and headings appear in the listItems array.  This
      *     parameter requires that the codes parameter also be supplied.</li>
