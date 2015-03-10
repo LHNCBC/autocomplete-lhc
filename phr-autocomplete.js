@@ -111,6 +111,18 @@ if (typeof angular !== 'undefined') {
 
 
           /**
+           *  Returns the model data structure for a selected item in a search
+           *  list.
+           * @param ac the autocompleter
+           * @param itemText the display string of the selected item
+           */
+          function getItemModelData(ac, itemText) {
+            return angular.extend({text: itemText, code: ac.getItemCode(itemText)},
+              ac.getItemExtraData())
+          }
+
+
+          /**
            *  Sets up a search list on the field.
            * @param pElem the element on which the autocompleter is to run
            * @param phrAutoOpts the options from the directive attribute
@@ -122,7 +134,7 @@ if (typeof angular !== 'undefined') {
                 var item;
                 if (!ac.multiSelect_) {
                   item = eventData.final_val;
-                  scope.modelData = {text: item, code: ac.getItemCode(item)};
+                  scope.modelData = getItemModelData(ac, item);
                 }
                 else {
                   if (typeof scope.modelData !== 'object')
@@ -138,8 +150,9 @@ if (typeof angular !== 'undefined') {
                       }
                     }
                   }
-                  else
-                    selectedItems.push({text: item, code: ac.getItemCode(item)});
+                  else {
+                    selectedItems.push(getItemModelData(ac, item));
+                  }
                 }
               });
             });

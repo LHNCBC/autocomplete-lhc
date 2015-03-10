@@ -37,7 +37,8 @@ cd test/protractor; protractor ./conf.js
 
 echo 'Running unit tests.  Check the result in the browser, and quit'
 echo 'the browser when finished.'
-firefox http://localhost:3000/test/scriptaculous_unit/autoComp_test.html
+firefox http://localhost:3000/test/scriptaculous_unit/autoComp_test.html http://localhost:3000/test/scriptaculous_unit/recordDataRequester_test.html
+
 # Wait for firefox to load the page
 sleep 3
 

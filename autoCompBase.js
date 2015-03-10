@@ -298,10 +298,11 @@ if (typeof Def === 'undefined')
     scoreFieldInitialized_: false,
 
     /**
-     *  A hash between list values and list codes, so we can find the right
-     *  code when the user picks an item in the list.
+     *  A hash between list values and and the original unsorted list index,
+     *  so that we can match up list values with arrays for codes and other
+     *  data.
      */
-    itemToCode_: null,
+    itemToDataIndex_: null,
 
     /**
      *  The codes of the currently selected items, stored as keys on a hash.
@@ -403,6 +404,12 @@ if (typeof Def === 'undefined')
      *  Whether or not multiple items can be selected from the list.
      */
     multiSelect_: false,
+
+    /**
+     *  The hash of "extra data" for the current list.  (This might only apply
+     *  to search lists.)
+     */
+    listExtraData_: null,
 
 
     /**
@@ -538,11 +545,10 @@ if (typeof Def === 'undefined')
     },
 
 
-     /**
+    /**
      *  Adds the code for the current item in the field to the list of selected
      *  codes, and does the same for the item text.  If this is not a multi-select
-     *  list, the newly selected code will replace the others, using itemToCode_
-     *  (which is initialized if needed.)
+     *  list, the newly selected code will replace the others.
      */
     storeSelectedItem: function() {
       var itemText = this.element.value;
@@ -559,11 +565,12 @@ if (typeof Def === 'undefined')
      *  Returns the code for the given item text, or null if there isn't one.
      */
     getItemCode: function(itemText) {
-      if (!this.itemToCode_)
-        this.initItemToCode();
-      var newCode = this.itemToCode_[this.element.value];
-      if (newCode === undefined)
-        newCode = null;
+      if (!this.itemToDataIndex_)
+        this.initItemToDataIndex();
+      var dataIndex = this.itemToDataIndex_[itemText];
+      var newCode = null;
+      if (dataIndex !== undefined && this.itemCodes_)
+        newCode = this.itemCodes_[dataIndex];
       return newCode;
     },
 
@@ -596,7 +603,7 @@ if (typeof Def === 'undefined')
       var li = event.target.parentNode;
       li.parentNode.removeChild(li);
       var itemText = li.childNodes[1].textContent;
-      var itemCode = this.itemToCode_[itemText];
+      var itemCode = this.getItemCode(itemText);
       delete this.selectedCodes_[itemCode];
       delete this.selectedItems_[itemText];
       this.listSelectionNotification(itemText, true, true);
@@ -1324,11 +1331,11 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Initializes the itemToCode_ map.  This should be overridden by
+     *  Initializes the itemToDataIndex_ map.  This should be overridden by
      *  subclasses.
      */
-    initItemToCode: function() {
-      throw 'initItemToCode must be overridden by autocompleter classes that '+
+    initItemToDataIndex: function() {
+      throw 'initItemToDataIndex must be overridden by autocompleter classes that '+
        'need it';
     },
 
@@ -1380,7 +1387,7 @@ if (typeof Def === 'undefined')
         this.preFieldFillVal_ === null ? 'typed' : 'arrows';
 
       var usedList = inputMethod !== 'typed' && onList;
-      var newCode = this.getItemCode(valTyped);
+      var newCode = this.getItemCode(finalVal);
 
       Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
         {input_method: inputMethod, val_typed_in: valTyped,

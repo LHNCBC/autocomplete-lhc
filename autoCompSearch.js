@@ -123,6 +123,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      */
     suggestionList_: null,
 
+
     /**
      *  The constructor.  (See Prototype's Class.create method.)
      * @param fieldID the ID of the field for which the list is displayed
@@ -153,7 +154,14 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *     returned, if autocomp==1).</li>
      *    <li>position 1 - the list of codes for the list items (if the items are
      *     coded)</li>
-     *    <li>position 2 - null (unused)</li>
+     *    <li>position 2 - A hash of extra data about the list items (e.g.
+     *     an extra set of codes).  The keys in the hash should be names for the
+     *     data elements, and the values should be an array of values, one for
+     *     each returned item.  Configuration for what gets returned here is out
+     *     of scope of this class; this search autocompleter just sends the
+     *     parameters above.  The extra data for the selected item (when the
+     *     user makes a selection) can get be retrieved with
+     *     getSelectedItemData().</li>
      *    <li>position 3 - the list item data; each item is an array of display
      *     string fields which will be joined together.  (At a mimimum, each item
      *     should be an array of one string.)</li>
@@ -167,6 +175,8 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *     items have codes)</li>
      *    <li>position 1 - the list of display strings (an array of strings, not
      *     of arrays) for the suggested items.</li>
+     *    <li>position 2 - A hash of extra data about the list items (the same
+     *     as position 2 for the non-suggestion request above.)
      *  </ul>
      * @param options A hash of optional parameters.  The allowed keys and their
      *  values are:
@@ -279,12 +289,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       opts['dataRequester'] = dataReq;
       return new Def.Autocompleter.Search(fieldID, this.url, opts);
     },
-
-
-    /**
-     *  Initializes the itemToCode_ map.
-     */
-    initItemToCode: Def.Autocompleter.Prefetch.prototype.initItemToCode,
 
 
     /**
@@ -407,9 +411,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     processChoices: function(listItemData, codes, highlighting) {
       var listItems;
       if (highlighting)
-        listItems = this.sortHighlightedResults(listItemData, codes);
+        listItems = this.sortHighlightedResults(listItemData);
       else
-        listItems = this.sortResults(listItemData, codes);
+        listItems = this.sortResults(listItemData);
       return listItems;
     },
 
@@ -419,10 +423,11 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      * @param responseData the array of data received from by onComplete.
      */
     buildUpdateHTML: function(responseData) {
-      var codes = responseData[1];
+      this.itemCodes_ = responseData[1];
+      this.listExtraData_ = responseData[2];
       var listItemData = responseData[3];
       var highlighting = responseData[4];
-      var listItems = this.processChoices(listItemData, codes, highlighting);
+      var listItems = this.processChoices(listItemData, this.itemCodes_, highlighting);
       this.rawList_ = listItems; // used by initItemToCode
 
       var output;
@@ -475,7 +480,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
             searchStrForFieldVal === searchStr) {
 
           // Retrieve the response data, which is in JSON format.
-          var responseData = eval(response.responseText);
+          var responseData = JSON.parse(response.responseText);
           var totalCount = responseData[0];
           if (totalCount > 0) {
             var shownCount = responseData[3].length;
@@ -535,26 +540,44 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
 
     /**
+     *  Returns a hash of extra data (returned with AJAX autocompletion request)
+     *  for the currently selected list item.
+     */
+    getItemExtraData: function() {
+      var dataIndex = this.itemToDataIndex_[this.element.value];
+      var itemData = {};
+      if (this.listExtraData_) {
+        var keys = Object.keys(this.listExtraData_);
+        for (var k=0, numKeys = keys.length; k<numKeys; ++k)
+          var key = keys[k];
+          itemData[key] = this.listExtraData_[key][dataIndex];
+      }
+      return itemData;
+    },
+
+
+    /**
      *  Returns a list of sorted search result items based on the returned
      *  data from the AJAX search request.  In the process, it also initializes
-     *  the this.itemToCode_ map.  This method assumes that highlighting is
+     *  this.itemToDataIndex_.  This method assumes that highlighting is
      *  off.  For sorting hightlighted search results, use
      *  sortHightlightedResults.
      * @param listItemData an array of item data arrays (one for each seach
      *  result), in the format returned by the get_search_res_list AJAX call.
-     * @param codes the codes corresponding to the items in listItemData.
+     * @param extraData the extra data for each item returned with the
+     *  autocompletion AJAX request.  For the format, see "position 2" in the
+     *  initialize method's comments.
      */
-    sortResults: function(listItemData, codes) {
+    sortResults: function(listItemData) {
       var numItems = listItemData.length;
       var listItems = new Array(numItems);
-      var itemToCodeMap = {};
+      this.itemToDataIndex_ = {};
       var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
       for (var i=0; i<numItems; ++i) {
         var item = listItemData[i].join(joinStr);
         listItems[i] = item.escapeHTML();
-        itemToCodeMap[item] = codes[i];
+        this.itemToDataIndex_[item] = i; // to preserve the original indices
       }
-      this.itemToCode_ = itemToCodeMap;
       var useStats = this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
       if (useStats) {
         // For this kind of suggestion, we want to rely on the statistical
@@ -577,17 +600,16 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     /**
      *  Returns a list of sorted search result items based on the returned
      *  data from the AJAX search request.  In the process, it also initializes
-     *  the this.itemToCode_ map.  This method assumes that highlighting is
+     *  this.itemToDataIndex_.  This method assumes that highlighting is
      *  ON.  For sorting unhightlighted search results, use
      *  sortResults.
      * @param listItemData an array of item data arrays (one for each seach
      *  result), in the format returned by the get_search_res_list AJAX call.
-     * @param codes the codes for the list items in listItemData
      */
-    sortHighlightedResults: function(listItemData, codes) {
+    sortHighlightedResults: function(listItemData) {
       var numItems = listItemData.length;
       var listItems = new Array(numItems);
-      var itemToCodeMap = {};
+      this.itemToDataIndex_ = {};
       var taglessItems = new Array(numItems);
       var taglessItemToOriginal = {};
       var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
@@ -600,7 +622,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         var taglessItem = item.replace(/<\/?span>/g, '');
         taglessItemToOriginal[taglessItem] = item;
         taglessItems[i] = taglessItem;
-        itemToCodeMap[item] = codes[i];
+        this.itemToDataIndex_[item] = i; // to preserve the original indices
       }
 
       // Sort the "tagless" results.
@@ -619,7 +641,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       for (i=0; i<numItems; ++i)
         listItems[i]= taglessItemToOriginal[taglessItems[i]];
 
-      this.itemToCode_ = itemToCodeMap;
       return listItems;
     },
 
@@ -835,7 +856,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     onFindSuggestionComplete: function(response) {
       if (response.status === 200) { // 200 is the "OK" status
         // Retrieve the response data, which is in JSON format.
-        var responseData = eval(response.responseText);
+        var responseData = JSON.parse(response.responseText);
         var codes = responseData[0];
         var eventData = [];
         var suggestionDialog = Def.Autocompleter.SuggestionDialog.getSuggestionDialog();
@@ -905,8 +926,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       // Also send a list selection notification (so that that event can be
       // used as a change event for the field).  Also, the suggestion was from
       // the list.
-      this.itemToCode_ = {};
-      this.itemToCode_[listItems[index]] = codes[index]; // used by listSelectionNotification
+      this.itemCodes_ = [codes[index]]; // used by listSelectionNotification
+      this.itemToDataIndex_ = {};
+      this.itemToDataIndex_[listItems[index]] = 1;
       this.listSelectionNotification(valTyped, true); // not typed, on list
 
       // No field is focused at the moment (because of the dialog).
