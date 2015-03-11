@@ -1,7 +1,7 @@
 helpers = require('./test_helpers.js');
 var hasClass = helpers.hasClass;
 var firstSearchRes = $('#searchResults li:first-child');
-/*
+
 describe('autocomp', function() {
   var searchResults = $('#searchResults');
   var raceField = $('#fe_race_or_ethnicity');
@@ -148,7 +148,7 @@ describe('autocomp', function() {
     });
   });
 });
-*/
+
 
 describe('directive', function() {
   var inputElem = $('#ac1');
@@ -158,7 +158,7 @@ describe('directive', function() {
   function openDirectiveTestPage() {
     browser.get('http://localhost:3000/test/protractor/directiveTest.html');
   }
-/*
+
   it('should create an area on the page for the list', function() {
     openDirectiveTestPage();
     expect(searchResults).not.toBeNull();
@@ -261,7 +261,7 @@ describe('directive', function() {
       expect(element(by.css('#searchResults li:first-child')).isPresent()).toBeFalsy();
     });
   });
-*/
+
   describe(': CNE lists', function() {
     var cneListID = 'ac2';
     var cneList = $('#'+cneListID);
@@ -319,7 +319,7 @@ describe('directive', function() {
       // Click someplace else to leave 'ar' in the field
       inputElem.click();
       expect(element(by.css('.ui-dialog')).isDisplayed()).toBeTruthy();
-      var sugLink = element(by.css('.ui-dialog a'));
+      var sugLink = element.all(by.css('.ui-dialog a')).first();
       expect(sugLink.isDisplayed()).toBeTruthy();
       sugLink.click();
       expect(list4.getAttribute('value')).toBe('Aortic insufficiency');
