@@ -27,7 +27,13 @@
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal3"
         phr-autocomplete="searchListOpts">
       <p>
-      Prefetch list w/ pre-populated model value:
+      Search list with suggestions:
+      <input name="list4" id="list4" type="text"
+        ng-required="false" placeholder="Select or type a value"
+        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4"
+        phr-autocomplete="searchList4Opts">
+      <p>
+       Prefetch list w/ pre-populated model value:
       <input name="list1b" type="text"
         ng-required="false"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal1b"
@@ -100,7 +106,14 @@
           autocomp: true,
           suggestionMode: 0
         };
-      }]);
+
+        $scope.searchList4Opts = {
+          url: '/form/get_search_res_list?fd_id=2163',
+          matchListValue: false,
+          autocomp: true,
+          suggestionMode: 0
+        };
+     }]);
     </script>
   </body>
 </html>

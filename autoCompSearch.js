@@ -182,7 +182,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *  values are:
      *  <ul>
      *    <li>matchListValue - Whether the field value is required to be one from
-     *     the list (default: false)</li>
+     *     the list (default: false).  When this field is false, for a
+     *     non-matching value a dialog will be shown with a list of suggestions
+     *     that are on the list.</li>
      *    <li>buttonID - the ID of the button (if there is one)</li>
      *    <li>autocomp - a boolean that controls whether the field should
      *     also autocomplete as the user types</li>
@@ -926,9 +928,10 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       // Also send a list selection notification (so that that event can be
       // used as a change event for the field).  Also, the suggestion was from
       // the list.
-      this.itemCodes_ = [codes[index]]; // used by listSelectionNotification
+      this.itemCodes_ = codes; // used by listSelectionNotification
       this.itemToDataIndex_ = {};
-      this.itemToDataIndex_[listItems[index]] = 1;
+      this.itemToDataIndex_[listItems[index]] = index;
+      this.listExtraData_ = this.suggestionList_[2];
       this.listSelectionNotification(valTyped, true); // not typed, on list
 
       // No field is focused at the moment (because of the dialog).

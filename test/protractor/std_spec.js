@@ -1,7 +1,7 @@
 helpers = require('./test_helpers.js');
 var hasClass = helpers.hasClass;
 var firstSearchRes = $('#searchResults li:first-child');
-
+/*
 describe('autocomp', function() {
   var searchResults = $('#searchResults');
   var raceField = $('#fe_race_or_ethnicity');
@@ -148,7 +148,7 @@ describe('autocomp', function() {
     });
   });
 });
-
+*/
 
 describe('directive', function() {
   var inputElem = $('#ac1');
@@ -158,7 +158,7 @@ describe('directive', function() {
   function openDirectiveTestPage() {
     browser.get('http://localhost:3000/test/protractor/directiveTest.html');
   }
-
+/*
   it('should create an area on the page for the list', function() {
     openDirectiveTestPage();
     expect(searchResults).not.toBeNull();
@@ -261,7 +261,7 @@ describe('directive', function() {
       expect(element(by.css('#searchResults li:first-child')).isPresent()).toBeFalsy();
     });
   });
-
+*/
   describe(': CNE lists', function() {
     var cneListID = 'ac2';
     var cneList = $('#'+cneListID);
@@ -297,6 +297,34 @@ describe('directive', function() {
       expect(searchList.evaluate('listFieldVal3')).toEqual(
         {text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
          term_icd9_code: '518.82'});
+
+      // Try the expanded results list
+      // Clear the field first
+      browser.driver.executeScript(function() {$('list3').value = '';});
+      searchList.sendKeys('ar');
+      expect(searchList.isDisplayed()).toBeTruthy();
+      var expandLink = $('#moreResults');
+      expect(expandLink.isDisplayed()).toBeTruthy();
+      expandLink.click();
+      var tenthSearchRes = $('#searchResults li:nth-child(10)');
+      tenthSearchRes.click();
+      expect(searchList.getAttribute('value')).toBe('Arrhythmia');
+      expect(searchList.evaluate('listFieldVal3')).toEqual(
+        {text: 'Arrhythmia', code: '3140', term_icd9_code: '427.9'});
+
+
+      // Try the suggestion list
+      var list4 = $('#list4');
+      list4.sendKeys('ar');
+      // Click someplace else to leave 'ar' in the field
+      inputElem.click();
+      expect(element(by.css('.ui-dialog')).isDisplayed()).toBeTruthy();
+      var sugLink = element(by.css('.ui-dialog a'));
+      expect(sugLink.isDisplayed()).toBeTruthy();
+      sugLink.click();
+      expect(list4.getAttribute('value')).toBe('Aortic insufficiency');
+      expect(searchList.evaluate('listFieldVal4')).toEqual(
+        {text: 'Aortic insufficiency', code: '2886', term_icd9_code: '424.1'});
     });
   });
 
