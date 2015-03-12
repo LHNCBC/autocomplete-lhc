@@ -546,9 +546,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *  for the currently selected list item.
      */
     getItemExtraData: function() {
-      var dataIndex = this.itemToDataIndex_[this.element.value];
       var itemData = {};
       if (this.listExtraData_) {
+        var dataIndex = this.itemToDataIndex_[this.element.value];
         var keys = Object.keys(this.listExtraData_);
         for (var k=0, numKeys = keys.length; k<numKeys; ++k)
           var key = keys[k];
