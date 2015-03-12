@@ -601,6 +601,8 @@ if (typeof Def === 'undefined')
      */
     removeSelection: function(event) {
       var li = event.target.parentNode;
+      if (event.target.tagName === 'SPAN') // the span within the button
+        li = li.parentNode;
       li.parentNode.removeChild(li);
       var itemText = li.childNodes[1].textContent;
       var itemCode = this.getItemCode(itemText);

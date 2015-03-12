@@ -1,4 +1,4 @@
-helpers = require('./test_helpers.js');
+helpers = require('../test_helpers.js');
 var hasClass = helpers.hasClass;
 var firstSearchRes = $('#searchResults li:first-child');
 
@@ -151,13 +151,6 @@ describe('autocomp', function() {
 
 
 describe('directive', function() {
-  var inputElem = $('#ac1');
-  var codeField = $('#code');
-  var searchResults = $('#searchResults');
-  var multiField = $('#ac2');
-  function openDirectiveTestPage() {
-    browser.get('http://localhost:3000/test/protractor/directiveTest.html');
-  }
 
   it('should create an area on the page for the list', function() {
     openDirectiveTestPage();
@@ -190,76 +183,6 @@ describe('directive', function() {
     codeField.click();
     expect(inputElem.getAttribute("value")).toEqual('Green');
     expect(codeField.getAttribute("value")).toEqual('G');
-  });
-
-  describe(': multi-select lists', function() {
-    it('should have an empty selection area initially (without a default setting)',
-       function() {
-      expect(multiField.isPresent()).toBe(true);
-      var list = multiField.element(by.xpath('../ul'));
-      expect(list.isPresent()).toBe(true);
-      var listItems = list.element(by.xpath('li'));
-      expect(listItems.isPresent()).toBe(false);
-    });
-
-    it('should be blank (without a default setting)', function() {
-      expect(multiField.getAttribute('value')).toEqual('');
-    });
-
-    it ('should leave the field empty after a selection', function() {
-      multiField.click();
-      expect(searchResults.isDisplayed()).toBeTruthy();
-      var item = $('#searchResults li:first-child');
-      item.click();
-      expect(multiField.getAttribute('value')).toEqual('');
-    });
-
-    it('should store mutiple values on the data model', function() {
-      openDirectiveTestPage();
-      expect(multiField.evaluate('listFieldVal2')).toEqual(null);
-      multiField.click();
-      expect(searchResults.isDisplayed()).toBeTruthy();
-      var item = $('#searchResults li:first-child');
-      item.click();
-      expect(multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
-      // Now add a second item.
-      item = $('#searchResults li:first-child');
-      item.click();
-      expect(multiField.evaluate('listFieldVal2')).toEqual(
-        [{text: 'Green', code: 'G'}, {text: 'Blue', code: 'B'}]);
-      // Now remove the first item
-      var button = element.all(by.css('button:first-child')).first().click();
-      expect(multiField.evaluate('listFieldVal2')).toEqual(
-        [{text: 'Blue', code: 'B'}]);
-      // Add an invalid value.  The existing value should not get lost if we
-      // then add a second valid value.  (Note: multiField is CNE).
-      multiField.sendKeys('zzz');
-      multiField.sendKeys(protractor.Key.TAB); // attempt to leave field
-      expect(hasClass(multiField, 'no_match')).toBe(true);
-      expect(hasClass(multiField, 'invalid')).toBe(true);
-      multiField.sendKeys(protractor.Key.TAB); // shift focus from field (clearing it)
-      expect(multiField.getAttribute('value')).toEqual('');
-      // Add a valid item and check the model.
-      multiField.click();
-      expect(searchResults.isDisplayed()).toBeTruthy();
-      item = $('#searchResults li:first-child');
-      item.click();
-      expect(multiField.evaluate('listFieldVal2')).toEqual(
-        [{text: 'Blue', code: 'B'},{text: 'Green', code: 'G'}]);
-    });
-
-    it('should not show matches for selected items', function() {
-      openDirectiveTestPage();
-      expect(multiField.evaluate('listFieldVal2')).toEqual(null);
-      multiField.click();
-      expect(searchResults.isDisplayed()).toBeTruthy();
-      var item = $('#searchResults li:first-child');
-      item.click();
-      expect(multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
-      multiField.sendKeys('Gr');
-      // There should be no matches
-      expect(element(by.css('#searchResults li:first-child')).isPresent()).toBeFalsy();
-    });
   });
 
   describe(': CNE lists', function() {
@@ -327,5 +250,4 @@ describe('directive', function() {
         {text: 'Aortic insufficiency', code: '2886', term_icd9_code: '424.1'});
     });
   });
-
 });
