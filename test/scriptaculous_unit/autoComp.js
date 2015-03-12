@@ -137,16 +137,16 @@ var testFunctions = {
 
 
     /**
-     *  Tests dupItemToCode.
+     *  Tests dupItemToDataIndex.
      */
-    testDupItemToCode: function() {with(this) {
+    testDupItemToDataIndex: function() {with(this) {
       var otherAutoComp =
         new Def.Autocompleter.Prefetch(AutoCompTestUtil.createInputElement().id,
            ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
            {'addSeqNum': false});
 
-      fe_other_list_field2_autoComp.dupItemToCode(otherAutoComp);
-      assertNotNull(otherAutoComp.itemToCode_);
+      fe_other_list_field2_autoComp.dupItemToDataIndex(otherAutoComp);
+      assertNotNull(otherAutoComp.itemToDataIndex_);
 
       // If a list isn't the original one, itemToCode should not get copied.
       otherAutoComp =
@@ -159,8 +159,8 @@ var testFunctions = {
            ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
            {'addSeqNum': false});
 
-      otherAutoComp.dupItemToCode(anotherAC);
-      assertNull(anotherAC.itemToCode_);
+      otherAutoComp.dupItemToDataIndex(anotherAC);
+      assertNull(anotherAC.itemToDataIndex_);
     }},
 
 
@@ -188,8 +188,8 @@ var testFunctions = {
       var dup = fe_other_list_field2_autoComp.dupForField(
         AutoCompTestUtil.createInputElement().id);
       assertNotNull(dup);
-      assertNotNull(dup.itemToCode_);
-      assertNotNull(dup.itemToCode_['apples']);
+      assertNotNull(dup.itemToDataIndex_);
+      assertNotNull(dup.itemToDataIndex_['apples']);
 
     }},
 
@@ -444,20 +444,20 @@ var testFunctions = {
 
 
     /**
-     *  Tests initItemToCode.
+     *  Tests initItemToDataIndex.
      */
-    testInitItemToCode: function() {with(this) {
+    testInitItemToDataIndex: function() {with(this) {
       // Clear the itemToCode_ hash and re-initialize it.
-      fe_other_list_field2_autoComp.itemToCode_ = null;
-      fe_other_list_field2_autoComp.initItemToCode();
-      assertEqual('pa',
-        fe_other_list_field2_autoComp.itemToCode_['pears and (apples)']);
+      fe_other_list_field2_autoComp.itemToDataIndex_ = null;
+      fe_other_list_field2_autoComp.initItemToDataIndex();
+      assertEqual(2,
+        fe_other_list_field2_autoComp.itemToDataIndex_['pears and (apples)']);
 
       // Also test a list that adds sequence numbers to its items
       fe_seq_num_list_autoComp.itemToCode_ = null;
-      fe_seq_num_list_autoComp.initItemToCode();
-      assertEqual('pa',
-        fe_seq_num_list_autoComp.itemToCode_['pears and (apples)']);
+      fe_seq_num_list_autoComp.initItemToDataIndex();
+      assertEqual(2,
+        fe_seq_num_list_autoComp.itemToDataIndex_['pears and (apples)']);
     }},
 
 
@@ -783,9 +783,9 @@ var testFunctions = {
       assertEnumEqual(expectedList,
         fe_search_test_autoComp.sortResults(listItemData, codes));
 
-      // Also check the item to code map.
-      assertEqual('2', fe_search_test_autoComp.itemToCode_['one - one two']);
-      assertEqual('1', fe_search_test_autoComp.itemToCode_['two - one']);
+      // Also check the item to index mapping.
+      assertEqual(1, fe_search_test_autoComp.itemToDataIndex_['one - one two']);
+      assertEqual(0, fe_search_test_autoComp.itemToDataIndex_['two - one']);
     }},
 
 
@@ -802,10 +802,10 @@ var testFunctions = {
         fe_search_test_autoComp.sortHighlightedResults(listItemData, codes));
 
       // Also check the item to code map.
-      assertEqual('2',
-        fe_search_test_autoComp.itemToCode_['one - one <span>tw</span>o']);
-      assertEqual('1',
-        fe_search_test_autoComp.itemToCode_['<span>tw</span>o - one']);
+      assertEqual(1,
+        fe_search_test_autoComp.itemToDataIndex_['one - one <span>tw</span>o']);
+      assertEqual(0,
+        fe_search_test_autoComp.itemToDataIndex_['<span>tw</span>o - one']);
     }}
 
 };

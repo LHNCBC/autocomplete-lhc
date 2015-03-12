@@ -187,21 +187,21 @@
 
 
     /**
-     *  Used by dupForField to duplicate the item to codes map when creating a
+     *  Used by dupForField to duplicate the item to indices map when creating a
      *  copy of this autocompleter for another field.  The map will not be
      *  copied if this autocompleter is not using its original list.  (The
      *  idea is that for fields that are given a list to begin with it makes
-     *  sense to copy the item to codes map when duplicating, but for fields that
+     *  sense to copy the map when duplicating, but for fields that
      *  are assigned lists from other actions, it does not make sense to copy
      *  the map.)
      * @param dupAutoComp the duplciate autocompleter instance.
      */
-    dupItemToCode: function(dupAutoComp) {
+    dupItemToDataIndex: function(dupAutoComp) {
       if (this.listIsOriginal_) {
         // Give the copy our hashmap of list items to codes.
-        if (!this.itemToCode_)
-          this.initItemToCode(); // so each copy doesn't have to do it
-        dupAutoComp.itemToCode_ = this.itemToCode_;
+        if (!this.itemToDataIndex_)
+          this.initItemToDataIndex(); // so each copy doesn't have to do it
+        dupAutoComp.itemToDataIndex_ = this.itemToDataIndex_;
       }
     },
 
@@ -218,7 +218,7 @@
       var opts = Object.clone(this.constructorOpts_);
       opts['dataRequester'] = dataReq;
       var rtn = new Def.Autocompleter.Prefetch(fieldID, this.rawList_, opts);
-      this.dupItemToCode(rtn);
+      this.dupItemToDataIndex(rtn);
       return rtn;
     },
 
@@ -272,14 +272,13 @@
 
 
     /**
-     *  Initializes itemToCode_, based on the current values of this.itemCodes_
-     *  and this.options.array.
+     *  Initializes itemToDataIndex_, based on the current value of this.rawList_.
      */
-    initItemToCode: function() {
-      this.itemToCode_ = {};
-      if (this.itemCodes_) {
+    initItemToDataIndex: function() {
+      this.itemToDataIndex_ = {};
+      if (this.rawList_) {
         for (var i=0, max=this.rawList_.length; i<max; ++i) {
-          this.itemToCode_[this.rawList_[i]] = this.itemCodes_[i];
+          this.itemToDataIndex_[this.rawList_[i]] = i;
         }
       }
     },
@@ -482,7 +481,7 @@
       this.options.array = displayList;
 
       this.itemCodes_ = itemCodes;
-      this.itemToCode_ = null; // to be built later
+      this.itemToDataIndex_ = null; // to be built later
 
       // Turn off autocomplete listeners  when we don't have a list
       this.enabled_ = listItems.length > 0;
