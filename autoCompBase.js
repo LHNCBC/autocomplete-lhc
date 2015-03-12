@@ -298,7 +298,7 @@ if (typeof Def === 'undefined')
     scoreFieldInitialized_: false,
 
     /**
-     *  A hash between list values and and the original unsorted list index,
+     *  A hash between list values and the original unsorted list index,
      *  so that we can match up list values with arrays for codes and other
      *  data.
      */
