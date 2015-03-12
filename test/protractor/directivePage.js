@@ -5,7 +5,6 @@ var DirectivePage = function() {
   this.searchResults = $('#searchResults');
   this.firstSearchRes = $('#searchResults li:first-child');
 
-  this.inputElem = element(by.id('ac1'));
   this.inputElem = $('#ac1');
   this.codeField = $('#code');
 
