@@ -78,9 +78,16 @@
   font-size: 90%;
   font-weight: bold;
   padding: 3px 10px 3px 10px;
+  /* Prevent wrapping of padding and border in IE */
+  break-inside: avoid;
 }
+/* We don't need a border on the last item */
 .auto_complete > ul > li:last-child {
   border: 0;
+}
+/* ...except that the list balances better in 2 columns if we do */
+.auto_complete.multi_col > ul > li:last-child {
+  border-bottom: 1px solid #DFDFDF;
 }
 
 
