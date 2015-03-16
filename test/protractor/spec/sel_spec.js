@@ -343,7 +343,9 @@ describe('autocomp selenese (modified) test', function() {
   // Load "selenese" test file.
   // (It is not quite selenese.)
   var fs = require('fs');
-  var sel_str = fs.readFileSync('autocompleters.sel', {'encoding': 'utf-8'});
+  var path = require('path');
+  var sel_str = fs.readFileSync(path.join(__dirname, '../autocompleters.sel'),
+                                {'encoding': 'utf-8'});
   var sel_lines = sel_str.split("\n");
 
   for (var i=0, len=sel_lines.length; i<len; ++i) {

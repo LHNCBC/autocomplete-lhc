@@ -4,9 +4,20 @@ var DirectivePage = function() {
   // them.
   this.searchResults = $('#searchResults');
   this.firstSearchRes = $('#searchResults li:first-child');
+  this.tenthSearchRes = $('#searchResults li:nth-child(10)');
+  this.expandLink = $('#moreResults');
+  this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion
 
+  // Directive-page properties
   this.inputElem = $('#ac1');
   this.codeField = $('#code');
+  this.prePopElem = $('#list1b'); // has pre-populated model
+  this.cneListID = 'ac2';
+  this.cneList = $('#'+this.cneListID);
+  this.searchList = $('#list3');
+  this.searchListModel = 'listFieldVal3'; // model name for searchList
+  this.searchWithSug = $('#list4');  // search list with suggestions
+  this.searchWithSugModel = 'listFieldVal4'; // model name
 
   // Multi-select prefetch list
   var multiFieldID = 'ac2';
