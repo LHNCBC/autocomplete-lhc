@@ -279,6 +279,19 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
 
     /**
+     *  Initializes the itemToDataIndex_ map.
+     */
+    initItemToDataIndex: function() {
+      // For the search list, itemToDataIndex_ gets populated when we get an
+      // autocompletion list.  However, it needs to have a non-null value for
+      // cases where lookups are done for non-matching field values which did
+      // not bring back any list (or single-character values when did not
+      // trigger an autocompletion event).
+      this.itemToDataIndex_ = {};
+    },
+
+
+    /**
      *  A copy constructor, for a new field (e.g. another field in a new row
      *  of a table).
      * @param fieldID the ID of the field being assigned to the new autocompleter
@@ -430,7 +443,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       var listItemData = responseData[3];
       var highlighting = responseData[4];
       var listItems = this.processChoices(listItemData, this.itemCodes_, highlighting);
-      this.rawList_ = listItems; // used by initItemToCode
+      this.rawList_ = listItems;
 
       var output;
       if (listItemData.length > 0) {
