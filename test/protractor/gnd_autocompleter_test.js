@@ -71,7 +71,9 @@ var fe_multi_sel_cne_autoComp =
 // CSS display issues when the list wraps to two columns).
 opts = {};
 opts['matchListValue']=true;
-opts['codes']=["QUE-13","QUE-21","QUE-7","QUE-0","QUE-20","QUE-8","QUE-16","QUE-15","QUE-11","QUE-5","QUE-4","QUE-3","QUE-6","QUE-12","QUE-14","QUE-17","QUE-18","QUE-2","QUE-9","QUE-10","QUE-19"];
+opts['codes']=["QUE-13","QUE-21","QUE-7","QUE-0","QUE-20","QUE-8","QUE-16",
+  "QUE-15","QUE-11","QUE-5","QUE-4","QUE-3","QUE-6","QUE-12","QUE-14","QUE-17",
+  "QUE-18","QUE-2","QUE-9","QUE-10","QUE-19"];
 new Def.Autocompleter.Prefetch('long_odd_cne', ["Allergies",
   "Disease risk based on family history","Exercise","General symptoms",
   "Genetic testing","Herbal or alternative remedies",
