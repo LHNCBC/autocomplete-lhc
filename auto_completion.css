@@ -174,7 +174,7 @@ li.suggestion {
 #completionOptionsScroller {
   background: none repeat scroll 0 0 #FFFFFF;
   border: 1px solid #838383;
-  border-top: 0;
+  border-top-color: #DFDFDF;
   overflow-y: auto;
   padding: 0;
 }
