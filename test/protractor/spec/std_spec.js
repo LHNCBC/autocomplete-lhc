@@ -151,102 +151,91 @@ describe('autocomp', function() {
 
 
 describe('directive', function() {
+  var dp = require('../directivePage.js'); // dp = DirectivePage instance
 
   it('should create an area on the page for the list', function() {
-    openDirectiveTestPage();
-    expect(searchResults).not.toBeNull();
+    dp.openDirectiveTestPage();
+    expect(dp.searchResults).not.toBeNull();
   });
   it('should assign an ID to the autocompleting field', function() {
-    var inputElem = element(by.id('ac1'));
-    expect(inputElem).not.toBeNull();
+    expect(dp.inputElem).not.toBeNull();
   });
   it('should show the list when the field is clicked', function() {
-    var searchResults = $('#searchResults');
-    expect(searchResults.isDisplayed()).toBeFalsy();
-    inputElem.click();
-    expect(searchResults.isDisplayed()).toBeTruthy();
+    expect(dp.searchResults.isDisplayed()).toBeFalsy();
+    dp.inputElem.click();
+    expect(dp.searchResults.isDisplayed()).toBeTruthy();
   });
   it('should load the default item code and value', function() {
-    expect(inputElem.getAttribute("value")).toEqual('Blue');
-    expect(codeField.getAttribute("value")).toEqual('B');
+    expect(dp.inputElem.getAttribute("value")).toEqual('Blue');
+    expect(dp.codeField.getAttribute("value")).toEqual('B');
   });
   it('should not load the default item code and value when the model is already populated', function() {
-    var prePopElem = $('#list1b');
-    expect(prePopElem.getAttribute("value")).toEqual('a pre-populated model value');
+    expect(dp.prePopElem.getAttribute("value")).toEqual('a pre-populated model value');
   });
   it('should populate the model when an item is selected', function() {
-    inputElem.click();
-    expect(searchResults.isDisplayed()).toBeTruthy();
-    var item = $('#searchResults li:first-child');
-    item.click();
+    dp.inputElem.click();
+    expect(dp.searchResults.isDisplayed()).toBeTruthy();
+    dp.firstSearchRes.click();
     // Change focus to send change event
-    codeField.click();
-    expect(inputElem.getAttribute("value")).toEqual('Green');
-    expect(codeField.getAttribute("value")).toEqual('G');
+    dp.codeField.click();
+    expect(dp.inputElem.getAttribute("value")).toEqual('Green');
+    expect(dp.codeField.getAttribute("value")).toEqual('G');
   });
 
   describe(': CNE lists', function() {
-    var cneListID = 'ac2';
-    var cneList = $('#'+cneListID);
     it('should warn user about invalid values', function() {
-      openDirectiveTestPage();
-      expect(hasClass(cneList, 'no_match')).toBe(false);
-      expect(hasClass(cneList, 'invalid')).toBe(false);
+      dp.openDirectiveTestPage();
+      expect(hasClass(dp.cneList, 'no_match')).toBe(false);
+      expect(hasClass(dp.cneList, 'invalid')).toBe(false);
 
-      cneList.click();
-      cneList.sendKeys('zzz');
-      cneList.sendKeys(protractor.Key.TAB); // shift focus from field
-      expect(hasClass(cneList, 'no_match')).toBe(true);
-      expect(hasClass(cneList, 'invalid')).toBe(true);
+      dp.cneList.click();
+      dp.cneList.sendKeys('zzz');
+      dp.cneList.sendKeys(protractor.Key.TAB); // shift focus from field
+      expect(hasClass(dp.cneList, 'no_match')).toBe(true);
+      expect(hasClass(dp.cneList, 'invalid')).toBe(true);
       // Focus should be back in the field
-      expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(cneListID);
+      expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(dp.cneListID);
     });
   });
 
   describe(': search lists', function() {
-    var searchList = $('#list3');
     it('should show a result list when the user types', function() {
-      searchList.click();
-      expect(searchResults.isDisplayed()).toBeFalsy();
-      searchList.sendKeys('ar');
-      expect(searchResults.isDisplayed()).toBeTruthy();
+      dp.searchList.click();
+      expect(dp.searchResults.isDisplayed()).toBeFalsy();
+      dp.searchList.sendKeys('ar');
+      expect(dp.searchResults.isDisplayed()).toBeTruthy();
     });
 
     it('should have the extra data in the model for selected items', function() {
       // Pick the first search result from the previous test
-      firstSearchRes.click();
-      expect(searchList.getAttribute('value')).toBe(
+      dp.firstSearchRes.click();
+      expect(dp.searchList.getAttribute('value')).toBe(
        'Adult respiratory distress syndrome (ARDS)');
-      expect(searchList.evaluate('listFieldVal3')).toEqual(
+      expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(
         {text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
          term_icd9_code: '518.82'});
 
       // Try the expanded results list
       // Clear the field first
       browser.driver.executeScript(function() {$('list3').value = '';});
-      searchList.sendKeys('ar');
-      expect(searchList.isDisplayed()).toBeTruthy();
-      var expandLink = $('#moreResults');
-      expect(expandLink.isDisplayed()).toBeTruthy();
-      expandLink.click();
-      var tenthSearchRes = $('#searchResults li:nth-child(10)');
-      tenthSearchRes.click();
-      expect(searchList.getAttribute('value')).toBe('Arrhythmia');
-      expect(searchList.evaluate('listFieldVal3')).toEqual(
+      dp.searchList.sendKeys('ar');
+      expect(dp.searchList.isDisplayed()).toBeTruthy();
+      expect(dp.expandLink.isDisplayed()).toBeTruthy();
+      dp.expandLink.click();
+      dp.tenthSearchRes.click();
+      expect(dp.searchList.getAttribute('value')).toBe('Arrhythmia');
+      expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(
         {text: 'Arrhythmia', code: '3140', term_icd9_code: '427.9'});
 
-
       // Try the suggestion list
-      var list4 = $('#list4');
-      list4.sendKeys('ar');
+      dp.searchWithSug.sendKeys('ar');
       // Click someplace else to leave 'ar' in the field
-      inputElem.click();
+      dp.inputElem.click();
       expect(element(by.css('.ui-dialog')).isDisplayed()).toBeTruthy();
-      var sugLink = element.all(by.css('.ui-dialog a')).first();
-      expect(sugLink.isDisplayed()).toBeTruthy();
-      sugLink.click();
-      expect(list4.getAttribute('value')).toBe('Aortic insufficiency');
-      expect(searchList.evaluate('listFieldVal4')).toEqual(
+      expect(dp.firstSugLink.isDisplayed()).toBeTruthy();
+      dp.firstSugLink.click();
+      expect(dp.searchWithSug.getAttribute('value')).toBe('Aortic insufficiency');
+      expect(dp.searchWithSug.evaluate(dp.searchWithSugModel)).toEqual(
         {text: 'Aortic insufficiency', code: '2886', term_icd9_code: '424.1'});
     });
   });

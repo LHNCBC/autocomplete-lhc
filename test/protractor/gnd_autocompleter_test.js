@@ -67,16 +67,19 @@ opts['maxSelect'] = '*';
 var fe_multi_sel_cne_autoComp =
  new Def.Autocompleter.Prefetch('fe_multi_sel_cne', ["Spanish","French","Other"], opts);
 
-Def.Autocompleter.Base.TABLE_FIELD_JOIN_STR = ' - ';
-// The following could be in a global JS file
-window.tip_delay = 50;
-window.access_close = 'C';
-Def.SET_VAL_DELIM = '|';
-Def.fieldObservers_={
- 'save':{
-     'click': [function(event){onSave(this,event);}, function(event) {event.stopPropagation();}]
-  }
-}
-Def.fieldValidations_ = {
-}
+// Long prefetched list autocompleter with an odd number of items (for checking
+// CSS display issues when the list wraps to two columns).
+opts = {};
+opts['matchListValue']=true;
+opts['codes']=["QUE-13","QUE-21","QUE-7","QUE-0","QUE-20","QUE-8","QUE-16",
+  "QUE-15","QUE-11","QUE-5","QUE-4","QUE-3","QUE-6","QUE-12","QUE-14","QUE-17",
+  "QUE-18","QUE-2","QUE-9","QUE-10","QUE-19"];
+new Def.Autocompleter.Prefetch('long_odd_cne', ["Allergies",
+  "Disease risk based on family history","Exercise","General symptoms",
+  "Genetic testing","Herbal or alternative remedies",
+  "Infant or child development","Insurance","Lab tests and/or results",
+  "Medical conditions","Medical equipment and/or supplies","Medications",
+  "Nutrition","Preventive/screening tests","Referrals",
+  "School or learning issues","Sports injuries","Surgeries","Travel advice",
+  "Vaccines","X-ray or other radiology tests and/or results"], opts);
 

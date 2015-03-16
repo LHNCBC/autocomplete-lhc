@@ -78,9 +78,16 @@
   font-size: 90%;
   font-weight: bold;
   padding: 3px 10px 3px 10px;
+  /* Prevent wrapping of padding and border in IE */
+  break-inside: avoid;
 }
+/* We don't need a border on the last item */
 .auto_complete > ul > li:last-child {
   border: 0;
+}
+/* ...except that the list balances better in 2 columns if we do */
+.auto_complete.multi_col > ul > li:last-child {
+  border-bottom: 1px solid #DFDFDF;
 }
 
 
@@ -167,7 +174,7 @@ li.suggestion {
 #completionOptionsScroller {
   background: none repeat scroll 0 0 #FFFFFF;
   border: 1px solid #838383;
-  border-top: 0;
+  border-top-color: #DFDFDF;
   overflow-y: auto;
   padding: 0;
 }
