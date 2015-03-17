@@ -7,6 +7,7 @@ var DirectivePage = function() {
   this.tenthSearchRes = $('#searchResults li:nth-child(10)');
   this.expandLink = $('#moreResults');
   this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion
+  this.suggestionDialog = element(by.css('.ui-dialog'));
 
   // Directive-page properties
   this.inputElem = $('#ac1');
