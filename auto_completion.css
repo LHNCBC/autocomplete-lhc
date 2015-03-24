@@ -213,20 +213,23 @@ input.search_field, textarea.search_field {
 }
 .autocomp_selected input, .autocomp_selected textarea {
   border-width: 1px;
+  width: 100%;
 }
 .autocomp_selected ul {
   list-style-type: none;
-  margin: 0.5em 0 0.5em 0.25em;
+  margin: 0.5em 0 0.25em 0.25em;
   padding-left: 0;
 }
 .autocomp_selected li {
-  display: inline;
+  display: inline-block;
   border-radius: 5px;
   border: 1px solid #444;
   background-color: #DDD;
   padding-left: 0.25em;
   padding-right: 0.25em;
-  margin-right: 0.5em;
+  margin-right: 0.25em;
+  margin-bottom: 0.25em;
+  white-space: nowrap;
 }
 .autocomp_selected li > button {
   border: 0;
