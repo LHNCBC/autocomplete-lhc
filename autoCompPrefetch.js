@@ -171,10 +171,7 @@
       // The base class sets up one for a "blur" event.
 
       this.onMouseMoveListener = this.onMouseMove.bindAsEventListener(this);
-      var matchListValue = options['matchListValue'];
-      if (matchListValue === null)
-        matchListValue = false;
-      this.defAutocompleterBaseInit(matchListValue, options);
+      this.defAutocompleterBaseInit(options);
       this.initHeadings(options);
       var codes = options['codes'];
       this.setList(listItems, codes);
@@ -787,18 +784,18 @@
           // Find the default index
           var targetField = Def.Autocompleter.getFieldLookupKey(this.element);
           var defaultVal = this.constructorOpts_.defaultValue;
-          if (defaultVal) {
+          if (defaultVal !== undefined) {
             if (this.itemCodes_) {
               // the default value should be a code
               for (var i=0, max=this.itemCodes_.length; i<max; ++i) {
-                if (this.itemCodes_[i]==defaultVal)
+                if (this.itemCodes_[i]===defaultVal)
                   index = i;
               }
             }
             if (index === -1) {
               // Look for the value in the list itself.
               for (var r=0, maxlen=this.rawList_.length; r<maxlen; ++r) {
-                if (this.rawList_[r]==defaultVal)
+                if (this.rawList_[r]===defaultVal)
                   index = r;
               }
             }
