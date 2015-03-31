@@ -635,9 +635,9 @@ var testFunctions = {
 
       // Create a search autocompleter without a matchListValue setting.
       var field2 = AutoCompTestUtil.createInputElement();
-      var fe_search_test_autoComp = new Def.Autocompleter.Search(field2.id,
+      var autoComp2 = new Def.Autocompleter.Search(field2.id,
         {'url': '/someURL'});
-      assertEqual(expectedDefaultVal, autoComp.matchListValue_);
+      assertEqual(expectedDefaultVal, autoComp2.matchListValue_);
     }},
 
 
