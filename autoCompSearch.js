@@ -230,10 +230,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         }.bind(this)
       }]);
 
-      var matchListValue = options['matchListValue'];
-      if (matchListValue === null)
-        matchListValue = false;
-      this.defAutocompleterBaseInit(matchListValue, options);
+      this.defAutocompleterBaseInit(options);
 
       this.autocomp = options['autocomp'];
       if (!this.autocomp) {

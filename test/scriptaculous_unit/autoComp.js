@@ -621,6 +621,27 @@ var testFunctions = {
 
 
     /**
+     *  Tests the matchListValue default.
+     */
+    testMatchListValue: function() {with(this) {
+      var expectedDefaultVal = false; // i.e., don't require a match
+      // Create a prefetch autcompleter without a matchListValue setting.
+      var list = ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'];
+      var codes = ['a', 'oa', 'pa', 'b'];
+      var field = AutoCompTestUtil.createInputElement();
+      var autoComp = new Def.Autocompleter.Prefetch(field.id,
+        list, {'addSeqNum': false, 'codes': codes});
+      assertEqual(expectedDefaultVal, autoComp.matchListValue_);
+
+      // Create a search autocompleter without a matchListValue setting.
+      var field2 = AutoCompTestUtil.createInputElement();
+      var autoComp2 = new Def.Autocompleter.Search(field2.id,
+        {'url': '/someURL'});
+      assertEqual(expectedDefaultVal, autoComp2.matchListValue_);
+    }},
+
+
+    /**
      *  Tests for multi-select.
      */
     testMultiSelect: function() {with(this) {

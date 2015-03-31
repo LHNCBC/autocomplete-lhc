@@ -416,11 +416,11 @@ if (typeof Def === 'undefined')
      *  An initialization method for the base Def.Autocompleter class.  This
      *  should be called after the initialization done by an autocompleter's
      *  Scriptaculous autocompleter base class.
-     * @param matchListValue Whether the field value is required to be one from
-     *  the list
      * @param options A hash of optional parameters.  For the allowed keys see the
      *  subclasses.  The base class uses the following keys:
      *  <ul>
+     *    <li>matchListValue - whether the field should validate its value
+     *      against the list (default: false)</li>
      *    <li>dataRequester - A DataRecordRequester for getting additional data
      *     after the user makes a selection from the completion list.  This may be
      *     null, in which case no request for additional data is made.</li>
@@ -436,13 +436,12 @@ if (typeof Def === 'undefined')
      *     selected.  Use '*' for unlimited.</li>
      *  </ul>
      */
-    defAutocompleterBaseInit: function(matchListValue, options) {
-
+    defAutocompleterBaseInit: function(options) {
+      if (!options)
+        options = {};
       if (options['suggestionMode'] !== undefined)
         this.suggestionMode_ = options['suggestionMode'];
 
-      if (!options)
-        options = {};
       if (options.maxSelect === undefined)
         options.maxSelect = 1;
       if (options.maxSelect === '*')
@@ -459,7 +458,7 @@ if (typeof Def === 'undefined')
       if (!Def.Autocompleter.Base.classInit_)
         Def.Autocompleter.Base.classInit();
 
-      this.matchListValue_ = matchListValue;
+      this.matchListValue_ = options['matchListValue'] || false;
 
       this.recDataRequester_ = dataRequester;
 
