@@ -96,7 +96,13 @@ if (typeof angular !== 'undefined') {
               // Just rely on the autocompleter list selection event to manage
               // model updates.  Here we will just return the model object, to
               // prevent any change to the model from the parsers.
-              return scope.modelData;
+              var rtn = scope.modelData;
+              // Returning "undefined" means the value is invalid and will cause
+              // the ng-invalid-parse class to get added.  Switch to null if we
+              // allow non-matching field values.
+              if (rtn === undefined && phrAutoOpts.matchListValue !== true)
+                rtn = null;
+              return rtn;
             });
 
             // if we have a default value, and if the model value is not already
