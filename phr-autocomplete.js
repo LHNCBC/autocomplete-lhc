@@ -64,14 +64,15 @@ if (typeof angular !== 'undefined') {
             var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
             Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
               scope.$apply(function() {
+                var item;
                 if (!ac.multiSelect_) {
                   var finalVal = eventData.final_val;
-                  var item = itemTextToItem[finalVal] ||
+                  item = itemTextToItem[finalVal] ||
                     {text: finalVal};
                   scope.modelData = item;
                 }
                 else {
-                  if (typeof scope.modelData !== 'object')
+                  if (!scope.modelData)
                     scope.modelData = [];
                   var selectedItems = scope.modelData;
                   if (eventData.removed) {
@@ -84,8 +85,12 @@ if (typeof angular !== 'undefined') {
                       }
                     }
                   }
-                  else
-                    selectedItems.push(itemTextToItem[eventData.final_val]);
+                  else {
+                    item = itemTextToItem[eventData.final_val];
+                    if (item === undefined)
+                      item = {text: eventData.final_val} // non-list item
+                    selectedItems.push(item);
+                  }
                 }
               });
             });

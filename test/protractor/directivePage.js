@@ -1,14 +1,8 @@
 // Page objects helpers for the directive test page
+var BasePage = require('./basePage').BasePage;
+
 var DirectivePage = function() {
-  // General properties that could be shared with other page objects if we had
-  // them.
-  this.searchResults = $('#searchResults');
-  this.firstSearchRes = $('#searchResults li:first-child');
-  this.secondSearchRes = $('#searchResults li:nth-child(2)');
-  this.tenthSearchRes = $('#searchResults li:nth-child(10)');
-  this.expandLink = $('#moreResults');
-  this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion
-  this.suggestionDialog = element(by.css('.ui-dialog'));
+  BasePage.call(this);
 
   // Directive-page properties
   this.inputElem = $('#ac1');
@@ -22,8 +16,9 @@ var DirectivePage = function() {
   this.searchWithSugModel = 'listFieldVal4'; // model name
   this.prefetchCWEBlank = $('#list5');
   this.prefetchCNEBlank = $('#list6');
+  this.multiPrefetchCWE = $('#multiPrefetchCWE');
 
-  // Multi-select prefetch list
+  // Multi-select CNE prefetch list
   var multiFieldID = 'ac2';
   this.multiField = $('#'+multiFieldID);
   this.multiFieldSelectedItems = element.all(by.css('.autocomp_selected li'));
@@ -31,6 +26,15 @@ var DirectivePage = function() {
   this.multiFieldFirstSelected = element.all(by.css(multiFieldFirstSelectedCSS)).first();
   this.multiFieldFirstSelectedSpan =
      element.all(by.css(multiFieldFirstSelectedCSS + ' span')).first();
+
+  // Multi-select CWE prefetch list
+  var multiPrefetchCWECSS = '#multiPrefetchCWE';
+  this.multiPrefetchCWE = $(multiPrefetchCWECSS);
+  var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection'
+  this.multiPrefetchCWEFirstSelected =
+    element(by.css(multiPrefetchCWESectionCSS + ' button:first-child'));
+  this.multiPrefetchCWESelected =
+    element.all(by.css(multiPrefetchCWESectionCSS + ' button'));
 
   this.openDirectiveTestPage = function() {
     browser.get('http://localhost:3000/test/protractor/directiveTest.html');

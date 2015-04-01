@@ -601,7 +601,7 @@ var testFunctions = {
      */
     testGetSelectedCodes: function() {with(this) {
       // Test a multiselect list
-      fe_other_list_field_autoComp.constructorOpts_.maxSelect = 2;
+      fe_other_list_field_autoComp.multiSelect_ = true;
       fe_other_list_field_autoComp.element.value = 'apples';
       fe_other_list_field_autoComp.storeSelectedItem();
       assertEnumEqual(['a'], fe_other_list_field_autoComp.getSelectedCodes());
@@ -610,7 +610,7 @@ var testFunctions = {
       assertEnumEqual(['a', 'b'], fe_other_list_field_autoComp.getSelectedCodes().sort());
 
       // Test a non-multiselect list
-      fe_other_list_field_autoComp.constructorOpts_.maxSelect = 1;
+      fe_other_list_field_autoComp.multiSelect_ = false;
       fe_other_list_field_autoComp.element.value = 'apples';
       fe_other_list_field_autoComp.storeSelectedItem();
       assertEnumEqual(['a'], fe_other_list_field_autoComp.getSelectedCodes());

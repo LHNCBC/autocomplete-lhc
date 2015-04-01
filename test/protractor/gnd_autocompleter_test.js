@@ -67,6 +67,14 @@ opts['maxSelect'] = '*';
 var fe_multi_sel_cne_autoComp =
  new Def.Autocompleter.Prefetch('fe_multi_sel_cne', ["Spanish","French","Other"], opts);
 
+// multi-select prefetch list without match required
+opts = {};
+opts['matchListValue']=false;
+opts['codes']=["LA44-3","LA45-0","LA46-8"];
+opts['maxSelect'] = '*';
+var fe_multi_sel_cne_autoComp =
+ new Def.Autocompleter.Prefetch('multi_sel_cwe', ["Spanish","French","Other"], opts);
+
 // Long prefetched list autocompleter with an odd number of items (for checking
 // CSS display issues when the list wraps to two columns).
 opts = {};

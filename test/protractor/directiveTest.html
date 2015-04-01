@@ -20,6 +20,13 @@
         ng-required="false" placeholder="Select or type a value"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
         phr-autocomplete="multilistOpts">
+      <p id="multiPrefetchCWESection">
+          Multi-select prefetch CWE list:
+          <input name="multiPrefetchCWE" id="multiPrefetchCWE" type="text"
+          ng-required="false" placeholder="Select or type a value"
+          ng-model-options="{updateOn: 'change'}" ng-model="multiPrefetchCWEVal"
+          phr-autocomplete="multiPrefetchCWEOpts">
+      </p>
       <p>
       "Search" CNE list:
       <input name="list3" id="list3" type="text"
@@ -109,6 +116,16 @@
             {text: 'Red', code: 'R'}
           ],
           matchListValue: true,
+          maxSelect: '*'
+        };
+
+        $scope.multiPrefetchCWEOpts = {
+          source: [
+            {text: 'Green', code: 'G'},
+            {text: 'Blue', code: 'B'},
+            {text: 'Red', code: 'R'}
+          ],
+          matchListValue: false,
           maxSelect: '*'
         };
 
