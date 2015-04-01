@@ -34,6 +34,14 @@ describe('directive', function() {
       expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(
         {text: 'Arrhythmia', code: '3140', term_icd9_code: '427.9'});
 
+      // Try a case with more than one field in the extra item data hash.
+      browser.driver.executeScript(function() {$('list3').value = '';}); // clear field
+      dp.searchList.sendKeys('abc');
+      dp.secondSearchRes.click();
+      expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(
+        {text: 'zArm pain', code: '2958',
+         term_icd9_code: '729.5', other_field: 'green'});
+
       // Try the suggestion list
       dp.searchWithSug.sendKeys('ar');
       // Click someplace else to leave 'ar' in the field

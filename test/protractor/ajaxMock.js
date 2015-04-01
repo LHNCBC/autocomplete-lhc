@@ -8,6 +8,7 @@ mockData_ = {
   '1284': { // fe_search_cne
     'partial': {
       'ar' : '[65,["5398","2910","154","4077","1051","4836","5529"],{"term_icd9_code":["042","518.82","704.01","","284.9","424.1","322.9"]},[["AIDS-related complex"],["Adult respiratory distress syndrome (ARDS)"],["Alopecia areata"],["Androblastoma"],["Anemia - refractory"],["Aortic insufficiency"],["Arachnoiditis"]],false]',
+      'abc': '[2,["2212","2958"],{"term_icd9_code":["414.9","729.5"], "other_field": ["blue", "green"]},[["Coronary artery disease (CAD)"],["zArm pain"]],false]',
       'pickw' : '[1,["1848"],{"term_icd9_code":["278.8"]},[["Pickwickian syndrome"]],false]'
      },
     'full' : {
@@ -53,7 +54,7 @@ Ajax.Request = function(url, options) {
     if (params.suggest === '1')
       responseText = '[[],[]]';
     else
-      responseText = '[0,[],{},[],false]';
+      responseText = '[0,[],null,[],false]';
   }
 
   var response = {};

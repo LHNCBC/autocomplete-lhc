@@ -155,7 +155,8 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *    <li>position 1 - the list of codes for the list items (if the items are
      *     coded)</li>
      *    <li>position 2 - A hash of extra data about the list items (e.g.
-     *     an extra set of codes).  The keys in the hash should be names for the
+     *     an extra set of codes), or null if there is none.
+     *     The keys in the hash should be names for the
      *     data elements, and the values should be an array of values, one for
      *     each returned item.  Configuration for what gets returned here is out
      *     of scope of this class; this search autocompleter just sends the
@@ -560,9 +561,10 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       if (this.listExtraData_) {
         var dataIndex = this.itemToDataIndex_[this.element.value];
         var keys = Object.keys(this.listExtraData_);
-        for (var k=0, numKeys = keys.length; k<numKeys; ++k)
+        for (var k=0, numKeys = keys.length; k<numKeys; ++k) {
           var key = keys[k];
           itemData[key] = this.listExtraData_[key][dataIndex];
+        }
       }
       return itemData;
     },

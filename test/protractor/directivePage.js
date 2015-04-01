@@ -4,6 +4,7 @@ var DirectivePage = function() {
   // them.
   this.searchResults = $('#searchResults');
   this.firstSearchRes = $('#searchResults li:first-child');
+  this.secondSearchRes = $('#searchResults li:nth-child(2)');
   this.tenthSearchRes = $('#searchResults li:nth-child(10)');
   this.expandLink = $('#moreResults');
   this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion
