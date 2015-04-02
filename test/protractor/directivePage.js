@@ -19,6 +19,8 @@ var DirectivePage = function() {
   this.searchListModel = 'listFieldVal3'; // model name for searchList
   this.searchWithSug = $('#list4');  // search list with suggestions
   this.searchWithSugModel = 'listFieldVal4'; // model name
+  this.prefetchCWEBlank = $('#list5');
+  this.prefetchCNEBlank = $('#list6');
 
   // Multi-select prefetch list
   var multiFieldID = 'ac2';

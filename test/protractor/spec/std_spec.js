@@ -182,6 +182,25 @@ describe('directive', function() {
     expect(dp.codeField.getAttribute("value")).toEqual('G');
   });
 
+  it('should assign ng-invalid-parse only for CNE', function() {
+    // Try a CWE
+    expect(hasClass(dp.prefetchCWEBlank, 'ng-invalid-parse')).toBe(false);
+    dp.prefetchCWEBlank.click();
+    dp.prefetchCWEBlank.sendKeys('zzz');
+    // Change focus to send change event
+    dp.codeField.click();
+    expect(hasClass(dp.prefetchCWEBlank, 'ng-invalid-parse')).toBe(false);
+
+    // Try a CNE
+    expect(hasClass(dp.prefetchCNEBlank, 'ng-invalid-parse')).toBe(false);
+    dp.prefetchCNEBlank.click();
+    dp.prefetchCNEBlank.sendKeys('zzz');
+    // Change focus to send change event
+    dp.codeField.click();
+    expect(hasClass(dp.prefetchCNEBlank, 'ng-invalid-parse')).toBe(true);
+  });
+
+
   describe(': CNE lists', function() {
     it('should warn user about invalid values', function() {
       dp.openDirectiveTestPage();

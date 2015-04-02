@@ -7,7 +7,7 @@
   </head>
   <body ng-app="someApp">
     <div ng-controller="testPageController">
-      Prefetch list:
+      Prefetch CWE list with a default:
       <input name="list1" type="text"
         ng-required="false"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal"
@@ -15,30 +15,42 @@
       <br>
       Selected code: <input readonly id="code" name="code" ng-model="listFieldVal.code">
       <p>
-      Multi-select prefetch list:
+      Multi-select prefetch CNE list:
       <input name="list2" type="text"
         ng-required="false" placeholder="Select or type a value"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
         phr-autocomplete="multilistOpts">
       <p>
-      "Search" list:
+      "Search" CNE list:
       <input name="list3" id="list3" type="text"
         ng-required="false" placeholder="Select or type a value"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal3"
         phr-autocomplete="searchListOpts">
       <p>
-      Search list with suggestions:
+      Search CWE list with suggestions:
       <input name="list4" id="list4" type="text"
         ng-required="false" placeholder="Select or type a value"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4"
         phr-autocomplete="searchList4Opts">
       <p>
-       Prefetch list w/ pre-populated model value:
+       Prefetch CWE list w/ pre-populated model value:
       <input name="list1b" type="text"
         ng-required="false"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal1b"
         phr-autocomplete="list1Opts" id="list1b">
       <p>
+       Prefetch CWE list (starting with empty field):
+      <input name="list5" type="text"
+        ng-required="false"
+        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal5"
+        phr-autocomplete="list5Opts" id="list5">
+      <p>
+       Prefetch CNE list (starting with empty field):
+      <input name="list6" type="text"
+        ng-required="false"
+        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal6"
+        phr-autocomplete="list6Opts" id="list6">
+       <p>
       <input name="nonlist" type="text">
     </div>
     <script src="/bower_components/prototypejs-bower/prototype.js"></script>
@@ -113,6 +125,26 @@
           autocomp: true,
           suggestionMode: 0
         };
+
+        $scope.list5Opts = {
+          // source is the list of item data
+          source: [
+            {text: 'Green', // label is the display string
+             code: 'G' // item objects can contain any other data too
+            },
+            {text: 'Blue', code: 'B'}
+          ]
+        };
+
+        $scope.list6Opts = {
+          source: [
+            {text: 'Green', code: 'G'},
+            {text: 'Blue', code: 'B'},
+            {text: 'Red', code: 'R'}
+          ],
+          matchListValue: true
+        };
+
      }]);
     </script>
   </body>
