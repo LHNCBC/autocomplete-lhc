@@ -57,11 +57,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     MAX_VALUE_SIZE_FOR_AUTOCOMP: 25,
 
     /**
-     *  A dialog for showing suggestions.
-     */
-    suggestionDialog_: null,
-
-    /**
      *  The constructor function.
      */
     constructor: Def.Autocompleter.Search,
