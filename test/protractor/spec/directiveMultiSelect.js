@@ -65,6 +65,50 @@ describe('directive', function() {
       expect(dp.multiFieldSelectedItems.count()).toEqual(1);
     });
 
+    it('should allow non-matching values for prefetch CWE lists', function () {
+      // Add a non-list value
+      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(null);
+      dp.multiPrefetchCWE.click();
+      dp.multiPrefetchCWE.sendKeys('non-list val 1');
+      dp.codeField.click(); // shift focus from field
+      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+        [{text: 'non-list val 1'}]);
+      expect(dp.multiPrefetchCWESelected.count()).toEqual(1);
+      expect(dp.multiPrefetchCWE.getAttribute('value')).toEqual('');
+      // Add a list value
+      dp.multiPrefetchCWE.click();
+      dp.firstSearchRes.click();
+      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+        [{text: 'non-list val 1'}, {text: 'Green', code: 'G'}]);
+      expect(dp.multiPrefetchCWESelected.count()).toEqual(2);
+      // Add another non-list value
+      dp.multiPrefetchCWE.click();
+      dp.multiPrefetchCWE.sendKeys('non-list val 2');
+      dp.codeField.click(); // shift focus from field
+      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+        [{text: 'non-list val 1'}, {text: 'Green', code: 'G'},
+         {text: 'non-list val 2'}]);
+      expect(dp.multiPrefetchCWESelected.count()).toEqual(3);
+      expect(dp.multiPrefetchCWE.getAttribute('value')).toEqual('');
+      // Remove the first non-list value
+      dp.multiPrefetchCWE.click();
+      expect(dp.allSearchRes.count()).toBe(2);
+      dp.multiPrefetchCWEFirstSelected.click();
+      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+        [{text: 'Green', code: 'G'}, {text: 'non-list val 2'}]);
+      expect(dp.multiPrefetchCWESelected.count()).toEqual(2);
+      // A non-list item should not be added into the list when removed
+      dp.multiPrefetchCWE.click();
+      expect(dp.allSearchRes.count()).toBe(2);
+      // Remove a list value
+      dp.multiPrefetchCWEFirstSelected.click();
+      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+        [{text: 'non-list val 2'}]);
+      expect(dp.multiPrefetchCWESelected.count()).toEqual(1);
+      dp.multiPrefetchCWE.click();
+      expect(dp.allSearchRes.count()).toBe(3);
+    });
+
     it('should not show matches for selected items', function() {
       dp.openDirectiveTestPage();
       expect(dp.multiField.evaluate('listFieldVal2')).toEqual(null);

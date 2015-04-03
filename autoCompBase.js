@@ -552,7 +552,7 @@ if (typeof Def === 'undefined')
     storeSelectedItem: function() {
       var itemText = this.element.value;
       var newCode = this.getItemCode(itemText);
-      if (this.constructorOpts_.maxSelect === 1)
+      if (!this.multiSelect_)
         this.selectedCodes_ = {};
       if (newCode !== null)
         this.selectedCodes_[newCode] = 1;
@@ -1361,6 +1361,17 @@ if (typeof Def === 'undefined')
     },
 
 
+    /*
+     *  Returns the value the user actually typed in the field (which might
+     *  have just been the first few characters of the final list value
+     *  following a selection).
+     */
+    getValTyped: function() {
+      return this.preFieldFillVal_ === null ? this.element.value :
+          this.preFieldFillVal_;
+    },
+
+
     /**
      *  Notifies event observers of an attempted list selection (which might
      *  actually have just been the user typing a value rather than picking it
@@ -1405,9 +1416,7 @@ if (typeof Def === 'undefined')
      */
     attemptSelection: function() {
       var canSelect = false;
-
-      var valTyped = this.preFieldFillVal_ === null ? this.element.value :
-          this.preFieldFillVal_;
+      var valTyped = this.getValTyped();
 
       if (this.active) {
         if (this.index === -1) {
@@ -1439,7 +1448,7 @@ if (typeof Def === 'undefined')
           this.setMatchStatusIndicator(true);
           this.setInvalidValIndicator(false);
           this.propagateFieldChanges();
-          if (this.constructorOpts_.maxSelect !== 1)
+          if (this.multiSelect_)
             this.moveEntryToSelectedArea();
         }
         // Don't hide the list if this is a multi-select list.
@@ -1448,11 +1457,6 @@ if (typeof Def === 'undefined')
           this.hide();
         }
       }
-
-      // Send a list selection notification for non-matching values too, but
-      // only if non-matching values are allowed.
-      if (!canSelect && !this.matchListValue_ && Def.Autocompleter.Event.callbacks_ !== null)
-        this.listSelectionNotification(valTyped, false);
 
       return canSelect;
     },
@@ -1508,6 +1512,13 @@ if (typeof Def === 'undefined')
           }.bind(this), 1);
         }
         else {
+          // Send a list selection notification for non-matching values too, but
+          // only if non-matching values are allowed.
+          if (Def.Autocompleter.Event.callbacks_ !== null)
+            this.listSelectionNotification(this.getValTyped(), false);
+          if (this.multiSelect_)
+            this.moveEntryToSelectedArea();
+
           // See if we can find some suggestions for what the user typed.
           if (this.findSuggestions) {
             // Use a timeout to let the event that triggered this call finish,

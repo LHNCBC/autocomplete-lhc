@@ -81,7 +81,7 @@
         ' and backspace a few letters to be sure the '+
         'choice you want was not in the choice menu, check the spelling '+
         'carefully and re-enter if wrong, or accept what you have '+
-        'entered but realize it will not be understood by any of the PHR '+
+        'entered but realize it will not be understood by any of the '+
         'checking processes.';
     },
 
@@ -100,7 +100,7 @@
         'choice you want was not in the choice menu, or check the spelling '+
         'carefully and re-enter if wrong.  You can let it remain as '+
         'entered, but realize that it will not be understood by any of the '+
-        'PHR checking processes.';
+        'checking processes.';
     },
 
 

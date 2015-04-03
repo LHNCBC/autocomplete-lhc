@@ -214,6 +214,7 @@ input.search_field, textarea.search_field {
 .autocomp_selected input, .autocomp_selected textarea {
   border-width: 1px;
   width: 100%;
+  box-sizing: border-box; /* include the padding w/ icon in the width */
 }
 .autocomp_selected ul {
   list-style-type: none;
