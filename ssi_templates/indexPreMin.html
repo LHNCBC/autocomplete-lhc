@@ -49,101 +49,54 @@ lists are shown in small, AJAX-retrieved chunks that match the user's input are
 called "<b>Search</b>", and are supported by autoCompSearch.js.
 
   <script src="bower_components/prototypejs-bower/prototype.js"></script>
-  <script src="dist/scriptaculous-subset.js"></script>
+  <!-- build:js dist/scriptaculous-subset.js -->
+    <script src="bower_components/scriptaculous-bower/effects.js"></script>
+    <script src="bower_components/scriptaculous-bower/controls.js"></script>
+  <!-- endbuild -->
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/jquery-no-conflict-exec/jquery-no-conflict.js"></script>
-  <script src="dist/jquery-ui-subset.js"></script>
+  <!-- build:js dist/jquery-ui-subset.js -->
+    <script src="bower_components/jquery-ui/ui/core.js"></script>
+    <script src="bower_components/jquery-ui/ui/widget.js"></script>
+    <script src="bower_components/jquery-ui/ui/button.js"></script>
+    <script src="bower_components/jquery-ui/ui/dialog.js"></script>
+  <!-- endbuild -->
 
-  <script src="dist/autocomp.js"></script>
+  <!-- build:js dist/autocomp.js -->
+    <script src="bower_components/autocomplete-lhc/effectScroll.js"></script>
+    <script src="bower_components/autocomplete-lhc/event.simulate.js"></script>
+    <script src="bower_components/autocomplete-lhc/observable.js"></script>
+    <script src="bower_components/autocomplete-lhc/screenReaderLog.js"></script>
+    <script src="bower_components/autocomplete-lhc/recordDataRequester.js"></script>
+    <script src="bower_components/autocomplete-lhc/fieldAlarms.js"></script>
+    <script src="bower_components/autocomplete-lhc/soundmanager/bonk.js"></script>
+    <script src="bower_components/autocomplete-lhc/dialog.js"></script>
+    <script src="bower_components/autocomplete-lhc/autoCompBase.js"></script>
+    <script src="bower_components/autocomplete-lhc/suggestionDialog.js"></script>
+    <script src="bower_components/autocomplete-lhc/autoCompPrefetch.js"></script>
+    <script src="bower_components/autocomplete-lhc/autoCompSearch.js"></script>
+    <script src="bower_components/autocomplete-lhc/autoCompEvents.js"></script>
+    <script src="bower_components/autocomplete-lhc/phr-autocomplete.js"></script>
+  <!-- endbuild -->
 
 <h2>A Few Demos</h2>
 
 A prefetch autocompleter that allows off-list items:
 <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
-<div class="demo"><input type="text" id="demo1">
-<script>
-var dessertArray = ['Chocoloate bar', 'Chocolate ice cream',
-  'Vanilla ice cream', 'Brownie', 'Fudge Brownie', 'Double Fudge Brownie',
-  'Fudge'].sort();
-new Def.Autocompleter.Prefetch('demo1', dessertArray);
-</script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo1&quot;&gt;
-&lt;script&gt;
-var dessertArray = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
-  &#39;Vanilla ice cream&#39;, &#39;Brownie&#39;, &#39;Fudge Brownie&#39;, &#39;Double Fudge Brownie&#39;,
-  &#39;Fudge&#39;].sort();
-new Def.Autocompleter.Prefetch(&#39;demo1&#39;, dessertArray);
-&lt;/script&gt;
-  </pre></div>
+<!--#include file="../demos/demo1.html-plusSource" -->
 
 Lists can also require the entered value to match:
-<div class="demo"><input type="text" id="demo2">
-<script>
-var opts = {'matchListValue': true}
-new Def.Autocompleter.Prefetch('demo2', dessertArray, opts);
-</script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo2&quot;&gt;
-&lt;script&gt;
-var opts = {&#39;matchListValue&#39;: true}
-new Def.Autocompleter.Prefetch(&#39;demo2&#39;, dessertArray, opts);
-&lt;/script&gt;
-  </pre></div>
+<!--#include file="../demos/demo2.html-plusSource" -->
 
 Sequence numbers can be left out (but are useful for picking by number):
-<div class="demo"><input type="text" id="demo3">
-<script>
-var opts = {addSeqNum: false}
-new Def.Autocompleter.Prefetch('demo3', dessertArray, opts);
-</script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo3&quot;&gt;
-&lt;script&gt;
-var opts = {addSeqNum: false}
-new Def.Autocompleter.Prefetch(&#39;demo3&#39;, dessertArray, opts);
-&lt;/script&gt;
-  </pre></div>
+<!--#include file="../demos/demo3.html-plusSource" -->
 
 When a field is near the bottom of the window, the list will scroll into view
 and flow into two columns:
-<div class="demo"><input type="text" id="demo4">
-<script>
-var moreDesserts = ['Chocoloate bar', 'Chocolate ice cream',
-  'Vanilla ice cream', 'Brownie', 'Fudge brownie', 'Double fudge brownie',
-  'Fudge', 'Chocolate cake', 'Chocolate mousse', 'Watermelon',
-   'Chocolate chip cookies', 'Brownie-stuffed cookie'].sort();
-new Def.Autocompleter.Prefetch('demo4', moreDesserts);
-</script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo4&quot;&gt;
-&lt;script&gt;
-var moreDesserts = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
-  &#39;Vanilla ice cream&#39;, &#39;Brownie&#39;, &#39;Fudge brownie&#39;, &#39;Double fudge brownie&#39;,
-  &#39;Fudge&#39;, &#39;Chocolate cake&#39;, &#39;Chocolate mousse&#39;, &#39;Watermelon&#39;,
-   &#39;Chocolate chip cookies&#39;, &#39;Brownie-stuffed cookie&#39;].sort();
-new Def.Autocompleter.Prefetch(&#39;demo4&#39;, moreDesserts);
-&lt;/script&gt;
-  </pre></div>
+<!--#include file="../demos/demo4.html-plusSource" -->
 
 Larger lists show a subset and have a "see more" link:
-<div class="demo"><input type="text" id="demo5">
-<script>
-var evenMoreDesserts = ['Chocoloate bar', 'Chocolate ice cream',
-  'Vanilla ice cream', 'Brownie', 'Fudge brownie', 'Double fudge brownie',
-  'Fudge', 'Chocolate cake', 'Chocolate mousse', 'Watermelon',
-  'Chocolate chip cookies', 'Brownie-stuffed cookie', 'Cannoli',
-  'Baklava', 'Tiramisu', 'Ice cream cake', 'Pumpkin pie', 'Shortbread',
-  'Samoas', 'Raisin cookies', 'Peanut butter cookies'].sort();
-new Def.Autocompleter.Prefetch('demo5', evenMoreDesserts);
-</script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo5&quot;&gt;
-&lt;script&gt;
-var evenMoreDesserts = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
-  &#39;Vanilla ice cream&#39;, &#39;Brownie&#39;, &#39;Fudge brownie&#39;, &#39;Double fudge brownie&#39;,
-  &#39;Fudge&#39;, &#39;Chocolate cake&#39;, &#39;Chocolate mousse&#39;, &#39;Watermelon&#39;,
-  &#39;Chocolate chip cookies&#39;, &#39;Brownie-stuffed cookie&#39;, &#39;Cannoli&#39;,
-  &#39;Baklava&#39;, &#39;Tiramisu&#39;, &#39;Ice cream cake&#39;, &#39;Pumpkin pie&#39;, &#39;Shortbread&#39;,
-  &#39;Samoas&#39;, &#39;Raisin cookies&#39;, &#39;Peanut butter cookies&#39;].sort();
-new Def.Autocompleter.Prefetch(&#39;demo5&#39;, evenMoreDesserts);
-&lt;/script&gt;
-  </pre></div>
+<!--#include file="../demos/demo5.html-plusSource" -->
 
 <script>
   function showSource(e) {
