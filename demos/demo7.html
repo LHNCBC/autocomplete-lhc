@@ -1,0 +1,9 @@
+<input type="text" id="demo7">
+<script>
+var colors = ['Primary', 'Red', 'Green', 'Blue',
+              'Secondary', 'Magenta', 'Yellow', 'Cyan']
+var opts = {codes: ['P', 'R', 'G', 'B', 'S', 'M', 'Y', 'C'],
+            itemToHeading: {R: 'P', G: 'P', B: 'P',
+                            M: 'S', Y: 'S', C: 'S'}}
+new Def.Autocompleter.Prefetch('demo7', colors, opts);
+</script>
