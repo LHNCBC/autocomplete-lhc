@@ -20,9 +20,12 @@ function addSourceBlockToDemo(demoSource) {
   return '<div class="demo">'+demoSource+'</div>'+
          '<div>'+
          '  <a class="showSource">[Show source]</a>'+
-         '  <pre style="display:none" class="prettyprint lang-html"'+
-         '   >'+escape(demoSource)+
-         '  </pre>'+
+         '  <div style="display:none">'+
+         '    <pre class="prettyprint lang-html"'+
+         '     ><code>'+escape(demoSource)+
+         '    </code></pre>'+
+         '    <a class="hideSource">[Hide source]</a>'+
+         '  </div>'+
          '</div>';
 }
 

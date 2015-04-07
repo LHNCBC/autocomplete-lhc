@@ -67,14 +67,14 @@ var dessertArray = ['Chocoloate bar', 'Chocolate ice cream',
   'Fudge'].sort();
 new Def.Autocompleter.Prefetch('demo1', dessertArray);
 </script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo1&quot;&gt;
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo1&quot;&gt;
 &lt;script&gt;
 var dessertArray = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
   &#39;Vanilla ice cream&#39;, &#39;Brownie&#39;, &#39;Fudge Brownie&#39;, &#39;Double Fudge Brownie&#39;,
   &#39;Fudge&#39;].sort();
 new Def.Autocompleter.Prefetch(&#39;demo1&#39;, dessertArray);
 &lt;/script&gt;
-  </pre></div>
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
 Lists can also require the entered value to match:
 <div class="demo"><input type="text" id="demo2">
@@ -82,12 +82,12 @@ Lists can also require the entered value to match:
 var opts = {'matchListValue': true}
 new Def.Autocompleter.Prefetch('demo2', dessertArray, opts);
 </script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo2&quot;&gt;
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo2&quot;&gt;
 &lt;script&gt;
 var opts = {&#39;matchListValue&#39;: true}
 new Def.Autocompleter.Prefetch(&#39;demo2&#39;, dessertArray, opts);
 &lt;/script&gt;
-  </pre></div>
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
 Sequence numbers can be left out (but are useful for picking by number):
 <div class="demo"><input type="text" id="demo3">
@@ -95,12 +95,12 @@ Sequence numbers can be left out (but are useful for picking by number):
 var opts = {addSeqNum: false}
 new Def.Autocompleter.Prefetch('demo3', dessertArray, opts);
 </script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo3&quot;&gt;
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo3&quot;&gt;
 &lt;script&gt;
 var opts = {addSeqNum: false}
 new Def.Autocompleter.Prefetch(&#39;demo3&#39;, dessertArray, opts);
 &lt;/script&gt;
-  </pre></div>
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
 When a field is near the bottom of the window, the list will scroll into view
 and flow into two columns:
@@ -112,7 +112,7 @@ var moreDesserts = ['Chocoloate bar', 'Chocolate ice cream',
    'Chocolate chip cookies', 'Brownie-stuffed cookie'].sort();
 new Def.Autocompleter.Prefetch('demo4', moreDesserts);
 </script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo4&quot;&gt;
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo4&quot;&gt;
 &lt;script&gt;
 var moreDesserts = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
   &#39;Vanilla ice cream&#39;, &#39;Brownie&#39;, &#39;Fudge brownie&#39;, &#39;Double fudge brownie&#39;,
@@ -120,7 +120,7 @@ var moreDesserts = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
    &#39;Chocolate chip cookies&#39;, &#39;Brownie-stuffed cookie&#39;].sort();
 new Def.Autocompleter.Prefetch(&#39;demo4&#39;, moreDesserts);
 &lt;/script&gt;
-  </pre></div>
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
 Larger lists show a subset and have a "see more" link:
 <div class="demo"><input type="text" id="demo5">
@@ -133,7 +133,7 @@ var evenMoreDesserts = ['Chocoloate bar', 'Chocolate ice cream',
   'Samoas', 'Raisin cookies', 'Peanut butter cookies'].sort();
 new Def.Autocompleter.Prefetch('demo5', evenMoreDesserts);
 </script>
-</div><div>  <a class="showSource">[Show source]</a>  <pre style="display:none" class="prettyprint lang-html"   >&lt;input type=&quot;text&quot; id=&quot;demo5&quot;&gt;
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo5&quot;&gt;
 &lt;script&gt;
 var evenMoreDesserts = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
   &#39;Vanilla ice cream&#39;, &#39;Brownie&#39;, &#39;Fudge brownie&#39;, &#39;Double fudge brownie&#39;,
@@ -143,7 +143,49 @@ var evenMoreDesserts = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
   &#39;Samoas&#39;, &#39;Raisin cookies&#39;, &#39;Peanut butter cookies&#39;].sort();
 new Def.Autocompleter.Prefetch(&#39;demo5&#39;, evenMoreDesserts);
 &lt;/script&gt;
-  </pre></div>
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+List items can have associated codes:
+<div class="demo"><input type="text" id="demo6" name="demo6">  Code: <input id=demo6Code readonly>
+<script>
+var opts = {codes: ['R', 'G', 'B']}
+new Def.Autocompleter.Prefetch('demo6', ['Red', 'Green', 'Blue'], opts);
+Def.Autocompleter.Event.observeListSelections('demo6', function(data) {
+  jQuery('#demo6Code')[0].value = data.item_code;
+});
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo6&quot; name=&quot;demo6&quot;&gt;  Code: &lt;input id=demo6Code readonly&gt;
+&lt;script&gt;
+var opts = {codes: [&#39;R&#39;, &#39;G&#39;, &#39;B&#39;]}
+new Def.Autocompleter.Prefetch(&#39;demo6&#39;, [&#39;Red&#39;, &#39;Green&#39;, &#39;Blue&#39;], opts);
+Def.Autocompleter.Event.observeListSelections(&#39;demo6&#39;, function(data) {
+  jQuery(&#39;#demo6Code&#39;)[0].value = data.item_code;
+});
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+List items can have headers (in prefetch lists):
+<div class="demo"><input type="text" id="demo7">
+<script>
+var colors = ['Primary', 'Red', 'Green', 'Blue',
+              'Secondary', 'Magenta', 'Yellow', 'Cyan']
+var opts = {codes: ['P', 'R', 'G', 'B', 'S', 'M', 'Y', 'C'],
+            itemToHeading: {R: 'P', G: 'P', B: 'P',
+                            M: 'S', Y: 'S', C: 'S'}}
+new Def.Autocompleter.Prefetch('demo7', colors, opts);
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo7&quot;&gt;
+&lt;script&gt;
+var colors = [&#39;Primary&#39;, &#39;Red&#39;, &#39;Green&#39;, &#39;Blue&#39;,
+              &#39;Secondary&#39;, &#39;Magenta&#39;, &#39;Yellow&#39;, &#39;Cyan&#39;]
+var opts = {codes: [&#39;P&#39;, &#39;R&#39;, &#39;G&#39;, &#39;B&#39;, &#39;S&#39;, &#39;M&#39;, &#39;Y&#39;, &#39;C&#39;],
+            itemToHeading: {R: &#39;P&#39;, G: &#39;P&#39;, B: &#39;P&#39;,
+                            M: &#39;S&#39;, Y: &#39;S&#39;, C: &#39;S&#39;}}
+new Def.Autocompleter.Prefetch(&#39;demo7&#39;, colors, opts);
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+(Search list demos are still TBD).
 
 <script>
   function showSource(e) {
@@ -151,6 +193,10 @@ new Def.Autocompleter.Prefetch(&#39;demo5&#39;, evenMoreDesserts);
     e.target.nextElementSibling.style.display='block';
   }
   jQuery('.showSource').click(showSource);
+  jQuery('.hideSource').click(function(e) {
+    e.target.parentNode.style.display='none';
+    e.target.parentNode.previousElementSibling.style.display = '';
+  });
 </script>
 
 
@@ -159,20 +205,20 @@ new Def.Autocompleter.Prefetch(&#39;demo5&#39;, evenMoreDesserts);
 <ol>
 <li>Section 508-compliant (i.e., accessible to screen readers)</li>
 <li>Supports coded-value lists</li>
-<li>Provides a way to get extra information about the record associated with a
-list item.  (See recordDataRequester.js.)</li>
-<li>Numbered list items (optional).</li>
+<li>Heading items in lists</li>
 <li>Two-column lists when there is not enough space on the page to show the list
 in a single column.</li>
+<li>Numbered list items (optional).</li>
+<li>Can require that an entry in the field match the list.</li>
+<li>Event listeners for various things like "list selection".</li>
+<li>Provides a way to get extra information about the record associated with a
+list item.  (See recordDataRequester.js.)</li>
 <li>Partial support for multi-select lists.  (Multi-select lists
 do not currently support entry of text not on the list.)</li>
 <li>Support for list suggestions in the search (AJAX) autocompleter, when the user does
 not pick an item in the list.</li>
-<li>Can require that an entry in the field match the list.</li>
-<li>Event listeners for various things like "list selection".</li>
 <li>"autofill" option -- fills in the field automatically if there is just one
 list item</li>
-<li>Heading items in lists</li>
 <li>Default values (optional), which gets placed in the field when the field gets
 focus (along with showing the list).</li>
 <li>A "see more" link on the search autocompleter which provides an expanded list

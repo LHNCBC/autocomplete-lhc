@@ -98,12 +98,24 @@ and flow into two columns:
 Larger lists show a subset and have a "see more" link:
 <!--#include file="../demos/demo5.html-plusSource" -->
 
+List items can have associated codes:
+<!--#include file="../demos/demo6.html-plusSource" -->
+
+List items can have headers (in prefetch lists):
+<!--#include file="../demos/demo7.html-plusSource" -->
+
+(Search list demos are still TBD).
+
 <script>
   function showSource(e) {
     e.target.style.display='none';
     e.target.nextElementSibling.style.display='block';
   }
   jQuery('.showSource').click(showSource);
+  jQuery('.hideSource').click(function(e) {
+    e.target.parentNode.style.display='none';
+    e.target.parentNode.previousElementSibling.style.display = '';
+  });
 </script>
 
 
@@ -112,20 +124,20 @@ Larger lists show a subset and have a "see more" link:
 <ol>
 <li>Section 508-compliant (i.e., accessible to screen readers)</li>
 <li>Supports coded-value lists</li>
-<li>Provides a way to get extra information about the record associated with a
-list item.  (See recordDataRequester.js.)</li>
-<li>Numbered list items (optional).</li>
+<li>Heading items in lists</li>
 <li>Two-column lists when there is not enough space on the page to show the list
 in a single column.</li>
+<li>Numbered list items (optional).</li>
+<li>Can require that an entry in the field match the list.</li>
+<li>Event listeners for various things like "list selection".</li>
+<li>Provides a way to get extra information about the record associated with a
+list item.  (See recordDataRequester.js.)</li>
 <li>Partial support for multi-select lists.  (Multi-select lists
 do not currently support entry of text not on the list.)</li>
 <li>Support for list suggestions in the search (AJAX) autocompleter, when the user does
 not pick an item in the list.</li>
-<li>Can require that an entry in the field match the list.</li>
-<li>Event listeners for various things like "list selection".</li>
 <li>"autofill" option -- fills in the field automatically if there is just one
 list item</li>
-<li>Heading items in lists</li>
 <li>Default values (optional), which gets placed in the field when the field gets
 focus (along with showing the list).</li>
 <li>A "see more" link on the search autocompleter which provides an expanded list
@@ -136,11 +148,12 @@ results list.  (Without a button, the user can click on the "see more" link.)</l
 for the same list items are not necessary.</li>
 </ol>
 
-<p>This software, autocomp-phr, was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH).</p>
+<p>This software, autocomplete-lhc, was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH).</p>
 
 <p>Please cite as: <a href="http://lhncbc.nlm.nih.gov/project/nlm-personal-health-record-phr">http://lhncbc.nlm.nih.gov/project/nlm-personal-health-record-phr</a></p>
 
-<p>This software is distributed under a BSD-style open-source license.  See <a href="LICENSE.md">LICENSE.md</a>.</p>
+<p>This software is distributed under a BSD-style open-source license.  See <a
+href="https://github.com/lhncbc/autocomplete-lhc/blob/master/LICENSE.md">LICENSE.md</a>.</p>
 
 <p>No warranty or indemnification for damages resulting from claims brought by third parties whose proprietary rights may be infringed by your usage of this software are provided by any of the owners.
 </p>
