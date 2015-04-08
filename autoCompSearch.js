@@ -195,6 +195,14 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *     the same target_field name.</li>
      *    <li>maxSelect - (default 1) The maximum number of items that can be
      *     selected.  Use '*' for unlimited.</li>
+     *    <li>scrolledContainer - the element that should be scrolled to bring
+     *     the list into view if it would otherwise extend below the edge of the
+     *     window. The default is document.documentElement (i.e. the whole
+     *     window).  This may be null if no scrolling is desired (e.g. if the
+     *     list field is in a fixed position on the window), but in that
+     *     case the list element might be unusually short.
+     *     Note:  At present the only tested cases of this parameter are the
+     *     default value and null.</li>
      *  </ul>
      */
     initialize: function(fieldID, url, options) {

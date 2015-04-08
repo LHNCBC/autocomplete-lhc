@@ -6,6 +6,9 @@ var AutocompPage = function() {
 
   this.nonField = $('#content');
 
+  this.longOddCNE = $('#long_odd_cne');
+  this.longOddCNENoScroll = $('#long_odd_cne_no_scroll');
+
   // Multi-select CWE prefetch list
   var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection';
   this.multiPrefetchCWE = $('#multi_sel_cwe');
@@ -16,6 +19,11 @@ var AutocompPage = function() {
 
   this.openTestPage = function() {
     browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+  }
+
+  // Returns the scroll position of the window
+  this.windowScrollTop = function() {
+    return browser.driver.executeScript('return jQuery(window).scrollTop()');
   }
 
 };
