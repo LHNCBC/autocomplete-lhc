@@ -1,0 +1,19 @@
+{
+  "name": "autocomp-pages",
+  "version": "0",
+  "authors": [
+    "Paul Lynch <plynch@mail.nih.gov>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "autocomplete-lhc": "~2.3.2"
+  }
+}

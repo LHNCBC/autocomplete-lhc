@@ -1,0 +1,8 @@
+<input type="text" id="demo6" name="demo6">  Code: <input id=demo6Code readonly>
+<script>
+var opts = {codes: ['R', 'G', 'B']}
+new Def.Autocompleter.Prefetch('demo6', ['Red', 'Green', 'Blue'], opts);
+Def.Autocompleter.Event.observeListSelections('demo6', function(data) {
+  jQuery('#demo6Code')[0].value = data.item_code;
+});
+</script>
