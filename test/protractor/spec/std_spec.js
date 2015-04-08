@@ -1,7 +1,6 @@
 helpers = require('../test_helpers.js');
 var hasClass = helpers.hasClass;
 var firstSearchRes = $('#searchResults li:first-child');
-var po = require('../autocompPage.js');
 
 describe('autocomp', function() {
   var searchResults = $('#searchResults');
@@ -19,7 +18,8 @@ describe('autocomp', function() {
     expect(searchResults.isDisplayed()).toBeTruthy();
     // In suggestion mode 0, the first element should be what is alphabetically
     // first.
-    expect(firstSearchRes.getInnerHtml()).toEqual('Arm painzzzzz'); // Backspace to erase the field, or the non-match suggestions dialog will
+    expect(firstSearchRes.getInnerHtml()).toEqual('Arm painzzzzz');
+    // Backspace to erase the field, or the non-match suggestions dialog will
     // appear (for the other kind of suggestion).
     suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
