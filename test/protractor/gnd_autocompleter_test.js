@@ -82,12 +82,17 @@ opts['matchListValue']=true;
 opts['codes']=["QUE-13","QUE-21","QUE-7","QUE-0","QUE-20","QUE-8","QUE-16",
   "QUE-15","QUE-11","QUE-5","QUE-4","QUE-3","QUE-6","QUE-12","QUE-14","QUE-17",
   "QUE-18","QUE-2","QUE-9","QUE-10","QUE-19"];
-new Def.Autocompleter.Prefetch('long_odd_cne', ["Allergies",
+var longList = ["Allergies",
   "Disease risk based on family history","Exercise","General symptoms",
   "Genetic testing","Herbal or alternative remedies",
   "Infant or child development","Insurance","Lab tests and/or results",
   "Medical conditions","Medical equipment and/or supplies","Medications",
   "Nutrition","Preventive/screening tests","Referrals",
   "School or learning issues","Sports injuries","Surgeries","Travel advice",
-  "Vaccines","X-ray or other radiology tests and/or results"], opts);
+  "Vaccines","X-ray or other radiology tests and/or results"];
+new Def.Autocompleter.Prefetch('long_odd_cne', longList, opts);
 
+// The same long prefetched list but with scrolling disabled.
+var opts2 = {matchListValue: true, codes: opts.codes,
+             scrolledContainer: null};
+new Def.Autocompleter.Prefetch('long_odd_cne_no_scroll', longList, opts2);

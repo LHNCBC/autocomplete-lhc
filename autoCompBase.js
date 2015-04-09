@@ -434,6 +434,14 @@ if (typeof Def === 'undefined')
      *     item in the list.</li>
      *    <li>maxSelect - (default 1) The maximum number of items that can be
      *     selected.  Use '*' for unlimited.</li>
+     *    <li>scrolledContainer - the element that should be scrolled to bring
+     *     the list into view if it would otherwise extend below the edge of the
+     *     window. The default is document.documentElement (i.e. the whole
+     *     window).  This may be null if no scrolling is desired (e.g. if the
+     *     list field is in a fixed position on the window), but in that
+     *     case the list element might be unusually short.
+     *     Note:  At present the only tested cases of this parameter are the
+     *     default value and null.</li>
      *  </ul>
      */
     defAutocompleterBaseInit: function(options) {
@@ -447,6 +455,10 @@ if (typeof Def === 'undefined')
       if (options.maxSelect === '*')
         options.maxSelect = Infinity;
       this.multiSelect_ = options.maxSelect !== 1;
+      if (options.scrolledContainer !== undefined) // allow null
+        this.scrolledContainer_ = options.scrolledContainer;
+      else
+        this.scrolledContainer_ = document.documentElement;
       this.constructorOpts_ = options;
 
       this.selectedCodes_ = {};
@@ -1195,8 +1207,8 @@ if (typeof Def === 'undefined')
       this.listContainer.style.width = ''; // reset it
       $('completionOptionsScroller').style.height = '';
 
-      var scrolledContainer = document.documentElement;
-      var viewPortHeight = scrolledContainer.clientHeight;
+      var scrolledContainer = this.scrolledContainer_;
+      var viewPortHeight = window.innerHeight;
       this.update.removeClassName('multi_col');
       var posElVPCoords = positionedElement.viewportOffset();
       var posElVPVertOffset = posElVPCoords[1];
@@ -1216,7 +1228,7 @@ if (typeof Def === 'undefined')
           // the border.
           var newListWidth = firstEntry.offsetWidth * 2 + 4;
           // Make sure the new width will fit horizontally
-          var viewPortWidth = scrolledContainer.clientWidth;
+          var viewPortWidth = window.innerWidth;
           if (newListWidth > viewPortWidth - posElVPCoords[0])
             tryMultiColumn = false;
           else {
@@ -1228,51 +1240,65 @@ if (typeof Def === 'undefined')
         // If the multi-column list is still not on the page, try scrolling the
         // page down (making the list go up).
         if (!tryMultiColumn || bottomOfListContainer > maxListContainerBottom) {
-          // Cancel any active scroll effect
-          if (this.lastScrollEffect_)
-            this.lastScrollEffect_.cancel();
-
-          var scrollDownAmount =
-            bottomOfListContainer - maxListContainerBottom;
-          var elementTop = element.viewportOffset()[1];
-          var headerBar = $('fe_form_header_0_expcol');
-          var topNavBarHeight = headerBar ? headerBar.offsetHeight : 0;
-          var maxScroll = elementTop - topNavBarHeight;
-          // Make sure we don't scroll the field out of view.
-          if (scrollDownAmount > maxScroll) {
-            scrollDownAmount = maxScroll;
-            // Also constrain the height of the list, so the bottom is on the page
-            // The maximum allowable space is the viewport hieght minus the field
-            // height minus the top nav bar height minus the part of the list
-            // container that is not for list items (e.g. "See more results")).
-            this.setListHeight(viewPortHeight - element.offsetHeight -
-              topNavBarHeight - this.listContainer.offsetHeight +
-              this.update.offsetHeight - 15);
-            bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
+          if (!scrolledContainer) {
+            // If we can't scroll the list into view, just constrain the height so
+            // the list is visible.
+            this.setListHeight(window.innerHeight - element.getBoundingClientRect().bottom);
           }
+          else {
+            // Cancel any active scroll effect
+            if (this.lastScrollEffect_)
+              this.lastScrollEffect_.cancel();
 
-          this.lastScrollEffect_ = new Effect.Scroll(scrolledContainer,
-            {y: scrollDownAmount, duration: 0.4});
+            var scrollDownAmount =
+              bottomOfListContainer - maxListContainerBottom;
+            var elementBoundingRect = element.getBoundingClientRect();
+            var elementTop = elementBoundingRect.top;
+            var headerBar = $('fe_form_header_0_expcol'); // TBD - See LF-145
+            var topNavBarHeight = headerBar ? headerBar.offsetHeight : 0;
 
-          // If the list is extending beyond the bottom of the page's normal
-          // limits, increasing the page's length, extend the spacer div to make
-          // sure the size does not diminish.  This should prevent the "bouncing"
-          // effect we were getting when typing into the field, where the page
-          // would first scroll up to accomodate a large list, and then as more
-          // keystrokes were enterd the list got smaller, so the page scrolled
-          // back down.  (The browser does that automatically when the page
-          // shrinks.)
-          var spacerDiv = $('spacer');
-          if (!spacerDiv) {
-            spacerDiv = document.createElement('div');
-            spacerDiv.setAttribute('id', 'spacer');
-            document.body.appendChild(spacerDiv);
-          }
-          var spacerCoords = spacerDiv.viewportOffset();
-          var bottomOfSpacer = spacerCoords[1] + spacerDiv.offsetHeight;
-          if (bottomOfListContainer > bottomOfSpacer) {
-            spacerDiv.style.height =
-              bottomOfListContainer - spacerCoords[1] + 'px';
+            var maxScroll;
+            var scrolledContainerViewportTop =
+              scrolledContainer.getBoundingClientRect().top;
+            if (scrolledContainerViewportTop > topNavBarHeight)
+              maxScroll = elementTop - scrolledContainerViewportTop;
+            else
+              maxScroll = elementTop - topNavBarHeight;
+
+            // Make sure we don't scroll the field out of view.
+            if (scrollDownAmount > maxScroll) {
+              scrollDownAmount = maxScroll;
+              // Also constrain the height of the list, so the bottom is on the page
+              // The maximum allowable space is the viewport hieght minus the field
+              // height minus the top nav bar height minus the part of the list
+              // container that is not for list items (e.g. "See more results")).
+              this.setListHeight(viewPortHeight - elementTop - topNavBarHeight);
+              bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
+            }
+
+            this.lastScrollEffect_ = new Effect.Scroll(scrolledContainer,
+              {y: scrollDownAmount, duration: 0.4});
+
+            // If the list is extending beyond the bottom of the page's normal
+            // limits, increasing the page's length, extend the spacer div to make
+            // sure the size does not diminish.  This should prevent the "bouncing"
+            // effect we were getting when typing into the field, where the page
+            // would first scroll up to accomodate a large list, and then as more
+            // keystrokes were enterd the list got smaller, so the page scrolled
+            // back down.  (The browser does that automatically when the page
+            // shrinks.)
+            var spacerDiv = $('spacer');
+            if (!spacerDiv) {
+              spacerDiv = document.createElement('div');
+              spacerDiv.setAttribute('id', 'spacer');
+              document.body.appendChild(spacerDiv);
+            }
+            var spacerCoords = spacerDiv.viewportOffset();
+            var bottomOfSpacer = spacerCoords[1] + spacerDiv.offsetHeight;
+            if (bottomOfListContainer > bottomOfSpacer) {
+              spacerDiv.style.height =
+                bottomOfListContainer - spacerCoords[1] + 'px';
+            }
           }
         }
       }
@@ -1281,8 +1307,9 @@ if (typeof Def === 'undefined')
 
     /**
      *  Constrains the height of the completion options list.
-     * @param height the height for the list options (an integer, a number of
-     *  pixels, but without the 'px' string).
+     * @param height the height for entire list, including the options, the "see
+     *  more" link, and the hit count.  This should be an integer number of
+     *  pixels.
      */
     setListHeight: function(height) {
       // This will usually be called when the list needs to scroll.
@@ -1290,12 +1317,20 @@ if (typeof Def === 'undefined')
       // mostly likely appear) and to avoid squeezing and wrapping the list items.
       this.listContainer.style.width = this.listContainer.offsetWidth +
         20 + 'px';
+
+      // Subtract from the height the height of the "see more" and hit count
+      // divs.
+      height = height - this.listContainer.offsetHeight +  // listContainer = everything
+                        this.update.offsetHeight;  // update = list items only
+
       // Multi-column lists typical scroll/overflow to the right, so we have put
       // $('completionOptions') in a container, $('completionOptionsScroller')
       // and set the height on that instead.  This allows the list to be
       // scrolled vertically instead of horizontally (with lots of short
       // columns).
-      $('completionOptionsScroller').style.height = height + 'px';
+      // Require at least 20 px of height, or give up
+      if (height >= 20)
+        $('completionOptionsScroller').style.height = height + 'px';
     },
 
 
