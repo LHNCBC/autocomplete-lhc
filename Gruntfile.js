@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 
     'useminPrepare': {
       options: {
-        dest: 'dist'
+        dest: '.'
       },
       html: 'indexPreMin.html'
     },
