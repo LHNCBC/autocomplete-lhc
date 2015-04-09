@@ -1,0 +1,31 @@
+{
+  "name": "jquery-no-conflict-exec",
+  "main": "jquery-no-conflict.js",
+  "homepage": "https://github.com/joramkwak/jquery-no-conflict-exec",
+  "authors": [
+    "Joram Kwak <jkwak@joramis.com>"
+  ],
+  "description": "Executes jQuery.noConflict(); Made to be included as a dependency with Bower when jQuery is a dependency and it causes problems with other libraries.",
+  "keywords": [
+    "jquery",
+    "no",
+    "conflict"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "c59106e79f",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "c59106e79fea9361ea1ccc0446e04197533d93ac"
+  },
+  "_source": "git://github.com/joramkwak/jquery-no-conflict-exec.git",
+  "_target": "master",
+  "_originalSource": "jquery-no-conflict-exec"
+}

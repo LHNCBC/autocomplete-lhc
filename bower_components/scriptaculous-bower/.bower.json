@@ -1,0 +1,18 @@
+{
+  "name": "scriptaculous-bower",
+  "main": "scriptaculous.js",
+  "dependencies": {
+    "prototypejs-bower": "^1.7.0"
+  },
+  "ignore": [],
+  "homepage": "https://github.com/plynchnlm/scriptaculous-bower",
+  "_release": "881e5499c2",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "881e5499c2ffc187beb3348965903062a6cf85f6"
+  },
+  "_source": "git://github.com/plynchnlm/scriptaculous-bower.git",
+  "_target": "master",
+  "_originalSource": "scriptaculous-bower"
+}
