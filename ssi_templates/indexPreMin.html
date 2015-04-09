@@ -9,8 +9,8 @@
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
     <title>Autocomplete-lhc</title>
-    <link href="bower_components/autocomplete-lhc/auto_completion.css" media="screen" rel="stylesheet" />
-    <link href="bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen" rel="stylesheet" />
+    <link href="dist/autocomplete-lhc/auto_completion.css" media="screen" rel="stylesheet" />
+    <link href="dist/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen" rel="stylesheet" />
   </head>
 
   <body>
@@ -48,21 +48,24 @@ lists are small enough to be fully specified at construction time are called
 lists are shown in small, AJAX-retrieved chunks that match the user's input are
 called "<b>Search</b>", and are supported by autoCompSearch.js.
 
-  <script src="bower_components/prototypejs-bower/prototype.js"></script>
-  <!-- build:js dist/scriptaculous-subset.js -->
+  <!-- build:js dist/demo.min.js -->
+    <script src="bower_components/prototypejs-bower/prototype.js"></script>
+
+    <!-- Scriptaculous subset -->
     <script src="bower_components/scriptaculous-bower/effects.js"></script>
     <script src="bower_components/scriptaculous-bower/controls.js"></script>
-  <!-- endbuild -->
-  <script src="bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="bower_components/jquery-no-conflict-exec/jquery-no-conflict.js"></script>
-  <!-- build:js dist/jquery-ui-subset.js -->
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+
+    <script src="bower_components/jquery-no-conflict-exec/jquery-no-conflict.js"></script>
+
+    <!-- jquery-ui subset -->
     <script src="bower_components/jquery-ui/ui/core.js"></script>
     <script src="bower_components/jquery-ui/ui/widget.js"></script>
     <script src="bower_components/jquery-ui/ui/button.js"></script>
     <script src="bower_components/jquery-ui/ui/dialog.js"></script>
-  <!-- endbuild -->
 
-  <!-- build:js dist/autocomp.js -->
+    <!-- autocomplete-lhc files -->
     <script src="bower_components/autocomplete-lhc/effectScroll.js"></script>
     <script src="bower_components/autocomplete-lhc/event.simulate.js"></script>
     <script src="bower_components/autocomplete-lhc/observable.js"></script>

@@ -1,9 +1,0 @@
-{
-  "name": "scriptaculous-bower",
-  "version": "1.9.0",
-  "main": "scriptaculous.js",
-  "dependencies": {
-    "prototypejs-bower":  "^1.7.0"
-  },
-  "ignore": []
-}
