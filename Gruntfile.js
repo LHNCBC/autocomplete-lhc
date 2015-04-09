@@ -4,7 +4,11 @@ module.exports = function(grunt) {
 
     copy: {
       dist: {
-        files: [ {src: 'indexPreMin.html', dest: 'index.html'} ]
+        files: [ {src: 'indexPreMin.html', dest: 'index.html'},
+                 {src: ['autocomplete-lhc/*.css',
+                        'autocomplete-lhc/*.png',
+                        'jquery-ui/themes/ui-lightness/**'],
+                  dest: 'dist/', expand: true, cwd: 'bower_components'} ]
       }
     },
 
