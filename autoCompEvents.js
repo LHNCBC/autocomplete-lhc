@@ -40,17 +40,17 @@
      *     selected from a list, whether by clicking or by arrows);
      *  4) on_list - boolean indicating whether or not the final value was on
      *     the list
-     *  4) input_method ('clicked', 'arrows', or 'typed')
-     *  5) item_code - the code for the selected item, or null if there isn't
+     *  5) input_method ('clicked', 'arrows', or 'typed')
+     *  6) item_code - the code for the selected item, or null if there isn't
      *     one.
-     *  6) removed - For multi-select lists, this indicates whether the
+     *  7) removed - For multi-select lists, this indicates whether the
      *     selection was actual an unselection, removing the named item from the
      *     list of selected items.  When true, final_val is the removed value
      *     (although for multi-select fields the field is blank afterward).
      *     (Optional; default false)
-     *  7) list - the items that were in the list (which is the full list for a
+     *  8) list - the items that were in the list (which is the full list for a
      *     prefetched list, or the portion shown to the user for a search list).
-     *  8) field_id - the ID of the list field
+     *  9) field_id - the ID of the list field
      */
     observeListSelections: function(fieldKey, callback) {
       this.storeCallback(fieldKey, 'LIST_SEL', callback);
