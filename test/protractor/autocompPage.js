@@ -8,6 +8,8 @@ var AutocompPage = function() {
 
   this.longOddCNE = $('#long_odd_cne');
   this.longOddCNENoScroll = $('#long_odd_cne_no_scroll');
+  this.prefetchCWEID = 'prefetch_cwe';  // single-select
+  this.prefetchCWE = $('#'+this.prefetchCWEID);  // single-select
 
   // Multi-select CWE prefetch list
   var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection';

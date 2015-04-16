@@ -36,19 +36,21 @@
      *  The function will be called with a hash argument with the following keys:
      *  1) val_typed_in (what the user actually typed in);
      *  2) final_val (the final value for the field);
-     *  3) final_val_from_list (boolean indicating whether or not final was
-     *     selected from a list;
+     *  3) used_list (boolean indicating whether or not the final was
+     *     selected from a list, whether by clicking or by arrows);
+     *  4) on_list - boolean indicating whether or not the final value was on
+     *     the list
      *  4) input_method ('clicked', 'arrows', or 'typed')
-     *  5) short_list - the list values the user saw (if the list was not expanded)
-     *  6) item_data - associated data for the selected item.  For prefetched
-     *     autocompleters, this is the data passed into the constructor (e.g.
-     *     an item code), and for search autocompleters is the data returned
-     *     from the server along with the item.
-     *  7) removed - For multi-select lists, this indicates whether the
+     *  5) item_code - the code for the selected item, or null if there isn't
+     *     one.
+     *  6) removed - For multi-select lists, this indicates whether the
      *     selection was actual an unselection, removing the named item from the
      *     list of selected items.  When true, final_val is the removed value
      *     (although for multi-select fields the field is blank afterward).
-     *  (Optional; default false)
+     *     (Optional; default false)
+     *  7) list - the items that were in the list (which is the full list for a
+     *     prefetched list, or the portion shown to the user for a search list).
+     *  8) field_id - the ID of the list field
      */
     observeListSelections: function(fieldKey, callback) {
       this.storeCallback(fieldKey, 'LIST_SEL', callback);

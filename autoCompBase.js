@@ -564,8 +564,10 @@ if (typeof Def === 'undefined')
     storeSelectedItem: function() {
       var itemText = this.element.value;
       var newCode = this.getItemCode(itemText);
-      if (!this.multiSelect_)
+      if (!this.multiSelect_) {
         this.selectedCodes_ = {};
+        this.selectedItems_ = {};
+      }
       if (newCode !== null)
         this.selectedCodes_[newCode] = 1;
       this.selectedItems_[itemText] = 1;
@@ -1517,6 +1519,12 @@ if (typeof Def === 'undefined')
       this.matchStatus_ = false;
       this.propagateFieldChanges();
 
+      // For a single selection list, clear the stored selection
+      if (!this.multiSelect_) {
+        this.selectedCodes_ = {};
+        this.selectedItems_ = {};
+      }
+
       // Blank values should not look different than values that haven't been
       // filled in.  They are okay-- at least until a submit, at which point
       // blank required fields will be brought to the user's attention.
@@ -1551,6 +1559,7 @@ if (typeof Def === 'undefined')
           // only if non-matching values are allowed.
           if (Def.Autocompleter.Event.callbacks_ !== null)
             this.listSelectionNotification(this.getValTyped(), false);
+          this.selectedItems_[this.element.value] = 1;
           if (this.multiSelect_)
             this.moveEntryToSelectedArea();
 
