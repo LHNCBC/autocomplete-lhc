@@ -22,7 +22,7 @@ var DirectivePage = function() {
   var multiFieldID = 'ac2';
   this.multiField = $('#'+multiFieldID);
   this.multiFieldSelectedItems = element.all(by.css('.autocomp_selected li'));
-  var multiFieldFirstSelectedCSS = 'button:first-child';
+  var multiFieldFirstSelectedCSS = 'li:first-child button';
   this.multiFieldFirstSelected = element.all(by.css(multiFieldFirstSelectedCSS)).first();
   this.multiFieldFirstSelectedSpan =
      element.all(by.css(multiFieldFirstSelectedCSS + ' span')).first();
@@ -32,7 +32,7 @@ var DirectivePage = function() {
   this.multiPrefetchCWE = $(multiPrefetchCWECSS);
   var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection'
   this.multiPrefetchCWEFirstSelected =
-    element(by.css(multiPrefetchCWESectionCSS + ' button:first-child'));
+    element(by.css(multiPrefetchCWESectionCSS + ' li:first-child button'));
   this.multiPrefetchCWESelected =
     element.all(by.css(multiPrefetchCWESectionCSS + ' button'));
 
