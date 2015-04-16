@@ -86,7 +86,7 @@ describe('autocomp', function() {
   });
 
 
-  iit('single select lists should store correct codes for non-list entries',
+  it('single select lists should store correct codes for non-list entries',
       function() {
     // Here we are testing two cases.  First, we test changing a list entry to a
     // non-list entry.  Second, we test clearing a non-list entry.
