@@ -1,6 +1,7 @@
 // Page objects common to the autocompleter test pages.
 function BasePage() {
-  var searchResCSS = '#searchResults';
+  var searchResID = 'searchResults';
+  var searchResCSS = '#'+searchResID;
   this.searchResults = $(searchResCSS);
   this.firstSearchRes = $(searchResCSS + ' li:first-child');
   this.secondSearchRes = $(searchResCSS + ' li:nth-child(2)');
@@ -23,7 +24,16 @@ function BasePage() {
       'var ac = $("'+fieldID+'").autocomp;'+
       'return [ac.getSelectedCodes(), ac.getSelectedItems()];'
     );
-  }
+  };
+
+  /**
+   *  Returns true if the selection list is currently visible, and false if not.
+   */
+  this.listIsVisible = function() {
+    return browser.driver.executeScript(
+      'return $("'+searchResID+'").style.visibility === "visible"'
+    );
+  };
 };
 
 module.exports = {BasePage: BasePage};

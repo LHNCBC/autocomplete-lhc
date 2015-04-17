@@ -176,6 +176,7 @@
       // Set up event observers.  The "bind" stuff specifies what "this"
       // should be inside the event callbacks.
       Event.observe(id, 'focus', this.onFocus.bind(this));
+      Event.observe(id, 'click', this.onFieldClick.bind(this));
       // The base class sets up one for a "blur" event.
 
       this.onMouseMoveListener = this.onMouseMove.bindAsEventListener(this);
@@ -826,6 +827,7 @@
      *  A method that gets called when the field gains the focus.
      */
     onFocus: function() {
+      console.log("%%% onFocus");
       // Ignore blur events on the completionOptionsScroller.
       if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
         Def.Autocompleter.completionOptionsScrollerClicked_ = false;
@@ -847,7 +849,7 @@
           Def.Autocompleter.Base.prototype.onFocus.apply(this);
           this.element.shakeCanceled = false;
 
-          this.activate();  // determines what is in the list
+          this.maybeShowList();
 
           this.index = this.getInitialSelectionIndex(); // for field defaults
           // Also put the value at "index" in the field
@@ -857,61 +859,69 @@
             // Simulate a change event (e.g. so that rules can run)
             Element.simulate(this.element, 'change');
           }
-          this.render();
-
-          //show the list based on following rules.
-          var blnShowList = false;
-          if (this.add_seqnum == false) {
-            //show list if number of choices > 0 and no sequence number added
-            if (this.entryCount > 0 ) {
-              blnShowList = true;
-            }
-            //don't show list if number of choices <= 0 and no sequence number added
-            else {
-              blnShowList = false;
-            }
-          }
-          else {
-            //show list if number of choices > 1 and sequence number added
-            if (this.entryCount > 1) {
-              blnShowList = true;
-            }
-            //check if the list item value matches seqnum + " - " + field value
-            else if (this.entryCount == 1) {
-              var value = this.listItemValue(this.update.firstChild.childNodes[0]);
-
-              if (value == this.uneditedValue) {
-                blnShowList = false;
-              }
-              else {
-                blnShowList = true;
-              }
-            }
-            else {
-              blnShowList = false;
-            }
-          }
-
-          if (blnShowList == true ) {
-            // This sets the top for the initial list displayed
-            // when the field first gets focus
-            this.posAnsList();
-            this.showList();
-            this.readSearchCount();
-            if (!this.doNotCountHover) {
-              // If the mouse happens to be positioned over the list that just
-              // appeared, do not count its presence as a "hover" event that would
-              // highlight an item in the list.
-              this.doNotCountHover = true;
-
-              // Also add a mouse move listener.  If the mouse moves, we want to
-              // clear this.doNotCountHover so that the user can select an item.
-              Event.observe(document, "mousemove", this.onMouseMoveListener);
-            }
-          }
 
           this.focusInProgress_ = false;
         } // if enabled
+      }
+    },
+
+
+    /**
+     *  Decides whether the list should be shown, and if so, positions and shows
+     *  it.  This used to be a part of onFocus.
+     */
+    maybeShowList: function() {
+      this.activate();  // determines what is in the list
+      this.render(); // marks which item is selected
+
+      //show the list based on following rules.
+      var blnShowList = false;
+      if (this.add_seqnum == false) {
+        //show list if number of choices > 0 (when no sequence number was added)
+        blnShowList = this.entryCount > 0;
+      }
+      else {
+        //show list if number of choices > 1 and sequence number added
+        if (this.entryCount > 1) {
+          blnShowList = true;
+        }
+        //check if the list item value matches field value
+        else if (this.entryCount == 1) {
+          var value = this.listItemValue(this.update.firstChild.childNodes[0]);
+          blnShowList = value != this.uneditedValue;
+        }
+      }
+
+      if (blnShowList == true ) {
+        // This sets the top for the initial list displayed
+        // when the field first gets focus
+        this.posAnsList();
+        this.showList();
+        this.readSearchCount();
+        if (!this.doNotCountHover) {
+          // If the mouse happens to be positioned over the list that just
+          // appeared, do not count its presence as a "hover" event that would
+          // highlight an item in the list.
+          this.doNotCountHover = true;
+
+          // Also add a mouse move listener.  If the mouse moves, we want to
+          // clear this.doNotCountHover so that the user can select an item.
+          Event.observe(document, "mousemove", this.onMouseMoveListener);
+        }
+      }
+    },
+
+
+    /**
+     *  Handles clicks on the field.
+     */
+    onFieldClick: function() {
+      if (this.enabled_) { // i.e. has list items
+        this.matchListItemsToField_ = false;
+        if (!this.listShowing) { // don't need to do this when the field is getting focused
+          console.log("%%% onFieldClick");
+          this.maybeShowList();
+        }
       }
     },
 
