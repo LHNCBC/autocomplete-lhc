@@ -237,18 +237,18 @@
 | waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
 | waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | false |
 # Test of a Prefetch CWE autocompleter
-| click | fe_prefetch_cwe |
+| click | prefetch_cwe |
 
 # Type an invalid value
-| typeKeys | fe_prefetch_cwe | Aardvark |
-| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | true |
-| keyDown | fe_prefetch_cwe | \9 |
-| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('invalid')} | false |
-| assertValue | fe_prefetch_cwe | Aardvark |
+| typeKeys | prefetch_cwe | Aardvark |
+| waitForExpression | javascript{$('prefetch_cwe').hasClassName('no_match')} | true |
+| keyDown | prefetch_cwe | \9 |
+| waitForExpression | javascript{$('prefetch_cwe').hasClassName('invalid')} | false |
+| assertValue | prefetch_cwe | Aardvark |
 
 # Confirm that the no_match indicator is still present
-| assertExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | true |
-| waitForExpression | javascript{$('fe_prefetch_cwe').autocomp.hasFocus} | false |
+| assertExpression | javascript{$('prefetch_cwe').hasClassName('no_match')} | true |
+| waitForExpression | javascript{$('prefetch_cwe').autocomp.hasFocus} | false |
 
 # Tests for a search CNE field
 | fireEvent | fe_search_cne | focus |
@@ -346,14 +346,14 @@
 
 # Tests for disabled autocompleters.  Tests beyond this point mess with
 # the autocompleters' lists.
-| type | fe_prefetch_cwe |
-| click | fe_prefetch_cwe |
-| typeKeys | fe_prefetch_cwe | 1 |
-| keyDown | fe_prefetch_cwe | \40 |
-| keyDown | fe_prefetch_cwe | \9 |
-| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | false |
-| assertExpression | javascript{$('fe_prefetch_cwe').autocomp.setList([],[]); 1} | 1 |
-| click | fe_prefetch_cwe |
-| typeKeys | fe_prefetch_cwe | zzzz |
-| keyDown | fe_prefetch_cwe | \9 |
-| waitForExpression | javascript{$('fe_prefetch_cwe').hasClassName('no_match')} | false |
+| type | prefetch_cwe |
+| click | prefetch_cwe |
+| typeKeys | prefetch_cwe | 1 |
+| keyDown | prefetch_cwe | \40 |
+| keyDown | prefetch_cwe | \9 |
+| waitForExpression | javascript{$('prefetch_cwe').hasClassName('no_match')} | false |
+| assertExpression | javascript{$('prefetch_cwe').autocomp.setList([],[]); 1} | 1 |
+| click | prefetch_cwe |
+| typeKeys | prefetch_cwe | zzzz |
+| keyDown | prefetch_cwe | \9 |
+| waitForExpression | javascript{$('prefetch_cwe').hasClassName('no_match')} | false |
