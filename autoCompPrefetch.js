@@ -827,7 +827,6 @@
      *  A method that gets called when the field gains the focus.
      */
     onFocus: function() {
-      console.log("%%% onFocus");
       // Ignore blur events on the completionOptionsScroller.
       if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
         Def.Autocompleter.completionOptionsScrollerClicked_ = false;
@@ -917,10 +916,15 @@
      */
     onFieldClick: function() {
       if (this.enabled_) { // i.e. has list items
-        this.matchListItemsToField_ = false;
-        if (!this.listShowing) { // don't need to do this when the field is getting focused
-          console.log("%%% onFieldClick");
+        // Don't show if we are already showing the full list.
+        if (!this.listShowing || this.matchListItemsToField_) {
+          this.matchListItemsToField_ = false;
+          // Temporarily disable list suggestions so we just show the whole list
+          // in order.
+          var oldSug = this.suggestionMode_;
+          this.suggestionMode_ =  Def.Autocompleter.NO_COMPLETION_SUGGESTIONS;
           this.maybeShowList();
+          this.suggestionMode_ = oldSug;
         }
       }
     },

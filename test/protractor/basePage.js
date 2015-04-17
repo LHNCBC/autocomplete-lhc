@@ -34,6 +34,15 @@ function BasePage() {
       'return $("'+searchResID+'").style.visibility === "visible"'
     );
   };
+
+  /**
+   *  Returns the number of items shown in the list.
+   */
+  this.shownItemCount = function() {
+    return browser.driver.executeScript(
+      'return $("completionOptions").down().childNodes.length'
+    );
+  };
 };
 
 module.exports = {BasePage: BasePage};
