@@ -766,6 +766,7 @@ if (typeof Def === 'undefined')
         var hidden = this.listContainer.style.visibility !== 'visible';
         if (!hidden) {
           this.listContainer.style.visibility = 'hidden';
+          this.listShowing = false;
           this.listContainer.writeAttribute('aria-hidden', 'true');
           this.element.writeAttribute('aria-expanded', 'false');
         }
@@ -779,6 +780,7 @@ if (typeof Def === 'undefined')
     showList: function() {
       var previouslyHidden = this.listContainer.style.visibility !== 'visible';
       this.listContainer.style.visibility = 'visible';
+      this.listShowing = true;
       this.listContainer.writeAttribute('aria-hidden', 'false');
       this.element.writeAttribute('aria-expanded', 'true');
       if (previouslyHidden && !this.temporaryHide_ && this.entryCount > 0) {
