@@ -337,6 +337,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         options.parameters.authenticity_token = window._token || '';
         options.parameters.terms = searchStr;
         options.onComplete = this.options.onComplete;
+        options.requestHeaders = {'X-Prototype-Version': null}; // to avoid problems with CORS
         this.changed = false;
         this.hasFocus = true;
         this.lastAjaxRequest_ = new Ajax.Request(this.url, options);
@@ -840,6 +841,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         options.parameters.terms = fieldVal;
         options.parameters.autocomp = 1;
         options.onComplete = this.options.onComplete;
+        options.requestHeaders = {'X-Prototype-Version': null}; // to avoid problems with CORS
         this.lastAjaxRequest_ = new Ajax.Request(this.url, options);
       }
     },
@@ -855,6 +857,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       options.parameters['field_val']=this.element.value;
       options.parameters['suggest'] = 1;
       options.onComplete = this.onFindSuggestionComplete.bind(this);
+      options.requestHeaders = {'X-Prototype-Version': null}; // to avoid problems with CORS
       var suggestionDialog = Def.Autocompleter.SuggestionDialog.getSuggestionDialog();
       suggestionDialog.resetDialog();
       suggestionDialog.show();
