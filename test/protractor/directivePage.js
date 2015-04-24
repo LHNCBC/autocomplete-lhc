@@ -16,7 +16,6 @@ var DirectivePage = function() {
   this.searchWithSugModel = 'listFieldVal4'; // model name
   this.prefetchCWEBlank = $('#list5');
   this.prefetchCNEBlank = $('#list6');
-  this.multiPrefetchCWE = $('#multiPrefetchCWE');
 
   // Multi-select CNE prefetch list
   var multiFieldID = 'ac2';
@@ -35,6 +34,15 @@ var DirectivePage = function() {
     element(by.css(multiPrefetchCWESectionCSS + ' li:first-child button'));
   this.multiPrefetchCWESelected =
     element.all(by.css(multiPrefetchCWESectionCSS + ' button'));
+
+  // Multi-select CWE search list
+  this.multiSearchCWE = $('#multiSearchCWE');
+  var multiSearchCWESectionCSS = '#multiSearchCWESection'
+  this.multiSearchCWEFirstSelected =
+    element(by.css(multiSearchCWESectionCSS + ' li:first-child button'));
+  this.multiSearchCWESelected =
+    element.all(by.css(multiSearchCWESectionCSS + ' button'));
+  this.multiSearchCWEModel = 'multiSearchCWEVal';
 
   this.openDirectiveTestPage = function() {
     browser.get('http://localhost:3000/test/protractor/directiveTest.html');

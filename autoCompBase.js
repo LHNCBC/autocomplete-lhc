@@ -1566,7 +1566,8 @@ if (typeof Def === 'undefined')
             this.moveEntryToSelectedArea();
 
           // See if we can find some suggestions for what the user typed.
-          if (this.findSuggestions) {
+          // For now, we do not support suggestions for multiselect lists.
+          if (this.findSuggestions && !this.multiSelect_) {
             // Use a timeout to let the event that triggered this call finish,
             // before we bring up a dialog box which might change the focus
             // state and interfere with subsequent event handlers after this one.

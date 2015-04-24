@@ -28,6 +28,13 @@
           ng-model-options="{updateOn: 'change'}" ng-model="multiPrefetchCWEVal"
           phr-autocomplete="multiPrefetchCWEOpts">
       </p>
+      <p id="multiSearchCWESection">
+          Multi-select search CWE list:
+          <input name="multiSearchCWE" id="multiSearchCWE" type="text"
+          ng-required="false" placeholder="Select or type a value"
+          ng-model-options="{updateOn: 'change'}" ng-model="multiSearchCWEVal"
+          phr-autocomplete="multiSearchCWEOpts">
+      </p>
       <p>
       "Search" CNE list:
       <input name="list3" id="list3" type="text"
@@ -128,6 +135,14 @@
           ],
           matchListValue: false,
           maxSelect: '*'
+        };
+
+        $scope.multiSearchCWEOpts = {
+          url: '/form/get_search_res_list?fd_id=1284',
+          matchListValue: false,
+          autocomp: true,
+          maxSelect: '*',
+          suggestionMode: 0
         };
 
         $scope.searchListOpts = {
