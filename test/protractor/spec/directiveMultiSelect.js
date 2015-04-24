@@ -65,6 +65,18 @@ describe('directive', function() {
       expect(dp.multiFieldSelectedItems.count()).toEqual(1);
     });
 
+    it('should not show matches for selected items', function() {
+      dp.openDirectiveTestPage();
+      expect(dp.multiField.evaluate('listFieldVal2')).toEqual(null);
+      dp.multiField.click();
+      expect(dp.searchResults.isDisplayed()).toBeTruthy();
+      dp.firstSearchRes.click();
+      expect(dp.multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
+      dp.multiField.sendKeys('Gr');
+      // There should be no matches
+      expect(dp.firstSearchRes.isPresent()).toBeFalsy();
+    });
+
     it('should allow non-matching values for prefetch CWE lists', function () {
       // Add a non-list value
       expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(null);
@@ -109,16 +121,45 @@ describe('directive', function() {
       expect(dp.allSearchRes.count()).toBe(3);
     });
 
-    it('should not show matches for selected items', function() {
+    it('should allow non-matching values for search CWE lists', function () {
       dp.openDirectiveTestPage();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual(null);
-      dp.multiField.click();
-      expect(dp.searchResults.isDisplayed()).toBeTruthy();
+      // Add a non-list value
+      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(null);
+      dp.multiSearchCWE.click();
+      dp.multiSearchCWE.sendKeys('non-list val 1');
+      dp.codeField.click(); // shift focus from field
+      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
+        [{text: 'non-list val 1'}]);
+      expect(dp.multiSearchCWESelected.count()).toEqual(1);
+      expect(dp.multiSearchCWE.getAttribute('value')).toEqual('');
+
+      // Add a list value
+      dp.multiSearchCWE.click();
+      dp.multiSearchCWE.sendKeys('ar');
       dp.firstSearchRes.click();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
-      dp.multiField.sendKeys('Gr');
-      // There should be no matches
-      expect(dp.firstSearchRes.isPresent()).toBeFalsy();
+      expect(dp.searchList.getAttribute('value')).toEqual('');
+      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
+        [{text: 'non-list val 1'},
+         {text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
+          term_icd9_code: '518.82'}]);
+      expect(dp.multiSearchCWESelected.count()).toEqual(2);
+
+      // Reload the page and add a list value first
+      dp.openDirectiveTestPage();
+      dp.multiSearchCWE.click();
+      dp.multiSearchCWE.sendKeys('ar');
+      dp.firstSearchRes.click();
+      expect(dp.multiSearchCWESelected.count()).toEqual(1);
+      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
+        [{text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
+          term_icd9_code: '518.82'}]);
+      // Now add a non-list value
+      dp.multiSearchCWE.sendKeys('non-list val 1');
+      dp.codeField.click(); // shift focus from field
+      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
+        [{text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
+          term_icd9_code: '518.82'}, {text: 'non-list val 1'}]);
+      expect(dp.multiSearchCWESelected.count()).toEqual(2);
     });
   });
 });

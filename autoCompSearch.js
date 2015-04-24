@@ -557,12 +557,13 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
     /**
      *  Returns a hash of extra data (returned with AJAX autocompletion request)
-     *  for the currently selected list item.
+     *  for a selected list item.
+     * @param itemText the display string of the selected item.
      */
-    getItemExtraData: function() {
+    getItemExtraData: function(itemText) {
       var itemData = {};
       if (this.listExtraData_) {
-        var dataIndex = this.itemToDataIndex_[this.element.value];
+        var dataIndex = this.itemToDataIndex_[itemText];
         var keys = Object.keys(this.listExtraData_);
         for (var k=0, numKeys = keys.length; k<numKeys; ++k) {
           var key = keys[k];
