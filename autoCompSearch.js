@@ -183,7 +183,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *     that are on the list.</li>
      *    <li>buttonID - the ID of the button (if there is one)</li>
      *    <li>autocomp - a boolean that controls whether the field should
-     *     also autocomplete as the user types</li>
+     *     also autocomplete as the user types. (Default:  true)</li>
      *    <li>dataRequester - A RecordDataRequester for getting additional data
      *     after the user makes a selection from the completion list.  This may be
      *     null, in which case no request for additional data is made.</li>
@@ -237,7 +237,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       this.defAutocompleterBaseInit(options);
 
       this.autocomp = options['autocomp'];
-      if (!this.autocomp) {
+      if (this.autocomp === undefined)
+        this.autocomp = true;  // default
+      else if (!this.autocomp) {
         // Disable autocompletion by setting it to run once every year.
         // Note:  This used to be 1000 years, but the Linux version of Firefox
         // was treating such a large timeout value as zero.
