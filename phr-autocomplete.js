@@ -95,21 +95,6 @@ if (typeof angular !== 'undefined') {
               });
             });
 
-            // Add a parser to convert from the field value to the object
-            // containing value and (e.g.) code.
-            controller.$parsers.push(function(value) {
-              // Just rely on the autocompleter list selection event to manage
-              // model updates.  Here we will just return the model object, to
-              // prevent any change to the model from the parsers.
-              var rtn = scope.modelData;
-              // Returning "undefined" means the value is invalid and will cause
-              // the ng-invalid-parse class to get added.  Switch to null if we
-              // allow non-matching field values.
-              if (rtn === undefined && phrAutoOpts.matchListValue !== true)
-                rtn = null;
-              return rtn;
-            });
-
             // if we have a default value, and if the model value is not already
             // set, go ahead and select the default
             if (phrAutoOpts.defaultValue !== undefined &&
@@ -128,8 +113,11 @@ if (typeof angular !== 'undefined') {
            * @param itemText the display string of the selected item
            */
           function getItemModelData(ac, itemText) {
-            return angular.extend({text: itemText, code: ac.getItemCode(itemText)},
-              ac.getItemExtraData())
+            var rtn = {text: itemText};
+            var code = ac.getItemCode(itemText);
+            if (code !== null)
+              rtn.code = code;
+            return angular.extend(rtn, ac.getItemExtraData(itemText))
           }
 
 
@@ -142,13 +130,12 @@ if (typeof angular !== 'undefined') {
             var ac = new Def.Autocompleter.Search(pElem.id, phrAutoOpts.url, phrAutoOpts);
             Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
               scope.$apply(function() {
-                var item;
+                var itemText = eventData.final_val;
                 if (!ac.multiSelect_) {
-                  item = eventData.final_val;
-                  scope.modelData = getItemModelData(ac, item);
+                  scope.modelData = getItemModelData(ac, itemText);
                 }
                 else {
-                  if (typeof scope.modelData !== 'object')
+                  if (!scope.modelData)
                     scope.modelData = [];
                   var selectedItems = scope.modelData;
                   if (eventData.removed) {
@@ -162,24 +149,10 @@ if (typeof angular !== 'undefined') {
                     }
                   }
                   else {
-                    selectedItems.push(getItemModelData(ac, item));
+                    selectedItems.push(getItemModelData(ac, itemText));
                   }
                 }
               });
-            });
-
-            // Add a parser to convert from the field value to the object
-            // containing value and (e.g.) code.
-            controller.$parsers.push(function(value) {
-              var rtn = value;
-              if (typeof value === 'string') {
-                var code = ac.getItemCode(value);
-                if (code === null && phrAutoOpts.matchListValue === true)
-                  rtn = undefined; // the signal that value is invalid
-                else
-                  rtn = {text: value, code: code};
-              }
-              return rtn;
             });
 
             return ac;
@@ -208,6 +181,21 @@ if (typeof angular !== 'undefined') {
 
               var ac = phrAutoOpts.url ? searchList(pElem, phrAutoOpts) :
                 prefetchList(pElem, phrAutoOpts);
+
+              // Add a parser to convert from the field value to the object
+              // containing value and (e.g.) code.
+              controller.$parsers.push(function(value) {
+                // Just rely on the autocompleter list selection event to manage
+                // model updates.  Here we will just return the model object, to
+                // prevent any change to the model from the parsers.
+                var rtn = scope.modelData;
+                // Returning "undefined" means the value is invalid and will cause
+                // the ng-invalid-parse class to get added.  Switch to null if we
+                // allow non-matching field values.
+                if (rtn === undefined && phrAutoOpts.matchListValue !== true)
+                  rtn = null;
+                return rtn;
+              });
 
               // Also add a formatter to get the display string if the model is
               // changed.
