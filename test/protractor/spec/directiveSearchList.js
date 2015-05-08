@@ -52,6 +52,18 @@ describe('directive', function() {
       expect(dp.searchWithSug.getAttribute('value')).toBe('Aortic insufficiency');
       expect(dp.searchWithSug.evaluate(dp.searchWithSugModel)).toEqual(
         {text: 'Aortic insufficiency', code: '2886', term_icd9_code: '424.1'});
+
+
+      // Try the search list that has suggestions turned off.
+      dp.searchWithoutSug.sendKeys('ar');
+      // Click someplace else to leave 'ar' in the field
+      dp.inputElem.click();
+      expect(dp.suggestionDialog.isDisplayed()).toBeFalsy();
+      expect(dp.searchWithoutSug.getAttribute('value')).toBe('ar');
+      // The only entry in the model should be the text, because it is not on
+      // the list.
+      expect(dp.searchWithoutSug.evaluate(dp.searchWithoutSugModel)).toEqual(
+        {text: 'ar'});
     });
 
     it('should provide suggestions when no list has been brought up', function() {
