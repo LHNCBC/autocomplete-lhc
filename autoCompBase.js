@@ -442,6 +442,9 @@ if (typeof Def === 'undefined')
      *     case the list element might be unusually short.
      *     Note:  At present the only tested cases of this parameter are the
      *     default value and null.</li>
+     *    <li>nonMatchSuggestions - (default: true) Whether the user should be
+     *     given a list of suggestions if they enter a non-matching value.
+     *     This only applies when matchListValue is false.</li>
      *  </ul>
      */
     defAutocompleterBaseInit: function(options) {
@@ -459,6 +462,8 @@ if (typeof Def === 'undefined')
         this.scrolledContainer_ = options.scrolledContainer;
       else
         this.scrolledContainer_ = document.documentElement;
+      if ((this.nonMatchSuggestions_ = options['nonMatchSuggestions']) === undefined)
+        this.nonMatchSuggestions_ = true; // default
       this.constructorOpts_ = options;
 
       this.selectedCodes_ = {};
@@ -1567,7 +1572,7 @@ if (typeof Def === 'undefined')
 
           // See if we can find some suggestions for what the user typed.
           // For now, we do not support suggestions for multiselect lists.
-          if (this.findSuggestions && !this.multiSelect_) {
+          if (this.findSuggestions && this.nonMatchSuggestions_ && !this.multiSelect_) {
             // Use a timeout to let the event that triggered this call finish,
             // before we bring up a dialog box which might change the focus
             // state and interfere with subsequent event handlers after this one.
