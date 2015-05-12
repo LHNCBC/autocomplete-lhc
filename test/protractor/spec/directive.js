@@ -41,13 +41,30 @@ describe('directive', function() {
     dp.codeField.click();
     expect(hasClass(dp.prefetchCWEBlank, 'ng-invalid-parse')).toBe(false);
 
-    // Try a CNE
-    expect(hasClass(dp.prefetchCNEBlank, 'ng-invalid-parse')).toBe(false);
+    // The parser no longer returns the invalid signal (undefined) so
+    // ng-invalid-parse never gets set.  See comments in the test below,
+    // 'should allow undefined model values even for CNE'.
+    // // Try a CNE
+    // expect(hasClass(dp.prefetchCNEBlank, 'ng-invalid-parse')).toBe(false);
+    // dp.prefetchCNEBlank.click();
+    // dp.prefetchCNEBlank.sendKeys('zzz');
+    // // Change focus to send change event
+    // dp.codeField.click();
+    // expect(hasClass(dp.prefetchCNEBlank, 'ng-invalid-parse')).toBe(true);
+  });
+
+  it('should allow undefined model values even for CNE', function() {
+    // In LForms, if you use the keyboard to select a list value in a CNE, there
+    // was an issue where it would register as an invalid value.
+    // This was traced to the parser code which went ahead and returned the
+    // model value (undefined) for CNE fields, but switched to null for CWE
+    // fields (which doesn't trigger the invalid status).
+    browser.driver.executeScript('angular.element("'+dp.prefetchCNEBlankSel+
+      '").isolateScope().modelData = undefined;');
     dp.prefetchCNEBlank.click();
-    dp.prefetchCNEBlank.sendKeys('zzz');
-    // Change focus to send change event
-    dp.codeField.click();
-    expect(hasClass(dp.prefetchCNEBlank, 'ng-invalid-parse')).toBe(true);
+    dp.prefetchCNEBlank.sendKeys(protractor.Key.ARROW_DOWN);
+    dp.prefetchCNEBlank.sendKeys(protractor.Key.TAB);
+    expect(hasClass(dp.prefetchCNEBlank, 'ng-invalid-parse')).toBe(false);
   });
 
 

@@ -190,9 +190,8 @@ if (typeof angular !== 'undefined') {
                 // prevent any change to the model from the parsers.
                 var rtn = scope.modelData;
                 // Returning "undefined" means the value is invalid and will cause
-                // the ng-invalid-parse class to get added.  Switch to null if we
-                // allow non-matching field values.
-                if (rtn === undefined && phrAutoOpts.matchListValue !== true)
+                // the ng-invalid-parse class to get added.  Switch to null.
+                if (rtn === undefined)
                   rtn = null;
                 return rtn;
               });

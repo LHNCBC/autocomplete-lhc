@@ -1,6 +1,6 @@
 {
   "name": "autocomp-phr",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "main": [
     "auto_completion.css",
     "../scriptaculous-bower/effects.js",
