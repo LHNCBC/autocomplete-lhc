@@ -17,7 +17,8 @@ var DirectivePage = function() {
   this.searchWithoutSug = $('#list4b');  // search list without suggestions
   this.searchWithoutSugModel = 'listFieldVal4b';  // search list without suggestions
   this.prefetchCWEBlank = $('#list5');
-  this.prefetchCNEBlank = $('#list6');
+  this.prefetchCNEBlankSel = '#list6';
+  this.prefetchCNEBlank = $(this.prefetchCNEBlankSel);
 
   // Multi-select CNE prefetch list
   var multiFieldID = 'ac2';
