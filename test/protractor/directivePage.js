@@ -1,5 +1,6 @@
 // Page objects helpers for the directive test page
 var BasePage = require('./basePage').BasePage;
+var config = require('../config');
 
 var DirectivePage = function() {
   BasePage.call(this);
@@ -45,7 +46,8 @@ var DirectivePage = function() {
   this.multiSearchCWEModel = 'multiSearchCWEVal';
 
   this.openDirectiveTestPage = function() {
-    browser.get('http://localhost:3000/test/protractor/directiveTest.html');
+    browser.get('http://localhost:'+config.port+
+      '/test/protractor/directiveTest.html');
   }
 }
 

@@ -30,7 +30,8 @@ ATR = {
       else {
         switch(cmd) {
           case 'open':
-            browser.get(arg1);
+            var config = require('../../config');
+            browser.get('http://localhost:'+config.port+arg1);
             break;
           case 'mouseDown':
             this.Commands.click(arg1);

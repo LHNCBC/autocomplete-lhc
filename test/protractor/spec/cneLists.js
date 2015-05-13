@@ -19,7 +19,7 @@ describe('CNE lists', function() {
   });
 
   it('should not send a list selection event for non-matching values', function() {
-    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    po.openTestPage();
     var singleCNEFieldName = 'race_or_ethnicity'
     var singleCNE = $('#fe_'+singleCNEFieldName);
     browser.driver.executeScript(function() {

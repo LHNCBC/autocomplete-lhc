@@ -13,7 +13,7 @@ describe('autocomp', function() {
 
   it('should respond to the suggestion mode setting',
      function() {
-    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    po.openTestPage();
     suggestionMode0CWE.click();
     suggestionMode0CWE.sendKeys('arm');
     expect(searchResults.isDisplayed()).toBeTruthy();
@@ -45,7 +45,7 @@ describe('autocomp', function() {
 
   it('should not show the list in response to a shift or control key being held down',
      function() {
-    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    po.openTestPage();
     var inputElem = raceField;
     inputElem.click();
     expect(searchResults.isDisplayed()).toBeTruthy();
@@ -64,7 +64,7 @@ describe('autocomp', function() {
 
   it('should not shift the selected item when the control key is down',
      function() {
-    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    po.openTestPage();
     raceField.click();
     expect(searchResults.isDisplayed()).toBeTruthy();
     raceField.sendKeys(protractor.Key.ARROW_DOWN); // first item

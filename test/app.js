@@ -6,6 +6,7 @@
 var connect = require('connect'),
     http = require('http'),
     path = require('path');
+var config = require('./config');
 
 // Set the document root to the package directory, which is the
 // parent of the directory containing this script.
@@ -41,4 +42,4 @@ connect()
      })
     .use(connect.static(docRoot))
     .use(connect.directory(docRoot))
-    .listen(3000);
+    .listen(config.port);

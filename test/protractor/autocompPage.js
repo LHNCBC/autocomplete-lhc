@@ -1,5 +1,6 @@
 // Page objects for the standard (i.e. non-directive) autocompleter test page
 var BasePage = require('./basePage').BasePage;
+var config = require('../config');
 
 var AutocompPage = function() {
   BasePage.call(this);
@@ -19,8 +20,17 @@ var AutocompPage = function() {
   this.multiPrefetchCWESelected =
     element.all(by.css(multiPrefetchCWESectionCSS + ' button'));
 
+  // Multi-select CWE search list
+  var multiSearchCWESectionCSS = '#multiSearchCWESection';
+  this.multiSearchCWE = $('#multi_search_sel_cwe');
+  this.multiSearchCWEFirstSelected =
+    element(by.css(multiSearchCWESectionCSS + ' li:first-child button'));
+  this.multiSearchCWESelected =
+    element.all(by.css(multiSearchCWESectionCSS + ' button'));
+
   this.openTestPage = function() {
-    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    browser.get('http://localhost:'+config.port+
+      '/test/protractor/autocomp_atr.html');
   }
 
   // Returns the scroll position of the window

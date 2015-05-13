@@ -75,6 +75,18 @@ opts['maxSelect'] = '*';
 var fe_multi_sel_cne_autoComp =
  new Def.Autocompleter.Prefetch('multi_sel_cwe', ["Spanish","French","Other"], opts);
 
+// multi-select search list without match required
+opts = {
+  'matchListValue': false,
+  'maxSelect': '*',
+  'suggestionMode': Def.Autocompleter.USE_STATISTICS,
+  'autocomp': true
+};
+var fe_search_cwe_autoComp =
+  new Def.Autocompleter.Search('multi_sel_search_cwe',
+    '/form/get_search_res_list?fd_id=2163', opts);
+
+
 // Long prefetched list autocompleter with an odd number of items (for checking
 // CSS display issues when the list wraps to two columns).
 opts = {};

@@ -35,5 +35,24 @@ describe('multi-select lists', function() {
     po.multiPrefetchCWE.click();
     expect(po.allSearchRes.count()).toBe(3);
   });
+  it('should allow multiple items to be clicked without closing the list',
+      function() {
+    po.openTestPage();
+    po.multiSearchCWE.click();
+    po.multiSearchCWE.sendKeys('ar');
+    po.firstSearchRes.click();
+    po.firstSearchRes.click(); // firstSearchRes should now point to the second
+    // Try keys
+    po.multiSearchCWE.sendKeys(protractor.DOWN);
+    po.multiSearchCWE.sendKeys(protractor.ENTER);
+    po.multiSearchCWE.sendKeys(protractor.DOWN);
+    po.multiSearchCWE.sendKeys(protractor.ENTER);
+
+    expect(po.multiSearchCWESelected.count()).toEqual(4);
+    expect(po.getSelected('multi_sel_search_cwe')).toEqual(
+      [["2189", "2212", "2319", "2958"],
+       ["Coronary artery disease (CAD)", "Arm pain", "Eye pain",
+        "Joint pain (arthralgia)"] ])
+  });
 });
 
