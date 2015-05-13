@@ -203,6 +203,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *     case the list element might be unusually short.
      *     Note:  At present the only tested cases of this parameter are the
      *     default value and null.</li>
+     *    <li>nonMatchSuggestions - (default: true) Whether the user should be
+     *     given a list of suggestions if they enter a non-matching value.
+     *     This only applies when matchListValue is false.</li>
      *  </ul>
      */
     initialize: function(fieldID, url, options) {
@@ -594,11 +597,16 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       var listItems = new Array(numItems);
       this.itemToDataIndex_ = {};
       var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
+      // Filter out already selected items.
+      var filteredItems = [];
       for (var i=0; i<numItems; ++i) {
         var item = listItemData[i].join(joinStr);
-        listItems[i] = item.escapeHTML();
-        this.itemToDataIndex_[item] = i; // to preserve the original indices
+        this.itemToDataIndex_[item] = i;
+        if (!this.isSelected(item)) {
+          filteredItems.push(item);
+        }
       }
+      listItems = filteredItems;
       var useStats = this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
       if (useStats) {
         // For this kind of suggestion, we want to rely on the statistical
@@ -629,9 +637,8 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      */
     sortHighlightedResults: function(listItemData) {
       var numItems = listItemData.length;
-      var listItems = new Array(numItems);
       this.itemToDataIndex_ = {};
-      var taglessItems = new Array(numItems);
+      var taglessItems = [];
       var taglessItemToOriginal = {};
       var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
       for (var i=0; i<numItems; ++i) {
@@ -640,10 +647,13 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         // the tags so we can sort it.  Also keep a map so that after the
         // sorting we can get back to the original item that has the tags.
         item = item.replace(/&lt;(\/)?span&gt;/g, '<$1span>');
-        var taglessItem = item.replace(/<\/?span>/g, '');
-        taglessItemToOriginal[taglessItem] = item;
-        taglessItems[i] = taglessItem;
         this.itemToDataIndex_[item] = i; // to preserve the original indices
+        // Filter out already selected items.
+        if (!this.isSelected(item)) {
+          var taglessItem = item.replace(/<\/?span>/g, '');
+          taglessItemToOriginal[taglessItem] = item;
+          taglessItems.push(taglessItem);
+        }
       }
 
       // Sort the "tagless" results.
@@ -659,6 +669,8 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
       // Now get the original version of the list items (the ones with tags)
       // in the order of the sorted taglessItems array.
+      numItems = taglessItems.length; // might have changed due to filtering done above
+      var listItems = new Array(numItems);
       for (i=0; i<numItems; ++i)
         listItems[i]= taglessItemToOriginal[taglessItems[i]];
 
@@ -795,7 +807,12 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
               {list_expansion_method: 'CtrlRet'});
           }
           else if (this.active) {
-            Autocompleter.Base.prototype.onKeyPress.apply(this, [event]);
+            this.selectEntry();
+            Event.stop(event);
+            if (!this.multiSelect_) {
+              this.hide();
+              this.active = false;
+            }
             this.uneditedValue = this.element.value;
           }
           break;

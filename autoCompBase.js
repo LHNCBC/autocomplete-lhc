@@ -520,6 +520,9 @@ if (typeof Def === 'undefined')
       // ease of accessing the autocompleter given the field.
       this.element.autocomp = this;
 
+      // Set the active list item index to -1, instead of 0 as in controls.js,
+      // because there might not be any list items.
+      this.index = -1;
     },
 
 
@@ -603,7 +606,22 @@ if (typeof Def === 'undefined')
       this.element.value = '';
       this.uneditedValue = '';
       Def.Autocompleter.screenReaderLog('Selected '+escapedVal);
-      this.onFocus(); // show the list again
+      if (this.index >= 0) { // i.e. if it is a list item
+        // Delete selected item
+        var ul = this.update.firstChild;
+        ul.removeChild(this.getCurrentEntry());
+        // Having deleted that item, we now need to update the the remaining ones
+        --this.entryCount;
+        var itemNodes = ul.childNodes;
+        for (var i=this.index, len=itemNodes.length; i<len; ++i)
+          itemNodes[i].autocompleteIndex = i;
+        if (this.index == this.entryCount)
+          --this.index;
+      }
+      // Make the list "active" again (functional) and reposition
+      this.active = true;
+      this.hasFocus = true;
+      this.posAnsList();
     },
 
 
@@ -1729,7 +1747,11 @@ if (typeof Def === 'undefined')
     onMouseDown: function(event) {
       // Call the superclass' method.
       var liElement = Event.findElement(event, 'LI');
-      var listItemClicked = !this.indexToHeadingLevel_[liElement.autocompleteIndex];
+      var itemVal = this.listItemValue(liElement);
+      if (!this.itemToDataIndex_)
+        this.initItemToDataIndex();
+      var listDataIndex = this.itemToDataIndex_[itemVal];
+      var listItemClicked = !this.indexToHeadingLevel_[listDataIndex];
       if (listItemClicked) {
         this.clickSelectionInProgress_ = true;
         Autocompleter.Base.prototype.onClick.apply(this, [event]);
@@ -1786,16 +1808,21 @@ if (typeof Def === 'undefined')
       else if (this.index >= shift) // e.g. >= 4 if numItems == 7
         newIndex = this.index - shift;
 
-      // Make sure the new index is not a header item.  If so, don't move.
-      if (newIndex !== this.index && !this.indexToHeadingLevel_[newIndex]) {
-        // Put the value into the field, but don't run the change event yet,
-        // because the user has not really selected it.
-        this.index = newIndex;
+      if (newIndex !== this.index) {
+        // Make sure the new index is not a header item.  If so, don't move.
         var highlightedLITag = this.getEntry(this.index);
-        this.element.value = this.listItemValue(highlightedLITag);
-        this.element.select();
-        this.render();
-        Event.stop(event);
+        var newVal = this.listItemValue(highlightedLITag);
+        if (!this.itemToDataIndex_)
+          this.initItemToDataIndex();
+        if (!this.indexToHeadingLevel_[this.itemToDataIndex_[newVal]]) {
+          // Put the value into the field, but don't run the change event yet,
+          // because the user has not really selected it.
+          this.index = newIndex;
+          this.element.value = newVal;
+          this.element.select();
+          this.render();
+          Event.stop(event);
+        }
       }
     },
 
