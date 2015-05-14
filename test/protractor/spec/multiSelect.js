@@ -1,6 +1,7 @@
 // Tests for multi-select lists
 // See also:  directiveMultiSelect.js
 var po = require('../autocompPage.js');
+var hasClass = require('../test_helpers').hasClass;
 
 describe('multi-select lists', function() {
   it('should allow non-matching values for prefetch CWE lists', function () {
@@ -41,18 +42,23 @@ describe('multi-select lists', function() {
     po.multiSearchCWE.click();
     po.multiSearchCWE.sendKeys('ar');
     po.firstSearchRes.click();
+    // That element should be removed, and the new first element should now have
+    // the "selected" class.
+    expect(hasClass(po.firstSearchRes, 'selected')).toBe(true);
     po.firstSearchRes.click(); // firstSearchRes should now point to the second
-    // Try keys
-    po.multiSearchCWE.sendKeys(protractor.DOWN);
-    po.multiSearchCWE.sendKeys(protractor.ENTER);
-    po.multiSearchCWE.sendKeys(protractor.DOWN);
-    po.multiSearchCWE.sendKeys(protractor.ENTER);
+    // Try keys.  The first item should still be selected.
+    po.multiSearchCWE.sendKeys(protractor.Key.ENTER);
+    // Confirm that the new firstSearchRes has the "selected" class
+    expect(hasClass(po.firstSearchRes, 'selected')).toBe(true);
+    po.multiSearchCWE.sendKeys(protractor.Key.ARROW_DOWN);
+    // Now we should be on the second item
+    po.multiSearchCWE.sendKeys(protractor.Key.ENTER);
 
     expect(po.multiSearchCWESelected.count()).toEqual(4);
     expect(po.getSelected('multi_sel_search_cwe')).toEqual(
-      [["2189", "2212", "2319", "2958"],
+      [["2212","2958","2189","11458"],
        ["Coronary artery disease (CAD)", "Arm pain", "Eye pain",
-        "Joint pain (arthralgia)"] ])
+        "Kidney failure (short-term renal failure)"]]);
   });
 });
 

@@ -23,7 +23,7 @@ var AutocompPage = function() {
 
   // Multi-select CWE search list
   var multiSearchCWESectionCSS = '#multiSearchCWESection';
-  this.multiSearchCWE = $('#multi_search_sel_cwe');
+  this.multiSearchCWE = $('#multi_sel_search_cwe');
   this.multiSearchCWEFirstSelected =
     element(by.css(multiSearchCWESectionCSS + ' li:first-child button'));
   this.multiSearchCWESelected =

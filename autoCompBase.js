@@ -617,6 +617,8 @@ if (typeof Def === 'undefined')
           itemNodes[i].autocompleteIndex = i;
         if (this.index == this.entryCount)
           --this.index;
+        // Mark the new "current" item as selected
+        Element.addClassName(this.getEntry(this.index),"selected");
       }
       // Make the list "active" again (functional) and reposition
       this.active = true;
