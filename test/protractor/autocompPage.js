@@ -15,7 +15,8 @@ var AutocompPage = function() {
 
   // Multi-select CWE prefetch list
   var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection';
-  this.multiPrefetchCWE = $('#multi_sel_cwe');
+  this.multiPrefetchCWEID = 'multi_sel_cwe';
+  this.multiPrefetchCWE = $('#'+this.multiPrefetchCWEID);
   this.multiPrefetchCWEFirstSelected =
     element(by.css(multiPrefetchCWESectionCSS + ' li:first-child button'));
   this.multiPrefetchCWESelected =

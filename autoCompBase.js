@@ -305,7 +305,8 @@ if (typeof Def === 'undefined')
     itemToDataIndex_: null,
 
     /**
-     *  The codes of the currently selected items, stored as keys on a hash.
+     *  The codes of the currently selected items, stored as values on a hash,
+     *  where the keys are the display strings.
      */
     selectedCodes_: null,
 
@@ -545,9 +546,16 @@ if (typeof Def === 'undefined')
 
     /**
      *  Returns the codes for the currently selected items or an empty array if there are none.
+     *  If some of the selected items do not have a code, there will be null in
+     *  that place in the returned array.
      */
     getSelectedCodes: function() {
-      return Object.keys(this.selectedCodes_);
+      var keys = this.getSelectedItems();
+      var rtn = [];
+      for (var i=0, len=keys.length; i<len; ++i) {
+        rtn.push(this.selectedCodes_[keys[i]]);
+      }
+      return rtn;
     },
 
 
@@ -572,7 +580,7 @@ if (typeof Def === 'undefined')
         this.selectedItems_ = {};
       }
       if (newCode !== null)
-        this.selectedCodes_[newCode] = 1;
+        this.selectedCodes_[itemText] = newCode;
       this.selectedItems_[itemText] = 1;
     },
 
@@ -638,8 +646,7 @@ if (typeof Def === 'undefined')
         li = li.parentNode;
       li.parentNode.removeChild(li);
       var itemText = li.childNodes[1].textContent;
-      var itemCode = this.getItemCode(itemText);
-      delete this.selectedCodes_[itemCode];
+      delete this.selectedCodes_[itemText];
       delete this.selectedItems_[itemText];
       this.listSelectionNotification(itemText, true, true);
       Def.Autocompleter.screenReaderLog('Unselected '+itemText);

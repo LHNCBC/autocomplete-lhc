@@ -36,6 +36,34 @@ describe('multi-select lists', function() {
     po.multiPrefetchCWE.click();
     expect(po.allSearchRes.count()).toBe(3);
   });
+
+  it('should return display strings and codes in the same order', function() {
+    po.openTestPage();
+    // Test both list items and non-list items.
+    po.multiPrefetchCWE.click();
+    po.firstSearchRes.click();
+    po.multiPrefetchCWE.sendKeys('zzz');
+    po.nonField.click(); // shift focus from field
+    po.multiPrefetchCWE.click();
+    po.firstSearchRes.click();
+    // Note:  The orders of the following arrays depends on their storage in a
+    // hash, so they could change;  However, the whatever the order, the order
+    // of the code and display strings should correspond to each other.
+    t2c =  {"Spanish": "LA44-3","French": "LA45-0", "zzz": null}
+    expect(po.getSelected(po.multiPrefetchCWEID)).toEqual(
+      [[t2c['Spanish'], t2c['zzz'], t2c['French']],
+      ['Spanish', 'zzz', 'French']]);
+    // Delete the first two items and confirm the codes are correct.
+    po.multiPrefetchCWEFirstSelected.click();
+    expect(po.getSelected(po.multiPrefetchCWEID)).toEqual(
+      [[t2c['zzz'], t2c['French']],
+      ['zzz', 'French']]);
+    po.multiPrefetchCWEFirstSelected.click();
+    expect(po.getSelected(po.multiPrefetchCWEID)).toEqual(
+      [[t2c['French']],
+      ['French']]);
+  });
+
   it('should allow multiple items to be clicked without closing the list',
       function() {
     po.openTestPage();
