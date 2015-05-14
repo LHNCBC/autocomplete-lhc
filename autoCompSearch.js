@@ -597,13 +597,13 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       var listItems = new Array(numItems);
       this.itemToDataIndex_ = {};
       var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
-      // Filter out already selected items.
+      // Filter out already selected items for multi-select lists
       var filteredItems = [];
       for (var i=0; i<numItems; ++i) {
         var item = listItemData[i].join(joinStr);
-        this.itemToDataIndex_[item] = i;
-        if (!this.isSelected(item)) {
-          filteredItems.push(item);
+        this.itemToDataIndex_[item] = i; // unescaped item string
+        if (!this.multiSelect_ || !this.isSelected(item)) {
+          filteredItems.push(item.escapeHTML());
         }
       }
       listItems = filteredItems;
@@ -642,14 +642,15 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       var taglessItemToOriginal = {};
       var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
       for (var i=0; i<numItems; ++i) {
-        var item = listItemData[i].join(joinStr).escapeHTML();
+        var item = listItemData[i].join(joinStr);
+        this.itemToDataIndex_[item] = i; // unescaped item string
+        item = item.escapeHTML();
         // Decode the span tags, and create a version of the string without
         // the tags so we can sort it.  Also keep a map so that after the
         // sorting we can get back to the original item that has the tags.
         item = item.replace(/&lt;(\/)?span&gt;/g, '<$1span>');
-        this.itemToDataIndex_[item] = i; // to preserve the original indices
         // Filter out already selected items.
-        if (!this.isSelected(item)) {
+        if (!this.multiSelect_ || !!this.isSelected(item)) {
           var taglessItem = item.replace(/<\/?span>/g, '');
           taglessItemToOriginal[taglessItem] = item;
           taglessItems.push(taglessItem);

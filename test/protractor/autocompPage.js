@@ -8,7 +8,8 @@ var AutocompPage = function() {
   this.nonField = $('#content');
 
   this.longOddCNE = $('#long_odd_cne');
-  this.longOddCNENoScroll = $('#long_odd_cne_no_scroll');
+  this.longOddCNENoScrollCSS = '#long_odd_cne_no_scroll';
+  this.longOddCNENoScroll = $(this.longOddCNENoScrollCSS);
   this.prefetchCWEID = 'prefetch_cwe';  // single-select
   this.prefetchCWE = $('#'+this.prefetchCWEID);  // single-select
 
