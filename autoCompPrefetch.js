@@ -84,15 +84,6 @@
      */
     autoFill_: true,
 
-    /**
-     *  A hash from item indexes to heading levels for all items in the complete
-     *  list (as opposed to a subset of the list that matches the field value
-     *  -- for that see indexToHeadingLevel_ in autoCompBase.js).  A level of 0
-     *  means the item is not a heading, level 1 means the item is a top-level
-     *  heading, and level 2 means a sub-heading.
-     */
-    fullIndexToHeadingLevel_: {},
-
 
     /**
      *  The constructor.  (See Prototype's Class.create method.)
@@ -264,14 +255,14 @@
           indexToHeadingLevel[i] = hcLevel ? hcLevel : 0;
         }
 
-        this.fullIndexToHeadingLevel_ = indexToHeadingLevel;
+        this.indexToHeadingLevel_ = indexToHeadingLevel;
         options['indexToHeadingLevel'] = indexToHeadingLevel;
 
         this.numHeadings_ = $H(headingCodeLevels).keys().length;
         options['numHeadings'] = this.numHeadings_;
       }
       else if (options['indexToHeadingLevel']) {
-        this.fullIndexToHeadingLevel_ = options['indexToHeadingLevel'];
+        this.indexToHeadingLevel_ = options['indexToHeadingLevel'];
         this.numHeadings_ = options['numHeadings'];
       }
     },
@@ -322,18 +313,15 @@
 
       var rtnBuffer = ['<ul>'];
       var lastHeading = null;
-      var lastHeadingLevel = null;
       var foundItemForLastHeading = false;
       var headerCount = 0;
       var subListIndex = 0; // an index into the list we're building
-      instance.indexToHeadingLevel_ = {};
       if (instance.options.ignoreCase)
         entry = entry.toLowerCase();
       for (var i=0, max=instance.rawList_.length; i<max; ++i) {
-        var tmp = instance.fullIndexToHeadingLevel_[i];
+        var tmp = instance.indexToHeadingLevel_[i];
         if (tmp) {
           lastHeading = instance.rawList_[i];
-          lastHeadingLevel = tmp;
           foundItemForLastHeading = false;
           ++headerCount;
         }
@@ -410,7 +398,6 @@
               rtnBuffer.push('<li class="heading">');
               rtnBuffer.push(lastHeading);
               rtnBuffer.push('</li>');
-              instance.indexToHeadingLevel_[subListIndex++] = lastHeadingLevel;
               countForLastHeading = 0;
             }
             if (!useFullList || !instance.numHeadings_ ||
@@ -421,7 +408,6 @@
               }
               rtnBuffer.push('<li>');
               rtnBuffer.push(itemText);
-              instance.indexToHeadingLevel_[subListIndex++] = 0;
               rtnBuffer.push('</li>');
               if (useFullList)
                 ++countForLastHeading;
@@ -928,7 +914,7 @@
      */
     onHover: function(event) {
       if (!this.doNotCountHover) {
-        Autocompleter.Local.prototype.onHover.apply(this, [event]);
+        Def.Autocompleter.Base.prototype.onHover.apply(this, [event]);
       }
     },
 

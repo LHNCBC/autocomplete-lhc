@@ -3,18 +3,27 @@ function BasePage() {
   var searchResID = 'searchResults';
   var searchResCSS = '#'+searchResID;
   this.searchResults = $(searchResCSS);
-  this.firstSearchRes = $(searchResCSS + ' li:first-child');
-  this.secondSearchRes = $(searchResCSS + ' li:nth-child(2)');
-  this.thirdSearchRes = $(searchResCSS + ' li:nth-child(4)');
-  this.fourthSearchRes = $(searchResCSS + ' li:nth-child(4)');
-  this.fifthSearchRes = $(searchResCSS + ' li:nth-child(5)');
-  this.tenthSearchRes = $(searchResCSS + ' li:nth-child(10)');
   this.allSearchRes = element.all(by.css(searchResCSS + ' li'));
   this.expandLink = $('#moreResults');
   this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion
   this.suggestionDialog = element(by.css('.ui-dialog'));
   this.suggestionDialogClose = element(by.css('.ui-dialog button'));
 
+  /**
+   *  Returns the list item in the search results list at the given position
+   *  number (starting at 1).  The returned item might be a heading.
+   * @param pos the item position number (starting at 1).
+   */
+  this.searchResult = function(pos) {
+    return $(searchResCSS + ' li:nth-child('+pos+')');
+  };
+
+  this.firstSearchRes = this.searchResult(1);
+  this.secondSearchRes = this.searchResult(2);
+  this.thirdSearchRes = this.searchResult(3);
+  this.fourthSearchRes = this.searchResult(4);
+  this.fifthSearchRes = this.searchResult(5);
+  this.tenthSearchRes = this.searchResult(10);
 
   /**
    *  Returns the results of getSelectedCodes and getSelectedItems for the

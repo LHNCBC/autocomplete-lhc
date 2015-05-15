@@ -98,9 +98,10 @@ describe('multi-select lists', function() {
     expect(po.multiHeadingCWESelected.count()).toEqual(1);
     // In this list, after picking that one, there are two more items
     // in that section and then another heading.  Try moving to that heading and
-    // selecting it.
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_DOWN);
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_DOWN);
+    // selecting it.  Note that we cannot normally move to that item, unless
+    // there is another bug, so we have to force the index there.
+    browser.driver.executeScript('return jQuery("#'+po.multiHeadingCWEID+
+                                 '")[0].autocomp.index = 3');
     po.multiHeadingCWE.sendKeys(protractor.Key.ENTER);
     // It should not have been added to the selction area.
     expect(po.multiHeadingCWESelected.count()).toEqual(1);
@@ -125,7 +126,6 @@ describe('multi-select lists', function() {
     po.checkSelected(po.multiHeadingCWEID, t2c);
   });
 
-
   it('should not have a weird problem with picking items from list with headings',
      function() {
     // There is currently an odd problem in which if you pick the first three
@@ -144,6 +144,24 @@ describe('multi-select lists', function() {
     po.secondSearchRes.click();
     expect(po.multiHeadingCWESelected.count()).toEqual(4);
     expect(po.searchResults.isDisplayed()).toBeTruthy();
+  });
+
+  it('should not allow left/right arrows to pick headings', function() {
+    po.openTestPage();
+    // Pick the first non-item item in the multi-select heading CWE field
+    po.multiHeadingCWE.click();
+    po.secondSearchRes.click();
+    // Now the list still has a heading as the first item, but the list is
+    // displaying as two columns, and next the first heading in the right column
+    // is a list item that we can get to with the arrow keys.
+    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_RIGHT);
+    // Confirm that this is a two column list by checking the selected item
+    expect(hasClass(po.tenthSearchRes, 'selected')).toBe(true);
+    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_UP);
+    expect(hasClass(po.searchResult(9), 'selected')).toBe(true);
+    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_LEFT);
+    expect(hasClass(po.firstSearchRes, 'selected')).toBe(false);
+    expect(hasClass(po.searchResult(9), 'selected')).toBe(true);
   });
 });
 
