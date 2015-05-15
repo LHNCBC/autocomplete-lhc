@@ -811,13 +811,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
               {list_expansion_method: 'CtrlRet'});
           }
           else if (this.active) {
-            this.selectEntry();
-            Event.stop(event);
-            if (!this.multiSelect_) {
-              this.hide();
-              this.active = false;
-            }
-            this.uneditedValue = this.element.value;
+            this.handleEnterKeySelection(event);
           }
           break;
         case 17: // control, by itself

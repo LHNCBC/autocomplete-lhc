@@ -653,14 +653,7 @@
               event.stopImmediatePropagation();
             }
             else {
-              // Only try to select an entry if the index is not -1 (to which
-              // it is set when the field first gets the focus).
-              if (this.index >= 0) {
-                Event.stop(event);
-                this.selectEntry();
-                if (!this.multiSelect_)
-                  this.hide(); // this didn't used to be necessary.
-              }
+              this.handleEnterKeySelection(event);
             }
             return;
           case 17: // control, by itself
@@ -973,7 +966,8 @@
           value = value.replace( "SPAN", "span" );
 
         var index = value.indexOf(this.SEQ_NUM_SEPARATOR);
-        value = value.substring(index + this.SEQ_NUM_SEPARATOR.length);
+        if (index >= 0)  // headings won't have the list number
+          value = value.substring(index + this.SEQ_NUM_SEPARATOR.length);
       }
       return value.stripTags().unescapeHTML();
     },

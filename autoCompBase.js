@@ -1756,12 +1756,7 @@ if (typeof Def === 'undefined')
     onMouseDown: function(event) {
       // Call the superclass' method.
       var liElement = Event.findElement(event, 'LI');
-      var itemVal = this.listItemValue(liElement);
-      if (!this.itemToDataIndex_)
-        this.initItemToDataIndex();
-      var listDataIndex = this.itemToDataIndex_[itemVal];
-      var listItemClicked = !this.indexToHeadingLevel_[listDataIndex];
-      if (listItemClicked) {
+      if (!this.liIsHeading(liElement)) {
         this.clickSelectionInProgress_ = true;
         Autocompleter.Base.prototype.onClick.apply(this, [event]);
         this.clickSelectionInProgress_ = false;
@@ -1772,6 +1767,42 @@ if (typeof Def === 'undefined')
         if (this.multiSelect_)
           this.showList();
       }
+    },
+
+
+    /**
+     *  Handles selection of an item by the keyboard (enter key).
+     * @param event the keyboard event
+     */
+    handleEnterKeySelection: function(event) {
+      // Only try to select an entry if the index is not -1 an the item is not a
+      // heading.
+      Event.stop(event);
+      if (this.index >= 0) {
+        if (!this.liIsHeading(this.getCurrentEntry())) {
+          this.selectEntry();
+          if (!this.multiSelect_) {
+            this.hide();
+            this.active = false;
+          }
+          this.uneditedValue = this.element.value;
+        }
+      }
+    },
+
+
+    /**
+     *  Returns true if the given LI element is a list heading rather than a
+     *  list item.
+     * @param li the LI DOM element from the list
+     */
+    liIsHeading: function(li) {
+      var itemVal = this.listItemValue(li);
+      if (!this.itemToDataIndex_)
+        this.initItemToDataIndex();
+      var listDataIndex = this.itemToDataIndex_[itemVal];
+      return (listDataIndex !== undefined) &&
+             (this.indexToHeadingLevel_[listDataIndex] !== undefined);
     },
 
 

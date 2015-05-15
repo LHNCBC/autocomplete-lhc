@@ -24,11 +24,19 @@ var AutocompPage = function() {
 
   // Multi-select CWE search list
   var multiSearchCWESectionCSS = '#multiSearchCWESection';
-  this.multiSearchCWE = $('#multi_sel_search_cwe');
+  this.multiSearchCWEID = 'multi_sel_search_cwe';
+  this.multiSearchCWE = $('#'+this.multiSearchCWEID);
   this.multiSearchCWEFirstSelected =
     element(by.css(multiSearchCWESectionCSS + ' li:first-child button'));
   this.multiSearchCWESelected =
     element.all(by.css(multiSearchCWESectionCSS + ' button'));
+
+  // Multi-select CWE prefetch list with headings
+  var multiHeadingCWESectionCSS = '#multi_headings_cwe_section';
+  this.multiHeadingCWEID = 'multi_headings_cwe';
+  this.multiHeadingCWE = $('#'+this.multiHeadingCWEID);
+  this.multiHeadingCWESelected =
+    element.all(by.css(multiHeadingCWESectionCSS + ' button'));
 
   this.openTestPage = function() {
     browser.get('http://localhost:'+config.port+
