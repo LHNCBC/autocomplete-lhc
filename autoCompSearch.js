@@ -573,10 +573,12 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       var itemData = {};
       if (this.listExtraData_) {
         var dataIndex = this.itemToDataIndex_[itemText];
-        var keys = Object.keys(this.listExtraData_);
-        for (var k=0, numKeys = keys.length; k<numKeys; ++k) {
-          var key = keys[k];
-          itemData[key] = this.listExtraData_[key][dataIndex];
+        if (dataIndex != null) {  // if it is on the list
+          var keys = Object.keys(this.listExtraData_);
+          for (var k=0, numKeys = keys.length; k<numKeys; ++k) {
+            var key = keys[k];
+            itemData[key] = this.listExtraData_[key][dataIndex];
+          }
         }
       }
       return itemData;

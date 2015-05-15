@@ -2,9 +2,12 @@
 <html>
   <head>
     <title>autocomp-phr directive test</title>
-   <link href="/auto_completion.css" media="screen" rel="stylesheet" />
-   <link href="/bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen"
-    rel="stylesheet" />
+    <link href="/auto_completion.css" media="screen" rel="stylesheet" />
+    <link href="/bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen"
+     rel="stylesheet" />
+    <style>
+      .ng-invalid-parse {border: 2px solid red}
+    </style>
   </head>
   <body ng-app="someApp">
     <div ng-controller="testPageController">
@@ -47,6 +50,12 @@
         ng-required="false" placeholder="Select or type a value"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4"
         phr-autocomplete="searchList4Opts">
+      <p>
+      Search CWE list without suggestions:
+      <input name="list4b" id="list4b" type="text"
+        ng-required="false" placeholder="Select or type a value"
+        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4b"
+        phr-autocomplete="searchList4bOpts">
       <p>
        Prefetch CWE list w/ pre-populated model value:
       <input name="list1b" type="text"
@@ -157,6 +166,14 @@
           matchListValue: false,
           autocomp: true,
           suggestionMode: 0
+        };
+
+        $scope.searchList4bOpts = {
+          url: '/form/get_search_res_list?fd_id=2163',
+          matchListValue: false,
+          autocomp: true,
+          suggestionMode: 0,
+          nonMatchSuggestions: false
         };
 
         $scope.list5Opts = {
