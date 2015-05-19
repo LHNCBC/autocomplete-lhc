@@ -599,7 +599,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      */
     sortResults: function(listItemData) {
       var numItems = listItemData.length;
-      var listItems = new Array(numItems);
       this.itemToDataIndex_ = {};
       var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
       // Filter out already selected items for multi-select lists
@@ -611,7 +610,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
           filteredItems.push(item.escapeHTML());
         }
       }
-      listItems = filteredItems;
+      var listItems = filteredItems;
       var useStats = this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
       if (useStats) {
         // For this kind of suggestion, we want to rely on the statistical
@@ -676,9 +675,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       // Now get the original version of the list items (the ones with tags)
       // in the order of the sorted taglessItems array.
       numItems = taglessItems.length; // might have changed due to filtering done above
-      var listItems = new Array(numItems);
+      var listItems = [];
       for (i=0; i<numItems; ++i)
-        listItems[i]= taglessItemToOriginal[taglessItems[i]];
+        listItems.push(taglessItemToOriginal[taglessItems[i]]);
 
       return listItems;
     },
