@@ -47,7 +47,7 @@ describe('multi-select lists', function() {
     po.multiPrefetchCWE.click();
     po.firstSearchRes.click();
     // Note:  The orders of the following arrays depends on their storage in a
-    // hash, so they could change;  However, the whatever the order, the order
+    // hash, so they could change;  However, whatever the order, the order
     // of the code and display strings should correspond to each other.
     t2c =  {"Spanish": "LA44-3","French": "LA45-0", "zzz": null}
     po.checkSelected(po.multiPrefetchCWEID, t2c);
