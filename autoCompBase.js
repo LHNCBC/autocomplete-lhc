@@ -305,7 +305,8 @@ if (typeof Def === 'undefined')
     itemToDataIndex_: null,
 
     /**
-     *  The codes of the currently selected items, stored as keys on a hash.
+     *  The codes of the currently selected items, stored as values on a hash,
+     *  where the keys are the display strings.
      */
     selectedCodes_: null,
 
@@ -381,9 +382,8 @@ if (typeof Def === 'undefined')
     fieldValIsListVal_: null,
 
     /**
-     *  A hash from item indexes to heading levels, for the list items currently
-     *  in the list shown to the user.  A level of 0 means
-     *  the item is not a heading, level 1 means the item is a top-level
+     *  A hash from item indexes to heading levels, for the full list.
+     *  A level of 0 means the item is not a heading, level 1 means the item is a top-level
      *  heading, and level 2 means a sub-heading.
      */
     indexToHeadingLevel_: {},
@@ -498,7 +498,7 @@ if (typeof Def === 'undefined')
       this.element.writeAttribute('aria-expanded', 'false');
 
       // Set up event handler functions.
-      this.onHoverListener = this.onHover.bindAsEventListener(this);
+      //this.onHoverListener = this.onHover.bindAsEventListener(this);
       this.onMouseDownListener = this.onMouseDown.bindAsEventListener(this);
       Event.observe(this.element, 'change',
         this.onChange.bindAsEventListener(this));
@@ -525,6 +525,9 @@ if (typeof Def === 'undefined')
       // ease of accessing the autocompleter given the field.
       this.element.autocomp = this;
 
+      // Set the active list item index to -1, instead of 0 as in controls.js,
+      // because there might not be any list items.
+      this.index = -1;
     },
 
 
@@ -547,9 +550,16 @@ if (typeof Def === 'undefined')
 
     /**
      *  Returns the codes for the currently selected items or an empty array if there are none.
+     *  If some of the selected items do not have a code, there will be null in
+     *  that place in the returned array.
      */
     getSelectedCodes: function() {
-      return Object.keys(this.selectedCodes_);
+      var keys = this.getSelectedItems();
+      var rtn = [];
+      for (var i=0, len=keys.length; i<len; ++i) {
+        rtn.push(this.selectedCodes_[keys[i]]);
+      }
+      return rtn;
     },
 
 
@@ -574,7 +584,7 @@ if (typeof Def === 'undefined')
         this.selectedItems_ = {};
       }
       if (newCode !== null)
-        this.selectedCodes_[newCode] = 1;
+        this.selectedCodes_[itemText] = newCode;
       this.selectedItems_[itemText] = 1;
     },
 
@@ -608,7 +618,36 @@ if (typeof Def === 'undefined')
       this.element.value = '';
       this.uneditedValue = '';
       Def.Autocompleter.screenReaderLog('Selected '+escapedVal);
-      this.onFocus(); // show the list again
+      if (this.index >= 0) { // i.e. if it is a list item
+        // Delete selected item
+        var ul = this.update.firstChild;
+        ul.removeChild(this.getCurrentEntry());
+        // Having deleted that item, we now need to update the the remaining ones
+        --this.entryCount;
+        var itemNodes = ul.childNodes;
+        for (var i=this.index, len=itemNodes.length; i<len; ++i)
+          itemNodes[i].autocompleteIndex = i;
+        if (this.index == this.entryCount)
+          --this.index;
+        if (this.numHeadings_) {
+          // Move index forward until there is a non-heading entry.  If there
+          // isn't one forward, try backward.
+          var startPos = this.index;
+          while (this.index < this.entryCount && this.liIsHeading(this.getCurrentEntry()))
+            ++this.index;
+          if (this.index == this.entryCount) { // no non-heading found
+            this.index = startPos - 1;
+            while (this.index > 0 && this.liIsHeading(this.getCurrentEntry()))
+              --this.index;
+          }
+        }
+        // Mark the new "current" item as selected
+        this.render();
+      }
+      // Make the list "active" again (functional) and reposition
+      this.active = true;
+      this.hasFocus = true;
+      this.posAnsList();
     },
 
 
@@ -623,8 +662,7 @@ if (typeof Def === 'undefined')
         li = li.parentNode;
       li.parentNode.removeChild(li);
       var itemText = li.childNodes[1].textContent;
-      var itemCode = this.getItemCode(itemText);
-      delete this.selectedCodes_[itemCode];
+      delete this.selectedCodes_[itemText];
       delete this.selectedItems_[itemText];
       this.listSelectionNotification(itemText, true, true);
       Def.Autocompleter.screenReaderLog('Unselected '+itemText);
@@ -712,16 +750,19 @@ if (typeof Def === 'undefined')
 
       // Move the index back and keep doing so until we're not on a heading (unless we
       // get back to where we started).
-      var startIndex = this.index;
+      var stopIndex = this.index;
+      if (stopIndex === -1)
+        stopIndex = this.entryCount - 1;
+      var highlightedLITag;
       do {
         if (this.index > 0)
           this.index--;
         else
           this.index = this.entryCount-1;
-      } while (this.indexToHeadingLevel_[this.index] && this.index !== startIndex);
+        highlightedLITag = this.getCurrentEntry(); // depends on this.index
+      } while (this.liIsHeading(highlightedLITag) && this.index !== stopIndex);
 
 
-      var highlightedLITag = this.getEntry(this.index);
       this.scrollToShow(highlightedLITag, this.update.parentNode);
 
       // Also put the value into the field, but don't run the change event yet,
@@ -742,16 +783,19 @@ if (typeof Def === 'undefined')
 
       // Move the index forward and keep doing so until we're not on a heading (unless we
       // get back to where we started).
-      var startIndex = this.index;
+      var stopIndex = this.index;
+      if (stopIndex === -1)
+        stopIndex = this.entryCount - 1;
+      var highlightedLITag;
       do {
         if (this.index < this.entryCount-1)
           this.index++;
         else
           this.index = 0;
-      } while (this.indexToHeadingLevel_[this.index] && this.index !== startIndex);
+        highlightedLITag = this.getCurrentEntry(); // depends on this.index
+      } while (this.liIsHeading(highlightedLITag) && this.index !== stopIndex);
 
 
-      var highlightedLITag = this.getEntry(this.index);
       this.scrollToShow(highlightedLITag, this.update.parentNode);
 
       // Also put the value into the field, but don't run the change event yet,
@@ -1051,7 +1095,7 @@ if (typeof Def === 'undefined')
                 // Use the first non-heading entry (whose number should match what was typed)
                 // as the default
                 this.index = 0;
-                for(; this.indexToHeadingLevel_[this.index] &&
+                for(; this.liIsHeading(this.getCurrentItem()) &&
                        this.index < this.entryCount; ++this.index);
               }
               else if (this.entryCount > 1 && !this.numHeadings_) {
@@ -1129,8 +1173,7 @@ if (typeof Def === 'undefined')
         var listItemElems = this.update.firstChild.childNodes;
         for (var i=0; i<this.entryCount; ++i) {
           // Make sure the entry is not a header before considering it
-          var headingLevel = this.indexToHeadingLevel_[i];
-          if (!headingLevel) { // could be null or 0; either case is not a heading
+          if (!this.liIsHeading(this.getEntry(i))) { // could be null or 0; either case is not a heading
             var elem = listItemElems[i];
             var elemText = this.listItemValue(elem).toLowerCase();
             // Also remove non-word characters from the start of the string.
@@ -1732,20 +1775,59 @@ if (typeof Def === 'undefined')
      * @param event the DOM event object for the mouse event
      */
     onMouseDown: function(event) {
-      // Call the superclass' method.
+      // Only process the event if the item is not a heading, but in all cases
+      // stop the event so that the list stays open and the field retains focus.
+      Event.stop(event);
       var liElement = Event.findElement(event, 'LI');
-      var listItemClicked = !this.indexToHeadingLevel_[liElement.autocompleteIndex];
-      if (listItemClicked) {
+      if (!this.liIsHeading(liElement)) {
         this.clickSelectionInProgress_ = true;
         Autocompleter.Base.prototype.onClick.apply(this, [event]);
         this.clickSelectionInProgress_ = false;
-        // Refocus the field.
-        Event.stop(event);
-        this.element.focus();
         // Reshow the list if this is a multi-select list.
         if (this.multiSelect_)
           this.showList();
       }
+    },
+
+
+    /**
+     *  Handles selection of an item by the keyboard (enter key).
+     * @param event the keyboard event
+     */
+    handleEnterKeySelection: function(event) {
+      // Only try to select an entry if the index is not -1 and the item is not a
+      // heading.
+      Event.stop(event);
+      if (this.index >= 0) {
+        if (!this.liIsHeading(this.getCurrentEntry())) {
+          this.selectEntry();
+          if (!this.multiSelect_) {
+            this.hide();
+            this.active = false;
+          }
+          this.uneditedValue = this.element.value;
+        }
+      }
+    },
+
+
+    /**
+     *  Returns true if the given LI element is a list heading rather than a
+     *  list item.
+     * @param li the LI DOM element from the list
+     */
+    liIsHeading: function(li) {
+      var rtn = !!this.numHeadings_; // true if headings exist
+      if (rtn) {  // if there are headings
+        var itemVal = this.listItemValue(li);
+        if (!this.itemToDataIndex_)
+          this.initItemToDataIndex();
+        var listDataIndex = this.itemToDataIndex_[itemVal];
+        // heading level 0 means not a heading
+        rtn = (listDataIndex !== undefined) &&
+              !!(this.indexToHeadingLevel_[listDataIndex]);
+      }
+      return rtn;
     },
 
 
@@ -1791,16 +1873,18 @@ if (typeof Def === 'undefined')
       else if (this.index >= shift) // e.g. >= 4 if numItems == 7
         newIndex = this.index - shift;
 
-      // Make sure the new index is not a header item.  If so, don't move.
-      if (newIndex !== this.index && !this.indexToHeadingLevel_[newIndex]) {
-        // Put the value into the field, but don't run the change event yet,
-        // because the user has not really selected it.
-        this.index = newIndex;
-        var highlightedLITag = this.getEntry(this.index);
-        this.element.value = this.listItemValue(highlightedLITag);
-        this.element.select();
-        this.render();
-        Event.stop(event);
+      if (newIndex !== this.index) {
+        // Make sure the new index is not a header item.  If so, don't move.
+        var newItem = this.getEntry(newIndex);
+        if (!this.liIsHeading(newItem)) {
+          // Put the value into the field, but don't run the change event yet,
+          // because the user has not really selected it.
+          this.index = newIndex;
+          this.element.value = this.listItemValue(newItem);
+          this.element.select();
+          this.render();
+          Event.stop(event);
+        }
       }
     },
 

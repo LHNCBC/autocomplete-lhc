@@ -1,19 +1,16 @@
 #!/bin/sh
 
-# The webdriver (selenium) server takes time to start,
-# doesn't provide a status on whether it is running,
-# and doesn't provide a way to stop it.  We could start
-# it here, but that takes ~12s, and slows down testing,
-# so we just do a test to see whether it is running.
+# See if the selenium webserver is already up, and start it if it isn't.
 ps -ef | grep selenium-server | grep -v grep > /dev/null
 if [ $? != 0 ]
 then
-  echo 'Please start the selenium server with "webdriver-manager start"'
-  echo 'before running this file.  If you have not run that before,'
-  echo 'you will need to run "webdriver-manager update" first.  If'
-  echo 'webdriver-manager is not in your path, please make sure'
-  echo 'you have run "npm install" from the autocomp directory.'
-  exit
+  webdriver-manager start 2> /dev/null &
+  not_started=1
+  while [ $not_started == 1 ]
+  do
+    netstat -apn |& grep LISTEN | grep 4444 > /dev/null
+    not_started=$?
+  done
 fi
 
 # Start node.js to serve a page that uses autocomp
@@ -35,13 +32,19 @@ fi
 # Now run the tests
 cd test/protractor; protractor ./conf.js
 
+# Shut down webdriver-manager.
+curl 'http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer'
+
 echo 'Running unit tests.  Check the result in the browser, and quit'
 echo 'the browser when finished.'
-firefox http://localhost:3000/test/scriptaculous_unit/autoComp_test.html \
-        http://localhost:3000/test/scriptaculous_unit/recordDataRequester_test.html
+
+port=`grep port ../config.js | grep -oP '(\d+)'`
+firefox http://localhost:${port}/test/scriptaculous_unit/autoComp_test.html \
+        http://localhost:${port}/test/scriptaculous_unit/recordDataRequester_test.html
 
 # Wait for firefox to load the page
 sleep 3
 
-# Shut down node.js (%1 = background job 1)
-kill %1
+# Shut down node.js (%n = background job n)
+kill %2
+

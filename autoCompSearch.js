@@ -564,6 +564,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     /**
      *  Returns a hash of extra data (returned with AJAX autocompletion request)
      *  for a selected list item.
+     *  Currently, this assumes that itemText was present in the last list shown
+     *  for this field; it subsequent autocompletion requests take place in
+     *  which itemText is not present, the return value will be empty.
      * @param itemText the display string of the selected item.
      */
     getItemExtraData: function(itemText) {
@@ -596,14 +599,18 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      */
     sortResults: function(listItemData) {
       var numItems = listItemData.length;
-      var listItems = new Array(numItems);
       this.itemToDataIndex_ = {};
       var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
+      // Filter out already selected items for multi-select lists
+      var filteredItems = [];
       for (var i=0; i<numItems; ++i) {
         var item = listItemData[i].join(joinStr);
-        listItems[i] = item.escapeHTML();
-        this.itemToDataIndex_[item] = i; // to preserve the original indices
+        this.itemToDataIndex_[item] = i; // unescaped item string
+        if (!this.multiSelect_ || !this.isSelected(item)) {
+          filteredItems.push(item.escapeHTML());
+        }
       }
+      var listItems = filteredItems;
       var useStats = this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
       if (useStats) {
         // For this kind of suggestion, we want to rely on the statistical
@@ -634,21 +641,24 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      */
     sortHighlightedResults: function(listItemData) {
       var numItems = listItemData.length;
-      var listItems = new Array(numItems);
       this.itemToDataIndex_ = {};
-      var taglessItems = new Array(numItems);
+      var taglessItems = [];
       var taglessItemToOriginal = {};
       var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
       for (var i=0; i<numItems; ++i) {
-        var item = listItemData[i].join(joinStr).escapeHTML();
+        var item = listItemData[i].join(joinStr);
+        this.itemToDataIndex_[item] = i; // unescaped item string
+        item = item.escapeHTML();
         // Decode the span tags, and create a version of the string without
         // the tags so we can sort it.  Also keep a map so that after the
         // sorting we can get back to the original item that has the tags.
         item = item.replace(/&lt;(\/)?span&gt;/g, '<$1span>');
-        var taglessItem = item.replace(/<\/?span>/g, '');
-        taglessItemToOriginal[taglessItem] = item;
-        taglessItems[i] = taglessItem;
-        this.itemToDataIndex_[item] = i; // to preserve the original indices
+        // Filter out already selected items.
+        if (!this.multiSelect_ || !!this.isSelected(item)) {
+          var taglessItem = item.replace(/<\/?span>/g, '');
+          taglessItemToOriginal[taglessItem] = item;
+          taglessItems.push(taglessItem);
+        }
       }
 
       // Sort the "tagless" results.
@@ -664,8 +674,10 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
       // Now get the original version of the list items (the ones with tags)
       // in the order of the sorted taglessItems array.
+      numItems = taglessItems.length; // might have changed due to filtering done above
+      var listItems = [];
       for (i=0; i<numItems; ++i)
-        listItems[i]= taglessItemToOriginal[taglessItems[i]];
+        listItems.push(taglessItemToOriginal[taglessItems[i]]);
 
       return listItems;
     },
@@ -800,8 +812,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
               {list_expansion_method: 'CtrlRet'});
           }
           else if (this.active) {
-            Autocompleter.Base.prototype.onKeyPress.apply(this, [event]);
-            this.uneditedValue = this.element.value;
+            this.handleEnterKeySelection(event);
           }
           break;
         case 17: // control, by itself

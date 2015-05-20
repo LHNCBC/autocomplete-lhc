@@ -13,7 +13,7 @@ describe('autocomp', function() {
 
   it('should respond to the suggestion mode setting',
      function() {
-    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    po.openTestPage();
     suggestionMode0CWE.click();
     suggestionMode0CWE.sendKeys('arm');
     expect(searchResults.isDisplayed()).toBeTruthy();
@@ -45,7 +45,7 @@ describe('autocomp', function() {
 
   it('should not show the list in response to a shift or control key being held down',
      function() {
-    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    po.openTestPage();
     var inputElem = raceField;
     inputElem.click();
     expect(searchResults.isDisplayed()).toBeTruthy();
@@ -64,7 +64,7 @@ describe('autocomp', function() {
 
   it('should not shift the selected item when the control key is down',
      function() {
-    browser.get('http://localhost:3000/test/protractor/autocomp_atr.html');
+    po.openTestPage();
     raceField.click();
     expect(searchResults.isDisplayed()).toBeTruthy();
     raceField.sendKeys(protractor.Key.ARROW_DOWN); // first item
@@ -103,7 +103,7 @@ describe('autocomp', function() {
     po.prefetchCWE.sendKeys('zzz');
     po.nonField.click(); // to remove focus from prefetchCWE
     selectedData = po.getSelected(po.prefetchCWEID);
-    expect(selectedData).toEqual([[], ["Spanishzzz"]]);
+    expect(selectedData).toEqual([[null], ["Spanishzzz"]]);
     // Select an item again.
     po.prefetchCWE.click();
     po.firstSearchRes.click();
@@ -147,5 +147,36 @@ describe('autocomp', function() {
       used_list: true, input_method: 'clicked', on_list: true,
       item_code: 'LA44-3', removed: false, list: ['Spanish', 'French', 'Other'],
       field_id: po.prefetchCWEID});
-   });
+  });
+
+
+  it('should handle left/right arrows for two-column lists', function() {
+    po.openTestPage();
+    po.multiHeadingCWE.click();
+    // Move to first item past heading (second item)
+    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
+    expect(po.multiHeadingCWE.getAttribute('value')).toBe('Chocolate');
+    // Move to second non-heading item (third item)
+    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(hasClass(po.secondSearchRes, 'selected')).toBe(false);
+    expect(hasClass(po.thirdSearchRes, 'selected')).toBe(true);
+    expect(po.multiHeadingCWE.getAttribute('value')).toBe('Crab');
+    // Move to the other column (11th item)
+    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_RIGHT);
+    expect(hasClass(po.thirdSearchRes, 'selected')).toBe(false);
+    expect(hasClass(po.searchResult(11), 'selected')).toBe(true);
+    expect(po.multiHeadingCWE.getAttribute('value')).toBe('Aminoglycosides');
+    // Move up (10th item)
+    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_UP);
+    expect(hasClass(po.searchResult(11), 'selected')).toBe(false);
+    expect(hasClass(po.searchResult(10), 'selected')).toBe(true);
+    expect(po.multiHeadingCWE.getAttribute('value')).toBe('ACE Inhibitors');
+    // Move left (back to second item)
+    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_LEFT);
+    expect(hasClass(po.searchResult(10), 'selected')).toBe(false);
+    expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
+    expect(po.multiHeadingCWE.getAttribute('value')).toBe('Chocolate');
+  });
+
 });
