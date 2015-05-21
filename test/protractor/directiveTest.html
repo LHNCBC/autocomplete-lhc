@@ -19,11 +19,13 @@
       <br>
       Selected code: <input readonly id="code" name="code" ng-model="listFieldVal.code">
       <p>
-      Multi-select prefetch CNE list:
-      <input name="list2" type="text"
-        ng-required="false" placeholder="Select or type a value"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
-        phr-autocomplete="multilistOpts">
+      <p id="multiPrefetchCNESection">
+        Multi-select prefetch CNE list:
+        <input name="list2" type="text" id="multiPrefetchCNE"
+          ng-required="false" placeholder="Select or type a value"
+          ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
+          phr-autocomplete="multilistOpts">
+      </p>
       <p id="multiPrefetchCWESection">
           Multi-select prefetch CWE list:
           <input name="multiPrefetchCWE" id="multiPrefetchCWE" type="text"
@@ -36,6 +38,17 @@
           <input name="multiSearchCWE" id="multiSearchCWE" type="text"
           ng-required="false" placeholder="Select or type a value"
           ng-model-options="{updateOn: 'change'}" ng-model="multiSearchCWEVal"
+          phr-autocomplete="multiSearchCWEOpts">
+      </p>
+      <ul>Selected values from above:
+        <li ng-repeat="item in multiSearchCWEVal track by item.text">{{item.text}}</li>
+      </ul>
+      <p id="multiSearchCWEPrePopSection">
+          Multi-select search CWE list with pre-populated model value:
+         <input name="multiSearchCWEPrePop" id="multiSearchCWEPrePop" type="text"
+          ng-required="false" placeholder="Select or type a value"
+          ng-model-options="{updateOn: 'change'}"
+          ng-model="multiSearchCWEPrePopVal"
           phr-autocomplete="multiSearchCWEOpts">
       </p>
       <p>
@@ -104,14 +117,10 @@
     <script src="/test/protractor/ajaxMock.js"></script>
     <script>
       angular.module('someApp', ['someModule', 'autocompPhr']);
-      var someMod = angular.module('someModule', []).directive('newTestDirective', function() {
-        return {link: function($scope, element, attrs, controller) {
-          element[0].innerHTML += 'orange';
-        }}
-      });
+      var someMod = angular.module('someModule', []);
 
       someMod.controller('testPageController', ['$scope', function ($scope) {
-        $scope.listFieldVal1b = 'a pre-populated model value';
+        $scope.listFieldVal1b = {text: 'a pre-populated model value'};
 
         $scope.list1Opts = {
           // source is the list of item data
@@ -153,6 +162,11 @@
           maxSelect: '*',
           suggestionMode: 0
         };
+
+        $scope.multiSearchCWEPrePopVal = [
+          {text: 'item1', code: 'a'},
+          {text: 'item2', code: 'b'}
+        ];
 
         $scope.searchListOpts = {
           url: '/form/get_search_res_list?fd_id=1284',

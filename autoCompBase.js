@@ -574,17 +574,27 @@ if (typeof Def === 'undefined')
     /**
      *  Adds the code for the current item in the field to the list of selected
      *  codes, and does the same for the item text.  If this is not a multi-select
-     *  list, the newly selected code will replace the others.
+     *  list, the newly selected code will replace the others.  The text and
+     *  code values can be provided to set the currently stored value.  This
+     *  does not broadcast any events.
+     * @param itemText (optional) if provided, this will be the selected text rather
+     *  than the current item in the field.  When this is provided, it is
+     *  assumed that "code" is provided too.
+     * @param code (optional) if provided, this will be the selected text rather
+     *  that then code for the item currently in the field.  If this is
+     *  provided, itemText must be provided too.
      */
-    storeSelectedItem: function() {
-      var itemText = this.element.value;
-      var newCode = this.getItemCode(itemText);
+    storeSelectedItem: function(itemText, code) {
+      if (itemText === undefined) {
+        itemText = this.element.value;
+        code = this.getItemCode(itemText);
+      }
       if (!this.multiSelect_) {
         this.selectedCodes_ = {};
         this.selectedItems_ = {};
       }
-      if (newCode !== null)
-        this.selectedCodes_[itemText] = newCode;
+      if (code !== null && code !== undefined)
+        this.selectedCodes_[itemText] = code;
       this.selectedItems_[itemText] = 1;
     },
 
@@ -604,17 +614,30 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Moves the current field string to the selected area.  After this,
-     *  the field will be blank.
+     *  Appends the given string (presumably a list item, but possibly off the
+     *  list) to the selected area.  This is only for multi-select lists.  Do
+     *  not call it for single-select lists, or you will get an error.
+     * @param text the text to be added to the list of selected items.
+     * @return an HTML-escaped version of the "text"
      */
-    moveEntryToSelectedArea: function() {
-      var escapedVal = Def.Autocompleter.Base.escapeAttribute(this.element.value);
+    addToSelectedArea:  function(text) {
+      var escapedVal = Def.Autocompleter.Base.escapeAttribute(text);
       var li = jQuery('<li><button type="button" alt="'+escapedVal+
                       '"><span aria-hidden="true">&times;</span></button>'
                       +escapedVal+'</li>')[0];
       this.selectedList.appendChild(li);
       var span = li.childNodes[0];
       jQuery(span).click(jQuery.proxy(this.removeSelection, this));
+      return escapedVal;
+    },
+
+
+    /**
+     *  Moves the current field string to the selected area (for multi-select
+     *  lists).  After this, the field will be blank.
+     */
+    moveEntryToSelectedArea: function() {
+      var escapedVal = this.addToSelectedArea(this.element.value);
       this.element.value = '';
       this.uneditedValue = '';
       Def.Autocompleter.screenReaderLog('Selected '+escapedVal);
