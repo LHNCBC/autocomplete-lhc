@@ -1818,7 +1818,7 @@ if (typeof Def === 'undefined')
      * @param event the keyboard event
      */
     handleEnterKeySelection: function(event) {
-      // Only try to select an entry if the index is not -1 an the item is not a
+      // Only try to select an entry if the index is not -1 and the item is not a
       // heading.
       Event.stop(event);
       if (this.index >= 0) {
