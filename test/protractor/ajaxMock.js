@@ -43,6 +43,7 @@ mockData_ = {
 };
 
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.
+/*
 Ajax.Request = function(url, options) {
   var params = options.parameters;
   var resultType = params.autocomp ? 'partial' : params.suggest ? 'suggest' : 'full'
@@ -64,5 +65,6 @@ Ajax.Request = function(url, options) {
   response.responseText = responseText;
   setTimeout(function() {options.onComplete(response);}, 1);
 };
+*/
 // end of mock for Ajax.Request
 
