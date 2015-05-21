@@ -19,11 +19,13 @@
       <br>
       Selected code: <input readonly id="code" name="code" ng-model="listFieldVal.code">
       <p>
-      Multi-select prefetch CNE list:
-      <input name="list2" type="text"
-        ng-required="false" placeholder="Select or type a value"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
-        phr-autocomplete="multilistOpts">
+      <p id="multiPrefetchCNESection">
+        Multi-select prefetch CNE list:
+        <input name="list2" type="text" id="multiPrefetchCNE"
+          ng-required="false" placeholder="Select or type a value"
+          ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
+          phr-autocomplete="multilistOpts">
+      </p>
       <p id="multiPrefetchCWESection">
           Multi-select prefetch CWE list:
           <input name="multiPrefetchCWE" id="multiPrefetchCWE" type="text"
