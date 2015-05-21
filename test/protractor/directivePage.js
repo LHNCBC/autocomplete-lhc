@@ -48,6 +48,11 @@ var DirectivePage = function() {
     element.all(by.css(multiSearchCWESectionCSS + ' button'));
   this.multiSearchCWEModel = 'multiSearchCWEVal';
 
+
+  // Multi-select CWE search list with pre-populated model value
+  this.multiSearchCWEPrePopID = 'multiSearchCWEPrePop';
+  this.multiSearchCWEPrePop = $('#'+this.multiSearchCWEPrePopID);
+
   this.openDirectiveTestPage = function() {
     browser.get('http://localhost:'+config.port+
       '/test/protractor/directiveTest.html');

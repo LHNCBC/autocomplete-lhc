@@ -179,8 +179,32 @@ if (typeof angular !== 'undefined') {
               if (pElem.name === '')
                 pElem.name = pElem.id;
 
+              // See if there is an existing model value for the field (and do
+              // it before prefetchList runs below, which might store a default
+              // value in the model).
+              var md = scope.modelData;
+              var hasPrepoluatedModel = md !== undefined;
+
               var ac = phrAutoOpts.url ? searchList(pElem, phrAutoOpts) :
                 prefetchList(pElem, phrAutoOpts);
+
+              // If there is a already a model value for this field, load it
+              // into the autocompleter.
+              if (hasPrepoluatedModel) {
+                if (ac.multiSelect_) {  // in this case md is an array
+                  for (var i=0, len=md.length; i<len; ++i) {
+                    var text = md[i].text;
+                    ac.storeSelectedItem(text, md[i].code);
+                    ac.addToSelectedArea(text);
+                  }
+                  // Clear the field value for multi-select lists
+                  ac.element.value = '';
+                }
+                else {
+                  ac.storeSelectedItem(md.text, md.code);
+                  ac.element.value = md.text;
+                }
+              }
 
               // Add a parser to convert from the field value to the object
               // containing value and (e.g.) code.

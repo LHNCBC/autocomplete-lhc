@@ -162,6 +162,10 @@ describe('directive', function() {
       expect(dp.multiSearchCWESelected.count()).toEqual(2);
     });
   });
+
+  it('should handle pre-populated model values', function () {
+    expect(dp.checkSelected(dp.multiSearchCWEPrePopID, {'item1': 'a', 'item2': 'b'}));
+  });
 });
 
 
