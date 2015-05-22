@@ -652,7 +652,6 @@ if (typeof Def === 'undefined')
       // Include the code field's value if there is a code field and if it
       // has a value.  If there isn't a code field value, include formField_'s
       // value.
-      var rtn = null;
       // Get the code value, assuming there is at most one (i.e. a non-multiselect
       // list, which is the use case for RecordDataRequester).
       var codeVal = this.formField_.autocomp.getSelectedCodes()[0];
