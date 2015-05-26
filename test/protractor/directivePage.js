@@ -22,6 +22,7 @@ var DirectivePage = function() {
   // Multi-select CNE prefetch list
   var multiFieldID = 'multiPrefetchCNE';
   this.multiField = $('#'+multiFieldID);
+  this.multiPrefetchCNE = this.multiField; // alias
   var multiPrefetchCNESectionCSS = '#multiPrefetchCNESection'
   this.multiFieldSelectedItems = element.all(by.css(
     multiPrefetchCNESectionCSS + ' .autocomp_selected li'));

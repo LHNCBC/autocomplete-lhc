@@ -364,7 +364,8 @@ if (typeof Def === 'undefined')
     recDataRequester_: null,
 
     /**
-     *  Whether autocompletion is enabled.
+     *  Whether autocompletion is enabled.  For example, this is false when
+     *  there is no list to be matched.
      */
     enabled_: true,
 
@@ -1625,6 +1626,11 @@ if (typeof Def === 'undefined')
           setTimeout(function() {
             this.element.focus();
             this.element.select(); // select the text
+            // Clear refocusInProgress_, which onFocus also clears, because
+            // onFocus isn't called if the field is still focused when focus()
+            // is called above.  That happens when you hit return to select an
+            // invalid value.
+            this.refocusInProgress_ = false;
           }.bind(this), 1);
         }
         else {

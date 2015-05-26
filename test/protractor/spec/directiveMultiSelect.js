@@ -161,6 +161,23 @@ describe('directive', function() {
           term_icd9_code: '518.82'}, {text: 'non-list val 1'}]);
       expect(dp.multiSearchCWESelected.count()).toEqual(2);
     });
+
+    it('should not allow non-matching values in a CNE', function() {
+      // Testing one particular case that is currently failing.
+      dp.openDirectiveTestPage();
+      // Add a non-list value
+      expect(dp.multiPrefetchCNE.evaluate(dp.multiSearchCWEModel)).toEqual(null);
+      dp.multiPrefetchCNE.click();
+      dp.multiPrefetchCNE.sendKeys('non-list val 1');
+      // Hit the enter key
+      dp.multiPrefetchCNE.sendKeys(protractor.Key.ENTER);
+      // Click outside the field
+      dp.inputElem.click();
+      // At this point the field should be cleared from its value (because there
+      // were two attempts to leave the field without the field changing
+      // inbetween.)
+      expect(dp.multiPrefetchCNE.getAttribute('value')).toEqual('');
+    });
   });
 
   it('should handle pre-populated model values', function () {
