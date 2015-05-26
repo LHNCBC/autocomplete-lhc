@@ -322,7 +322,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       // This might free up a thread for the browser, but it does not help
       // the server any.
       if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
-        this.lastAjaxRequest_.transport.abort();
+        this.lastAjaxRequest_.abort();
 
       this.searchInProgress = true;
       this.searchStartTime = new Date().getTime();
@@ -334,18 +334,22 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         results = this.getCachedResults(searchStr,
                             Def.Autocompleter.Search.RESULT_CACHE_SEARCH_RESULTS);
         if (results)
-          this.onComplete(results, true);
+          this.onComplete(results, null, true);
       }
       if (!results) { // i.e. if it wasn't cached
         // Run the search
-        var options = {parameters: {}};
-        options.parameters.authenticity_token = window._token || '';
-        options.parameters.terms = searchStr;
-        options.onComplete = this.options.onComplete;
-        options.requestHeaders = {'X-Prototype-Version': null}; // to avoid problems with CORS
+        var paramData = {
+          authenticity_token: window._token || '',
+          terms: searchStr
+        }
+        var options = {
+          data: paramData,
+          complete: this.options.onComplete
+        }
         this.changed = false;
         this.hasFocus = true;
-        this.lastAjaxRequest_ = new Ajax.Request(this.url, options);
+        this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
+        this.lastAjaxRequest_.requestParamData_ = paramData;
       }
     },
 
@@ -466,24 +470,26 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     /**
      *  This gets called when an Ajax request returns.  (See Prototype's
      *  Ajax.Request and callback sections.)
-     * @param response the AJAX response object
+     * @param xhrObj A jQuery-extended XMLHttpRequest object
+     * @param textStatus A jQuery text version of the status of the request
+     *  (e.g. "success")
      * @param fromCache whether "response" is from the cache (optional).
      */
-    onComplete: function(response, fromCache) {
-      if (this.lastAjaxRequest_ === response.request) {
+    onComplete: function(xhrObj, textStatus, fromCache) {
+      if (this.lastAjaxRequest_ === xhrObj) {
         this.lastAjaxRequest_ = null;
       }
-      if (response.status === 200) { // 200 is the "OK" status
-        var reqOptions = response.request.options;
-        var searchStr = reqOptions.parameters['terms'];
-        var autocomp = reqOptions.parameters['autocomp'];
+      if (xhrObj.status === 200) { // 200 is the "OK" status
+        var reqParams = xhrObj.requestParamData_;
+        var searchStr = reqParams['terms'];
+        var autocomp = reqParams['autocomp'];
         var searchAC = Def.Autocompleter.Search;
 
         if (!fromCache && this.useResultCache_) {
           var resultCacheIndex = autocomp ?
             searchAC.RESULT_CACHE_AUTOCOMP_RESULTS :
             searchAC.RESULT_CACHE_SEARCH_RESULTS;
-          this.storeCachedResults(searchStr, resultCacheIndex, response);
+          this.storeCachedResults(searchStr, resultCacheIndex, xhrObj);
         }
 
         // The search string is a truncated version of the field value for
@@ -502,7 +508,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
             searchStrForFieldVal === searchStr) {
 
           // Retrieve the response data, which is in JSON format.
-          var responseData = JSON.parse(response.responseText);
+          var responseData = xhrObj.responseJSON || JSON.parse(xhrObj.responseText);
           var totalCount = responseData[0];
           if (totalCount > 0) {
             var shownCount = responseData[3].length;
@@ -518,7 +524,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
           // Show "see more" link depending on whether this was an autocompletion
           // event and whether there are more items to see.
-          if (this.entryCount < totalCount && reqOptions.parameters['autocomp'])
+          if (this.entryCount < totalCount && reqParams['autocomp'])
             $('moreResults').style.display ='block';
           else {
             $('moreResults').style.display ='none';
@@ -536,7 +542,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
 
           // bytes count of the total response data
-          var bytes = response.responseText.length + '';
+          var bytes = xhrObj.responseText.length + '';
 
           var resultInfo = '; ' + bytes + ' bytes in ' + elapsed_time + ' ms';
           // Add some padding so the string stays roughly the same size
@@ -833,7 +839,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      */
     getUpdatedChoices: function() {
       if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
-        this.lastAjaxRequest_.transport.abort();
+        this.lastAjaxRequest_.abort();
 
       this.searchStartTime = new Date().getTime() ;
 
@@ -851,17 +857,22 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         results = this.getCachedResults(fieldVal,
                                     autocompSearch.RESULT_CACHE_AUTOCOMP_RESULTS);
         if (results)
-          this.onComplete(results, true);
+          this.onComplete(results, null, true);
       }
       if (!results) {
         // Run the search
-        var options = {parameters: {}};
-        options.parameters.authenticity_token = window._token || '';
-        options.parameters.terms = fieldVal;
-        options.parameters.autocomp = 1;
-        options.onComplete = this.options.onComplete;
-        options.requestHeaders = {'X-Prototype-Version': null}; // to avoid problems with CORS
-        this.lastAjaxRequest_ = new Ajax.Request(this.url, options);
+        var paramData = {
+          authenticity_token: window._token || '',
+          terms: fieldVal,
+          autocomp: 1
+        };
+        var options = {
+          data: paramData,
+          dataType: 'json',
+          complete: this.options.onComplete
+        }
+        this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
+        this.lastAjaxRequest_.requestParamData_ = paramData;
       }
     },
 
@@ -871,18 +882,21 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *  not match the list.
      */
     findSuggestions: function() {
-      var options = {parameters: {}};
-      options.parameters.authenticity_token = window._token || '';
-      options.parameters['field_val']=this.element.value;
-      options.parameters['suggest'] = 1;
-      options.onComplete = this.onFindSuggestionComplete.bind(this);
-      options.requestHeaders = {'X-Prototype-Version': null}; // to avoid problems with CORS
+      var paramData = {
+        authenticity_token: window._token || '',
+        field_val: this.element.value,
+        suggest: 1
+      };
+      var options = {
+        data: paramData,
+        complete: this.onFindSuggestionComplete.bind(this)
+      };
       var suggestionDialog = Def.Autocompleter.SuggestionDialog.getSuggestionDialog();
       suggestionDialog.resetDialog();
       suggestionDialog.show();
       $('suggestionFieldVal').innerHTML = this.element.value.escapeHTML();
 
-      new Ajax.Request(this.url, options);
+      jQuery.ajax(this.url, options);
     },
 
 
@@ -890,12 +904,12 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *  Handles the return of the AJAX call started in findSuggestions.
      *  (See Prototype's Ajax.Request and callback sections for a description
      *  of the parameter and how this works.)
-     * @param response the AJAX response object
+     * @param response the jQuery-extended XMLHttpRequest object
      */
     onFindSuggestionComplete: function(response) {
       if (response.status === 200) { // 200 is the "OK" status
         // Retrieve the response data, which is in JSON format.
-        var responseData = JSON.parse(response.responseText);
+        var responseData = response.responseJSON || JSON.parse(response.responseText);
         var codes = responseData[0];
         var eventData = [];
         var suggestionDialog = Def.Autocompleter.SuggestionDialog.getSuggestionDialog();

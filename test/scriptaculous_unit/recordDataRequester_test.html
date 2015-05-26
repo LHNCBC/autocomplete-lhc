@@ -174,9 +174,9 @@
 
 
     /**
-     *  Tests the construction of the CGI parameter string.
+     *  Tests the construction of the CGI parameters.
      */
-    testBuildParameterString: function() { with(this) {
+    testBuildParameters: function() { with(this) {
       // Test a field that does not have a code.
       var dataReq = new Def.RecordDataRequester($('fe_pseudonym_1'),
         '/someurl', ['record_id', 'trigger_field'], ['code'], true);
@@ -185,9 +185,11 @@
       $('fe_record_id_1').value = '45';
       $('fe_pseudonym_1').value = 'one two';
       $('fe_pseudonym_1').autocomp.storeSelectedItem()
-      assertEqual('field_val=one%20two&record_id=45&trigger_field=tf%20val'+
-                  '&authenticity_token=undefined',
-                  dataReq.buildParameterString());
+      var params = dataReq.buildParameters();
+      assertEqual('tf val', params['trigger_field']);
+      assertEqual('one two', params['field_val']);
+      assertEqual('45', params['record_id']);
+      assertEqual('', params['authenticity_token']);
 
       // Test a field that has a code.
       dataReq = new Def.RecordDataRequester($('fe_gender_1'),
@@ -195,16 +197,21 @@
       $('fe_gender_1').value = 'Male';
       $('fe_gender_C_1').value = 'M';
       $('fe_gender_1').autocomp.storeSelectedItem()
-      assertEqual('code_val=M&record_id=45&trigger_field=tf%20val'+
-                  '&authenticity_token=undefined',
-                  dataReq.buildParameterString());
+      params = dataReq.buildParameters();
+      assertEqual('M', params['code_val']);
+      assertEqual('45', params['record_id']);
+      assertEqual('tf val', params['trigger_field']);
+      assertEqual('', params['authenticity_token']);
+
       // Test a field that has a blank code field.
       $('fe_gender_1').value = 'Not Male';
       $('fe_gender_C_1').value = '';
       $('fe_gender_1').autocomp.storeSelectedItem()
-      assertEqual('field_val=Not%20Male&record_id=45&trigger_field=tf%20val'+
-                 '&authenticity_token=undefined',
-                  dataReq.buildParameterString());
+      params = dataReq.buildParameters();
+      assertEqual('Not Male', params['field_val']);
+      assertEqual('45', params['record_id']);
+      assertEqual('tf val', params['trigger_field']);
+      assertEqual('', params['authenticity_token']);
     }},
 
 

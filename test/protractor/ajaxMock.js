@@ -43,8 +43,8 @@ mockData_ = {
 };
 
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.
-Ajax.Request = function(url, options) {
-  var params = options.parameters;
+jQuery.ajax = function(url, options) {
+  var params = options.data;
   var resultType = params.autocomp ? 'partial' : params.suggest ? 'suggest' : 'full'
   // This is just for testing, so assume the right parameters.
   var fd_id = url.match(/fd_id=(\d+)/)[1];
@@ -62,7 +62,8 @@ Ajax.Request = function(url, options) {
   this.options = options;
   response.status = 200;
   response.responseText = responseText;
-  setTimeout(function() {options.onComplete(response);}, 1);
+  response.responseJSON = JSON.parse(responseText);
+  setTimeout(function() {options.complete(response);}, 1);
+  return response;
 };
 // end of mock for Ajax.Request
-

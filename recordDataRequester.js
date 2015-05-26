@@ -217,13 +217,13 @@ if (typeof Def === 'undefined')
       // We can no longer cache the assignment of onComplete, which now
       // depends on the input parameter.  (We could cache the bound versions
       // of the functions, but I am not sure if it is worth it.)
-      this.dataRequestOptions_.onComplete = listDataOnly ?
+      this.dataRequestOptions_.complete = listDataOnly ?
         this.onDataReqCompleteForListData.bind(this) :
         this.onDataReqComplete.bind(this);
 
-      this.dataRequestOptions_.parameters = this.buildParameterString();
+      this.dataRequestOptions_.data = this.buildParameters();
       this.latestPendingAjaxRequest_ =
-        new Ajax.Request(this.dataURL_, this.dataRequestOptions_);
+        jQuery.ajax(this.dataURL_, this.dataRequestOptions_);
       this.lastFieldVal_ = Def.Autocompleter.getFieldVal(this.formField_);
 
     }, // end requestData
@@ -289,11 +289,11 @@ if (typeof Def === 'undefined')
       // in the order A, B, A returns, B returns, or in the order
       // A, B, B returns, A returns.  This check keeps the output fields
       // in a consistent state with the triggering field.
-      if (this.latestPendingAjaxRequest_ === response.request) {
+      if (this.latestPendingAjaxRequest_ === response) {
         // Do nothing if the field value has changed since this
         this.lastFieldVal_ = Def.Autocompleter.getFieldVal(this.formField_);
         // The response text should be a JSON object for a data hash map.
-        var dataHash = response.responseText.evalJSON();
+        var dataHash = response.responseJSON || JSON.parse(response.responseText);
         this.lastDataHash_ = dataHash;
         this.assignDataToFields(dataHash);
         this.processUpdateList(dataHash) ;
@@ -310,9 +310,9 @@ if (typeof Def === 'undefined')
     onDataReqCompleteForListData: function(response) {
       // Do nothing if this is not the most recent request.
       // (See onDataReqComplete.)
-      if (this.latestPendingAjaxRequest_ === response.request) {
+      if (this.latestPendingAjaxRequest_ === response) {
         // The response text should be a JSON object for a data hash map.
-        var dataHash = response.responseText.evalJSON();
+        var dataHash = response.responseJSON || JSON.parse(response.responseText);
         this.lastDataHash_ = dataHash;
         this.assignDataToFields(dataHash, true);
         this.processUpdateList(dataHash) ;
@@ -644,21 +644,21 @@ if (typeof Def === 'undefined')
      *  Constructs and returns the CGI parameter string for the URL used
      *  to make the data request.
      */
-    buildParameterString: function() {
+    buildParameters: function() {
+      var data = {};
       if (!this.inputFieldsHash_)
         this.initFieldsHash();
 
       // Include the code field's value if there is a code field and if it
       // has a value.  If there isn't a code field value, include formField_'s
       // value.
-      var rtn = null;
       // Get the code value, assuming there is at most one (i.e. a non-multiselect
       // list, which is the use case for RecordDataRequester).
       var codeVal = this.formField_.autocomp.getSelectedCodes()[0];
       if (codeVal !== null && codeVal !== undefined)
-        rtn = 'code_val=' + encodeURIComponent(codeVal);
+        data.code_val = codeVal;
       else
-        rtn = 'field_val=' + encodeURIComponent(Def.Autocompleter.getFieldVal(this.formField_));
+        data.field_val = Def.Autocompleter.getFieldVal(this.formField_);
 
       if (this.dataReqInput_) {
         for (var i=0, max=this.dataReqInput_.size(); i<max; ++i) {
@@ -666,17 +666,15 @@ if (typeof Def === 'undefined')
           var inputField = this.inputFieldsHash_[inputTargetFieldName];
           if (inputField === undefined || inputField === null)
             throw 'Could not find field for '+inputTargetFieldName;
-
-          rtn += '&' + inputTargetFieldName +
-                 '=' + encodeURIComponent(Def.Autocompleter.getFieldVal(inputField));
+          data[inputTargetFieldName] = Def.Autocompleter.getFieldVal(inputField);
         }
       }
       // Lastly add authenticity_token for csrf protection
-      rtn += '&authenticity_token='+ encodeURIComponent(window._token) || '';
-      return rtn;
+      data.authenticity_token = window._token || '';
+      return data;
     }
-
   };
+
 
   Object.extend(Def.RecordDataRequester.prototype, tmp);
   tmp = null;
