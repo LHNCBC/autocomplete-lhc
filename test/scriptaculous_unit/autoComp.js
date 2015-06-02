@@ -664,7 +664,7 @@ var testFunctions = {
       var listItems = listTag.childNodes;
       assertEqual(4, listItems.length, 'item count before selection');
       field.value = 'apples';
-      autoComp.onChange();
+      autoComp.onChange({stopped: true});
       // The value should be moved out of the field and into the selected item area.
       assertEqual('', field.value);
       var selectedItem = Element.down(fieldWrapper, 'li');

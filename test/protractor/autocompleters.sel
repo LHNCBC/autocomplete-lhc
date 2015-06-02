@@ -32,7 +32,7 @@
 | assertExpression | javascript{Def.Autocompleter.Event.observeListExpansions('race_or_ethnicity', function(){++storedVars['callbackCount']}); 1} | 1|
 # Focus the prefetched list field
 | fireEvent | fe_search_cne | blur |
-| fireEvent | fe_race_or_ethnicity | focus |
+| fireEvent | race_or_ethnicity | focus |
 | waitForVisible | moreResults | |
 | assertExpression | javascript{storedVars['callbackCount']} | 2 |
 # Click on "see more" and confirm the callback was called.
@@ -40,12 +40,12 @@
 | waitForNotVisible | moreResults | |
 | waitForExpression | javascript{storedVars['callbackCount']} | 3 |
 # Now bring the "see more" back and try again using control return
-| fireEvent | fe_race_or_ethnicity | blur |
-| fireEvent | fe_race_or_ethnicity | focus |
+| fireEvent | race_or_ethnicity | blur |
+| fireEvent | race_or_ethnicity | focus |
 | waitForVisible | moreResults | |
 | controlKeyDown | | |
 | assertExpression | javascript{storedVars['callbackCount']} | 3 |
-| typeKeys | fe_race_or_ethnicity | \13 |
+| typeKeys | race_or_ethnicity | \13 |
 | controlKeyUp | | |
 | waitForNotVisible | moreResults | |
 | waitForExpression | javascript{storedVars['callbackCount']} | 4 |
@@ -147,7 +147,7 @@
 | waitForExpression | javascript{storedVars['callbackData']['restored_value']} | ab |
 
 # Reset fields back to blank for the subsequent tests
-| type | fe_race_or_ethnicity | |
+| type | race_or_ethnicity | |
 | type | fe_search_cne | |
 | type | fe_search_cwe | |
 
@@ -179,63 +179,62 @@
 | waitForNotVisible | suggestionList |
 
 # Test of a Prefetch CNE autocompleter
-| fireEvent | fe_race_or_ethnicity | focus |
+| fireEvent | race_or_ethnicity | focus |
 | waitForVisible | completionOptions | |
 | waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 7 |
-| typeKeys | fe_race_or_ethnicity | a |
+| typeKeys | race_or_ethnicity | a |
 | waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 3 |
 # (40 = down arrow)
-| keyDown | fe_race_or_ethnicity | \40 |
-| keyDown | fe_race_or_ethnicity | \9 |
-| waitForValue | fe_race_or_ethnicity | Asian |
+| keyDown | race_or_ethnicity | \40 |
+| keyDown | race_or_ethnicity | \9 |
+| waitForValue | race_or_ethnicity | Asian |
 
 # refocus the field and try a selection by clicking
-| fireEvent | fe_race_or_ethnicity | focus |
+| fireEvent | race_or_ethnicity | focus |
 | mouseDown | css=span#completionOptions > ul > li:first-child |
-| waitForValue | fe_race_or_ethnicity | American Indian or Alaska Native |
+| waitForValue | race_or_ethnicity | American Indian or Alaska Native |
 # (refocus, because clicking on an item now moves the focus)
-| fireEvent | fe_race_or_ethnicity | focus |
+| fireEvent | race_or_ethnicity | focus |
 
 # Test an invalid value
-| typeKeys | fe_race_or_ethnicity | z |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | true |
-| assertExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
+| typeKeys | race_or_ethnicity | z |
+| waitForExpression | javascript{$('race_or_ethnicity').hasClassName('no_match')} | true |
+| assertExpression | javascript{$('race_or_ethnicity').hasClassName('invalid')} | false |
 
 # Try to leave the field with an invalid value
-| keyDown | fe_race_or_ethnicity | \9 |
-| fireEvent | fe_race_or_ethnicity | change |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | true |
-| assertExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | true |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | true |
-| assertValue | fe_race_or_ethnicity | American Indian or Alaska Nativez |
-| waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 7 |
+| keyDown | race_or_ethnicity | \9 |
+| fireEvent | race_or_ethnicity | change |
+| waitForExpression | javascript{$('race_or_ethnicity').hasClassName('invalid')} | true |
+| assertExpression | javascript{$('race_or_ethnicity').hasClassName('no_match')} | true |
+| waitForExpression | javascript{$('race_or_ethnicity').autocomp.hasFocus} | true |
+| assertValue | race_or_ethnicity | American Indian or Alaska Nativez |
 
 # Make a second attempt to leave the field.  It should be successful, but the
 # field value should be cleared.
-| keyDown | fe_race_or_ethnicity | \9 |
-| waitForValue | fe_race_or_ethnicity | |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | false |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
-| assertExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | false |
+| keyDown | race_or_ethnicity | \9 |
+| waitForValue | race_or_ethnicity | |
+| waitForExpression | javascript{$('race_or_ethnicity').autocomp.hasFocus} | false |
+| waitForExpression | javascript{$('race_or_ethnicity').hasClassName('invalid')} | false |
+| assertExpression | javascript{$('race_or_ethnicity').hasClassName('no_match')} | false |
 
 # Now pick a valid value and make sure the match/invalid indicators clear.
-| fireEvent | fe_race_or_ethnicity | focus |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | true |
-| type | fe_race_or_ethnicity | Asia |
-| typeKeys | fe_race_or_ethnicity | n |
+| fireEvent | race_or_ethnicity | focus |
+| waitForExpression | javascript{$('race_or_ethnicity').autocomp.hasFocus} | true |
+| type | race_or_ethnicity | Asia |
+| typeKeys | race_or_ethnicity | n |
 # (Test that if you type in the full value of a list item, the no_match
 # indicator does not get set.)
-| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | false |
+| waitForExpression | javascript{$('race_or_ethnicity').hasClassName('no_match')} | false |
 | waitForExpression | javascript{$('completionOptions').down().childNodes.length} | 1 |
 # For some reason, tab (\9) no longer causes change & blur events (as of Firefox 19), and manually
 # firing a change event here causes the focus to return to the field.
-#| keyDown | fe_race_or_ethnicity | \9 |
-| fireEvent | fe_race_or_ethnicity | change |
-| fireEvent | fe_race_or_ethnicity | blur |
-| waitForValue | fe_race_or_ethnicity | Asian |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').autocomp.hasFocus} | false |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('invalid')} | false |
-| waitForExpression | javascript{$('fe_race_or_ethnicity').hasClassName('no_match')} | false |
+#| keyDown | race_or_ethnicity | \9 |
+| fireEvent | race_or_ethnicity | change |
+| fireEvent | race_or_ethnicity | blur |
+| waitForValue | race_or_ethnicity | Asian |
+| waitForExpression | javascript{$('race_or_ethnicity').autocomp.hasFocus} | false |
+| waitForExpression | javascript{$('race_or_ethnicity').hasClassName('invalid')} | false |
+| waitForExpression | javascript{$('race_or_ethnicity').hasClassName('no_match')} | false |
 # Test of a Prefetch CWE autocompleter
 | click | prefetch_cwe |
 

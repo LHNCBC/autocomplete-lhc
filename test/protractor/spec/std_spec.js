@@ -5,7 +5,7 @@ var po = require('../autocompPage.js');
 
 describe('autocomp', function() {
   var searchResults = $('#searchResults');
-  var raceField = $('#fe_race_or_ethnicity');
+  var raceField = po.prefetchCNE;
   var searchCNE = $('#fe_search_cne');
   var suggestionMode0CWE = $('#fe_search0_cwe');
   var suggestionMode1CWE = $('#fe_search_cwe');

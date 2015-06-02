@@ -625,62 +625,6 @@
 
 
     /**
-     *  Override some of the key event handling.
-     * @param event the DOM event object
-     */
-    autocompKeyPress: function(event) {
-      if(this.active) {
-        switch(event.keyCode) {
-          case Event.KEY_RETURN:
-            if (event.ctrlKey) {
-              this.handleSeeMoreItems(event);
-              Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_EXP',
-                {list_expansion_method: 'CtrlRet'});
-              event.stopImmediatePropagation();
-            }
-            else {
-              this.handleEnterKeySelection(event);
-            }
-            return;
-          case 17: // control, by itself
-            break; // ignore it
-          case Event.KEY_ESC:
-            // Use escape to clear the list highlight
-            this.index = -1;
-            this.render();
-            this.hide();
-            this.active = false;
-            Event.stop(event);
-            return;
-          default:
-            // Call the base class method
-            this.matchListItemsToField_ = true;
-            this.onKeyPressWrapper(event);
-        }
-      }
-      else {
-         // Call the base class method.  We still require a match to the field
-         // content in this case, because if the user selected an item with the
-         // mouse, the field will still have focus (though the list will not be
-         // active), and the user can keep typing.
-         this.matchListItemsToField_ = true;
-         this.onKeyPressWrapper(event);
-      }
-    },
-
-
-    /**
-     *   Calls the base class onkeypress if the control key isn't down.
-     */
-    onKeyPressWrapper: function(event) {
-      // Skip calling the base onkeypress if control key is down, so that the list does not
-      // respon to control + arrow.
-      if (!event.ctrlKey)
-        Autocompleter.Local.prototype.onKeyPress.apply(this, [event]);
-    },
-
-
-    /**
      *  Attempts to find a RecordDataRequester that it can use to retrieve
      *  the list for this autocompleter.  (This method assumes this autocompleter
      *  does not already have a list.)
@@ -963,11 +907,6 @@
      *
      */
     updateElement: function(selectedElement) {
-
-      if (this.options.updateElement) {
-        this.options.updateElement(selectedElement);
-        return;
-      }
       // The Scriptaculous autocompleters allow you to autocomplete more than
       // once in a field and select more than one value from the list.  We're
       // not doing that, so we don't do the getTokenBounds() stuff.
@@ -975,10 +914,6 @@
       // Do not use setFieldVal for the above; after this gets called,
       // propagateFieldChanges is called, and that takes care of running
       // change event handlers.
-
-      this.oldElementValue = this.element.value;
-      // this.element.focus(); // we no longer want to refocus after a
-                               // selection via keyboard
 
       if (this.options.afterUpdateElement)
         this.options.afterUpdateElement(this.element, selectedElement);
@@ -991,7 +926,7 @@
      *  a search in the search autocompleter, and reusing code (and hence the
      *  function name).
      */
-    fieldEventIsSearch: function(event) {
+    fieldEventIsBigList: function(event) {
       return event.keyCode===Event.KEY_RETURN && event.ctrlKey;
     },
 

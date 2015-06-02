@@ -6,12 +6,17 @@ var AutocompPage = function() {
   BasePage.call(this);
 
   this.nonField = $('#content');
+  this.prefetchCNEFieldName = 'race_or_ethnicity';
+  this.prefetchCNE = $('#'+this.prefetchCNEFieldName);
 
   this.longOddCNE = $('#long_odd_cne');
   this.longOddCNENoScrollCSS = '#long_odd_cne_no_scroll';
   this.longOddCNENoScroll = $(this.longOddCNENoScrollCSS);
   this.prefetchCWEID = 'prefetch_cwe';  // single-select
   this.prefetchCWE = $('#'+this.prefetchCWEID);  // single-select
+
+  // Multi-select CNE prefetch list
+  this.multiPrefetchCNEID = 'multi_sel_cne';
 
   // Multi-select CWE prefetch list
   var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection';
