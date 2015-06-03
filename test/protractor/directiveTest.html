@@ -13,9 +13,7 @@
     <div ng-controller="testPageController">
       Prefetch CWE list with a default:
       <input name="list1" type="text"
-        ng-required="false"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal"
-        autocomplete-lhc="list1Opts">
+        ng-required="false" ng-model="listFieldVal" autocomplete-lhc="list1Opts">
       <br>
       Selected code: <input readonly id="code" name="code" ng-model="listFieldVal.code">
       <p>
@@ -23,21 +21,21 @@
         Multi-select prefetch CNE list:
         <input name="list2" type="text" id="multiPrefetchCNE"
           ng-required="false" placeholder="Select or type a value"
-          ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
+          ng-model="listFieldVal2"
           autocomplete-lhc="multilistOpts">
       </p>
       <p id="multiPrefetchCWESection">
           Multi-select prefetch CWE list:
           <input name="multiPrefetchCWE" id="multiPrefetchCWE" type="text"
           ng-required="false" placeholder="Select or type a value"
-          ng-model-options="{updateOn: 'change'}" ng-model="multiPrefetchCWEVal"
+          ng-model="multiPrefetchCWEVal"
           autocomplete-lhc="multiPrefetchCWEOpts">
       </p>
       <p id="multiSearchCWESection">
           Multi-select search CWE list:
           <input name="multiSearchCWE" id="multiSearchCWE" type="text"
           ng-required="false" placeholder="Select or type a value"
-          ng-model-options="{updateOn: 'change'}" ng-model="multiSearchCWEVal"
+          ng-model="multiSearchCWEVal"
           autocomplete-lhc="multiSearchCWEOpts">
       </p>
       <ul>Selected values from above:
@@ -47,7 +45,6 @@
           Multi-select search CWE list with pre-populated model value:
          <input name="multiSearchCWEPrePop" id="multiSearchCWEPrePop" type="text"
           ng-required="false" placeholder="Select or type a value"
-          ng-model-options="{updateOn: 'change'}"
           ng-model="multiSearchCWEPrePopVal"
           autocomplete-lhc="multiSearchCWEOpts">
       </p>
@@ -55,37 +52,37 @@
       "Search" CNE list:
       <input name="list3" id="list3" type="text"
         ng-required="false" placeholder="Select or type a value"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal3"
+        ng-model="listFieldVal3"
         autocomplete-lhc="searchListOpts">
       <p>
       Search CWE list with suggestions:
       <input name="list4" id="list4" type="text"
         ng-required="false" placeholder="Select or type a value"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4"
+        ng-model="listFieldVal4"
         autocomplete-lhc="searchList4Opts">
       <p>
       Search CWE list without suggestions:
       <input name="list4b" id="list4b" type="text"
         ng-required="false" placeholder="Select or type a value"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4b"
+        ng-model="listFieldVal4b"
         autocomplete-lhc="searchList4bOpts">
       <p>
        Prefetch CWE list w/ pre-populated model value:
       <input name="list1b" type="text"
         ng-required="false"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal1b"
+        ng-model="listFieldVal1b"
         autocomplete-lhc="list1Opts" id="list1b">
       <p>
        Prefetch CWE list (starting with empty field):
       <input name="list5" type="text"
         ng-required="false"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal5"
+        ng-model="listFieldVal5"
         autocomplete-lhc="list5Opts" id="list5">
       <p>
        Prefetch CNE list (starting with empty field):
       <input name="list6" type="text"
         ng-required="false"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal6"
+        ng-model="listFieldVal6"
         autocomplete-lhc="list6Opts" id="list6">
        <p>
       <input name="nonlist" type="text">

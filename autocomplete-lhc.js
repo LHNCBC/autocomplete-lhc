@@ -43,6 +43,12 @@ if (typeof angular !== 'undefined') {
           modelData: '=ngModel' // the ng-model attribute on the tag
         },
         link:function (scope, element, attrs, controller) {
+          // Set the update options to 'none' so only the autocompleter code
+          // updates the model.
+          if (!controller.$options)
+            controller.$options = {};
+          controller.$options.updateOn = 'none';
+          controller.$options.updateOnDefault = false;
 
           /**
            *  Sets up a prefetched list on the field.
