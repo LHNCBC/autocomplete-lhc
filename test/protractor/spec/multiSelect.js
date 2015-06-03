@@ -4,6 +4,7 @@ var po = require('../autocompPage.js');
 var hasClass = require('../test_helpers').hasClass;
 
 describe('multi-select lists', function() {
+
   it('should allow non-matching values for prefetch CWE lists', function () {
     po.openTestPage();
     // Add a non-list value
@@ -163,5 +164,32 @@ describe('multi-select lists', function() {
     expect(hasClass(po.firstSearchRes, 'selected')).toBe(false);
     expect(hasClass(po.searchResult(9), 'selected')).toBe(true);
   });
+
+  it('should not prevent shift-tab from leaving the field even when an item is '+
+     'selected', function() {
+    po.openTestPage();
+    po.multiPrefetchCWE.click();
+    // Select first item
+    po.multiPrefetchCWE.sendKeys(protractor.Key.ARROW_DOWN);
+    po.multiPrefetchCWE.sendKeys(protractor.Key.SHIFT, protractor.Key.TAB);
+    // Focus should be on the button for the selected item now
+    expect(browser.driver.switchTo().activeElement().getAttribute('id')).
+      toNotEqual(po.multiPrefetchCWEID);
+  });
+
+  it('should not select an item when the tab key is pressed if there is nothing' +
+     ' in the field', function() {
+    // Note that an item might be highlighted from a return-key
+    // selection, but if the field is empty we will ignore that
+    // because the user might just be trying to leave the field.
+    po.openTestPage();
+    po.multiPrefetchCWE.click();
+    po.multiPrefetchCWE.sendKeys(protractor.Key.ARROW_DOWN);
+    po.multiPrefetchCWE.sendKeys(protractor.Key.ENTER);
+    expect(po.multiPrefetchCWESelected.count()).toBe(1);
+    po.multiPrefetchCWE.sendKeys(protractor.Key.TAB);
+    expect(po.multiPrefetchCWESelected.count()).toBe(1);
+  });
+
 });
 

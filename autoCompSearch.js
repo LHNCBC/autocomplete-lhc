@@ -183,7 +183,8 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *     that are on the list.</li>
      *    <li>buttonID - the ID of the button (if there is one)</li>
      *    <li>autocomp - a boolean that controls whether the field should
-     *     also autocomplete as the user types. (Default:  true)</li>
+     *     also autocomplete as the user types.  When this is false, the user
+     *     won't see an autocompletion list until they hit return.  (Default:  true)</li>
      *    <li>dataRequester - A RecordDataRequester for getting additional data
      *     after the user makes a selection from the completion list.  This may be
      *     null, in which case no request for additional data is made.</li>
@@ -403,10 +404,10 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
     /**
      *  Returns true if the given key event (from the input field) is a request
-     *  for running a search.
+     *  for showing the expanded list.
      * @param event the key event
      */
-    fieldEventIsSearch: function(event) {
+    fieldEventIsBigList: function(event) {
        return event.keyCode===Event.KEY_RETURN && (event.ctrlKey ||
            (!this.autocomp &&
            this.element.value !== this.uneditedValue &&
@@ -788,47 +789,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         if (!this.searchInProgress) {
           this.active = false;
         }
-      }
-    },
-
-
-    /**
-     *  Override some of the key event handling for the field.
-     * @param event the DOM event object
-     */
-    autocompKeyPress: function(event) {
-      this.CtrlReturn=false;
-      switch(event.keyCode) {
-        case Event.KEY_RETURN:
-          // Run the search if the text field's value has changed.
-          // For autocompleters, only do this if the control key was also down.
-          if (this.fieldEventIsSearch(event)) {
-            Event.stop(event);
-            event.stopImmediatePropagation();
-            this.CtrlReturn =true;
-            // If the user had arrowed down into the list, reset the field
-            // value to what the user actually typed before running the search.
-            if (this.preFieldFillVal_)
-              this.element.value = this.preFieldFillVal_;
-            this.runSearch();
-
-            // Currently the "control+return" sequence is only used for
-            // "see more" request to get an expanded search list.
-            Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_EXP',
-              {list_expansion_method: 'CtrlRet'});
-          }
-          else if (this.active) {
-            this.handleEnterKeySelection(event);
-          }
-          break;
-        case 17: // control, by itself
-          break; // ignore it
-        default:
-          // Call the base class method
-          // ... but not when the control key is down, so that the list does not
-          // respon to control + arrow.
-          if (!event.ctrlKey)
-            Autocompleter.Base.prototype.onKeyPress.apply(this, [event]);
       }
     },
 

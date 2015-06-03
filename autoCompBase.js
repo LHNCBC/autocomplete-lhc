@@ -364,7 +364,8 @@ if (typeof Def === 'undefined')
     recDataRequester_: null,
 
     /**
-     *  Whether autocompletion is enabled.
+     *  Whether the autocompleter is enabled.  For example, this is false when
+     *  there is no list assigned to the field.
      */
     enabled_: true,
 
@@ -940,91 +941,124 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Override the onKeyPress method to incorporate our navigation key handling.
-     *  Subclasses that wish to customize the Scriptaculous onKeyPress should
-     *  instead override autocompKeyPress (for which a default implementation
-     *  is given below).
+     *  Handles key down events in the field (in spite of the name).
      * @param event the event object from the keypress event
      */
     onKeyPress: function(event) {
+      // Do nothing if the autocompleter widget is not enabled_.
       if (this.enabled_) {
         // Note:  Normal (i.e. not search or navigation) key strokes are handled
         // by Scriptaculous, which defers processing until a short time later
         // (specified by 'frequency').  This is important, because we are
         // catching a keyDown event, at which time the element's value has not
-        // yet been updated.  (Nor can we contruct the new value, without knowing
-        // the caret position in the field, and the current selection in the field.
-        // Possible, but messy, for IE & Firefox.  Not sure about Safari.)
+        // yet been updated.
 
-        // Check to see if this autocompleter knows how to search.
-        var searcher = typeof this.fieldEventIsSearch !== 'undefined';
         var charCode = event.keyCode;
-
-        if (searcher && this.fieldEventIsSearch(event)) {
-          // This is the key combination for running a search in a field that is
-          // also an autocompleter.
-          this.autocompKeyPress(event); // might stop event
-        }
-        else if (this.active && charCode===Event.KEY_TAB) {
-          // Change the Scriptaculous behavior and allow tab keys to move
-          // to the next field following a selection.
-          if (this.index>=0)
-            this.selectEntry();
-          if (this.observer)
-            clearTimeout(this.observer);
-          this.preFieldFillVal_ = null;
-        }
-        // Note:  The next two clauses were originally combined into one with
-        // an "else if (this.active)".  In firefox, this resulted in the window
-        // somehow getting the event, and in the case of a return key, the form
-        // being submitted.  (At least, the form was submitted.)  This may
-        // indicate a race condition, and more investigation would be a good idea.
-        else if (this.active && this.index>=0 && !event.shiftKey &&
-                 charCode===Event.KEY_RETURN) {
-          // This is a completion key event, the autocompleter is active, and an
-          // item is selected.
-          this.autocompKeyPress(event); // might stop event
-          this.preFieldFillVal_ = null;
-        }
-        else if ((charCode===Event.KEY_PAGEUP || charCode===Event.KEY_PAGEDOWN) &&
-            this.active) {
-          this.pageOptionsUpOrDown(charCode===Event.KEY_PAGEUP);
-        }
-        else if (!event.ctrlKey &&
-         (charCode===Event.KEY_LEFT || charCode===Event.KEY_RIGHT) &&
-            this.active && this.index>=0 &&
-            this.update.hasClassName('multi_col')) {
-          this.moveToOtherColumn(event);
+        var keyHandled = true;
+        if (this.fieldEventIsBigList(event)) {
+          event.stopImmediatePropagation();
+          // If the user had arrowed down into the list, reset the field
+          // value to what the user actually typed before running the search.
+          if (this.preFieldFillVal_)
+            this.element.value = this.preFieldFillVal_;
+          this.handleSeeMoreItems(event); // implemented in sub-classes
+          // Currently we don't have separate events for different reasons to
+          // show the big list (e.g. search vs. list expansion), so just send
+          // the list expansion event.
+          Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_EXP',
+            {list_expansion_method: 'CtrlRet'});
         }
         else {
-          if (charCode === Event.KEY_ESC && this.preFieldFillVal_!==null) {
-            // Restore the field value
-            this.element.value = this.preFieldFillVal_;
-            Def.Autocompleter.Event.notifyObservers(this.element, 'CANCEL',
-                {restored_value: this.preFieldFillVal_});
-          }
-          else if (charCode !== Event.KEY_DOWN && charCode !== Event.KEY_UP &&
-                   charCode !== 17) { // 17 = control
-            this.preFieldFillVal_ = null;  // reset on key strokes in field
-          }
+          switch(charCode) {
+            case Event.KEY_RETURN:
+              // Step the event for multiselect lists so the focus stays in the
+              // field.  The user might be trying to select more than one item
+              // by hitting return more than once.
+              if (this.multiSelect_)
+                Event.stop(event);
+              this.handleDataEntry(event);
+              break;
+            case Event.KEY_TAB:
+              // For a tab, only try to select a value if there is something in
+              // the field.  An item might be highlighted from a return-key
+              // selection (in a multi-select list), but if the field is empty we
+              // will ignore that because the user might just be trying to leave
+              // the field.
+              if (this.element.value !== '')
+                this.handleDataEntry(event);
+              break;
+            case Event.KEY_ESC:
+              if (this.preFieldFillVal_!==null) {
+                // Restore the field value
+                this.element.value = this.preFieldFillVal_;
+                Def.Autocompleter.Event.notifyObservers(this.element, 'CANCEL',
+                    {restored_value: this.preFieldFillVal_});
+              }
+              if (this.active) {
+                this.index = -1;
+                this.hide();
+                this.active = false;
+              }
+              break;
+            default:
+              if (this.active) {
+                switch(charCode) {
+                  case Event.KEY_PAGEUP:
+                    this.pageOptionsUpOrDown(true);
+                    break;
+                  case Event.KEY_PAGEDOWN:
+                    this.pageOptionsUpOrDown(false);
+                    break;
+                  default:
+                    if (!event.ctrlKey) {
+                      switch(charCode) {
+                        case Event.KEY_DOWN:
+                        case Event.KEY_UP:
+                          charCode===Event.KEY_UP ? this.markPrevious() : this.markNext();
+                          this.render();
+                          Event.stop(event);
+                          break;
+                        case Event.KEY_LEFT:
+                        case Event.KEY_RIGHT:
+                          if (!event.ctrlKey && this.index>=0 &&
+                              this.update.hasClassName('multi_col')) {
+                            this.moveToOtherColumn(event);
+                          }
+                          break;
+                        default:
+                          keyHandled = false;
+                      }
+                    }
+                    else
+                      keyHandled = false;
+                } // switch
+              } // if this.active
+              else
+                keyHandled = false;
+          } // switch
+        }
+
+        if (!keyHandled) {
           // Ignore events that are only a shift or control key.  If we allow a
           // shift key to get processed (and e.g. show the list) then shift-tab
           // to a previous field can have trouble, because the autocompleter will
           // still be scrolling the page to show the list.
-          if (charCode !== 16 && charCode !== 17) // 16 & 17 = shift & control
-            this.autocompKeyPress(event);
+          // charCode being 0 is a case Scriptaculous excluded for WebKit
+          // browsers.  (I'm not sure when that happens.)
+          // 16 & 17 = shift & control key codes
+          if (charCode !== 16 && charCode !== 17 && charCode!==0) {
+            this.preFieldFillVal_ = null;  // reset on key strokes in field
+            this.changed = true;
+            this.hasFocus = true;
+            this.matchListItemsToField_ = true;
+
+            if (this.observer)
+              clearTimeout(this.observer);
+            this.observer =
+              setTimeout(this.onObserverEvent.bind(this), this.options.frequency*1000);
+          }
         }
       }
-    },
-
-
-    /**
-     *  A default implementation of autocompKeyPress, which just calls the
-     *  Scriptaculous autocompleter onKeyPress method.
-     * @param event the DOM event object
-     */
-    autocompKeyPress: function(event) {
-      Autocompleter.Base.prototype.onKeyPress.apply(this, [event]);
     },
 
 
@@ -1534,14 +1568,15 @@ if (typeof Def === 'undefined')
           // Allow the selection if what the user typed
           // exactly matches an item in the list, except for case.
           for (var i=0; i<this.entryCount && !canSelect; ++i) {
-            if (elemVal===this.listItemValue(this.getEntry(i)).toLowerCase()) {
+            var li = this.getEntry(i);
+            if (elemVal===this.listItemValue(li).toLowerCase() && !this.liIsHeading(li)) {
               canSelect = true;
               this.index = i;
             }
           }
         }
         else
-          canSelect = this.entryCount > 0;
+          canSelect = this.entryCount > 0 && !this.liIsHeading(this.getCurrentEntry());
 
         this.fieldValIsListVal_ = canSelect;
         if (canSelect) {
@@ -1625,6 +1660,11 @@ if (typeof Def === 'undefined')
           setTimeout(function() {
             this.element.focus();
             this.element.select(); // select the text
+            // Clear refocusInProgress_, which onFocus also clears, because
+            // onFocus isn't called if the field is still focused when focus()
+            // is called above.  That happens when you hit return to select an
+            // invalid value.
+            this.refocusInProgress_ = false;
           }.bind(this), 1);
         }
         else {
@@ -1660,31 +1700,13 @@ if (typeof Def === 'undefined')
      *  An event function for when the field changes.
      * @param event the DOM event object for the change event
      */
-    onChange: function (event) {
+    onChange: function(event) {
       if (!Def.Autocompleter.completionOptionsScrollerClicked_) {
-        // The field might have a tool tip if it is empty, so do not access
-        // element.value directly.
-        var elemVal = Def.Autocompleter.getFieldVal(this.element);
-
         // We used to only process the change if this.enabled_ was true.  However,
         // if the list field is changed by a RecordDataRequester, it will not
         // be active and might have an empty list.
 
-        // If the user has changed the value since the last entry/selection,
-        // try to use the value to select an item from the list.
-        // Don't attempt to make a selection if the user has cleared the field.
-        if (this.uneditedValue !== elemVal && (elemVal === "" ||
-                !this.attemptSelection())) {
-          if (elemVal === "")
-            this.fieldValIsListVal_ = false;
-          this.handleNonListEntry();
-        }
-
-        // Note that attemptSelection might have changed the element value, so
-        // we call getFieldVal again.
-        this.valueOnChange_ = Def.Autocompleter.getFieldVal(this.element);
-        if (!this.refocusInProgress_)  // if not refocusing (for an invalid value)
-          this.uneditedValue = this.valueOnChange_;
+        this.handleDataEntry(event);
       }
     },
 
@@ -1699,7 +1721,7 @@ if (typeof Def === 'undefined')
         Def.Autocompleter.completionOptionsScrollerClicked_ = false;
       }
       else {
-        // If the did not type in the field but the value is different from the
+        // If the user did not type in the field but the value is different from the
         // value when the field was focused (such as via down arrow or a click)
         // we need to simulate the change event.
         var elemVal = Def.Autocompleter.getFieldVal(this.element);
@@ -1724,18 +1746,8 @@ if (typeof Def === 'undefined')
           // value.
           // Since the empty field is not an invalid field, we need to set the
           // invalid indicator to false
-          if (this.invalidStatus_){
-            //this.element.value = '';
-            Def.Autocompleter.setFieldVal(this.element, '');
-            this.setInvalidValIndicator(false);
-            // Also clear the match status flag, because a blank value is okay
-            // (except for required fields when the form submits).
-            this.setMatchStatusIndicator(true);
-            // If the field was not originally blank, send a list selection
-            // event.
-            if (this.uneditedValue != '')
-              this.listSelectionNotification('', false);
-          }
+          if (this.invalidStatus_)
+            this.clearInvalidFieldVal();
           else {
             // If the user retyped a non-list value that was in the field, and that
             // value that matches part of an entry but not completely, and the field
@@ -1761,6 +1773,24 @@ if (typeof Def === 'undefined')
           }
         }
       }
+    },
+
+
+    /**
+     *  Clears an (assumed) invalid value from the list field, and resets the
+     *  invalid indicator.
+     */
+    clearInvalidFieldVal: function() {
+      Def.Autocompleter.setFieldVal(this.element, '');
+      this.setInvalidValIndicator(false);
+      // Also clear the match status flag, because a blank value is okay
+      // (except for required fields when the form submits).
+      this.setMatchStatusIndicator(true);
+      // If the field was not originally blank, send a list selection
+      // event.
+      if (this.uneditedValue !== '')
+        this.listSelectionNotification('', false);
+      this.uneditedValue = ''; // otherwise onChange might send another notification
     },
 
 
@@ -1814,22 +1844,57 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Handles selection of an item by the keyboard (enter key).
-     * @param event the keyboard event
+     *  Handles entry of an item.
+     * @param event the DOM event signaling the data entry
      */
-    handleEnterKeySelection: function(event) {
-      // Only try to select an entry if the index is not -1 and the item is not a
-      // heading.
-      Event.stop(event);
-      if (this.index >= 0) {
-        if (!this.liIsHeading(this.getCurrentEntry())) {
-          this.selectEntry();
-          if (!this.multiSelect_) {
-            this.hide();
-            this.active = false;
-          }
-          this.uneditedValue = this.element.value;
+    handleDataEntry: function(event) {
+      if (this.invalidStatus_ && this.valueOnChange_ === this.element.value)
+        this.clearInvalidFieldVal();
+      else {
+        // If there was a pending autocompletion event (key event) clear it so we
+        // don't reshow a list right after this selection.
+        if (this.observer)
+          clearTimeout(this.observer);
+
+        var elemVal = Def.Autocompleter.getFieldVal(this.element);
+
+        // If the user has changed the value since the last entry/selection,
+        // try to use the value to select an item from the list.
+        // Don't attempt to make a selection if the user has cleared the field,
+        // unless this is a multiselect list, in which case the field will be
+        // cleared if another item was selected before this one.
+        // Also, note that for multiselect lists the value in the field might
+        // not have changed.  It can remain blank while the enter is pressed
+        // repeatedly.
+        var selectionSucceeded = false;
+        if (this.uneditedValue !== elemVal && elemVal !== '')
+          selectionSucceeded = this.attemptSelection();
+        else if (this.multiSelect_ && elemVal === '' && this.index >= 0)
+          selectionSucceeded = this.attemptSelection();
+
+        // If the value changed but we couldn't select it from the list, treat
+        // it as a non-list entry.
+        if (this.uneditedValue !== elemVal && !selectionSucceeded) {
+          if (elemVal === "")
+            this.fieldValIsListVal_ = false;
+          this.handleNonListEntry();
         }
+
+        // Note that attemptSelection might have changed the element value, so
+        // we call getFieldVal again.
+        this.valueOnChange_ = Def.Autocompleter.getFieldVal(this.element);
+        if (!this.refocusInProgress_)  // if not refocusing (for an invalid value)
+          this.uneditedValue = this.valueOnChange_;
+
+        if (!this.multiSelect_) {
+          this.hide();
+          this.active = false;
+        }
+
+        // Stop the event if the field is in an invalid state (to avoid form
+        // submission.)
+        if (!event.stopped && this.matchListValue_ && this.invalidStatus_)
+          Event.stop(event);
       }
     },
 

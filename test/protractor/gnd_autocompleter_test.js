@@ -6,7 +6,11 @@ opts['matchListValue']=true
 opts['codes']=["LA6155-1","LA6156-9","LA6162-7","LA6214-6","LA6266-6","LA4457-3","LA4489-6"]
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
 opts['autoFill']=true
-var fe_race_or_ethnicity_autoComp = new Def.Autocompleter.Prefetch('fe_race_or_ethnicity', ["American Indian or Alaska Native","Asian","Black or African-American","Hispanic or Latino","Native Hawaiian or Pacific Islander","White","Unknown"], opts);
+var fe_race_or_ethnicity_autoComp = new
+  Def.Autocompleter.Prefetch('race_or_ethnicity', [
+  "American Indian or Alaska Native","Asian","Black or African-American",
+  "Hispanic or Latino","Native Hawaiian or Pacific Islander","White",
+  "Unknown"], opts);
 var opts = {};
 opts['codes']=["LA44-3","LA45-0","LA46-8"]
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
