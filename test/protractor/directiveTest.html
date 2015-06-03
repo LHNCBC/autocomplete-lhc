@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>autocomp-phr directive test</title>
+    <title>autocomplete-lhc directive test</title>
     <link href="/auto_completion.css" media="screen" rel="stylesheet" />
     <link href="/bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen"
      rel="stylesheet" />
@@ -15,7 +15,7 @@
       <input name="list1" type="text"
         ng-required="false"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal"
-        phr-autocomplete="list1Opts">
+        autocomplete-lhc="list1Opts">
       <br>
       Selected code: <input readonly id="code" name="code" ng-model="listFieldVal.code">
       <p>
@@ -24,21 +24,21 @@
         <input name="list2" type="text" id="multiPrefetchCNE"
           ng-required="false" placeholder="Select or type a value"
           ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
-          phr-autocomplete="multilistOpts">
+          autocomplete-lhc="multilistOpts">
       </p>
       <p id="multiPrefetchCWESection">
           Multi-select prefetch CWE list:
           <input name="multiPrefetchCWE" id="multiPrefetchCWE" type="text"
           ng-required="false" placeholder="Select or type a value"
           ng-model-options="{updateOn: 'change'}" ng-model="multiPrefetchCWEVal"
-          phr-autocomplete="multiPrefetchCWEOpts">
+          autocomplete-lhc="multiPrefetchCWEOpts">
       </p>
       <p id="multiSearchCWESection">
           Multi-select search CWE list:
           <input name="multiSearchCWE" id="multiSearchCWE" type="text"
           ng-required="false" placeholder="Select or type a value"
           ng-model-options="{updateOn: 'change'}" ng-model="multiSearchCWEVal"
-          phr-autocomplete="multiSearchCWEOpts">
+          autocomplete-lhc="multiSearchCWEOpts">
       </p>
       <ul>Selected values from above:
         <li ng-repeat="item in multiSearchCWEVal track by item.text">{{item.text}}</li>
@@ -49,44 +49,44 @@
           ng-required="false" placeholder="Select or type a value"
           ng-model-options="{updateOn: 'change'}"
           ng-model="multiSearchCWEPrePopVal"
-          phr-autocomplete="multiSearchCWEOpts">
+          autocomplete-lhc="multiSearchCWEOpts">
       </p>
       <p>
       "Search" CNE list:
       <input name="list3" id="list3" type="text"
         ng-required="false" placeholder="Select or type a value"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal3"
-        phr-autocomplete="searchListOpts">
+        autocomplete-lhc="searchListOpts">
       <p>
       Search CWE list with suggestions:
       <input name="list4" id="list4" type="text"
         ng-required="false" placeholder="Select or type a value"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4"
-        phr-autocomplete="searchList4Opts">
+        autocomplete-lhc="searchList4Opts">
       <p>
       Search CWE list without suggestions:
       <input name="list4b" id="list4b" type="text"
         ng-required="false" placeholder="Select or type a value"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4b"
-        phr-autocomplete="searchList4bOpts">
+        autocomplete-lhc="searchList4bOpts">
       <p>
        Prefetch CWE list w/ pre-populated model value:
       <input name="list1b" type="text"
         ng-required="false"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal1b"
-        phr-autocomplete="list1Opts" id="list1b">
+        autocomplete-lhc="list1Opts" id="list1b">
       <p>
        Prefetch CWE list (starting with empty field):
       <input name="list5" type="text"
         ng-required="false"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal5"
-        phr-autocomplete="list5Opts" id="list5">
+        autocomplete-lhc="list5Opts" id="list5">
       <p>
        Prefetch CNE list (starting with empty field):
       <input name="list6" type="text"
         ng-required="false"
         ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal6"
-        phr-autocomplete="list6Opts" id="list6">
+        autocomplete-lhc="list6Opts" id="list6">
        <p>
       <input name="nonlist" type="text">
     </div>
@@ -113,10 +113,10 @@
     <script src="/effectScroll.js"></script>
     <script src="/event.simulate.js"></script>
     <script src="/bower_components/angular/angular.js"></script>
-    <script src="/phr-autocomplete.js"></script>
+    <script src="/autocomplete-lhc.js"></script>
     <script src="/test/protractor/ajaxMock.js"></script>
     <script>
-      angular.module('someApp', ['someModule', 'autocompPhr']);
+      angular.module('someApp', ['someModule', 'autocompleteLhcMod']);
       var someMod = angular.module('someModule', []);
 
       someMod.controller('testPageController', ['$scope', function ($scope) {

@@ -2,7 +2,7 @@
 // An AngularJS directive (optional; for use if you are using AngularJS)
 //
 // Example:
-// <input name="myfield" phr-autocomplete="opts" ng-model="selectedVal">
+// <input name="myfield" autocomplete-lhc="opts" ng-model="selectedVal">
 //
 // The opts object (which could be a function that returns an object) contains
 // the information needed for specifying the behavior of the autocompleter (e.g.
@@ -33,9 +33,9 @@
 //    in autoCompSearch.js.  (Look at the options parameter in the initialize
 //    method.)
 if (typeof angular !== 'undefined') {
-  angular.module('autocompPhr', [])
+  angular.module('autocompleteLhcMod', [])
 
-    .directive('phrAutocomplete', ['$timeout', function (phrAutocompleteConfig, $timeout) {
+    .directive('autocompleteLhc', ['$timeout', function (autocompleteConfig, $timeout) {
       'use strict';
       return {
         require:'?ngModel',
@@ -47,21 +47,21 @@ if (typeof angular !== 'undefined') {
           /**
            *  Sets up a prefetched list on the field.
            * @param pElem the element on which the autocompleter is to run
-           * @param phrAutoOpts the options from the directive attribute
+           * @param autoOpts the options from the directive attribute
            */
-          function prefetchList(pElem, phrAutoOpts) {
+          function prefetchList(pElem, autoOpts) {
             var itemText = [];
             var itemTextToItem = {};
             var itemLabel;
             // "source" = list item data.
-            for (var i=0, len=phrAutoOpts.source.length; i<len; ++i) {
-              var item = phrAutoOpts.source[i];
+            for (var i=0, len=autoOpts.source.length; i<len; ++i) {
+              var item = autoOpts.source[i];
               itemLabel = item.text;
               itemText[i] = itemLabel;
               itemTextToItem[itemLabel] = item;
             }
 
-            var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, phrAutoOpts);
+            var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, autoOpts);
             Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
               scope.$apply(function() {
                 var item;
@@ -97,9 +97,9 @@ if (typeof angular !== 'undefined') {
 
             // if we have a default value, and if the model value is not already
             // set, go ahead and select the default
-            if (phrAutoOpts.defaultValue !== undefined &&
+            if (autoOpts.defaultValue !== undefined &&
                 (scope.modelData === undefined || scope.modelData === null)) {
-              scope.modelData = itemTextToItem[phrAutoOpts.defaultValue];
+              scope.modelData = itemTextToItem[autoOpts.defaultValue];
             }
 
             return ac;
@@ -124,10 +124,10 @@ if (typeof angular !== 'undefined') {
           /**
            *  Sets up a search list on the field.
            * @param pElem the element on which the autocompleter is to run
-           * @param phrAutoOpts the options from the directive attribute
+           * @param autoOpts the options from the directive attribute
            */
-          function searchList(pElem, phrAutoOpts) {
-            var ac = new Def.Autocompleter.Search(pElem.id, phrAutoOpts.url, phrAutoOpts);
+          function searchList(pElem, autoOpts) {
+            var ac = new Def.Autocompleter.Search(pElem.id, autoOpts.url, autoOpts);
             Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
               scope.$apply(function() {
                 var itemText = eventData.final_val;
@@ -161,8 +161,8 @@ if (typeof angular !== 'undefined') {
 
           var initWidget = function () {
             // Because we created our own scope, we have to evaluate
-            // attrs.phrAutocomplete in the parent scope.
-            var phrAutoOpts = scope.$parent.$eval(attrs.phrAutocomplete);
+            // attrs.autocompleteLhc in the parent scope.
+            var autoOpts = scope.$parent.$eval(attrs.autocompleteLhc);
 
             if (controller) { // ngModelController, from the "require"
               var pElem = element[0];
@@ -185,8 +185,8 @@ if (typeof angular !== 'undefined') {
               var md = scope.modelData;
               var hasPrepoluatedModel = md !== undefined;
 
-              var ac = phrAutoOpts.url ? searchList(pElem, phrAutoOpts) :
-                prefetchList(pElem, phrAutoOpts);
+              var ac = autoOpts.url ? searchList(pElem, autoOpts) :
+                prefetchList(pElem, autoOpts);
 
               // If there is a already a model value for this field, load it
               // into the autocompleter.
