@@ -191,5 +191,33 @@ describe('multi-select lists', function() {
     expect(po.multiPrefetchCWESelected.count()).toBe(1);
   });
 
+  it('should not show "see more" in a search list after a click on an item',
+    function() {
+    // This is because in this case, unless the user previously arrowed down
+    // into the list, preFieldFillVal_ won't be set, and the link won't show any
+    // results (but will still show the hit count field).  There is no reason
+    // why this couldn't be fixed, so that we could show "see more" in this
+    // case, but until we need it, I am leaving this test here and these
+    // comments to make sure the link doesn't start appearing without a fix
+    // being in place.
+    po.openTestPage();
+    po.multiSearchCWE.click();
+    po.multiSearchCWE.sendKeys('ar');
+    po.firstSearchRes.click();
+    expect(po.expandLink.isDisplayed()).toBe(false); // i.e. not visible
+  });
+
+  it('should expand list when "see more" is clicked after an item is selected',
+    function() {
+    // Per the comments in the test above, currently the only way to have a "see
+    // more" link after selecting an item is to select it with the keyboard.
+    po.openTestPage();
+    po.multiSearchCWE.click();
+    po.multiSearchCWE.sendKeys('ar');
+    po.multiSearchCWE.sendKeys(protractor.Key.ARROW_DOWN);
+    po.multiSearchCWE.sendKeys(protractor.Key.ENTER);
+    po.expandLink.click();
+    expect(po.allSearchRes.count()).toBeGreaterThan(14);
+  });
 });
 
