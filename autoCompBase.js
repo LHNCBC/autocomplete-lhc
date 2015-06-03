@@ -1553,7 +1553,6 @@ if (typeof Def === 'undefined')
 
 
     /**
-
      *  Attempts to select an item from the list, if possible.  If successful,
      *  this will take care of updating the code field, and running rules.
      * @return true if an item was successfully selected (i.e. the list was active
