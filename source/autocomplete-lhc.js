@@ -13,7 +13,7 @@
 // keys on the hash differ.
 //
 // For "prefetched lists", opts can contain:
-// 1) source - (required) This is the list item data.  It should be an array,
+// 1) listItems - (required) This is the list item data.  It should be an array,
 //    and each element in the array should have a "text" property which is the
 //    display string the user sees.  The object containing that text property
 //    is what will get stored on the model you have associated via ng-model
@@ -59,9 +59,9 @@ if (typeof angular !== 'undefined') {
             var itemText = [];
             var itemTextToItem = {};
             var itemLabel;
-            // "source" = list item data.
-            for (var i=0, len=autoOpts.source.length; i<len; ++i) {
-              var item = autoOpts.source[i];
+            // "listItems" = list item data.
+            for (var i=0, len=autoOpts.listItems.length; i<len; ++i) {
+              var item = autoOpts.listItems[i];
               itemLabel = item.text;
               itemText[i] = itemLabel;
               itemTextToItem[itemLabel] = item;
