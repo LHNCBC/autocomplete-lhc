@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "main": [
     "auto_completion.css",
     "../scriptaculous-bower/effects.js",

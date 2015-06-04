@@ -744,6 +744,14 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      * @param event the click event on the link
      */
     handleSeeMoreItems: function(event) {
+      // For multiselect lists, after selecting an item the field is empty, so
+      // if we have a preFieldFillVal_, we reset the field value back to that
+      // before running the search.  At present, the only case where we don't
+      // have preFieldFillVal_ is when the user has clicked on a list item,
+      // after which (kind of by accident) the "see more items" link is hidden,
+      // so we don't need to worry about that case for now.
+      if (this.multiSelect_ && this.element.value === '' && this.preFieldFillVal_)
+        this.element.value = this.preFieldFillVal_;
       this.buttonClick(event);
     },
 
