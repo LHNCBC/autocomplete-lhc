@@ -42,11 +42,14 @@ extensive revisions and additions.  These were developed to meet the requirement
 href="https://lforms-demo.nlm.nih.gov">LForms</a> projects</a>.  The package
 includes an AngularJS directive, but can be used without Angular.</p>
 
-The package supports two basic types of autocompleters.  Autocompleters whose
+<p>The package supports two basic types of autocompleters.  Autocompleters whose
 lists are small enough to be fully specified at construction time are called
 "<b>Prefetch</b>", and are supported by autoCompPrefetch.js.  Autocompleters whose
 lists are shown in small, AJAX-retrieved chunks that match the user's input are
-called "<b>Search</b>", and are supported by autoCompSearch.js.
+called "<b>Search</b>", and are supported by autoCompSearch.js.</p>
+
+<p>Below are a few <a href="#demos">demos</a> to show off the <a
+href="#features">features</a> and the code to use them.</p>
 
   <!-- build:js dist/demo.min.js -->
     <script src="bower_components/prototypejs-bower/prototype.js"></script>
@@ -66,23 +69,23 @@ called "<b>Search</b>", and are supported by autoCompSearch.js.
     <script src="bower_components/jquery-ui/ui/dialog.js"></script>
 
     <!-- autocomplete-lhc files -->
-    <script src="bower_components/autocomplete-lhc/effectScroll.js"></script>
-    <script src="bower_components/autocomplete-lhc/event.simulate.js"></script>
-    <script src="bower_components/autocomplete-lhc/observable.js"></script>
-    <script src="bower_components/autocomplete-lhc/screenReaderLog.js"></script>
-    <script src="bower_components/autocomplete-lhc/recordDataRequester.js"></script>
-    <script src="bower_components/autocomplete-lhc/fieldAlarms.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/effectScroll.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/event.simulate.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/observable.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/screenReaderLog.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/recordDataRequester.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/fieldAlarms.js"></script>
     <script src="bower_components/autocomplete-lhc/soundmanager/bonk.js"></script>
-    <script src="bower_components/autocomplete-lhc/dialog.js"></script>
-    <script src="bower_components/autocomplete-lhc/autoCompBase.js"></script>
-    <script src="bower_components/autocomplete-lhc/suggestionDialog.js"></script>
-    <script src="bower_components/autocomplete-lhc/autoCompPrefetch.js"></script>
-    <script src="bower_components/autocomplete-lhc/autoCompSearch.js"></script>
-    <script src="bower_components/autocomplete-lhc/autoCompEvents.js"></script>
-    <script src="bower_components/autocomplete-lhc/phr-autocomplete.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/dialog.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autoCompBase.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/suggestionDialog.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autoCompPrefetch.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autoCompSearch.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autoCompEvents.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autocomplete-lhc.js"></script>
   <!-- endbuild -->
 
-<h2>A Few Demos</h2>
+<h2><a id="demos"></a>A Few Demos</h2>
 
 A prefetch autocompleter that allows off-list items:
 <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
@@ -107,7 +110,9 @@ List items can have associated codes:
 List items can have headers (in prefetch lists):
 <!--#include file="../demos/demo7.html-plusSource" -->
 
-(Search list demos are still TBD).
+A search autocompleter searching medical conditions:
+<!--#include file="../demos/demo8.html-plusSource" -->
+
 
 <script>
   function showSource(e) {
@@ -122,7 +127,7 @@ List items can have headers (in prefetch lists):
 </script>
 
 
-<h2>Features:</h2>
+<h2><a id="features"></a>Features:</h2>
 
 <ol>
   <li>Section 508-compliant (i.e., accessible to screen readers)</li>

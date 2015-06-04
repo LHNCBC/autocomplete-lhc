@@ -42,15 +42,18 @@ extensive revisions and additions.  These were developed to meet the requirement
 href="https://lforms-demo.nlm.nih.gov">LForms</a> projects</a>.  The package
 includes an AngularJS directive, but can be used without Angular.</p>
 
-The package supports two basic types of autocompleters.  Autocompleters whose
+<p>The package supports two basic types of autocompleters.  Autocompleters whose
 lists are small enough to be fully specified at construction time are called
 "<b>Prefetch</b>", and are supported by autoCompPrefetch.js.  Autocompleters whose
 lists are shown in small, AJAX-retrieved chunks that match the user's input are
-called "<b>Search</b>", and are supported by autoCompSearch.js.
+called "<b>Search</b>", and are supported by autoCompSearch.js.</p>
+
+<p>Below are a few <a href="#demos">demos</a> to show off the <a
+href="#features">features</a> and the code to use them.</p>
 
   <script src="dist/demo.min.js"></script>
 
-<h2>A Few Demos</h2>
+<h2><a id="demos"></a>A Few Demos</h2>
 
 A prefetch autocompleter that allows off-list items:
 <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
@@ -179,7 +182,19 @@ new Def.Autocompleter.Prefetch(&#39;demo7&#39;, colors, opts);
 &lt;/script&gt;
     </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
-(Search list demos are still TBD).
+A search autocompleter searching medical conditions:
+<div class="demo"><input type="text" id="demo8">
+<script>
+new Def.Autocompleter.Search('demo8',
+  'https://lforms-service.nlm.nih.gov/conditions', {nonMatchSuggestions: false});
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo8&quot;&gt;
+&lt;script&gt;
+new Def.Autocompleter.Search(&#39;demo8&#39;,
+  &#39;https://lforms-service.nlm.nih.gov/conditions&#39;, {nonMatchSuggestions: false});
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
 
 <script>
   function showSource(e) {
@@ -194,7 +209,7 @@ new Def.Autocompleter.Prefetch(&#39;demo7&#39;, colors, opts);
 </script>
 
 
-<h2>Features:</h2>
+<h2><a id="features"></a>Features:</h2>
 
 <ol>
   <li>Section 508-compliant (i.e., accessible to screen readers)</li>

@@ -14,6 +14,6 @@
     "tests"
   ],
   "dependencies": {
-    "autocomplete-lhc": "^2"
+    "autocomplete-lhc": "^5"
   }
 }
