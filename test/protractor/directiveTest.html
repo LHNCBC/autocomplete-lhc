@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>autocomp-phr directive test</title>
-    <link href="/auto_completion.css" media="screen" rel="stylesheet" />
+    <title>autocomplete-lhc directive test</title>
+    <link href="/source/auto_completion.css" media="screen" rel="stylesheet" />
     <link href="/bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen"
      rel="stylesheet" />
     <style>
@@ -13,9 +13,7 @@
     <div ng-controller="testPageController">
       Prefetch CWE list with a default:
       <input name="list1" type="text"
-        ng-required="false"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal"
-        phr-autocomplete="list1Opts">
+        ng-required="false" ng-model="listFieldVal" autocomplete-lhc="list1Opts">
       <br>
       Selected code: <input readonly id="code" name="code" ng-model="listFieldVal.code">
       <p>
@@ -23,22 +21,22 @@
         Multi-select prefetch CNE list:
         <input name="list2" type="text" id="multiPrefetchCNE"
           ng-required="false" placeholder="Select or type a value"
-          ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal2"
-          phr-autocomplete="multilistOpts">
+          ng-model="listFieldVal2"
+          autocomplete-lhc="multilistOpts">
       </p>
       <p id="multiPrefetchCWESection">
           Multi-select prefetch CWE list:
           <input name="multiPrefetchCWE" id="multiPrefetchCWE" type="text"
           ng-required="false" placeholder="Select or type a value"
-          ng-model-options="{updateOn: 'change'}" ng-model="multiPrefetchCWEVal"
-          phr-autocomplete="multiPrefetchCWEOpts">
+          ng-model="multiPrefetchCWEVal"
+          autocomplete-lhc="multiPrefetchCWEOpts">
       </p>
       <p id="multiSearchCWESection">
           Multi-select search CWE list:
           <input name="multiSearchCWE" id="multiSearchCWE" type="text"
           ng-required="false" placeholder="Select or type a value"
-          ng-model-options="{updateOn: 'change'}" ng-model="multiSearchCWEVal"
-          phr-autocomplete="multiSearchCWEOpts">
+          ng-model="multiSearchCWEVal"
+          autocomplete-lhc="multiSearchCWEOpts">
       </p>
       <ul>Selected values from above:
         <li ng-repeat="item in multiSearchCWEVal track by item.text">{{item.text}}</li>
@@ -47,46 +45,45 @@
           Multi-select search CWE list with pre-populated model value:
          <input name="multiSearchCWEPrePop" id="multiSearchCWEPrePop" type="text"
           ng-required="false" placeholder="Select or type a value"
-          ng-model-options="{updateOn: 'change'}"
           ng-model="multiSearchCWEPrePopVal"
-          phr-autocomplete="multiSearchCWEOpts">
+          autocomplete-lhc="multiSearchCWEOpts">
       </p>
       <p>
       "Search" CNE list:
       <input name="list3" id="list3" type="text"
         ng-required="false" placeholder="Select or type a value"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal3"
-        phr-autocomplete="searchListOpts">
+        ng-model="listFieldVal3"
+        autocomplete-lhc="searchListOpts">
       <p>
       Search CWE list with suggestions:
       <input name="list4" id="list4" type="text"
         ng-required="false" placeholder="Select or type a value"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4"
-        phr-autocomplete="searchList4Opts">
+        ng-model="listFieldVal4"
+        autocomplete-lhc="searchList4Opts">
       <p>
       Search CWE list without suggestions:
       <input name="list4b" id="list4b" type="text"
         ng-required="false" placeholder="Select or type a value"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal4b"
-        phr-autocomplete="searchList4bOpts">
+        ng-model="listFieldVal4b"
+        autocomplete-lhc="searchList4bOpts">
       <p>
        Prefetch CWE list w/ pre-populated model value:
       <input name="list1b" type="text"
         ng-required="false"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal1b"
-        phr-autocomplete="list1Opts" id="list1b">
+        ng-model="listFieldVal1b"
+        autocomplete-lhc="list1Opts" id="list1b">
       <p>
        Prefetch CWE list (starting with empty field):
       <input name="list5" type="text"
         ng-required="false"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal5"
-        phr-autocomplete="list5Opts" id="list5">
+        ng-model="listFieldVal5"
+        autocomplete-lhc="list5Opts" id="list5">
       <p>
        Prefetch CNE list (starting with empty field):
       <input name="list6" type="text"
         ng-required="false"
-        ng-model-options="{updateOn: 'change'}" ng-model="listFieldVal6"
-        phr-autocomplete="list6Opts" id="list6">
+        ng-model="listFieldVal6"
+        autocomplete-lhc="list6Opts" id="list6">
        <p>
       <input name="nonlist" type="text">
     </div>
@@ -99,32 +96,31 @@
     <script src="/bower_components/jquery-ui/ui/widget.js"></script>
     <script src="/bower_components/jquery-ui/ui/button.js"></script>
     <script src="/bower_components/jquery-ui/ui/dialog.js"></script>
-    <script src="/dialog.js"></script>
-    <script src="/observable.js"></script>
-    <script src="/screenReaderLog.js"></script>
-    <script src="/recordDataRequester.js"></script>
-    <script src="/fieldAlarms.js"></script>
+    <script src="/source/dialog.js"></script>
+    <script src="/source/observable.js"></script>
+    <script src="/source/screenReaderLog.js"></script>
+    <script src="/source/recordDataRequester.js"></script>
+    <script src="/source/fieldAlarms.js"></script>
     <script src="/soundmanager/bonk.js"></script>
-    <script src="/autoCompBase.js"></script>
-    <script src="/suggestionDialog.js"></script>
-    <script src="/autoCompPrefetch.js"></script>
-    <script src="/autoCompSearch.js"></script>
-    <script src="/autoCompEvents.js"></script>
-    <script src="/effectScroll.js"></script>
-    <script src="/event.simulate.js"></script>
+    <script src="/source/autoCompBase.js"></script>
+    <script src="/source/suggestionDialog.js"></script>
+    <script src="/source/autoCompPrefetch.js"></script>
+    <script src="/source/autoCompSearch.js"></script>
+    <script src="/source/autoCompEvents.js"></script>
+    <script src="/source/effectScroll.js"></script>
+    <script src="/source/event.simulate.js"></script>
     <script src="/bower_components/angular/angular.js"></script>
-    <script src="/phr-autocomplete.js"></script>
+    <script src="/source/autocomplete-lhc.js"></script>
     <script src="/test/protractor/ajaxMock.js"></script>
     <script>
-      angular.module('someApp', ['someModule', 'autocompPhr']);
+      angular.module('someApp', ['someModule', 'autocompleteLhcMod']);
       var someMod = angular.module('someModule', []);
 
       someMod.controller('testPageController', ['$scope', function ($scope) {
         $scope.listFieldVal1b = {text: 'a pre-populated model value'};
 
         $scope.list1Opts = {
-          // source is the list of item data
-          source: [
+          listItems: [
             {text: 'Green', // label is the display string
              code: 'G' // item objects can contain any other data too
             },
@@ -134,7 +130,7 @@
         };
 
         $scope.multilistOpts = {
-          source: [
+          listItems: [
             {text: 'Green', // label is the display string
              code: 'G' // item objects can contain any other data too
             },
@@ -146,7 +142,7 @@
         };
 
         $scope.multiPrefetchCWEOpts = {
-          source: [
+          listItems: [
             {text: 'Green', code: 'G'},
             {text: 'Blue', code: 'B'},
             {text: 'Red', code: 'R'}
@@ -191,8 +187,7 @@
         };
 
         $scope.list5Opts = {
-          // source is the list of item data
-          source: [
+          listItems: [
             {text: 'Green', // label is the display string
              code: 'G' // item objects can contain any other data too
             },
@@ -201,7 +196,7 @@
         };
 
         $scope.list6Opts = {
-          source: [
+          listItems: [
             {text: 'Green', code: 'G'},
             {text: 'Blue', code: 'B'},
             {text: 'Red', code: 'R'}
