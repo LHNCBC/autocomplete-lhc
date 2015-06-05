@@ -18,6 +18,7 @@ var DirectivePage = function() {
   this.prefetchCWEBlank = $('#list5');
   this.prefetchCNEBlankSel = '#list6';
   this.prefetchCNEBlank = $(this.prefetchCNEBlankSel);
+  this.prefetchWithCodeDefault = $('#list7');
 
   // Multi-select CNE prefetch list
   var multiFieldID = 'multiPrefetchCNE';

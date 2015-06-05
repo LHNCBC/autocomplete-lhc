@@ -85,6 +85,12 @@
         ng-model="listFieldVal6"
         autocomplete-lhc="list6Opts" id="list6">
        <p>
+       Prefetch CNE list with a default specified by its code:
+      <input name="list7" type="text"
+        ng-required="false"
+        ng-model="listFieldVal7"
+        autocomplete-lhc="list7Opts" id="list7">
+       <p>
       <input name="nonlist" type="text">
     </div>
     <script src="/bower_components/prototypejs-bower/prototype.js"></script>
@@ -204,6 +210,13 @@
           matchListValue: true
         };
 
+        $scope.list7Opts = {
+          listItems: [
+            {text: 'Green', code: 'G'},
+            {text: 'Blue', code: 'B'}
+          ],
+          defaultValue: {code: 'G'}
+        };
      }]);
     </script>
   </body>

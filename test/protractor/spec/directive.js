@@ -22,6 +22,10 @@ describe('directive', function() {
   it('should not load the default item code and value when the model is already populated', function() {
     expect(dp.prePopElem.getAttribute("value")).toEqual('a pre-populated model value');
   });
+  it('should allow specification of the default by a code', function() {
+    expect(dp.prefetchWithCodeDefault.getAttribute('value')).toEqual('Green');
+  });
+
   it('should populate the model when an item is selected', function() {
     dp.inputElem.click();
     expect(dp.searchResults.isDisplayed()).toBeTruthy();

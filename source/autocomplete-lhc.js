@@ -22,7 +22,17 @@
 //    from the list.  If this is '*', an unlimited number can be selected.  When
 //    more than one item can be selected, selected items are stored in an array
 //    on the model (e.g., selectedVal becomes an array).
-// 3) Any other parameters used by the Def.Autocomp.Prefetch constructor defined in
+// 3) defaultVal - The default value for the field.  This setting also exists in
+//    the non-directive prefetch lists, but there are two differences here:
+//    a) defaultVal can either be one of the list item display strings (the
+//       "text" property), or it can be a hash like {code: 'AF-5'}, where "code" is
+//       a key on the list item object, and 'AF-5' is the value of that key
+//       to select the item as the default.  This is to allow the default value
+//       to be specified not just by the display string, but by other attributes
+//       of the list item object.
+//    b) the default list item is loaded into the field when the autocompletion
+//       is set up.
+// 4) Any other parameters used by the Def.Autocomp.Prefetch constructor defined in
 //    autoCompPrefetch.js.  (Look at the options parameter in the initialize method).
 //
 // For "search" lists, opts can contain:
@@ -59,12 +69,33 @@ if (typeof angular !== 'undefined') {
             var itemText = [];
             var itemTextToItem = {};
             var itemLabel;
+
+            // See if we have a default value, unless the model is already
+            // populated.
+            var defaultKey = null; // null means not using a default
+            var defaultValueSpec = autoOpts.defaultValue;
+            var defaultKeyVal = null; // the value in defaultValueSpec corresponding to defaultKey
+            if (defaultValueSpec !== undefined &&
+                (scope.modelData === undefined || scope.modelData === null)) {
+              if (typeof defaultValueSpec === 'string') {
+                defaultKey = 'text';
+                defaultKeyVal = defaultValueSpec;
+              }
+              else { // an object like {code: 'AL-23'}
+                defaultKey = Object.keys(defaultValueSpec)[0];
+                defaultKeyVal = defaultValueSpec[defaultKey];
+              }
+            }
+
             // "listItems" = list item data.
-            for (var i=0, len=autoOpts.listItems.length; i<len; ++i) {
+            var modelDefault = null;
+            for (var i=0, numItems=autoOpts.listItems.length; i<numItems; ++i) {
               var item = autoOpts.listItems[i];
               itemLabel = item.text;
               itemText[i] = itemLabel;
               itemTextToItem[itemLabel] = item;
+              if (defaultKey && item[defaultKey] === defaultKeyVal)
+                modelDefault = item;
             }
 
             var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, autoOpts);
@@ -101,12 +132,9 @@ if (typeof angular !== 'undefined') {
               });
             });
 
-            // if we have a default value, and if the model value is not already
-            // set, go ahead and select the default
-            if (autoOpts.defaultValue !== undefined &&
-                (scope.modelData === undefined || scope.modelData === null)) {
-              scope.modelData = itemTextToItem[autoOpts.defaultValue];
-            }
+            // If we have a default value, assign it to the model.
+            if (modelDefault !== null)
+              scope.modelData = modelDefault;
 
             return ac;
           }
