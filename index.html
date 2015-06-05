@@ -13,7 +13,7 @@
     <link href="dist/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen" rel="stylesheet" />
   </head>
 
-  <body>
+  <body ng-app="demoApp">
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
@@ -51,7 +51,9 @@ called "<b>Search</b>", and are supported by autoCompSearch.js.</p>
 <p>Below are a few <a href="#demos">demos</a> to show off the <a
 href="#features">features</a> and the code to use them.</p>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
   <script src="dist/demo.min.js"></script>
+
 
 <h2><a id="demos"></a>A Few Demos</h2>
 
@@ -195,6 +197,53 @@ new Def.Autocompleter.Search(&#39;demo8&#39;,
 &lt;/script&gt;
     </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
+A prefetch autocompleter via an AngularJS directive:
+<div class="demo"><script>
+  angular.module('demoApp', ['autocompleteLhcMod']).
+    controller('demoController', ['$scope', function($scope) {
+      // Set up the list items as data on the scope.  Base them
+      // on the dessertArray declared in the first demo.
+      var listItemData = [];
+      for (var i=0, len=dessertArray.length; i<len; ++i) {
+        // Each item's data is an object which will get stored on the
+        // input field's model (demo9Val, in this case) when the item is
+        // selected from the list.
+        listItemData.push({
+          text: dessertArray[i],  // the display string goes under "text"
+          otherItemData:  'anything else you want can be included in the object'
+        });
+      }
+      $scope.demo9ListOpts = {listItems: listItemData};
+    }]);
+</script>
+<div ng-controller="demoController">
+  <input type="text" id="demo9" ng-model="demo9Val"
+   autocomplete-lhc="demo9ListOpts">
+</div>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;script&gt;
+  angular.module(&#39;demoApp&#39;, [&#39;autocompleteLhcMod&#39;]).
+    controller(&#39;demoController&#39;, [&#39;$scope&#39;, function($scope) {
+      // Set up the list items as data on the scope.  Base them
+      // on the dessertArray declared in the first demo.
+      var listItemData = [];
+      for (var i=0, len=dessertArray.length; i&lt;len; ++i) {
+        // Each item&#39;s data is an object which will get stored on the
+        // input field&#39;s model (demo9Val, in this case) when the item is
+        // selected from the list.
+        listItemData.push({
+          text: dessertArray[i],  // the display string goes under &quot;text&quot;
+          otherItemData:  &#39;anything else you want can be included in the object&#39;
+        });
+      }
+      $scope.demo9ListOpts = {listItems: listItemData};
+    }]);
+&lt;/script&gt;
+&lt;div ng-controller=&quot;demoController&quot;&gt;
+  &lt;input type=&quot;text&quot; id=&quot;demo9&quot; ng-model=&quot;demo9Val&quot;
+   autocomplete-lhc=&quot;demo9ListOpts&quot;&gt;
+&lt;/div&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
 
 <script>
   function showSource(e) {
@@ -261,7 +310,6 @@ href="https://github.com/lhncbc/autocomplete-lhc/blob/master/LICENSE.md">LICENSE
         <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-
 
   </body>
 </html>
