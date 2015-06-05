@@ -244,6 +244,16 @@ A prefetch autocompleter via an AngularJS directive:
 &lt;/div&gt;
     </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
+A multi-select prefetch autocompleter:
+<div class="demo"><input type="text" id="demo10">
+<script>
+new Def.Autocompleter.Prefetch('demo10', dessertArray, {maxSelect: '*'});
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo10&quot;&gt;
+&lt;script&gt;
+new Def.Autocompleter.Prefetch(&#39;demo10&#39;, dessertArray, {maxSelect: &#39;*&#39;});
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
 <script>
   function showSource(e) {
