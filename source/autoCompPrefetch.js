@@ -130,6 +130,11 @@
      *     case the list element might be unusually short.
      *     Note:  At present the only tested cases of this parameter are the
      *     default value and null.</li>
+     *    <li>headerBar - If the page has a fixed-position element at the top of
+     *     the page (e.g. a top navigation bar), the autocompleter needs to know
+     *     that so that when scrolling to show the list it doesn't scroll the current
+     *     field under the header bar.  This is the element ID for such a header
+     *     bar.</li>
      *  </ul>
      */
     initialize: function(id, listItems, options) {

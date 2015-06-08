@@ -446,6 +446,11 @@ if (typeof Def === 'undefined')
      *    <li>nonMatchSuggestions - (default: true) Whether the user should be
      *     given a list of suggestions if they enter a non-matching value.
      *     This only applies when matchListValue is false.</li>
+     *    <li>headerBar - If the page has a fixed-position element at the top of
+     *     the page (e.g. a top navigation bar), the autocompleter needs to know
+     *     that so that when scrolling to show the list it doesn't scroll the current
+     *     field under the header bar.  This is the element ID for such a header
+     *     bar.</li>
      *  </ul>
      */
     defAutocompleterBaseInit: function(options) {
@@ -1363,7 +1368,7 @@ if (typeof Def === 'undefined')
               bottomOfListContainer - maxListContainerBottom;
             var elementBoundingRect = element.getBoundingClientRect();
             var elementTop = elementBoundingRect.top;
-            var headerBar = $('fe_form_header_0_expcol'); // TBD - See LF-145
+            var headerBar = jQuery('#'+this.constructorOpts_.headerBar)[0];
             var topNavBarHeight = headerBar ? headerBar.offsetHeight : 0;
 
             var maxScroll;
@@ -1378,7 +1383,7 @@ if (typeof Def === 'undefined')
             if (scrollDownAmount > maxScroll) {
               scrollDownAmount = maxScroll;
               // Also constrain the height of the list, so the bottom is on the page
-              // The maximum allowable space is the viewport hieght minus the field
+              // The maximum allowable space is the viewport height minus the field
               // height minus the top nav bar height minus the part of the list
               // container that is not for list items (e.g. "See more results")).
               this.setListHeight(viewPortHeight - elementTop - topNavBarHeight);
