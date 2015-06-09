@@ -1,0 +1,22 @@
+<script>
+  angular.module('demoApp', ['autocompleteLhcMod']).
+    controller('demoController', ['$scope', function($scope) {
+      // Set up the list items as data on the scope.  Base them
+      // on the dessertArray declared in the first demo.
+      var listItemData = [];
+      for (var i=0, len=dessertArray.length; i<len; ++i) {
+        // Each item's data is an object which will get stored on the
+        // input field's model (demo9Val, in this case) when the item is
+        // selected from the list.
+        listItemData.push({
+          text: dessertArray[i],  // the display string goes under "text"
+          otherItemData:  'anything else you want can be included in the object'
+        });
+      }
+      $scope.demo9ListOpts = {listItems: listItemData};
+    }]);
+</script>
+<div ng-controller="demoController">
+  <input type="text" id="demo9" ng-model="demo9Val"
+   autocomplete-lhc="demo9ListOpts">
+</div>
