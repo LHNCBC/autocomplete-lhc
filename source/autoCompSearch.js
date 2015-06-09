@@ -207,6 +207,11 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *    <li>nonMatchSuggestions - (default: true) Whether the user should be
      *     given a list of suggestions if they enter a non-matching value.
      *     This only applies when matchListValue is false.</li>
+     *    <li>headerBar - If the page has a fixed-position element at the top of
+     *     the page (e.g. a top navigation bar), the autocompleter needs to know
+     *     that so that when scrolling to show the list it doesn't scroll the current
+     *     field under the header bar.  This is the element ID for such a header
+     *     bar.</li>
      *  </ul>
      */
     initialize: function(fieldID, url, options) {

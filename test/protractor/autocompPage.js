@@ -9,7 +9,8 @@ var AutocompPage = function() {
   this.prefetchCNEFieldName = 'race_or_ethnicity';
   this.prefetchCNE = $('#'+this.prefetchCNEFieldName);
 
-  this.longOddCNE = $('#long_odd_cne');
+  this.longOddCNECSS = '#long_odd_cne';
+  this.longOddCNE = $(this.longOddCNECSS);
   this.longOddCNENoScrollCSS = '#long_odd_cne_no_scroll';
   this.longOddCNENoScroll = $(this.longOddCNENoScrollCSS);
   this.prefetchCWEID = 'prefetch_cwe';  // single-select
