@@ -51,4 +51,48 @@ describe('autocomp scroll function', function() {
       })
     });
   });
+
+
+  it('should scroll as much as possible when the list is large', function() {
+    po.openTestPage();
+    browser.manage().window().setSize(1100, 460);
+    // Test that when the long list is expanded, the field gets scrolled up to
+    // the top of the window.
+    po.multiHeadingCWE.click();
+    po.multiHeadingCWE.sendKeys(protractor.Key.CONTROL, protractor.Key.ENTER);
+    // Here we take the difference between the field's container (which
+    // holds the selected item list) and the page's scrollTop.  It should be
+    // zero, meaning that the page was scrolled up as far as we allow.
+    var positionTest =
+        'return jQuery("#'+po.multiHeadingCWEID+ '")[0].parentNode.offsetTop - '+
+        '(document.body.scrollTop || document.documentElement.scrollTop) === 0';
+
+    // The scrolling takes place over about 0.5s, so wait a bit for it.
+    browser.driver.wait(
+      function() {
+        return browser.driver.executeScript(positionTest);
+      },
+      5000
+    );
+    expect(browser.driver.executeScript(positionTest)).toBeTruthy();
+  });
+
+
+  it('should stop scrolling if the field blurs', function () {
+    // The reason for this is that if the page is being scrolled for field A,
+    // and the user clicks in field B, field B might get scrolled out of view.
+    // To test for this, we repeat the events in
+    // 'should scroll as much as possible when the list is large'
+    // in which the field was scrolled to the top, but shift-tab to the previous
+    // field before the scrolling is done.
+    po.openTestPage();
+    browser.manage().window().setSize(1100, 460);
+    po.multiHeadingCWE.click();
+    po.multiHeadingCWE.sendKeys(protractor.Key.CONTROL, protractor.Key.ENTER);
+    // Now shift-tab to previous field
+    po.multiHeadingCWE.sendKeys(protractor.Key.SHIFT, protractor.Key.TAB);
+    // Confirm the event was canceled
+    expect(browser.driver.executeScript('return jQuery("#'+po.multiHeadingCWEID+
+      '")[0].autocomp.lastScrollEffect_.state === "finished"')).toBeTruthy();
+  });
 });
