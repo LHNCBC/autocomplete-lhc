@@ -1303,7 +1303,10 @@ if (typeof Def === 'undefined')
      *  always below the field.
      */
     posListBelowFieldInMultiCol: function() {
-      var element = this.element;
+      // Set "element" to the container of the element and the selected list
+      // when this is a multi-select list, so that when the list is scrolled
+      // into view, the selected items remain visible.
+      var element = this.multiSelect_ ? this.element.parentNode : this.element;
       var update = this.update;
       update.style.height = '';  // Turn off height setting, if any
 
@@ -1354,10 +1357,12 @@ if (typeof Def === 'undefined')
         // If the multi-column list is still not on the page, try scrolling the
         // page down (making the list go up).
         if (!tryMultiColumn || bottomOfListContainer > maxListContainerBottom) {
+          var elementBoundingRect = element.getBoundingClientRect();
           if (!scrolledContainer) {
             // If we can't scroll the list into view, just constrain the height so
             // the list is visible.
-            this.setListHeight(window.innerHeight - element.getBoundingClientRect().bottom);
+            var elementRect =
+            this.setListHeight(window.innerHeight - elementBoundingRect.bottom);
           }
           else {
             // Cancel any active scroll effect
@@ -1366,7 +1371,6 @@ if (typeof Def === 'undefined')
 
             var scrollDownAmount =
               bottomOfListContainer - maxListContainerBottom;
-            var elementBoundingRect = element.getBoundingClientRect();
             var elementTop = elementBoundingRect.top;
             var headerBar = jQuery('#'+this.constructorOpts_.headerBar)[0];
             var topNavBarHeight = headerBar ? headerBar.offsetHeight : 0;
@@ -1386,7 +1390,7 @@ if (typeof Def === 'undefined')
               // The maximum allowable space is the viewport height minus the field
               // height minus the top nav bar height minus the part of the list
               // container that is not for list items (e.g. "See more results")).
-              this.setListHeight(viewPortHeight - elementTop - topNavBarHeight);
+              this.setListHeight(viewPortHeight - elementBoundingRect.height - topNavBarHeight);
               bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
             }
 
@@ -1726,6 +1730,10 @@ if (typeof Def === 'undefined')
         Def.Autocompleter.completionOptionsScrollerClicked_ = false;
       }
       else {
+        // Cancel any active scroll effect
+        if (this.lastScrollEffect_)
+          this.lastScrollEffect_.cancel();
+
         // If the user did not type in the field but the value is different from the
         // value when the field was focused (such as via down arrow or a click)
         // we need to simulate the change event.
