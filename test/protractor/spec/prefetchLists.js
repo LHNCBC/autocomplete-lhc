@@ -30,5 +30,13 @@ describe('Prefetch lists', function() {
     expect(po.shownItemCount()).toBe(3);
     expect(po.firstSearchRes.getText()).toEqual('1:  Spanish');
   });
+
+  it('should allow selection by number', function() {
+    po.openTestPage();
+    po.prefetchCWE.click();
+    po.prefetchCWE.sendKeys('2');
+    expect(po.shownItemCount()).toBe(1);
+    expect(po.firstSearchRes.getText()).toEqual('2:  French');
+  });
 });
 
