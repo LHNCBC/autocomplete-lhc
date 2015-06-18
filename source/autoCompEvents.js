@@ -13,7 +13,9 @@
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
      *  that are related for which the callback should receive notifications.
-     * @param callback the function to be called when the list is expanded.
+     *  This can be null, in which case the function will be called for every
+     *  event of this kind, regardless of the field for which it occurred.
+     * @param callback the function to be called when the event occurs.
      *  The function will be called with the argument
      *  {list_expansion_method: 'CtrlRet'} if it was expanded with the keyboard,
      *  and {list_expansion_method: 'clicked'} if it was expanded with
@@ -32,7 +34,9 @@
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
      *  that are related for which the callback should receive notifications.
-     * @param callback the function to be called when the list is expanded.
+     *  This can be null, in which case the function will be called for every
+     *  event of this kind, regardless of the field for which it occurred.
+     * @param callback the function to be called when the event occurs.
      *  The function will be called with a hash argument with the following keys:
      *  1) val_typed_in (what the user actually typed in);
      *  2) final_val (the final value for the field);
@@ -64,7 +68,7 @@
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
      *  that are related for which the callback should receive notifications.
-     * @param callback the function to be called when the list is expanded.
+     * @param callback the function to be called when the event occurs.
      *  The function will be called with an the following argument:
      *  - start_val (the value already in the field)
      */
@@ -81,7 +85,7 @@
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
      *  that are related for which the callback should receive notifications.
-     * @param callback the function to be called when the list is expanded.
+     * @param callback the function to be called when the event occurs.
      *  The function will be called with an the following argument:
      *  - restored_value (the value that was restored to the field)
      */
@@ -98,7 +102,7 @@
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
      *  that are related for which the callback should receive notifications.
-     * @param callback the function to be called when the list is expanded.
+     * @param callback the function to be called when the event occurs.
      *  The function will be called with an the following argument:
      *  - suggestion_list (an array of the values in the list shown to the user,
      *    or an empty array if no suggestions were found)
@@ -116,7 +120,7 @@
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
      *  that are related for which the callback should receive notifications.
-     * @param callback the function to be called when the list is expanded.
+     * @param callback the function to be called when the event occurs.
      */
     observeSuggestionUsed: function(fieldKey, callback) {
       this.storeCallback(fieldKey, 'SUGGESTION_USED', callback);
@@ -132,7 +136,7 @@
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
      *  that are related for which the callback should receive notifications.
-     * @param callback the function to be called when the list is expanded.
+     * @param callback the function to be called when the event occurs.
      */
     observeListAssignments: function(fieldKey, callback) {
       this.storeCallback(fieldKey, 'LIST_ASSIGNMENT', callback);
