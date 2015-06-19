@@ -38,5 +38,23 @@ describe('Prefetch lists', function() {
     expect(po.shownItemCount()).toBe(1);
     expect(po.firstSearchRes.getText()).toEqual('2:  French');
   });
+
+  it('should still show the list when there is a default', function() {
+    // If the user tabs to a field with a default value, the list should be
+    // open.
+    po.openTestPage();
+    // Start at the field prior to the field with the default.
+    po.prefetchCWE.click();
+    // Check that the field with the default is blank
+    expect(po.prefetchWithDefault.getAttribute('value')).toBe('');
+
+    // Tab into it
+    po.prefetchCWE.sendKeys(protractor.Key.TAB);
+    expect(po.prefetchWithDefault.getAttribute('value')).toBe('French');
+    // Check that the list is showing by trying to get the text of the first
+    // search result.  Protractor won't let us see the first result if the list
+    // is hidden.
+    expect(po.firstSearchRes.getText()).toEqual('1:  Spanish');
+  });
 });
 
