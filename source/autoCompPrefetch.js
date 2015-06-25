@@ -505,6 +505,7 @@
     setFieldToListValue: function(newVal) {
       var field = this.element;
       field.value = newVal;
+      this.fieldValIsListVal_ = true;
       this.storeSelectedItem();
       // Set this value as the "unedited value", so that when we send a change
       // event below, the autocompleter does not try to select the value from the
@@ -518,8 +519,6 @@
       this.setMatchStatusIndicator(true);
       this.setInvalidValIndicator(false);
       this.propagateFieldChanges();
-
-      Element.simulate(field, 'change');
     },
 
 
@@ -781,10 +780,14 @@
           this.index = this.getInitialSelectionIndex(); // for field defaults
           // Also put the value at "index" in the field
           if (this.index >= 0) {
-            this.selectEntry();
+            this.setFieldToListValue(this.listItemValue(this.getCurrentEntry()));
+//            this.selectEntry();
             this.element.select(); // select the text
-            // Simulate a change event (e.g. so that rules can run)
-            Element.simulate(this.element, 'change');
+            // selectEntry above will send a list selection event, so there is
+            // no need to do that here.
+            // selectEntry hides the list.  Call render to highlight the default
+            // item and show the list.
+            this.render(); // to highlight the entered item
           }
 
           this.focusInProgress_ = false;
@@ -798,7 +801,7 @@
      *  it.  This used to be a part of onFocus.
      */
     maybeShowList: function() {
-      this.activate();  // determines what is in the list
+      this.activate();  // determines what is in the list (and resets the index)
       this.render(); // marks which item is selected
 
       //show the list based on following rules.

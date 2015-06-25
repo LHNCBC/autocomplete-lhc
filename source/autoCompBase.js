@@ -1157,7 +1157,7 @@ if (typeof Def === 'undefined')
                 // Use the first non-heading entry (whose number should match what was typed)
                 // as the default
                 this.index = 0;
-                for(; this.liIsHeading(this.getCurrentItem()) &&
+                for(; this.liIsHeading(this.getCurrentEntry()) &&
                        this.index < this.entryCount; ++this.index);
               }
               else if (this.entryCount > 1 && !this.numHeadings_) {
