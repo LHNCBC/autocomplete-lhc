@@ -22,9 +22,9 @@
 //    from the list.  If this is '*', an unlimited number can be selected.  When
 //    more than one item can be selected, selected items are stored in an array
 //    on the model (e.g., selectedVal becomes an array).
-// 3) defaultVal - The default value for the field.  This setting also exists in
+// 3) defaultValue - The default value for the field.  This setting also exists in
 //    the non-directive prefetch lists, but there are two differences here:
-//    a) defaultVal can either be one of the list item display strings (the
+//    a) defaultValue can either be one of the list item display strings (the
 //       "text" property), or it can be a hash like {code: 'AF-5'}, where "code" is
 //       a key on the list item object, and 'AF-5' is the value of that key
 //       to select the item as the default.  This is to allow the default value
