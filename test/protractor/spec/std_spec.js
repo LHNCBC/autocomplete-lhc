@@ -179,4 +179,19 @@ describe('autocomp', function() {
     expect(po.multiHeadingCWE.getAttribute('value')).toBe('Chocolate');
   });
 
+
+  it('should support the twoColumnFlow option', function() {
+    po.openTestPage();
+    po.headings1ColCWE.click();
+    // Move to first item past heading (second item)
+    po.headings1ColCWE.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
+    expect(po.headings1ColCWE.getAttribute('value')).toBe('Chocolate');
+    // In a two column list, the right arrow key would move to a different item.
+    // Confirmat that it does not.
+    po.headings1ColCWE.sendKeys(protractor.Key.ARROW_RIGHT);
+    expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
+    expect(po.headings1ColCWE.getAttribute('value')).toBe('Chocolate');
+  });
+
 });

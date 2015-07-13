@@ -45,6 +45,9 @@ var AutocompPage = function() {
   this.multiHeadingCWESelected =
     element.all(by.css(multiHeadingCWESectionCSS + ' button'));
 
+  // CWE prefetch list with headings without two-column flow
+  this.headings1ColCWE = $('#headings_1col_cwe');
+
   this.openTestPage = function() {
     browser.get('http://localhost:'+config.port+
       '/test/protractor/autocomp_atr.html');

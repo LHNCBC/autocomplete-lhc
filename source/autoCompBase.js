@@ -451,6 +451,8 @@ if (typeof Def === 'undefined')
      *     that so that when scrolling to show the list it doesn't scroll the current
      *     field under the header bar.  This is the element ID for such a header
      *     bar.</li>
+     *    <li>twoColumnFlow - (default: true) Whether to allow long lists to
+     *     flow into two columns to show more of the list on the page.</li>
      *  </ul>
      */
     defAutocompleterBaseInit: function(options) {
@@ -458,6 +460,10 @@ if (typeof Def === 'undefined')
         options = {};
       if (options['suggestionMode'] !== undefined)
         this.suggestionMode_ = options['suggestionMode'];
+
+      this.twoColumnFlow_ = options.twoColumnFlow;
+      if (this.twoColumnFlow_ === undefined)
+        this.twoColumnFlow_ = true;
 
       if (options.maxSelect === undefined)
         options.maxSelect = 1;
@@ -1334,7 +1340,7 @@ if (typeof Def === 'undefined')
       // If this list is not completely on the page, try making it a multi-column
       // list.
       if (bottomOfListContainer > maxListContainerBottom) {
-        var tryMultiColumn = this.entryCount > 4; // otherwise it's too short
+        var tryMultiColumn = this.twoColumnFlow_ && this.entryCount > 4; // otherwise it's too short
         if (tryMultiColumn) {
           // Try as a multi column list
           var firstEntry = this.getEntry(0);
