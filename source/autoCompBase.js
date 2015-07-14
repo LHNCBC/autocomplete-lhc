@@ -226,6 +226,10 @@ if (typeof Def === 'undefined')
         });
 
         Event.observe('completionOptionsScroller', 'mousedown', function(event) {
+          // Here is a work-around for an IE-only issue in which if you use the scrollbar
+          // on the list, the field gets a blur event (and maybe a change event
+          // as well.)  For IE, we set things to refocus the field and to ignore
+          // the change, blur, and focus events.
           if (Def.Autocompleter.isIE && event.target.id === 'completionOptionsScroller') {
             Event.stop(event);
             event.stopImmediatePropagation();
