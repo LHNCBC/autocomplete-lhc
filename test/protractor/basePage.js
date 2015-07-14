@@ -8,6 +8,7 @@ function BasePage() {
   this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion
   this.suggestionDialog = element(by.css('.ui-dialog'));
   this.suggestionDialogClose = element(by.css('.ui-dialog button'));
+  this.completionOptionsScroller = $('#completionOptionsScroller');
 
   /**
    *  Returns the list item in the search results list at the given position
