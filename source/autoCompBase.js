@@ -9,9 +9,18 @@ if (typeof Def === 'undefined')
 
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  // A test for IE, borrowed from PrototypeJS -- and modified.
+  var isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
+  var isIE = !!window.attachEvent && !isOpera || navigator.userAgent.indexOf('Trident') >= 0;
+
   Def.Autocompleter = { // Namespace for DEF autocompletion stuff
     // Variables related to autocompleters but independent of any particular
     // autocompleter go here.
+
+    /**
+     *  True if the browser is IE.
+     */
+    isIE: isIE,
 
     /**
      *  A variable to keep track of which autocomplete text field is using the
@@ -217,12 +226,10 @@ if (typeof Def === 'undefined')
         });
 
         Event.observe('completionOptionsScroller', 'mousedown', function(event) {
-console.log("%%% in base completionOptionsScroller observer, clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
-          if (event.target.id === 'completionOptionsScroller') {
+          if (Def.Autocompleter.isIE && event.target.id === 'completionOptionsScroller') {
             Event.stop(event);
             event.stopImmediatePropagation();
             Def.Autocompleter.completionOptionsScrollerClicked_ = true;
-console.log("%%% B: in base completionOptionsScroller observer, clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
             if ($(Def.Autocompleter.currentAutoCompField_) != -1) {
               var field = $(Def.Autocompleter.currentAutoCompField_);
               setTimeout(function(){field.focus()}, 1);
@@ -1370,7 +1377,7 @@ console.log("%%% B: in base completionOptionsScroller observer, clicked="+Def.Au
             // If we can't scroll the list into view, just constrain the height so
             // the list is visible.
             var elementRect =
-            this.setListHeight(window.innerHeight - elementBoundingRect.bottom);
+              this.setListHeight(window.innerHeight - elementBoundingRect.bottom);
           }
           else {
             // Cancel any active scroll effect
@@ -1718,7 +1725,6 @@ console.log("%%% B: in base completionOptionsScroller observer, clicked="+Def.Au
      * @param event the DOM event object for the change event
      */
     onChange: function(event) {
-console.log("%%% in base onChange clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
       if (!Def.Autocompleter.completionOptionsScrollerClicked_) {
         // We used to only process the change if this.enabled_ was true.  However,
         // if the list field is changed by a RecordDataRequester, it will not
@@ -1734,12 +1740,8 @@ console.log("%%% in base onChange clicked="+Def.Autocompleter.completionOptionsS
      * @param event the DOM event object for the blur event
      */
     onBlur: function(event) {
-console.log("%%% in base onBlur clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
       // Ignore blur events on the completionOptionsScroller.
-      if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
-        Def.Autocompleter.completionOptionsScrollerClicked_ = false;
-      }
-      else {
+      if (!Def.Autocompleter.completionOptionsScrollerClicked_) {
         // Cancel any active scroll effect
         if (this.lastScrollEffect_)
           this.lastScrollEffect_.cancel();
@@ -1822,8 +1824,6 @@ console.log("%%% in base onBlur clicked="+Def.Autocompleter.completionOptionsScr
      * @param event the DOM event object for the focus event
      */
     onFocus: function(event) {
-console.log("%%% in base onFocus clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
-console.trace();
       Def.Autocompleter.currentAutoCompField_ = this.element.id;
       this.valueOnChange_ = Def.Autocompleter.getFieldVal(this.element);
       if (!this.refocusInProgress_)
@@ -1853,7 +1853,6 @@ console.trace();
      * @param event the DOM event object for the mouse event
      */
     onMouseDown: function(event) {
-console.log("%%% in base onMouseDown clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
       // Only process the event if the item is not a heading, but in all cases
       // stop the event so that the list stays open and the field retains focus.
       Event.stop(event);
