@@ -217,10 +217,12 @@ if (typeof Def === 'undefined')
         });
 
         Event.observe('completionOptionsScroller', 'mousedown', function(event) {
+console.log("%%% in base completionOptionsScroller observer, clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
           if (event.target.id === 'completionOptionsScroller') {
             Event.stop(event);
             event.stopImmediatePropagation();
             Def.Autocompleter.completionOptionsScrollerClicked_ = true;
+console.log("%%% B: in base completionOptionsScroller observer, clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
             if ($(Def.Autocompleter.currentAutoCompField_) != -1) {
               var field = $(Def.Autocompleter.currentAutoCompField_);
               setTimeout(function(){field.focus()}, 1);
@@ -1716,6 +1718,7 @@ if (typeof Def === 'undefined')
      * @param event the DOM event object for the change event
      */
     onChange: function(event) {
+console.log("%%% in base onChange clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
       if (!Def.Autocompleter.completionOptionsScrollerClicked_) {
         // We used to only process the change if this.enabled_ was true.  However,
         // if the list field is changed by a RecordDataRequester, it will not
@@ -1731,6 +1734,7 @@ if (typeof Def === 'undefined')
      * @param event the DOM event object for the blur event
      */
     onBlur: function(event) {
+console.log("%%% in base onBlur clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
       // Ignore blur events on the completionOptionsScroller.
       if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
         Def.Autocompleter.completionOptionsScrollerClicked_ = false;
@@ -1818,6 +1822,8 @@ if (typeof Def === 'undefined')
      * @param event the DOM event object for the focus event
      */
     onFocus: function(event) {
+console.log("%%% in base onFocus clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
+console.trace();
       Def.Autocompleter.currentAutoCompField_ = this.element.id;
       this.valueOnChange_ = Def.Autocompleter.getFieldVal(this.element);
       if (!this.refocusInProgress_)
@@ -1847,6 +1853,7 @@ if (typeof Def === 'undefined')
      * @param event the DOM event object for the mouse event
      */
     onMouseDown: function(event) {
+console.log("%%% in base onMouseDown clicked="+Def.Autocompleter.completionOptionsScrollerClicked_);
       // Only process the event if the item is not a heading, but in all cases
       // stop the event so that the list stays open and the field retains focus.
       Event.stop(event);
