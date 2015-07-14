@@ -176,8 +176,8 @@
       // The base class sets up one for a "blur" event.
 
       this.onMouseMoveListener = this.onMouseMove.bindAsEventListener(this);
-      this.defAutocompleterBaseInit(options);
       this.initHeadings(options);
+      this.defAutocompleterBaseInit(options);
       var codes = options['codes'];
       this.setList(listItems, codes);
       this.listIsOriginal_ = true; // reset this after calling setList
