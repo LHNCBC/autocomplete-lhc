@@ -4,7 +4,7 @@ var po = require('../autocompPage.js');
 
 describe('CNE lists', function() {
   var cneList = $('#fe_multi_sel_cne');
-/*
+
   it('should warn user about invalid values', function() {
     po.openTestPage();
     expect(hasClass(cneList, 'no_match')).toBe(false);
@@ -99,7 +99,7 @@ describe('CNE lists', function() {
           ).toBe(false);
   });
 
-*/
+
   it('should accept a valid value when the user erases extra characters',
       function() {
     // This tests for bug LF-185, in which if you start with a valid field

@@ -425,6 +425,18 @@ if (typeof Def === 'undefined')
      */
     listExtraData_: null,
 
+    /**
+     *  The last value we tried to handle as a data entry, valid or not.
+     */
+    processedFieldVal_: null,
+
+    /**
+     *  The most recent field value which was not invalid.  For CWE fields, this
+     *  will just be last value entered, and will equal procesesdFieldVal.  For
+     *  CNE fields, it will be the last good value before processedFieldVal_.
+     */
+    lastValidValue_: '',
+
 
     /**
      *  An initialization method for the base Def.Autocompleter class.  This
@@ -664,7 +676,8 @@ if (typeof Def === 'undefined')
     moveEntryToSelectedArea: function() {
       var escapedVal = this.addToSelectedArea(this.element.value);
       this.element.value = '';
-      this.uneditedValue = '';
+      this.processedFieldVal_ = '';
+      this.lastValidVal_ = this.processedFieldVal_;
       Def.Autocompleter.screenReaderLog('Selected '+escapedVal);
       if (this.index >= 0) { // i.e. if it is a list item
         // Delete selected item
@@ -1617,7 +1630,8 @@ if (typeof Def === 'undefined')
             this.listSelectionNotification(valTyped, true);
 
           // Now continue with the processing of the selection.
-          this.uneditedValue = this.element.value;
+          this.processedFieldVal_ = Def.Autocompleter.getFieldVal(this.element);
+          this.lastValidVal_ = this.processedFieldVal_;
           this.setMatchStatusIndicator(true);
           this.setInvalidValIndicator(false);
           this.propagateFieldChanges();
@@ -1664,12 +1678,14 @@ if (typeof Def === 'undefined')
       // Blank values should not look different than values that haven't been
       // filled in.  They are okay-- at least until a submit, at which point
       // blank required fields will be brought to the user's attention.
+      var fieldVal = Def.Autocompleter.getFieldVal(this.element);
       if (Def.Autocompleter.getFieldVal(this.element) === '') {
         this.setMatchStatusIndicator(true);
         this.setInvalidValIndicator(false);
         // Send a list selection event for this case.
         if (Def.Autocompleter.Event.callbacks_ !== null)
           this.listSelectionNotification('', false);
+        this.lastValidVal_ = this.processedFieldVal_ = fieldVal;
       }
       else {
         if (this.enabled_) // i.e. if there is a list that should be matched
@@ -1685,6 +1701,7 @@ if (typeof Def === 'undefined')
           // processed.  Waiting the smallest amount of time should be sufficient
           // to push this after the pending events.
           this.refocusInProgress_ = true;
+          this.processedFieldVal_ = fieldVal;
           setTimeout(function() {
             this.element.focus();
             this.element.select(); // select the text
@@ -1702,7 +1719,9 @@ if (typeof Def === 'undefined')
             this.listSelectionNotification(this.getValTyped(), false);
           this.selectedItems_[this.element.value] = 1;
           if (this.multiSelect_)
-            this.moveEntryToSelectedArea();
+            this.moveEntryToSelectedArea(); // resets processedFieldVal_ & lastValidVal_
+          else
+            this.lastValidVal_ = this.processedFieldVal_ = fieldVal;
 
           // See if we can find some suggestions for what the user typed.
           // For now, we do not support suggestions for multiselect lists.
@@ -1754,7 +1773,7 @@ if (typeof Def === 'undefined')
         // value when the field was focused (such as via down arrow or a click)
         // we need to simulate the change event.
         var elemVal = Def.Autocompleter.getFieldVal(this.element);
-        if (elemVal !== this.valueOnChange_)
+        if (elemVal !== this.processedFieldVal_)
           Element.simulate(this.element, 'change');
 
         if (this.enabled_ &&
@@ -1817,9 +1836,9 @@ if (typeof Def === 'undefined')
       this.setMatchStatusIndicator(true);
       // If the field was not originally blank, send a list selection
       // event.
-      if (this.uneditedValue !== '')
+      if (this.lastValidVal_ !== '')
         this.listSelectionNotification('', false);
-      this.uneditedValue = ''; // otherwise onChange might send another notification
+      this.lastValidVal_ = this.processedFieldVal_ = '';
     },
 
 
@@ -1829,14 +1848,16 @@ if (typeof Def === 'undefined')
      */
     onFocus: function(event) {
       Def.Autocompleter.currentAutoCompField_ = this.element.id;
-      this.valueOnChange_ = Def.Autocompleter.getFieldVal(this.element);
+      // Don't update processedFieldVal_ if we are refocusing due to an invalid
+      // value.  processedFieldVal_ should retain the last non-invalid value in
+      // the field.
       if (!this.refocusInProgress_)
-        this.uneditedValue = this.valueOnChange_;
+        this.lastValidVal_ = this.processedFieldVal_ = Def.Autocompleter.getFieldVal(this.element);
 
       this.refocusInProgress_ = false;
       this.preFieldFillVal_ = null;
       Def.Autocompleter.Event.notifyObservers(this.element, 'FOCUS',
-        {start_val: this.uneditedValue});
+        {start_val: this.processedFieldVal_});
 
       // If this is a multi-select list, announce any items in the selected
       // area.
@@ -1877,7 +1898,7 @@ if (typeof Def === 'undefined')
      * @param event the DOM event signaling the data entry
      */
     handleDataEntry: function(event) {
-      if (this.invalidStatus_ && this.valueOnChange_ === this.element.value)
+      if (this.invalidStatus_ && this.processedFieldVal_ === this.element.value)
         this.clearInvalidFieldVal();
       else {
         // If there was a pending autocompletion event (key event) clear it so we
@@ -1896,24 +1917,18 @@ if (typeof Def === 'undefined')
         // not have changed.  It can remain blank while the enter is pressed
         // repeatedly.
         var selectionSucceeded = false;
-        if (this.uneditedValue !== elemVal && elemVal !== '')
+        if (this.processedFieldVal_ !== elemVal && elemVal !== '')
           selectionSucceeded = this.attemptSelection();
         else if (this.multiSelect_ && elemVal === '' && this.index >= 0)
           selectionSucceeded = this.attemptSelection();
 
         // If the value changed but we couldn't select it from the list, treat
         // it as a non-list entry.
-        if (this.uneditedValue !== elemVal && !selectionSucceeded) {
+        if (this.processedFieldVal_ !== elemVal && !selectionSucceeded) {
           if (elemVal === "")
             this.fieldValIsListVal_ = false;
           this.handleNonListEntry();
         }
-
-        // Note that attemptSelection might have changed the element value, so
-        // we call getFieldVal again.
-        this.valueOnChange_ = Def.Autocompleter.getFieldVal(this.element);
-        if (!this.refocusInProgress_)  // if not refocusing (for an invalid value)
-          this.uneditedValue = this.valueOnChange_;
 
         if (!this.multiSelect_) {
           this.hide();

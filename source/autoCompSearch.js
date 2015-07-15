@@ -415,7 +415,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     fieldEventIsBigList: function(event) {
        return event.keyCode===Event.KEY_RETURN && (event.ctrlKey ||
            (!this.autocomp &&
-           this.element.value !== this.uneditedValue &&
+           this.element.value !== this.processedFieldVal_ &&
            this.element.value.trim() !== ''));
     },
 
@@ -940,9 +940,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       var listItems = this.suggestionList_[1];
       var valTyped = this.element.value;
       this.element.value = listItems[index];
-      // Mark the field as having a valid value, and reset uneditedValue.
+      // Mark the field as having a valid value, and reset processedFieldVal_.
       this.setMatchStatusIndicator(true);
-      this.uneditedValue = this.element.value;
+      this.processedFieldVal_ = this.element.value;
       this.fieldValIsListVal_ = true;
 
       this.propagateFieldChanges();
