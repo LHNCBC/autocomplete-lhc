@@ -9,9 +9,18 @@ if (typeof Def === 'undefined')
 
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  // A test for IE, borrowed from PrototypeJS -- and modified.
+  var isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
+  var isIE = !!window.attachEvent && !isOpera || navigator.userAgent.indexOf('Trident') >= 0;
+
   Def.Autocompleter = { // Namespace for DEF autocompletion stuff
     // Variables related to autocompleters but independent of any particular
     // autocompleter go here.
+
+    /**
+     *  True if the browser is IE.
+     */
+    isIE: isIE,
 
     /**
      *  A variable to keep track of which autocomplete text field is using the
@@ -217,7 +226,11 @@ if (typeof Def === 'undefined')
         });
 
         Event.observe('completionOptionsScroller', 'mousedown', function(event) {
-          if (event.target.id === 'completionOptionsScroller') {
+          // Here is a work-around for an IE-only issue in which if you use the scrollbar
+          // on the list, the field gets a blur event (and maybe a change event
+          // as well.)  For IE, we set things to refocus the field and to ignore
+          // the change, blur, and focus events.
+          if (Def.Autocompleter.isIE && event.target.id === 'completionOptionsScroller') {
             Event.stop(event);
             event.stopImmediatePropagation();
             Def.Autocompleter.completionOptionsScrollerClicked_ = true;
@@ -1368,7 +1381,7 @@ if (typeof Def === 'undefined')
             // If we can't scroll the list into view, just constrain the height so
             // the list is visible.
             var elementRect =
-            this.setListHeight(window.innerHeight - elementBoundingRect.bottom);
+              this.setListHeight(window.innerHeight - elementBoundingRect.bottom);
           }
           else {
             // Cancel any active scroll effect
@@ -1732,10 +1745,7 @@ if (typeof Def === 'undefined')
      */
     onBlur: function(event) {
       // Ignore blur events on the completionOptionsScroller.
-      if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
-        Def.Autocompleter.completionOptionsScrollerClicked_ = false;
-      }
-      else {
+      if (!Def.Autocompleter.completionOptionsScrollerClicked_) {
         // Cancel any active scroll effect
         if (this.lastScrollEffect_)
           this.lastScrollEffect_.cancel();

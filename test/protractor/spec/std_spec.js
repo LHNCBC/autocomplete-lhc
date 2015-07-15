@@ -188,7 +188,7 @@ describe('autocomp', function() {
     expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
     expect(po.headings1ColCWE.getAttribute('value')).toBe('Chocolate');
     // In a two column list, the right arrow key would move to a different item.
-    // Confirmat that it does not.
+    // Confirm that it does not.
     po.headings1ColCWE.sendKeys(protractor.Key.ARROW_RIGHT);
     expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
     expect(po.headings1ColCWE.getAttribute('value')).toBe('Chocolate');
