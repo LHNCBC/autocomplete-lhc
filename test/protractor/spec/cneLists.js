@@ -4,7 +4,7 @@ var po = require('../autocompPage.js');
 
 describe('CNE lists', function() {
   var cneList = $('#fe_multi_sel_cne');
-
+/*
   it('should warn user about invalid values', function() {
     po.openTestPage();
     expect(hasClass(cneList, 'no_match')).toBe(false);
@@ -99,5 +99,73 @@ describe('CNE lists', function() {
           ).toBe(false);
   });
 
+*/
+  it('should accept a valid value when the user erases extra characters',
+      function() {
+    // This tests for bug LF-185, in which if you start with a valid field
+    // value (previously entered) and then append extra characters and click
+    // away from the field to get it to complain, if you then remove the extra
+    // characters so the value is valid and click away, the field clears.
+    // The following test (should move to the next field...) tests for a variant
+    // of this bug involving the TAB key.
+    po.openTestPage();
+    po.prefetchCNE.click();
+    po.prefetchCNE.sendKeys('Unknown');
+    po.prefetchCNE.sendKeys(protractor.Key.TAB);
+    // At the point the field should be in a valid state.
+    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(false);
+    // Add extra characters
+    po.prefetchCNE.click();
+    po.prefetchCNE.sendKeys('z');
+    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknownz');
+    po.nonField.click();
+    // Now it should be invalid
+    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(true);
+    // Now erase the bad key.  Hit the right arrow key to move to the end of the
+    // field, because the text might be highlighted.
+    po.prefetchCNE.sendKeys(protractor.Key.ARROW_RIGHT);
+    po.prefetchCNE.sendKeys(protractor.Key.BACK_SPACE);
+    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknown');
+    po.nonField.click();
+    // The field should be valid and still have its value.
+    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(false);
+    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknown');
+  });
+
+
+  it('should move to the next field after the user erases extra characters',
+      function() {
+    // This is a part of LF-185.  If the list has an valid value, and then the
+    // user adds extra characters and tabs and gets the invalid value warning,
+    // and then the user deletes the extra characters so the is is valid again,
+    // the field remained in its invalid state when the TAB key was pressed and
+    // the focus stayed in the field.
+    po.openTestPage();
+    po.prefetchCNE.click();
+    po.prefetchCNE.sendKeys('Unknown');
+    po.prefetchCNE.sendKeys(protractor.Key.TAB);
+    // At the point the field should be in a valid state.
+    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(false);
+    po.prefetchCNE.click();
+    po.prefetchCNE.sendKeys('z');
+    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknownz');
+    po.prefetchCNE.sendKeys(protractor.Key.TAB);
+    // Now it should be invalid
+    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(true);
+    // Now erase the bad key.  Hit the right arrow key to move to the end of the
+    // field, because the text might be highlighted.
+    po.prefetchCNE.sendKeys(protractor.Key.ARROW_RIGHT);
+    po.prefetchCNE.sendKeys(protractor.Key.BACK_SPACE);
+    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknown');
+    po.prefetchCNE.sendKeys(protractor.Key.TAB);
+    // Now the field should be valid, and shoud not have focus anymore.
+    // (I am not testing which field should have focus, to avoid introducing
+    // a dependency on the order of the fields on the page, but just that this
+    // field does not have the focus.)
+    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(false);
+    expect(po.prefetchCNE.getAttribute('id')).not.toEqual(
+      browser.driver.switchTo().activeElement().getAttribute('id'));
+    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknown');
+  });
 });
 
