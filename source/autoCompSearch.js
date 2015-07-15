@@ -939,10 +939,11 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       var codes = this.suggestionList_[0];
       var listItems = this.suggestionList_[1];
       var valTyped = this.element.value;
-      this.element.value = listItems[index];
+      var newVal = listItems[index];
+      this.element.value = this.lastValidVal_ = this.processedFieldVal_ =
+         listItems[index];
       // Mark the field as having a valid value, and reset processedFieldVal_.
       this.setMatchStatusIndicator(true);
-      this.processedFieldVal_ = this.element.value;
       this.fieldValIsListVal_ = true;
 
       this.propagateFieldChanges();

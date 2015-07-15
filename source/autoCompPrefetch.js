@@ -511,7 +511,7 @@
       // event below, the autocompleter does not try to select the value from the
       // list (which can fail if the list is not active, e.g. when the value
       // is being set programattically, as in via selectByCode()).
-      this.processedFieldVal_ = field.value;
+      this.lastValidVal_ = this.processedFieldVal_ = newVal;
       // Queue the list selection event before doing further processing,
       // which might trigger other events (i.e. the duplication warning event.)
       this.listSelectionNotification('', true);
