@@ -507,11 +507,11 @@
       field.value = newVal;
       this.fieldValIsListVal_ = true;
       this.storeSelectedItem();
-      // Set this value as the "unedited value", so that when we send a change
+      // Set this value as the "processed value", so that when we send a change
       // event below, the autocompleter does not try to select the value from the
       // list (which can fail if the list is not active, e.g. when the value
       // is being set programattically, as in via selectByCode()).
-      this.uneditedValue = field.value;
+      this.lastValidVal_ = this.processedFieldVal_ = newVal;
       // Queue the list selection event before doing further processing,
       // which might trigger other events (i.e. the duplication warning event.)
       this.listSelectionNotification('', true);
@@ -818,7 +818,7 @@
         //check if the list item value matches field value
         else if (this.entryCount == 1) {
           var value = this.listItemValue(this.update.firstChild.childNodes[0]);
-          blnShowList = value != this.uneditedValue;
+          blnShowList = value != this.processedFieldVal_;
         }
       }
 
