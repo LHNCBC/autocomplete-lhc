@@ -290,7 +290,7 @@ if (typeof Def === 'undefined')
 
   // Extend Def.Autocompleter.Base from Autocompleter.Base, and then modify it
   // further.
-  Object.extend(Def.Autocompleter.Base.prototype, Autocompleter.Base.prototype);
+  Object.extend(Def.Autocompleter.Base.prototype, Def.ScriptaculousAutocompleter.Base.prototype);
 
   // This is the definition for the Base instance methods.  We define it in
   // a temporary object to help NetBeans see it.
@@ -1426,7 +1426,7 @@ if (typeof Def === 'undefined')
               bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
             }
 
-            this.lastScrollEffect_ = new Effect.Scroll(scrolledContainer,
+            this.lastScrollEffect_ = new Def.Effect.Scroll(scrolledContainer,
               {y: scrollDownAmount, duration: 0.4});
 
             // If the list is extending beyond the bottom of the page's normal
@@ -1621,7 +1621,7 @@ if (typeof Def === 'undefined')
 
         this.fieldValIsListVal_ = canSelect;
         if (canSelect) {
-          Autocompleter.Base.prototype.selectEntry.apply(this);
+          Def.ScriptaculousAutocompleter.Base.prototype.selectEntry.apply(this);
           this.storeSelectedItem();
 
           // Queue the list selection event before doing further processing,
@@ -1884,7 +1884,7 @@ if (typeof Def === 'undefined')
       var liElement = Event.findElement(event, 'LI');
       if (!this.liIsHeading(liElement)) {
         this.clickSelectionInProgress_ = true;
-        Autocompleter.Base.prototype.onClick.apply(this, [event]);
+        Def.ScriptaculousAutocompleter.Base.prototype.onClick.apply(this, [event]);
         this.clickSelectionInProgress_ = false;
         // Reshow the list if this is a multi-select list.
         if (this.multiSelect_)

@@ -12,7 +12,7 @@
   Def.Autocompleter.Prefetch = Class.create();
   Def.Autocompleter.Prefetch.constructor = Def.Autocompleter.Prefetch;
   Object.extend(Def.Autocompleter.Prefetch.prototype,
-    Autocompleter.Local.prototype);
+    Def.ScriptaculousAutocompleter.Local.prototype);
   Object.extend(Def.Autocompleter.Prefetch.prototype,
     Def.Autocompleter.Base.prototype);
   Def.Autocompleter.Prefetch.prototype.className = 'Def.Autocompleter.Prefetch' ;
@@ -154,11 +154,11 @@
       if (!Def.Autocompleter.Base.classInit_)
         Def.Autocompleter.Base.classInit();
       if (updateDiv) {
-        Autocompleter.Local.prototype.initialize.apply(this, [id,
+        Def.ScriptaculousAutocompleter.Local.prototype.initialize.apply(this, [id,
           updateDiv, [], {frequency: 0.01, partialChars: 1}]);
       }
       else {
-        Autocompleter.Local.prototype.initialize.apply(this, [id,
+        Def.ScriptaculousAutocompleter.Local.prototype.initialize.apply(this, [id,
           'completionOptions', [], {frequency: 0.01, partialChars: 1,
 
           onShow: this.onShow,
@@ -618,7 +618,7 @@
      // $('searchHint').style.display = 'none';
 
       // Now call the base class' onObserverEvent
-      Autocompleter.Local.prototype.onObserverEvent.apply(this, []);
+      Def.ScriptaculousAutocompleter.Local.prototype.onObserverEvent.apply(this, []);
       this.posAnsList() ;
       this.showList();
       // Dan Clark of Freedom Scientific reported that the search count made
