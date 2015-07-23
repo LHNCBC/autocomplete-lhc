@@ -238,20 +238,6 @@ if (typeof Def === 'undefined')
 
   });
 
-  Ajax.Autocompleter = Class.create(Autocompleter.Base, {
-    initialize: function(element, update, url, options) {
-      this.baseInitialize(element, update, options);
-      this.options.asynchronous  = true;
-      this.options.onComplete    = this.onComplete.bind(this);
-      this.options.defaultParams = this.options.parameters || null;
-      this.url                   = url;
-    },
-
-    onComplete: function(request) {
-      this.updateChoices(request.responseText);
-    }
-  });
-
   Def.ScriptaculousAutocompleter = Autocompleter;
 
 })($, jQuery, Def);

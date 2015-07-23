@@ -77,7 +77,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
   ctmp = null;
 
   Object.extend(Def.Autocompleter.Search.prototype,
-    Ajax.Autocompleter.prototype);
+    Def.ScriptaculousAutocompleter.Base.prototype);
   Object.extend(Def.Autocompleter.Search.prototype,
     Def.Autocompleter.Base.prototype);
   Def.Autocompleter.Search.prototype.className = 'Def.Autocompleter.Search' ;
@@ -224,9 +224,8 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       // Call the Scriptaculous class' initialize method.  We do this via the
       // "apply" function, which lets us specify the "this" object plus an array
       // of arguments to pass in to the method.
-      Ajax.Autocompleter.prototype.initialize.apply(this,
-       [fieldID, 'completionOptions', url,
-       {frequency: 0.01, minChars: 2, partialChars: 2,
+      this.baseInitialize(fieldID, 'completionOptions', {
+        frequency: 0.01, minChars: 2, partialChars: 2,
         onHide: function(element, update) {
           $('searchCount').style.display = 'none';
           $('moreResults').style.display = 'none';
@@ -240,8 +239,11 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
           $('moreResults').style.display = 'block';
 
           Def.Autocompleter.Base.prototype.showList.apply(this);
-        }.bind(this)
-      }]);
+        }.bind(this),
+
+        onComplete: this.onComplete.bind(this)
+      });
+      this.url = url;
 
       this.defAutocompleterBaseInit(options);
 
@@ -287,6 +289,15 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         Event.observe(buttonID, 'keypress', this.buttonKeyPress.bind(this));
       }
       this.element.addClassName('search_field');
+    },
+
+
+    /**
+     *  The function that gets called after an AJAX request for an updated list.
+     * @param the AJAX request object
+     */
+    onComplete: function(request) {
+      this.updateChoices(request.responseText);
     },
 
 
