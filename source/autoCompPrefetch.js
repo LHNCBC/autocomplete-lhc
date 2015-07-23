@@ -12,7 +12,7 @@
   Def.Autocompleter.Prefetch = Class.create();
   Def.Autocompleter.Prefetch.constructor = Def.Autocompleter.Prefetch;
   Object.extend(Def.Autocompleter.Prefetch.prototype,
-    Def.ScriptaculousAutocompleter.Local.prototype);
+    Def.ScriptaculousAutocompleter.Base.prototype);
   Object.extend(Def.Autocompleter.Prefetch.prototype,
     Def.Autocompleter.Base.prototype);
   Def.Autocompleter.Prefetch.prototype.className = 'Def.Autocompleter.Prefetch' ;
@@ -109,9 +109,6 @@
      *      against the list (default: false)</li>
      *    <li>autoFill - If true, the field will be filled in with
      *      the list's value if there is just one item in the list.</li>
-     *    <li>updateDiv - the form div that is the container for the
-     *      list/options.  If unspecified, a default container will be
-     *      used.)</li>
      *    <li>suggestionMode - an integer specifying what type of suggestion
      *      should be offered based on what the user has typed.  For values, see
      *      defAutocompleterBaseInit in autoCompBase.js.
@@ -138,8 +135,17 @@
      *  </ul>
      */
     initialize: function(id, listItems, options) {
-      if (!options)
-        options = {};
+
+      // Add Scriptaculous defaults, modified
+      options = Object.extend({
+        ignoreCase: true,
+        fullSearch: false,
+        selector: this.selector,
+        onShow: this.onShow,
+        onHide: this.onHide,
+        frequency: 0.01
+      }, options || { });
+
       var addSeqNum = options['addSeqNum'];
       this.add_seqnum = addSeqNum===undefined ? true : addSeqNum;
 
@@ -150,24 +156,10 @@
       // Call the base class' initialize method.  We do this via the "apply"
       // function, which lets us specify the "this" object plus an array of
       // arguments to pass in to the method.
-      var updateDiv = options['updateDiv'];
       if (!Def.Autocompleter.Base.classInit_)
         Def.Autocompleter.Base.classInit();
-      if (updateDiv) {
-        Def.ScriptaculousAutocompleter.Local.prototype.initialize.apply(this, [id,
-          updateDiv, [], {frequency: 0.01, partialChars: 1}]);
-      }
-      else {
-        Def.ScriptaculousAutocompleter.Local.prototype.initialize.apply(this, [id,
-          'completionOptions', [], {frequency: 0.01, partialChars: 1,
 
-          onShow: this.onShow,
-
-          onHide: this.onHide,
-
-          selector: this.selector
-          }]);
-      }
+      this.baseInitialize(id, 'completionOptions', options); // Scriptaculous base
 
       // Set up event observers.  The "bind" stuff specifies what "this"
       // should be inside the event callbacks.
@@ -185,6 +177,14 @@
       this.options.minChars = 0; // do autocompletion even if the field is blank
       this.splitAutocomp_ = false;
       this.element.addClassName('ansList');
+    },
+
+
+    /**
+     *  Populates the list based on the field content.
+     */
+    getUpdatedChoices: function() {
+      this.updateChoices(this.options.selector(this));
     },
 
 
@@ -618,7 +618,7 @@
      // $('searchHint').style.display = 'none';
 
       // Now call the base class' onObserverEvent
-      Def.ScriptaculousAutocompleter.Local.prototype.onObserverEvent.apply(this, []);
+      Def.ScriptaculousAutocompleter.Base.prototype.onObserverEvent.apply(this, []);
       this.posAnsList() ;
       this.showList();
       // Dan Clark of Freedom Scientific reported that the search count made

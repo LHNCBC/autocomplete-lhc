@@ -252,62 +252,6 @@ if (typeof Def === 'undefined')
     }
   });
 
-  // The local array autocompleter. Used when you'd prefer to
-  // inject an array of autocompletion options into the page, rather
-  // than sending out Ajax queries, which can be quite slow sometimes.
-  //
-  // The constructor takes four parameters. The first two are, as usual,
-  // the id of the monitored textbox, and id of the autocompletion menu.
-  // The third is the array you want to autocomplete from, and the fourth
-  // is the options block.
-  //
-  // Extra local autocompletion options:
-  // - choices - How many autocompletion choices to offer
-  //
-  // - partialSearch - If false, the autocompleter will match entered
-  //                    text only at the beginning of strings in the
-  //                    autocomplete array. Defaults to true, which will
-  //                    match text at the beginning of any *word* in the
-  //                    strings in the autocomplete array. If you want to
-  //                    search anywhere in the string, additionally set
-  //                    the option fullSearch to true (default: off).
-  //
-  // - fullSsearch - Search anywhere in autocomplete array strings.
-  //
-  // - partialChars - How many characters to enter before triggering
-  //                   a partial match (unlike minChars, which defines
-  //                   how many characters are required to do any match
-  //                   at all). Defaults to 2.
-  //
-  // - ignoreCase - Whether to ignore case when autocompleting.
-  //                 Defaults to true.
-  //
-  // It's possible to pass in a custom function as the 'selector'
-  // option, if you prefer to write your own autocompletion logic.
-  // In that case, the other options above will not apply unless
-  // you support them.
-
-  Autocompleter.Local = Class.create(Autocompleter.Base, {
-    initialize: function(element, update, array, options) {
-      this.baseInitialize(element, update, options);
-      this.options.array = array;
-    },
-
-    getUpdatedChoices: function() {
-      this.updateChoices(this.options.selector(this));
-    },
-
-    setOptions: function(options) {
-      this.options = Object.extend({
-        choices: 10,
-        partialSearch: true,
-        partialChars: 2,
-        ignoreCase: true,
-        fullSearch: false
-      }, options || { });
-    }
-  });
-
   Def.ScriptaculousAutocompleter = Autocompleter;
 
 })($, jQuery, Def);
