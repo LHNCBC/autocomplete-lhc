@@ -535,7 +535,6 @@ if (typeof Def === 'undefined')
       this.element.writeAttribute('aria-expanded', 'false');
 
       // Set up event handler functions.
-      //this.onHoverListener = this.onHover.bindAsEventListener(this);
       this.onMouseDownListener = this.onMouseDown.bindAsEventListener(this);
       Event.observe(this.element, 'change',
         this.onChange.bindAsEventListener(this));

@@ -167,7 +167,6 @@
       Event.observe(id, 'click', this.onFieldClick.bind(this));
       // The base class sets up one for a "blur" event.
 
-      this.onMouseMoveListener = this.onMouseMove.bindAsEventListener(this);
       this.initHeadings(options);
       this.defAutocompleterBaseInit(options);
       var codes = options['codes'];
@@ -828,16 +827,6 @@
         this.posAnsList();
         this.showList();
         this.readSearchCount();
-        if (!this.doNotCountHover) {
-          // If the mouse happens to be positioned over the list that just
-          // appeared, do not count its presence as a "hover" event that would
-          // highlight an item in the list.
-          this.doNotCountHover = true;
-
-          // Also add a mouse move listener.  If the mouse moves, we want to
-          // clear this.doNotCountHover so that the user can select an item.
-          Event.observe(document, "mousemove", this.onMouseMoveListener);
-        }
       }
     },
 
@@ -862,30 +851,10 @@
 
 
     /**
-     *  Highlight an item in the list, unless doNotCountHover is set.
-     */
-    onHover: function(event) {
-      if (!this.doNotCountHover) {
-        Def.Autocompleter.Base.prototype.onHover.apply(this, [event]);
-      }
-    },
-
-
-    /**
      *  Puts the focus into the field.
      */
     focusField: function() {
        this.element.focus();
-    },
-
-    /**
-     *  In response to a mouse movement, this clears the "doNotCountHover"
-     *  flag so that the user's mouse over event can be counted.
-     */
-    onMouseMove: function(event) {
-      this.doNotCountHover = false;
-      // Also reset this event listener.
-      Event.stopObserving(document, "mousemove", this.onMouseMoveListener);
     },
 
 

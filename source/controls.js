@@ -149,16 +149,6 @@ if (typeof Def === 'undefined')
       this.getUpdatedChoices();
     },
 
-    onHover: function(event) {
-      var element = Event.findElement(event, 'LI');
-      if(this.index != element.autocompleteIndex)
-      {
-          this.index = element.autocompleteIndex;
-          this.render();
-      }
-      Event.stop(event);
-    },
-
   });
 
   Def.ScriptaculousAutocompleter = Autocompleter;
