@@ -2077,7 +2077,41 @@ if (typeof Def === 'undefined')
       this.update = null;
       this.listContainer = null;
       this.recDataRequester_ = null; // has DOM references
-    }
+    },
+
+
+    /**
+     *  Updates the field with the selected list item value.
+     * @param selectedElement the DOM LI element the user selected.
+     */
+    updateElement: function(selectedElement) {
+      // The Scriptaculous autocompleters allow you to autocomplete more than
+      // once in a field and select more than one value from the list.  We're
+      // not doing that, so we don't do the getTokenBounds() stuff.
+      this.element.value = this.listItemValue(selectedElement);
+      // Do not use setFieldVal for the above; after this gets called,
+      // propagateFieldChanges is called, and that takes care of running
+      // change event handlers.
+
+      if (this.options.afterUpdateElement)
+        this.options.afterUpdateElement(this.element, selectedElement);
+    },
+
+
+    // Copied as-is from controls.js  (remove this comment if you modify it).
+    onObserverEvent: function() {
+      this.changed = false;
+      this.tokenBounds = null;
+      if(this.getToken().length>=this.options.minChars) {
+        this.getUpdatedChoices();
+      } else {
+        this.active = false;
+        this.hide();
+      }
+      this.oldElementValue = this.element.value;
+    },
+
+
 
 
   };  // end Def.Autocompleter.Base class

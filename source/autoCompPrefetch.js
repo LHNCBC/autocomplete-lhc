@@ -618,7 +618,7 @@
      // $('searchHint').style.display = 'none';
 
       // Now call the base class' onObserverEvent
-      Def.ScriptaculousAutocompleter.Base.prototype.onObserverEvent.apply(this, []);
+      Def.Autocompleter.Base.prototype.onObserverEvent.apply(this, []);
       this.posAnsList() ;
       this.showList();
       // Dan Clark of Freedom Scientific reported that the search count made
@@ -908,23 +908,6 @@
           value = value.substring(index + this.SEQ_NUM_SEPARATOR.length);
       }
       return value.stripTags().unescapeHTML();
-    },
-
-
-    /** updateElement. remove the sequence # from the selected item in the list
-     *
-     */
-    updateElement: function(selectedElement) {
-      // The Scriptaculous autocompleters allow you to autocomplete more than
-      // once in a field and select more than one value from the list.  We're
-      // not doing that, so we don't do the getTokenBounds() stuff.
-      this.element.value = this.listItemValue(selectedElement);
-      // Do not use setFieldVal for the above; after this gets called,
-      // propagateFieldChanges is called, and that takes care of running
-      // change event handlers.
-
-      if (this.options.afterUpdateElement)
-        this.options.afterUpdateElement(this.element, selectedElement);
     },
 
 
