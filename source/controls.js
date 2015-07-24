@@ -159,42 +159,6 @@ if (typeof Def === 'undefined')
       Event.stop(event);
     },
 
-    onClick: function(event) {
-      var element = Event.findElement(event, 'LI');
-      this.index = element.autocompleteIndex;
-      this.selectEntry();
-      this.hide();
-    },
-
-    render: function() {
-      if(this.entryCount > 0) {
-        for (var i = 0; i < this.entryCount; i++)
-          this.index==i ?
-            Element.addClassName(this.getEntry(i),"selected") :
-            Element.removeClassName(this.getEntry(i),"selected");
-        if(this.hasFocus) {
-          this.show();
-          this.active = true;
-        }
-      } else {
-        this.active = false;
-        this.hide();
-      }
-    },
-
-    getEntry: function(index) {
-      return this.update.firstChild.childNodes[index];
-    },
-
-    getCurrentEntry: function() {
-      return this.getEntry(this.index);
-    },
-
-    selectEntry: function() {
-      this.active = false;
-      this.updateElement(this.getCurrentEntry());
-    },
-
   });
 
   Def.ScriptaculousAutocompleter = Autocompleter;

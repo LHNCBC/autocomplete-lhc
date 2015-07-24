@@ -1621,7 +1621,8 @@ if (typeof Def === 'undefined')
 
         this.fieldValIsListVal_ = canSelect;
         if (canSelect) {
-          Def.ScriptaculousAutocompleter.Base.prototype.selectEntry.apply(this);
+          this.active = false;
+          this.updateElement(this.getCurrentEntry());
           this.storeSelectedItem();
 
           // Queue the list selection event before doing further processing,
@@ -1884,7 +1885,9 @@ if (typeof Def === 'undefined')
       var liElement = Event.findElement(event, 'LI');
       if (!this.liIsHeading(liElement)) {
         this.clickSelectionInProgress_ = true;
-        Def.ScriptaculousAutocompleter.Base.prototype.onClick.apply(this, [event]);
+        this.index = liElement.autocompleteIndex;
+        this.selectEntry();
+        this.hide();
         this.clickSelectionInProgress_ = false;
         // Reshow the list if this is a multi-select list.
         if (this.multiSelect_)
@@ -2099,6 +2102,36 @@ if (typeof Def === 'undefined')
 
 
     // Copied as-is from controls.js  (remove this comment if you modify it).
+    render: function() {
+      if(this.entryCount > 0) {
+        for (var i = 0; i < this.entryCount; i++)
+          this.index==i ?
+            Element.addClassName(this.getEntry(i),"selected") :
+            Element.removeClassName(this.getEntry(i),"selected");
+        if(this.hasFocus) {
+          this.show();
+          this.active = true;
+        }
+      } else {
+        this.active = false;
+        this.hide();
+      }
+    },
+
+
+    // Copied as-is from controls.js  (remove this comment if you modify it).
+    getEntry: function(index) {
+      return this.update.firstChild.childNodes[index];
+    },
+
+
+    // Copied as-is from controls.js  (remove this comment if you modify it).
+    getCurrentEntry: function() {
+      return this.getEntry(this.index);
+    },
+
+
+    // Copied as-is from controls.js  (remove this comment if you modify it).
     onObserverEvent: function() {
       this.changed = false;
       this.tokenBounds = null;
@@ -2109,10 +2142,7 @@ if (typeof Def === 'undefined')
         this.hide();
       }
       this.oldElementValue = this.element.value;
-    },
-
-
-
+    }
 
   };  // end Def.Autocompleter.Base class
 
