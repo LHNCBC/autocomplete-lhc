@@ -12,8 +12,6 @@
   Def.Autocompleter.Prefetch = Class.create();
   Def.Autocompleter.Prefetch.constructor = Def.Autocompleter.Prefetch;
   Object.extend(Def.Autocompleter.Prefetch.prototype,
-    Def.ScriptaculousAutocompleter.Base.prototype);
-  Object.extend(Def.Autocompleter.Prefetch.prototype,
     Def.Autocompleter.Base.prototype);
   Def.Autocompleter.Prefetch.prototype.className = 'Def.Autocompleter.Prefetch' ;
   // Define a temporary object for extending the Prefetch.prototype, which we
@@ -159,8 +157,6 @@
       if (!Def.Autocompleter.Base.classInit_)
         Def.Autocompleter.Base.classInit();
 
-      this.baseInitialize(id, 'completionOptions', options); // Scriptaculous base
-
       // Set up event observers.  The "bind" stuff specifies what "this"
       // should be inside the event callbacks.
       Event.observe(id, 'focus', this.onFocus.bind(this));
@@ -168,7 +164,7 @@
       // The base class sets up one for a "blur" event.
 
       this.initHeadings(options);
-      this.defAutocompleterBaseInit(options);
+      this.defAutocompleterBaseInit(id, options);
       var codes = options['codes'];
       this.setList(listItems, codes);
       this.listIsOriginal_ = true; // reset this after calling setList

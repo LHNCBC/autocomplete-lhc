@@ -1,7 +1,33 @@
 // This file contains auto-completer code for the Data Entry Framework project.
 
 // These autocompleters are based on the Autocompleter.Base class defined
-// in the Script.aculo.us controls.js file.
+// in the Script.aculo.us controls.js file.   Most of the controls.js code has
+// been overridden, and the part that hasn't has been included in this file.
+//
+// See http://script.aculo.us/ for Scriptaculous, whose license is the following
+// MIT-style license:
+//
+// Copyright © 2005-2008 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// “Software”), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 
 if (typeof Def === 'undefined')
   Def = {};
@@ -288,10 +314,6 @@ if (typeof Def === 'undefined')
   });
 
 
-  // Extend Def.Autocompleter.Base from Autocompleter.Base, and then modify it
-  // further.
-  Object.extend(Def.Autocompleter.Base.prototype, Def.ScriptaculousAutocompleter.Base.prototype);
-
   // This is the definition for the Base instance methods.  We define it in
   // a temporary object to help NetBeans see it.
   var tmp = {
@@ -439,9 +461,8 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  An initialization method for the base Def.Autocompleter class.  This
-     *  should be called after the initialization done by an autocompleter's
-     *  Scriptaculous autocompleter base class.
+     *  An initialization method for the base Def.Autocompleter class.
+     * @param fieldID the ID of the field for which the list is displayed
      * @param options A hash of optional parameters.  For the allowed keys see the
      *  subclasses.  The base class uses the following keys:
      *  <ul>
@@ -480,7 +501,7 @@ if (typeof Def === 'undefined')
      *     flow into two columns to show more of the list on the page.</li>
      *  </ul>
      */
-    defAutocompleterBaseInit: function(options) {
+    defAutocompleterBaseInit: function(fieldID, options) {
       if (!options)
         options = {};
       if (options['suggestionMode'] !== undefined)
@@ -515,6 +536,24 @@ if (typeof Def === 'undefined')
       this.matchListValue_ = options['matchListValue'] || false;
 
       this.recDataRequester_ = dataRequester;
+      this.update      = $('completionOptions');
+      this.options = options;
+      this.options.frequency    = this.options.frequency || 0.01;
+      this.options.minChars     = this.options.minChars || 2;
+
+      // --- start of section copied from controls.js baseInitialize ---
+      this.element     = $(fieldID);
+      this.hasFocus    = false;
+      this.changed     = false;
+      this.active      = false;
+      this.index       = 0;
+      this.entryCount  = 0;
+      this.observer = null;
+      this.element.setAttribute('autocomplete','off');
+      Element.hide(this.update);
+      Event.observe(this.element, 'blur', this.onBlur.bindAsEventListener(this));
+      Event.observe(this.element, 'keydown', this.onKeyPress.bindAsEventListener(this));
+      // --- end of section copied from controls.js baseInitialize ---
 
       // If this is a multiselect list, put the field into a span.
       if (options.maxSelect > 1) {

@@ -77,8 +77,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
   ctmp = null;
 
   Object.extend(Def.Autocompleter.Search.prototype,
-    Def.ScriptaculousAutocompleter.Base.prototype);
-  Object.extend(Def.Autocompleter.Search.prototype,
     Def.Autocompleter.Base.prototype);
   Def.Autocompleter.Search.prototype.className = 'Def.Autocompleter.Search' ;
 
@@ -215,23 +213,14 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *  </ul>
      */
     initialize: function(fieldID, url, options) {
-      if (!options)
-        options = {};
 
-      if (!Def.Autocompleter.Base.classInit_)
-        Def.Autocompleter.Base.classInit();
-
-      // Call the Scriptaculous class' initialize method.  We do this via the
-      // "apply" function, which lets us specify the "this" object plus an array
-      // of arguments to pass in to the method.
-      this.baseInitialize(fieldID, 'completionOptions', {
-        frequency: 0.01, minChars: 2, partialChars: 2,
+      options = Object.extend({
+        partialChars: 2,
         onHide: function(element, update) {
           $('searchCount').style.display = 'none';
           $('moreResults').style.display = 'none';
           Def.Autocompleter.Base.prototype.hideList.apply(this);
         }.bind(this),
-
 
         onShow: function(element, update) {
           // Make the search count display before adjusting the list position.
@@ -242,10 +231,14 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         }.bind(this),
 
         onComplete: this.onComplete.bind(this)
-      });
+      }, options || {});
+
+      if (!Def.Autocompleter.Base.classInit_)
+        Def.Autocompleter.Base.classInit();
+
       this.url = url;
 
-      this.defAutocompleterBaseInit(options);
+      this.defAutocompleterBaseInit(fieldID, options);
 
       this.autocomp = options['autocomp'];
       if (this.autocomp === undefined)
