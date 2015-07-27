@@ -948,6 +948,14 @@
         rtn = true;
       }
       return rtn;
+    },
+
+
+    // Copied as-is from controls.js  (remove this comment if you modify it).
+    activate: function() {
+      this.changed = false;
+      this.hasFocus = true;
+      this.getUpdatedChoices();
     }
 
   };  // end Def.Autocompleter.Prefetch class

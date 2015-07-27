@@ -1217,8 +1217,6 @@ if (typeof Def === 'undefined')
           this.entryCount = 0;
         }
 
-        this.stopIndicator();
-
         if(this.entryCount===1 && this.options.autoSelect) {
           this.selectEntry();
           this.hide();
@@ -2097,6 +2095,39 @@ if (typeof Def === 'undefined')
 
       if (this.options.afterUpdateElement)
         this.options.afterUpdateElement(this.element, selectedElement);
+    },
+
+
+
+    // Copied as-is from controls.js  (remove this comment if you modify it).
+    show: function() {
+      if(Element.getStyle(this.update, 'display')=='none') this.options.onShow(this.element, this.update);
+      if(!this.iefix &&
+        (Prototype.Browser.IE) &&
+        (Element.getStyle(this.update, 'position')=='absolute')) {
+        new Insertion.After(this.update,
+         '<iframe id="' + this.update.id + '_iefix" '+
+         'style="display:none;position:absolute;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);" ' +
+         'src="javascript:false;" frameborder="0" scrolling="no"></iframe>');
+        this.iefix = $(this.update.id+'_iefix');
+      }
+      if(this.iefix) setTimeout(this.fixIEOverlapping.bind(this), 50);
+    },
+
+
+    // Copied as-is from controls.js  (remove this comment if you modify it).
+    fixIEOverlapping: function() {
+      Position.clone(this.update, this.iefix, {setTop:(!this.update.style.height)});
+      this.iefix.style.zIndex = 1;
+      this.update.style.zIndex = 2;
+      Element.show(this.iefix);
+    },
+
+
+    // Copied as-is from controls.js  (remove this comment if you modify it).
+    hide: function() {
+      if(Element.getStyle(this.update, 'display')!='none') this.options.onHide(this.element, this.update);
+      if(this.iefix) Element.hide(this.iefix);
     },
 
 
