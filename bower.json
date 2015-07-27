@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "6.1.2",
+  "version": "6.2.0",
   "main": [
     "source/auto_completion.css",
     "../jquery-ui/ui/core.js",
@@ -8,7 +8,6 @@
     "../jquery-ui/ui/button.js",
     "../jquery-ui/ui/dialog.js",
     "source/effects.js",
-    "source/controls.js",
     "source/effectScroll.js",
     "source/event.simulate.js",
     "source/observable.js",
