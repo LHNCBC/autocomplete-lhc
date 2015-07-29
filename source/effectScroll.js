@@ -18,7 +18,7 @@ Element.addMethods({
   }
 });
 
-Effect.Scroll = Class.create();
+Def.Effect.Scroll = Class.create();
 // Wrap the definitions in a function to protect our version of global variables
 (function($, Effect) {
   Object.extend(Object.extend(Effect.Scroll.prototype, Effect.Base.prototype), {
@@ -71,4 +71,4 @@ Effect.Scroll = Class.create();
         document.body.scrollTo(left, top);
     }
   });
-})($, Effect);
+})($, Def.Effect);

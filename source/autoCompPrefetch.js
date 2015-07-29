@@ -12,8 +12,6 @@
   Def.Autocompleter.Prefetch = Class.create();
   Def.Autocompleter.Prefetch.constructor = Def.Autocompleter.Prefetch;
   Object.extend(Def.Autocompleter.Prefetch.prototype,
-    Autocompleter.Local.prototype);
-  Object.extend(Def.Autocompleter.Prefetch.prototype,
     Def.Autocompleter.Base.prototype);
   Def.Autocompleter.Prefetch.prototype.className = 'Def.Autocompleter.Prefetch' ;
   // Define a temporary object for extending the Prefetch.prototype, which we
@@ -109,9 +107,6 @@
      *      against the list (default: false)</li>
      *    <li>autoFill - If true, the field will be filled in with
      *      the list's value if there is just one item in the list.</li>
-     *    <li>updateDiv - the form div that is the container for the
-     *      list/options.  If unspecified, a default container will be
-     *      used.)</li>
      *    <li>suggestionMode - an integer specifying what type of suggestion
      *      should be offered based on what the user has typed.  For values, see
      *      defAutocompleterBaseInit in autoCompBase.js.
@@ -138,8 +133,17 @@
      *  </ul>
      */
     initialize: function(id, listItems, options) {
-      if (!options)
-        options = {};
+
+      // Add Scriptaculous defaults, modified
+      options = Object.extend({
+        ignoreCase: true,
+        fullSearch: false,
+        selector: this.selector,
+        onShow: this.onShow,
+        onHide: this.onHide,
+        frequency: 0.01
+      }, options || { });
+
       var addSeqNum = options['addSeqNum'];
       this.add_seqnum = addSeqNum===undefined ? true : addSeqNum;
 
@@ -150,24 +154,8 @@
       // Call the base class' initialize method.  We do this via the "apply"
       // function, which lets us specify the "this" object plus an array of
       // arguments to pass in to the method.
-      var updateDiv = options['updateDiv'];
       if (!Def.Autocompleter.Base.classInit_)
         Def.Autocompleter.Base.classInit();
-      if (updateDiv) {
-        Autocompleter.Local.prototype.initialize.apply(this, [id,
-          updateDiv, [], {frequency: 0.01, partialChars: 1}]);
-      }
-      else {
-        Autocompleter.Local.prototype.initialize.apply(this, [id,
-          'completionOptions', [], {frequency: 0.01, partialChars: 1,
-
-          onShow: this.onShow,
-
-          onHide: this.onHide,
-
-          selector: this.selector
-          }]);
-      }
 
       // Set up event observers.  The "bind" stuff specifies what "this"
       // should be inside the event callbacks.
@@ -175,9 +163,8 @@
       Event.observe(id, 'click', this.onFieldClick.bind(this));
       // The base class sets up one for a "blur" event.
 
-      this.onMouseMoveListener = this.onMouseMove.bindAsEventListener(this);
       this.initHeadings(options);
-      this.defAutocompleterBaseInit(options);
+      this.defAutocompleterBaseInit(id, options);
       var codes = options['codes'];
       this.setList(listItems, codes);
       this.listIsOriginal_ = true; // reset this after calling setList
@@ -185,6 +172,14 @@
       this.options.minChars = 0; // do autocompletion even if the field is blank
       this.splitAutocomp_ = false;
       this.element.addClassName('ansList');
+    },
+
+
+    /**
+     *  Populates the list based on the field content.
+     */
+    getUpdatedChoices: function() {
+      this.updateChoices(this.options.selector(this));
     },
 
 
@@ -618,7 +613,7 @@
      // $('searchHint').style.display = 'none';
 
       // Now call the base class' onObserverEvent
-      Autocompleter.Local.prototype.onObserverEvent.apply(this, []);
+      Def.Autocompleter.Base.prototype.onObserverEvent.apply(this, []);
       this.posAnsList() ;
       this.showList();
       // Dan Clark of Freedom Scientific reported that the search count made
@@ -828,16 +823,6 @@
         this.posAnsList();
         this.showList();
         this.readSearchCount();
-        if (!this.doNotCountHover) {
-          // If the mouse happens to be positioned over the list that just
-          // appeared, do not count its presence as a "hover" event that would
-          // highlight an item in the list.
-          this.doNotCountHover = true;
-
-          // Also add a mouse move listener.  If the mouse moves, we want to
-          // clear this.doNotCountHover so that the user can select an item.
-          Event.observe(document, "mousemove", this.onMouseMoveListener);
-        }
       }
     },
 
@@ -862,30 +847,10 @@
 
 
     /**
-     *  Highlight an item in the list, unless doNotCountHover is set.
-     */
-    onHover: function(event) {
-      if (!this.doNotCountHover) {
-        Def.Autocompleter.Base.prototype.onHover.apply(this, [event]);
-      }
-    },
-
-
-    /**
      *  Puts the focus into the field.
      */
     focusField: function() {
        this.element.focus();
-    },
-
-    /**
-     *  In response to a mouse movement, this clears the "doNotCountHover"
-     *  flag so that the user's mouse over event can be counted.
-     */
-    onMouseMove: function(event) {
-      this.doNotCountHover = false;
-      // Also reset this event listener.
-      Event.stopObserving(document, "mousemove", this.onMouseMoveListener);
     },
 
 
@@ -908,23 +873,6 @@
           value = value.substring(index + this.SEQ_NUM_SEPARATOR.length);
       }
       return value.stripTags().unescapeHTML();
-    },
-
-
-    /** updateElement. remove the sequence # from the selected item in the list
-     *
-     */
-    updateElement: function(selectedElement) {
-      // The Scriptaculous autocompleters allow you to autocomplete more than
-      // once in a field and select more than one value from the list.  We're
-      // not doing that, so we don't do the getTokenBounds() stuff.
-      this.element.value = this.listItemValue(selectedElement);
-      // Do not use setFieldVal for the above; after this gets called,
-      // propagateFieldChanges is called, and that takes care of running
-      // change event handlers.
-
-      if (this.options.afterUpdateElement)
-        this.options.afterUpdateElement(this.element, selectedElement);
     },
 
 
@@ -996,6 +944,14 @@
         rtn = true;
       }
       return rtn;
+    },
+
+
+    // Copied as-is from controls.js  (remove this comment if you modify it).
+    activate: function() {
+      this.changed = false;
+      this.hasFocus = true;
+      this.getUpdatedChoices();
     }
 
   };  // end Def.Autocompleter.Prefetch class

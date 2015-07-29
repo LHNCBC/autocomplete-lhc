@@ -77,8 +77,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
   ctmp = null;
 
   Object.extend(Def.Autocompleter.Search.prototype,
-    Ajax.Autocompleter.prototype);
-  Object.extend(Def.Autocompleter.Search.prototype,
     Def.Autocompleter.Base.prototype);
   Def.Autocompleter.Search.prototype.className = 'Def.Autocompleter.Search' ;
 
@@ -215,24 +213,14 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *  </ul>
      */
     initialize: function(fieldID, url, options) {
-      if (!options)
-        options = {};
 
-      if (!Def.Autocompleter.Base.classInit_)
-        Def.Autocompleter.Base.classInit();
-
-      // Call the Scriptaculous class' initialize method.  We do this via the
-      // "apply" function, which lets us specify the "this" object plus an array
-      // of arguments to pass in to the method.
-      Ajax.Autocompleter.prototype.initialize.apply(this,
-       [fieldID, 'completionOptions', url,
-       {frequency: 0.01, minChars: 2, partialChars: 2,
+      options = Object.extend({
+        partialChars: 2,
         onHide: function(element, update) {
           $('searchCount').style.display = 'none';
           $('moreResults').style.display = 'none';
           Def.Autocompleter.Base.prototype.hideList.apply(this);
         }.bind(this),
-
 
         onShow: function(element, update) {
           // Make the search count display before adjusting the list position.
@@ -240,10 +228,17 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
           $('moreResults').style.display = 'block';
 
           Def.Autocompleter.Base.prototype.showList.apply(this);
-        }.bind(this)
-      }]);
+        }.bind(this),
 
-      this.defAutocompleterBaseInit(options);
+        onComplete: this.onComplete.bind(this)
+      }, options || {});
+
+      if (!Def.Autocompleter.Base.classInit_)
+        Def.Autocompleter.Base.classInit();
+
+      this.url = url;
+
+      this.defAutocompleterBaseInit(fieldID, options);
 
       this.autocomp = options['autocomp'];
       if (this.autocomp === undefined)
@@ -287,6 +282,15 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         Event.observe(buttonID, 'keypress', this.buttonKeyPress.bind(this));
       }
       this.element.addClassName('search_field');
+    },
+
+
+    /**
+     *  The function that gets called after an AJAX request for an updated list.
+     * @param the AJAX request object
+     */
+    onComplete: function(request) {
+      this.updateChoices(request.responseText);
     },
 
 

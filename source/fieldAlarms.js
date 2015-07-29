@@ -27,7 +27,7 @@ if (typeof Def === 'undefined')
         }
       }
       this.bonk.play();
-      Effect.Shake(field.id, 5);
+      Def.Effect.Shake(field.id, 5);
     }, // end of setOffAlarm
 
     /**
