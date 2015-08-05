@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "main": [
     "source/auto_completion.css",
     "../jquery-ui/ui/core.js",
