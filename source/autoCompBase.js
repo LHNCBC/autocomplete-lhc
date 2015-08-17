@@ -76,6 +76,14 @@ if (typeof Def === 'undefined')
     SUGGEST_SHORTEST: 1,
 
     /**
+     *  If the list items consist of multiple
+     *  strings (fields) each, this is the string used to join together each list
+     *  item's fields to produce the list item string the user sees in the list.
+     */
+    LIST_ITEM_FIELD_SEP: ' - ',
+
+
+    /**
      *  The screen reader log used by the autocompleter.
      */
     screenReaderLog_: new Def.ScreenReaderLog(),

@@ -89,11 +89,7 @@
      * @param id the ID of the form field for which the list is displayed
      * @param listItems the array of completion options (list values).  If not
      *  specified here, the list will be supplied later by a call to the
-     *  setListAndField function.  An example of this would be a list that
-     *  contains values from the current form, such as the group headers
-     *  list.  The list contents are not actually retrieved until the
-     *  field receives focus, so that all currently defined group header
-     *  fields are included on the list.
+     *  setListAndField function.
      * @param options A hash of optional parameters.  The allowed keys and their
      *  values are:
      *  <ul>

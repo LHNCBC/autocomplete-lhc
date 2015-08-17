@@ -64,14 +64,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     /**
      * The superclass.
      */
-    superclass: Def.Autocompleter.Base.prototype,
-
-    /**
-     *  If the list items returned by the AJAX search call consist of multiple
-     *  strings (fields) each, this is the string used to join together each list
-     *  item's fields to produce the list item string the user sees in the list.
-     */
-    LIST_ITEM_FIELD_SEP: ' - '
+    superclass: Def.Autocompleter.Base.prototype
   };
   Object.extend(Def.Autocompleter.Search, ctmp);
   ctmp = null;
