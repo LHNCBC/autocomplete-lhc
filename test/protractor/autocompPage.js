@@ -49,9 +49,9 @@ var AutocompPage = function() {
   this.headings1ColCWE = $('#headings_1col_cwe');
 
   // Multi-field lists
-  this.multiFieldPrefetch = $('multi_field_cwe');
-  this.multiFieldPretetchCol2 = $('multi_field_cwe2'); // 2nd column
-  this.multiFieldSearch = $('multi_field_search_cwe');
+  this.multiFieldPrefetch = $('#multi_field_cwe');
+  this.multiFieldPrefetchCol2 = $('#multi_field_cwe2'); // 2nd column
+  this.multiFieldSearch = $('#multi_field_search_cwe');
 
 
   this.openTestPage = function() {
