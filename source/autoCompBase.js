@@ -839,10 +839,15 @@ if (typeof Def === 'undefined')
     /**
      *  Returns the value of a list item (minus any sequence number an
      *  separator.)
-     * @param li a list item DOM element.
+     * @param itemElem a list item DOM element.
      */
-    listItemValue: function(li) {
-      return li.textContent; // decodes escaped HTML elements
+    listItemValue: function(itemElem) {
+      var rtn;
+      if (this.options.tableFormat)
+        rtn = itemElem.getAttribute('data-fieldval');
+      else
+        rtn = itemElem.textContent; // decodes escaped HTML elements
+      return rtn;
     },
 
 
@@ -1207,11 +1212,17 @@ if (typeof Def === 'undefined')
 
 
     /**
+     *  Returns the index of the best match for the current input
+Selects the top item for the
+
+
+    /**
      *  This is called to update the completion list area with new search results.
      *  We override this to change the default selection.
      * @param choices the HTML for a ul list.
+     * @param pickedByNum whether the user is picking by number
      */
-    updateChoices: function(choices) {
+    updateChoices: function(choices, pickedByNum) {
       // We no longer call controls.js' updateChoices because the autocompleteIndex
       // settings need to be made after we move the default selection.  However,
       // a good bit of this code is copied from there.
@@ -1219,38 +1230,21 @@ if (typeof Def === 'undefined')
       if (!this.changed && this.hasFocus) {
         this.update.innerHTML = choices;
         Element.cleanWhitespace(this.update);
-        Element.cleanWhitespace(this.update.down());
+        var itemContainer = this.options.tableFormat ?
+          this.update.down('tbody') : this.update.down();
+        Element.cleanWhitespace(itemContainer);
+        var domItems = itemContainer.childNodes;
 
-        if(this.update.firstChild && this.update.down().childNodes) {
-          this.entryCount = this.update.down().childNodes.length;
+        if (domItems) {
+          this.entryCount = domItems.length;
           if (this.suggestionMode_ !== Def.Autocompleter.NO_COMPLETION_SUGGESTIONS) {
-
-            // Pick the default item and move it to the top of the list,
-            // but not if the field is being focused, and not if the list
-            // is numbered and the user typed a number, and not if the list uses
-            // headings.
             var i;
             if (this.entryCount > 0 && !this.focusInProgress_) {
-              if (this.add_seqnum && this.element.value.match(/^\d+$/)) {
-                // Use the first non-heading entry (whose number should match what was typed)
-                // as the default
-                this.index = 0;
-                for(; this.liIsHeading(this.getCurrentEntry()) &&
+              if (pickedByNum) {
+                // Use the first non-heading entry (whose number should match
+                // what was typed) as the default
+                for(this.index = 0; this.liIsHeading(domItems[i]) &&
                        this.index < this.entryCount; ++this.index);
-              }
-              else if (this.entryCount > 1 && !this.numHeadings_) {
-                var useStats =
-                  this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
-                var index = useStats ? 0 : this.pickDefaultItem();
-                if (index > -1) {
-                  var listTag = this.update.firstChild;
-                  var listElements = listTag.childNodes;
-                  var suggestion = listElements[index];
-                  suggestion.addClassName('suggestion');
-                  if (index > 0) {
-                    listTag.insertBefore(suggestion, listElements[0]);
-                  }
-                }
               }
             }
           } // If we are making a suggestion
@@ -1276,30 +1270,28 @@ if (typeof Def === 'undefined')
         if (!this.focusInProgress_) {
           // The field is in a non-matching state if the value is not empty
           // and there are no items in the list.
-          this.setMatchStatusIndicator(this.entryCount > 0 ||
-                               Def.Autocompleter.getFieldVal(this.element)==='');
+          this.setMatchStatusIndicator(this.entryCount > 0 || this.elemVal==='');
         }
       }
     },
 
 
     /**
-     *  Returns the index of the item in the currently displayed list (which
-     *  is possibly a subset of the full list if the user has typed something)
-     *  which should be highlighted as the default item.  The code here assumes
-     *  the list is a standard list, and not a table such as used by
-     *  autoCompTableSearch.js.
+     *  Returns the index of the item in the given list
+     *  which should be offered as best match.
+     * @param listItems an array of the items in the list
      * @return the index of the item, or -1 if no item should be highlighted.
      */
-    pickDefaultItem: function() {
-      // If there is something in the field, change the default hightlight to
+    pickBestMatch: function(listItems) {
+      // If there is something in the field, pick:
       // 1) the shortest choice with the field value at the beginning, or
       // 2) the shortest choice with the field value somewhere, or
       // 3) the shortest choice
-      var elemValue = this.element.value.trim().toLowerCase();
+      var elemValue = this.elemVal.toLowerCase();
+      var numItems = listItems.length;
       var rtn = -1;
 
-      if (elemValue.length > 0 && this.entryCount > 0) {
+      if (elemValue.length > 0 && numItems > 0) {
         var minLengthIndex = -1;
         var minLength = Infinity;
          // this.update.firstChild.childNodes[minLengthIndex].innerHTML.length;
@@ -1308,17 +1300,16 @@ if (typeof Def === 'undefined')
         var innerMatchMinLengthIndex = -1;
         var innerMatchMinLength = minLength;
 
-        var listItemElems = this.update.firstChild.childNodes;
-        for (var i=0; i<this.entryCount; ++i) {
+        for (var i=0; i<numItems; ++i) {
           // Make sure the entry is not a header before considering it
-          if (!this.liIsHeading(this.getEntry(i))) { // could be null or 0; either case is not a heading
-            var elem = listItemElems[i];
-            var elemText = this.listItemValue(elem).toLowerCase();
+          var itemText = listItems[i];
+          if (!this.itemTextIsHeading(listItems[i])) {
+            var itemTextLC = itemText.toLowerCase();
             // Also remove non-word characters from the start of the string.
-            elemText = elemText.replace(/^\W+/, '');
+            itemTextLC = itemTextLC.replace(/^\W+/, '');
 
-            var matchIndex = elemText.indexOf(elemValue);
-            var elemLength = this.update.firstChild.childNodes[i].innerHTML.length;
+            var matchIndex = itemTextLC.indexOf(elemValue);
+            var itemTextLength = itemTextLength;
             if (matchIndex === 0) {
               // if searching by list item #, then ignore length and highlight
               // first element
@@ -1326,21 +1317,21 @@ if (typeof Def === 'undefined')
                 beginMatchMinLengthIndex = 0;
                 beginMatchMinLength = 0;
               }
-              else if (elemLength < beginMatchMinLength) {
+              else if (itemTextLength < beginMatchMinLength) {
                 beginMatchMinLengthIndex = i;
-                beginMatchMinLength = elemLength;
+                beginMatchMinLength = itemTextLength;
               }
             }
             else if (beginMatchMinLengthIndex === -1) { // no begin match found yet
               if (matchIndex > 0) {
-                if (elemLength < innerMatchMinLength) {
+                if (itemTextLength < innerMatchMinLength) {
                   innerMatchMinLengthIndex = i;
-                  innerMatchMinLength = elemLength;
+                  innerMatchMinLength = itemTextLength;
                 }
               }
               else if (innerMatchMinLengthIndex === -1 && // no inner match yet
-                       elemLength < minLength) {
-                minLength = elemLength;
+                       itemTextLength < minLength) {
+                minLength = itemTextLength;
                 minLengthIndex = i;
               }
             }
@@ -1408,9 +1399,10 @@ if (typeof Def === 'undefined')
       var maxListContainerBottom = viewPortHeight; // bottom edge of viewport
       var bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
       // If this list is not completely on the page, try making it a multi-column
-      // list.
+      // list (unless it is a table format list, which already has columns).
       if (bottomOfListContainer > maxListContainerBottom) {
-        var tryMultiColumn = this.twoColumnFlow_ && this.entryCount > 4; // otherwise it's too short
+        var tryMultiColumn = this.twoColumnFlow_ && !this.options.tableFormat &&
+          this.entryCount > 4; // otherwise it's too short
         if (tryMultiColumn) {
           // Try as a multi column list
           var firstEntry = this.getEntry(0);
@@ -1991,6 +1983,25 @@ if (typeof Def === 'undefined')
 
 
     /**
+     *  Returns true if the given list item is a list heading rather than a
+     *  list item.
+     * @param itemText the text of the item from the list
+     */
+    itemTextIsHeading: function(itemText) {
+      var rtn = !!this.numHeadings_; // true if headings exist
+      if (rtn) {  // if there are headings
+        if (!this.itemToDataIndex_)
+          this.initItemToDataIndex();
+        var listDataIndex = this.itemToDataIndex_[itemText];
+        // heading level 0 means not a heading
+        rtn = (listDataIndex !== undefined) &&
+              !!(this.indexToHeadingLevel_[listDataIndex]);
+      }
+      return rtn;
+    },
+
+
+    /**
      *  Returns true if the given LI element is a list heading rather than a
      *  list item.
      * @param li the LI DOM element from the list
@@ -1999,12 +2010,7 @@ if (typeof Def === 'undefined')
       var rtn = !!this.numHeadings_; // true if headings exist
       if (rtn) {  // if there are headings
         var itemVal = this.listItemValue(li);
-        if (!this.itemToDataIndex_)
-          this.initItemToDataIndex();
-        var listDataIndex = this.itemToDataIndex_[itemVal];
-        // heading level 0 means not a heading
-        rtn = (listDataIndex !== undefined) &&
-              !!(this.indexToHeadingLevel_[listDataIndex]);
+        rtn = this.itemTextIsHeading(this.listItemValue(li));
       }
       return rtn;
     },
@@ -2198,7 +2204,12 @@ if (typeof Def === 'undefined')
 
     // Copied as-is from controls.js  (remove this comment if you modify it).
     getEntry: function(index) {
-      return this.update.firstChild.childNodes[index];
+      var rtn;
+      if (this.options.tableFormat)
+        rtn = this.update.firstChild.firstChild.childNodes[index];
+      else
+        rtn = this.update.firstChild.childNodes[index];
+      return rtn;
     },
 
 

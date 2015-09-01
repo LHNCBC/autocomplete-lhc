@@ -10,7 +10,7 @@ describe('autocomp', function() {
   var suggestionMode0CWE = $('#fe_search0_cwe');
   var suggestionMode1CWE = $('#fe_search_cwe');
   var suggestionMode2CWE = $('#fe_search2_cwe');
-
+/*
   it('should respond to the suggestion mode setting',
      function() {
     po.openTestPage();
@@ -178,7 +178,7 @@ describe('autocomp', function() {
     expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
     expect(po.multiHeadingCWE.getAttribute('value')).toBe('Chocolate');
   });
-
+*/
 
   it('should support the twoColumnFlow option', function() {
     po.openTestPage();
@@ -194,4 +194,24 @@ describe('autocomp', function() {
     expect(po.headings1ColCWE.getAttribute('value')).toBe('Chocolate');
   });
 
+
+  it('should not use twoColumnFlow for a tableFormat list', function() {
+    // Re-open the page so the multiFieldSearch field is not scrolled up.
+    po.openTestPage();
+    // Resize the window so the two-column layout would be in effect for a
+    // non-tableFormat list.
+    browser.manage().window().setSize(1100, 473);
+    po.multiFieldSearch.click();
+    po.multiFieldSearch.sendKeys("mtest");
+    // Arrow down to first item
+    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(po.multiFieldSearch.getAttribute('value')).toBe(
+      'Coronary artery disease');
+    // In a two column list, the right arrow key would move to a different item.
+    // Confirm that it does not.
+    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_RIGHT);
+    expect(po.multiFieldSearch.getAttribute('value')).toBe(
+      'Coronary artery disease');
+    browser.pause();
+  });
 });

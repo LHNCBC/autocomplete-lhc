@@ -137,23 +137,18 @@ delete opts['maxSelect'];
 new Def.Autocompleter.Prefetch('headings_1col_cwe', ["Food allergies","Chocolate","Crab","Egg","Fish","Gluten","Milk","Monosodium Glutamate (MSG)","Peanut","Pork","Sesame","Shellfish","Shrimp","Soy","Tomatoes","Tree Nuts","Wheat","Cochineal extract (Carmine) red dye","FD\u0026C Blue No. 1 dye","FD\u0026C Yellow No. 2 dye","Environmental allergies","Cat","Cockroach","Cold Weather","Dog","Dust Mites","Hay Fever","Iodinated x-ray contrast","Latex","Mold","Nickel","Pet Dander","Pollen","Ragweed","Semen","Sun","Wasp, hornet, bee sting","Medication class allergies","ACE Inhibitors","Aminoglycosides","Antihistamines","Benzodiazepines","Beta Blockers","Calcium Channel Blockers","Cephalosporins","Diuretics","H2 Blockers","Insulins","Iodine Containing Medications","Local Anesthetics","Macrolides (like Erythromycin)","Muscle Relaxants, Skeletal","Narcotic Analgesics","Nonsteroidal Anti Inflam. Agents (NSAID)","Penicillin and Derivatives","Phenothiazines","Proton Pump Inhibitors","Quinolone Antibiotics","Serotonin Re-Uptake Inhibitors","Statins","Sulfa Drugs","Tetracycline","Medication allergies","ALEVE (Naproxen)","AMBIEN (Zolpedem)","Amoxicillin","Aspirin (ASA)","ATIVAN  (Lorazapam)","ATROVENT  (Ipartropium)","AVINZA (Morphine)","Bacitracin","BACTRIM  (Sulfamethoxazol/trimethaprim)","BENADRYL  (Diphenhydramine )","BUMEX  (Bumetanide)","CARDIZEM  (Diltizzam)","CEFZIL (Cefprozil)","CIPROFLOXACIN  (Cipro)","Codeine","COLACE (Docusate Sodium)","COMPAZINE (Prochlorperazine Maleate)","COUMADIN (Warfarin)","DALMANE  (Flurazepam)","DEMEROL (Meperidine)","DEPAKOTE ER (Valproic Acid)","DILANTIN (Phenytoin)","DULCOLAX (Bisacodyl)","E-MYCIN (Erythromycin)","GASTROGRAFIN(Diatrizoate Meglumine)","GLUCOPHAGE (Metformin)","HALCION (Triazolam)","HALDOL (Haloperidol)","HUMALIN (human insulin)","IMDUR (Isosorbide)","ISONIAZID (Isoniazide)","KAYEVELATE (Sodium Polystyrene Sulfonate)","KLONOPIN (Clonazepam)","Lactose","LASIX (Furosemide)","LEVAQUIN (Levofloxacin)","LIBRIUM (Chlordiazepoxide)","Lidocaine, Local","LIPITOR (Atorvastatin)","LOPRESSOR (Metroprolol)","LOVENOX (Enoxaparin)","MELLARIL (Thioridazine)","MOTRIN/ADVIL (Ibuprofen)","NORVASC (Amlodipine)","OMNICEF (Cefdinir)","Penicillin","PEPCID (Famotidine)","PERMITIL (Fluphenazine)","PLAVIX (Clopidogrel)","PREVACID (Lansoprazole)","PROLIXIN (Fluphenazine)","REGLAN (Metoclopramide)","RESTORIL (Temazepam)","ROBAXIN (Methocarbamol)","SENOKOT (Senna)","SERAX (Oxazepam)","SERENTIL (Mesoridazine)","SLOW-K (Potassium)","SOLU MEDROL (Methylprednisolone )","STELAZINE (Trifluoperazine)","SYNTHROID (Thyroxin)","TEGRETOL (Carbamazepine)","THORAZINE (Chlorpromazine)","TOPROL (Metoprolol)","TRANXENE (Clorazepate)","TRILAFON (Perphenazie)","TYLENOL (Acetaminophen)","VALIUM (Diastat)","VALIUM (Diazepam)","VASOTEC (Enalapril)","VITAMIN K1 (Phytonadione)","XANAX (Alprazolam)","ZAROXOLYN (Metolazone)","ZOLOFT (Sertraline)","ZOSYN (Piperacillin/Tazobactam)","ZYPREXA (Olanzapine)"], opts);
 
 // Multi-field prefetch CWE
-opts = {};
+opts = {tableFormat: true};
 opts['codes']=["LA44-3","LA45-0","LA46-8"];
-new Def.Autocompleter.Prefetch('multi_field_cwe', [["Spanish", "Español"],
-  ["French", "Francais"], ["Other"]], opts);
+//new Def.Autocompleter.Prefetch('multi_field_cwe', [["Spanish", "Español"],
+//  ["French", "Francais"], ["Other"]], opts);
 
 // Multi-field prefetch CWE with a column specification
-opts = {
-  codes: ["LA44-3","LA45-0","LA46-8"],
-  valueCols: [1]
-};
-new Def.Autocompleter.Prefetch('multi_field_cwe2', [["Spanish", "Español"],
-  ["French", "Francais"], ["Other", "???"]], opts);
+opts.valueCols = [1];
+//new Def.Autocompleter.Prefetch('multi_field_cwe2', [["Spanish", "Español"],
+//  ["French", "Francais"], ["Other", "???"]], opts);
 
 /// multi-field search CWE
-opts = {
-  'autocomp': true
-};
+opts.autocomp = true;
 var fe_search_cwe_autoComp =
   new Def.Autocompleter.Search('multi_field_search_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
