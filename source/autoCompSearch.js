@@ -437,12 +437,13 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *  items to the list item arrays received from the AJAX call
      * @return an array of three elements, an array of field value strings from
      *  fieldValToItemFields ordered in the way the items should appear in the
-     *  list, processed list item strings, a boolean indicating whether the
+     *  list, a boolean indicating whether the
      *  topmost item is placed as a suggested item, and a boolean indicating
      *  whether the user picked by number.
      */
     processChoices: function(fieldValToItemFields) {
       // Filter out already selected items for multi-select lists
+      var pickedByNum = false;
       var filteredItems = [];
       var fieldVals = Object.keys(fieldValToItemFields);
       this.itemToDataIndex_ = {};
@@ -468,8 +469,9 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
           var topItemIndex = 0;
         }
         else {
-          var pickedByNum = this.add_seqnum && this.elemVal.match(/^\d+$/);
-          if (!pickedByNum) {
+          pickedByNum = this.pickedByNumber();
+          if (!pickedByNum &&
+              this.suggestionMode_ === Def.Autocompleter.SUGGEST_SHORTEST) {
             var topItemIndex = this.pickBestMatch(filteredItems);
             if (topItemIndex > -1)
               suggestionFound = true;
@@ -492,6 +494,19 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
 
     /**
+     *  HTML-escapes a string of text for display in a search list.
+     *  Allows <span> tags to pass through.
+     * @param text the string to escape
+     * @return the escaped string
+     */
+    escapeHTML: function(text) {
+      var f = Def.Autocompleter.Base.escapeAttribute(text);
+      // Allow (unescape) span tags to mark matches.
+      return f.replace(/&lt;(\/)?span&gt;/g, '<$1span>');
+    },
+
+
+    /**
      *  Builds and returns the HTML for the selection area.
      * @param listItems the array of item strings to be shown in the list.
      * @param bestMatchFound whether a best match was found as a recommenation
@@ -499,34 +514,42 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *  items to the list item arrays received from the AJAX call
      */
     buildUpdateHTML: function(listItems, bestMatchFound, fieldValToItemFields) {
-      var rtn;
-      var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
-      if (this.options.tableFormat) {
-        rtn = '<table><tbody>'
-        for (var i=0, len=listItems.length; i<len; ++i) {
-          var itemText = listItems[i];
-          var itemFields = fieldValToItemFields[itemText];
-          var escapedFields = [];
-          for (var c=0, flen=itemFields.length; c<flen; ++c)
-            escapedFields[c] = escapeHTML(itemFields[c]);
-          rtn += (i===0 && bestMatchFound) ? '<tr class="suggestion" ' : '<tr ';
-          rtn += 'data-fieldval="' + escapeHTML(itemText);
-          rtn += '"><td>'+ escapedFields.join('</td><td>') + '</td></tr>';
-        }
-        rtn += '</tbody></table>'
+      var rtn, htmlStart, htmlEnd, rowStartOpen, rowStartClose, fieldSep, rowEnd;
+      var tableFormat = this.options.tableFormat;
+      if (tableFormat) {
+        htmlStart = '<table><tbody>';
+        htmlEnd = '</tbody></table>';
+        rowStartOpen = '<tr';
+        rowStartClose = '><td>';
+        fieldSep = '</td><td>';
+        rowEnd = '</td></tr>';
       }
       else {
-        var escapedItems = [];
-        for (var i=0, len=listItems.length; i<len; ++i)
-          escapedItems[i] = escapeHTML(listItems[i]);
-        if (listItems.length === 0)
-          rtn = '<ul></ul>';
-        else {
-          rtn = i===0 && bestMatchFound ? '<ul><li class="suggestion">' : '<ul><li>';
-          rtn += escapedItems.join('</li><li>') + '</li></ul>';
-        }
+        htmlStart = '<ul>';
+        htmlEnd = '</ul>'
+        rowStartOpen = '<li';
+        rowStartClose = '>';
+        fieldSep = Def.Autocompleter.LIST_ITEM_FIELD_SEP;
+        rowEnd = '</li>';
       }
 
+      rtn = htmlStart;
+      for (var i=0, len=listItems.length; i<len; ++i) {
+        var itemText = listItems[i];
+        var itemFields = fieldValToItemFields[itemText];
+        var escapedFields = [];
+        for (var c=0, flen=itemFields.length; c<flen; ++c)
+          escapedFields[c] = this.escapeHTML(itemFields[c]);
+        rtn += rowStartOpen;
+        if (i===0 && bestMatchFound)
+          rtn += ' class="suggestion"';
+        if (tableFormat)
+          rtn += ' data-fieldval="' + this.escapeHTML(itemText) + '"';
+        rtn += rowStartClose;
+        rtn += escapedFields.join(fieldSep)
+        rtn += rowEnd;
+      }
+      rtn += htmlEnd;
       return rtn;
     },
 
@@ -595,7 +618,10 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         }
         else
           selectedFields = itemFields;
-        rtn[selectedFields.join(joinSep)] = itemFields;
+        var fieldVal = selectedFields.join(joinSep);
+        // Remove any <span> tags added for highlighting
+        fieldVal = fieldVal.replace(/<\/?span>/g, '');
+        rtn[fieldVal] = itemFields;
       }
       return rtn;
     },

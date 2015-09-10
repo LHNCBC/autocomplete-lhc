@@ -12,6 +12,10 @@
   z-index: 1000;
 }
 
+#searchResults strong {
+  color: brown;
+}
+
 #searchCount {
   display: none;
   font-weight: bold;
@@ -99,7 +103,7 @@
 
 
 .suggestion {
-  font-style: italic;
+  color: DarkBlue;
 }
 
 

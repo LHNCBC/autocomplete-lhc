@@ -4,7 +4,6 @@ jQuery.noConflict();
 var opts = {};
 opts['matchListValue']=true
 opts['codes']=["LA6155-1","LA6156-9","LA6162-7","LA6214-6","LA6266-6","LA4457-3","LA4489-6"]
-opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
 opts['autoFill']=true
 var fe_race_or_ethnicity_autoComp = new
   Def.Autocompleter.Prefetch('race_or_ethnicity', [
@@ -25,20 +24,17 @@ var fe_search_cne_autoComp =
 
 var opts = {'matchListValue': false,
  'suggestionMode': Def.Autocompleter.SUGGEST_SHORTEST, 'autocomp': true};
-var fe_search_cwe_autoComp =
-  new Def.Autocompleter.Search('fe_search_cwe',
+new Def.Autocompleter.Search('fe_search_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
 
 var opts = {'matchListValue': false,
  'suggestionMode': Def.Autocompleter.NO_COMPLETION_SUGGESTIONS, 'autocomp': true};
-var fe_search_cwe_autoComp =
-  new Def.Autocompleter.Search('fe_search0_cwe',
+new Def.Autocompleter.Search('fe_search0_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
 
 var opts = {'matchListValue': false,
  'suggestionMode': Def.Autocompleter.USE_STATISTICS, 'autocomp': true};
-var fe_search_cwe_autoComp =
-  new Def.Autocompleter.Search('fe_search2_cwe',
+new Def.Autocompleter.Search('fe_search2_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
 
 var opts = {};

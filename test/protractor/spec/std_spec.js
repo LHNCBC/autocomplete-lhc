@@ -10,7 +10,7 @@ describe('autocomp', function() {
   var suggestionMode0CWE = $('#fe_search0_cwe');
   var suggestionMode1CWE = $('#fe_search_cwe');
   var suggestionMode2CWE = $('#fe_search2_cwe');
-/*
+
   it('should respond to the suggestion mode setting',
      function() {
     po.openTestPage();
@@ -40,6 +40,11 @@ describe('autocomp', function() {
     // In suggestion mode 2, the first element should be the first returned in
     // the AJAX call.
     expect(firstSearchRes.getInnerHtml()).toEqual('Coronary artery disease (CAD)');
+
+    // Confirm that the default is mode 1.
+    po.prefetchCNE.click();
+    po.prefetchCNE.sendKeys('a');
+    expect(firstSearchRes.getInnerHtml()).toEqual('Asian');
   });
 
 
@@ -178,7 +183,7 @@ describe('autocomp', function() {
     expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
     expect(po.multiHeadingCWE.getAttribute('value')).toBe('Chocolate');
   });
-*/
+
 
   it('should support the twoColumnFlow option', function() {
     po.openTestPage();

@@ -437,7 +437,7 @@ if (typeof Def === 'undefined')
      *  be offered based on what the user has typed.  For allowed values,
      *  see the suggestionMode option in defAutocompleterBaseInit.
      */
-    suggestionMode_: this.SUGGEST_SHORTEST,
+    suggestionMode_: Def.Autocompleter.SUGGEST_SHORTEST,
 
     /**
      *  A reference to the last scroll effect (used in positioning).
@@ -536,7 +536,6 @@ if (typeof Def === 'undefined')
       this.selectedItems_ = {};
 
       var dataRequester = options.dataRequester;
-      var suggestionMode = options.suggestionMode;
 
       if (!Def.Autocompleter.Base.classInit_)
         Def.Autocompleter.Base.classInit();
@@ -1277,6 +1276,14 @@ Selects the top item for the
 
 
     /**
+     *  Returns true if the user seems to be picking a list item by number.
+     */
+    pickedByNumber: function() {
+      return this.add_seqnum && this.elemVal.match(/^\d+$/);
+    },
+
+
+    /**
      *  Returns the index of the item in the given list
      *  which should be offered as best match.
      * @param listItems an array of the items in the list
@@ -1309,7 +1316,7 @@ Selects the top item for the
             itemTextLC = itemTextLC.replace(/^\W+/, '');
 
             var matchIndex = itemTextLC.indexOf(elemValue);
-            var itemTextLength = itemTextLength;
+            var itemTextLength = itemText.length;
             if (matchIndex === 0) {
               // if searching by list item #, then ignore length and highlight
               // first element
