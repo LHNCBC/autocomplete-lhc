@@ -1,6 +1,5 @@
 var helpers = require('../test_helpers.js');
 var hasClass = helpers.hasClass;
-var firstSearchRes = $('#searchResults li:first-child');
 var po = require('../autocompPage.js');
 
 describe('autocomp', function() {
@@ -19,7 +18,7 @@ describe('autocomp', function() {
     expect(searchResults.isDisplayed()).toBeTruthy();
     // In suggestion mode 0, the first element should be what is alphabetically
     // first.
-    expect(firstSearchRes.getInnerHtml()).toEqual('Arm painzzzzz');
+    expect(po.firstSearchRes.getInnerHtml()).toEqual('Arm painzzzzz');
     // Backspace to erase the field, or the non-match suggestions dialog will
     // appear (for the other kind of suggestion).
     suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -30,7 +29,7 @@ describe('autocomp', function() {
     suggestionMode1CWE.sendKeys('arm');
     // In suggesion mode 1, the first element should be the shortest item
     // starting with the input text.
-    expect(firstSearchRes.getInnerHtml()).toEqual('Arm z');
+    expect(po.firstSearchRes.getInnerHtml()).toEqual('Arm z');
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -39,12 +38,26 @@ describe('autocomp', function() {
     suggestionMode2CWE.sendKeys('arm');
     // In suggestion mode 2, the first element should be the first returned in
     // the AJAX call.
-    expect(firstSearchRes.getInnerHtml()).toEqual('Coronary artery disease (CAD)');
+    expect(po.firstSearchRes.getInnerHtml()).toEqual('Coronary artery disease (CAD)');
+    suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
+    suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
+    suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
 
     // Confirm that the default is mode 1.
+    // "Asian" is the short match and should be offered as a default
     po.prefetchCNE.click();
     po.prefetchCNE.sendKeys('a');
-    expect(firstSearchRes.getInnerHtml()).toEqual('Asian');
+    po.firstSearchRes.click();
+    expect(po.prefetchCNE.getAttribute('value')).toEqual('Asian');
+
+    // The suggestion should not be offered if the user clicks in the field to
+    // see the full list.  (A suggestion should be made only when the user is
+    // typing.)
+    po.nonField.click();
+    po.prefetchCNE.click();
+    po.firstSearchRes.click();
+    expect(po.prefetchCNE.getAttribute('value')).toEqual(
+      'American Indian or Alaska Native');
   });
 
 
@@ -211,12 +224,12 @@ describe('autocomp', function() {
     // Arrow down to first item
     po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
     expect(po.multiFieldSearch.getAttribute('value')).toBe(
-      'Coronary artery disease');
+      'pain in arm');
     // In a two column list, the right arrow key would move to a different item.
     // Confirm that it does not.
     po.multiFieldSearch.sendKeys(protractor.Key.ARROW_RIGHT);
     expect(po.multiFieldSearch.getAttribute('value')).toBe(
-      'Coronary artery disease');
-    browser.pause();
+      'pain in arm');
   });
+
 });

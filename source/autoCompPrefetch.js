@@ -439,10 +439,11 @@
      *  the item's row in the list.
      */
     buildHTML: function(itemsInList, itemToHTMLData) {
-      // Don't use suggestions if there are headings
+      // Don't use suggestions if there are headings, or if we are showing the
+      // full list.
       var topItemIndex = -1;
       var i, topItem;
-      if (!this.numHeadings_ &&
+      if (!this.numHeadings_ && this.matchListItemsToField_ &&
           this.suggestionMode_ === Def.Autocompleter.SUGGEST_SHORTEST) {
         var topItemIndex = this.pickBestMatch(itemsInList);
         if (topItemIndex >= 0) {

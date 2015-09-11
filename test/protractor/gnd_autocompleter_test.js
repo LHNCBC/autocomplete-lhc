@@ -39,12 +39,6 @@ new Def.Autocompleter.Search('fe_search2_cwe',
 
 var opts = {};
 opts['matchListValue']=true
-opts['codes']=["LA6155-1","LA6156-9","LA6162-7","LA6214-6","LA6266-6","LA4457-3","LA4489-6"]
-opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
-opts['autoFill']=true
-var fe_table_prefetch_cne_autoComp = new Def.Autocompleter.Prefetch('fe_table_prefetch_cne', ["LA6155-1 - American Indian or Alaska Native","LA6156-9 - Asian","LA6162-7 - Black or African-American","LA6214-6 - Hispanic or Latino","LA6266-6 - Native Hawaiian or Pacific Islander","LA4457-3 - White","LA4489-6 - Unknown"], opts);
-var opts = {};
-opts['matchListValue']=true
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
 opts['buttonID']='fe_search_button_cne_button'
 opts['autocomp']=true
@@ -135,6 +129,7 @@ new Def.Autocompleter.Prefetch('headings_1col_cwe', ["Food allergies","Chocolate
 // Multi-field prefetch CWE
 opts = {tableFormat: true};
 opts['codes']=["LA44-3","LA45-0","LA46-8"];
+// Commenting out the multi-field prefetch lists until we support that
 //new Def.Autocompleter.Prefetch('multi_field_cwe', [["Spanish", "Español"],
 //  ["French", "Francais"], ["Other"]], opts);
 

@@ -12,13 +12,8 @@
   z-index: 1000;
 }
 
-#searchResults strong {
-  color: brown;
-}
-
 #searchCount {
   display: none;
-  font-weight: bold;
   font-size: 90%;
   background-color: #e0e2d7;
   padding-left: 3px;
@@ -80,7 +75,6 @@
 .auto_complete > ul > li{
   border-bottom: 1px solid #DFDFDF;
   font-size: 90%;
-  font-weight: bold;
   padding: 3px 10px 3px 10px;
   /* Prevent wrapping of padding and border in IE */
   break-inside: avoid;

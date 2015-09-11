@@ -1925,10 +1925,13 @@ Selects the top item for the
       // Only process the event if the item is not a heading, but in all cases
       // stop the event so that the list stays open and the field retains focus.
       Event.stop(event);
-      var liElement = Event.findElement(event, 'LI');
-      if (!this.liIsHeading(liElement)) {
+      var itemElem = event.target;
+      while (itemElem && itemElem.autocompleteIndex === undefined)
+        itemElem = itemElem.parentNode;
+
+      if (itemElem && !this.liIsHeading(itemElem)) {
         this.clickSelectionInProgress_ = true;
-        this.index = liElement.autocompleteIndex;
+        this.index = itemElem.autocompleteIndex;
         this.selectEntry();
         this.hide();
         this.clickSelectionInProgress_ = false;

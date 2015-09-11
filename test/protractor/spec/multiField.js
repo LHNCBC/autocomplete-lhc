@@ -3,6 +3,8 @@ var po = require('../autocompPage.js');
 var hasClass = require('../test_helpers').hasClass;
 
 describe('multi-field lists', function() {
+/* Commenting out multi-field prefetch tests until we support that
+
   it('should show both fields in the list', function() {
     po.openTestPage();
     po.multiFieldPrefetch.click();
@@ -23,14 +25,21 @@ describe('multi-field lists', function() {
     po.firstSearchRes.click();
     expect(po.multiFieldPrefetchCol2.getAttribute('value')).toBe('Español');
   });
+*/
+
   it('should show both fields in the list for search fields', function() {
+    po.openTestPage();
     po.multiFieldSearch.click();
     po.multiFieldSearch.sendKeys('mtest');
-    expect(po.firstSearchRes).toBe('CAD - Coronary artery disease');
+    expect(po.tableSearchResult(1).isPresent(0)).toBe(true);
+    expect(po.tableSearchResult(1).getInnerHtml()).toBe(
+      '<td>Arm pain</td><td>pain in arm</td>');
   });
+
   it('should put only the second field into the search form field when configured that way',
      function() {
-    po.firstSearchRes.click();
-    expect(po.multiFieldSearch.getAttribute('value')).toBe('Coronary artery disease');
+    po.tableSearchResult(1).click();
+    expect(po.multiFieldSearch.getAttribute('value')).toBe('pain in arm');
   });
+
 });

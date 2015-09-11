@@ -487,7 +487,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         }
         filteredItems = filteredItems.sort(Def.Autocompleter.Base.noCaseSort);
         if (topItemIndex > -1)
-          filteredItems[topItemIndex] = topItem;
+          filteredItems[0] = topItem;
       }
       return [filteredItems, suggestionFound, pickedByNum];
     },
@@ -671,8 +671,11 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
           // Retrieve the response data, which is in JSON format.
           var responseData = xhrObj.responseJSON || JSON.parse(xhrObj.responseText);
 
-          var itemFieldArrays = responseData[3];
-          var fieldValToItemFields = this.createFieldVals(itemFieldArrays);
+          var totalCount = responseData[0];
+          this.itemCodes_ = responseData[1];
+          this.listExtraData_ = responseData[2];
+          this.rawList_ = responseData[3]; // rawList_ is used in list selection events
+          var fieldValToItemFields = this.createFieldVals(this.rawList_);
           var data = this.processChoices(fieldValToItemFields);
           var listFieldVals=data[0], bestMatchFound=data[1],
             pickedByNum=data[3];
@@ -680,7 +683,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
             fieldValToItemFields);
           this.updateChoices(listHTML, pickedByNum);
 
-          var totalCount = responseData[0];
           var shownCount = listFieldVals.length;
           this.setSearchCountDiv(totalCount, shownCount,
             xhrObj.responseText.length);
