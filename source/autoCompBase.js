@@ -1211,11 +1211,6 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Returns the index of the best match for the current input
-Selects the top item for the
-
-
-    /**
      *  This is called to update the completion list area with new search results.
      *  We override this to change the default selection.
      * @param choices the HTML for a ul list.

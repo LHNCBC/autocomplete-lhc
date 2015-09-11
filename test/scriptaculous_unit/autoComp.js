@@ -7,7 +7,6 @@ var fe_other_list_field_autoComp =
    ['oranges and apples', 'apples', 'pears and (apples)', 'bananas', 'spinach'],
    {'matchListValue': false, 'addSeqNum': false,
     'codes': ['oa', 'a', 'pa', 'b', 's'],
-//    'suggestionMode': Def.Autocompleter.NO_COMPLETION_SUGGESTIONS,
     'dataRequester': new Def.RecordDataRequester($('fe_other_list_field'),
          '/someurl', ['fe_record_id'], ['fe_code', 'fe_pseudonym'])});
 
