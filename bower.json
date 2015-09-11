@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "main": [
     "source/auto_completion.css",
     "../jquery-ui/ui/core.js",
@@ -26,7 +26,7 @@
   "dependencies": {
     "jquery-ui": "^1.10.1",
     "jquery-no-conflict-exec" : "#master",
-    "prototypejs-bower": "1.7.2",
+    "prototypejs-bower": "1.7.2"
   },
   "devDependencies": {
     "angular": "~1.3.1"
