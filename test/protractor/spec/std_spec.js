@@ -6,7 +6,7 @@ var po = require('../autocompPage.js');
 describe('autocomp', function() {
   var searchResults = $('#searchResults');
   var raceField = po.prefetchCNE;
-  var searchCNE = $('#fe_search_cne');
+  var searchCNE =  po.searchCNE;
   var suggestionMode0CWE = $('#fe_search0_cwe');
   var suggestionMode1CWE = $('#fe_search_cwe');
   var suggestionMode2CWE = $('#fe_search2_cwe');
@@ -193,5 +193,30 @@ describe('autocomp', function() {
     expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
     expect(po.headings1ColCWE.getAttribute('value')).toBe('Chocolate');
   });
+
+
+  it('should not require a name attribute', function() {
+    // Here we are testing that two search fields will not use each other's
+    // ajax cache when both are lacking the name attribute.
+    po.openTestPage();
+    // Preconditions -- need two search fields which do not have a name
+    // attribute.
+    expect(po.multiSearchCWE.getAttribute('name')).toBe('');
+    expect(po.searchCNE.getAttribute('name')).toBe('');
+    po.multiSearchCWE.click();
+    po.multiSearchCWE.sendKeys('ar');
+    // A list should appear
+    // This list is using statitics, so it pulls CAD to the top.  The second
+    // result is what we can compare with the first result in the other list.
+    expect(po.secondSearchRes.getInnerHtml()).toBe("Arm pain");
+    // Now go to another field, which like multiSearchCWE has no name field.
+    po.searchCNE.click();
+    po.searchCNE.sendKeys('ar');
+    // The search result list should be different (even though the name
+    // attribute is the same/missing for both).
+    expect(po.firstSearchRes.getInnerHtml()).toNotBe("Arm pain");
+    expect(po.firstSearchRes.getInnerHtml()).toBe("Arachnoiditis");
+  });
+
 
 });
