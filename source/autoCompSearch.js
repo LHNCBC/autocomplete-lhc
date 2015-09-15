@@ -203,15 +203,15 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *     that so that when scrolling to show the list it doesn't scroll the current
      *     field under the header bar.  This is the element ID for such a header
      *     bar.</li>
-     *    <li>tableFormat</li> - If true, then if the list's items contain
+     *    <li>tableFormat - If true, then if the list's items contain
      *     multiple fields, the list will be formatted in a table instead of just
      *     concatenating the fields together for each list item.</li>
-     *    <li>valueCols</li> - Used when tableFormat is true to indicate
+     *    <li>valueCols - Used when tableFormat is true to indicate
      *     which columns in the table should be combined to form the field value
      *     when the row is selected.  This should be an array of column indices
      *     (starting with 0).  If absent, all columns will be combined for the
      *     value.  Note that the specification here must result in unique field
-     *     values for each table row.
+     *     values for each table row.</li>
      *  </ul>
      */
     initialize: function(fieldID, url, options) {
@@ -555,8 +555,8 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
 
     /**
-     *  Determines whether to show the search count div below this list, and its
-     *  content.
+     *  Updates the contents of the search count div below the list, if
+     *  there were any results.
      * @param totalCount the total hits found on the server (possibly more than
      *  returned.)
      * @param shownCount the number of hits to be shown in the list
@@ -597,7 +597,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
     /**
      *  Returns a hash from the values that get placed into the form field when
-     *  a item is selected to the array of item field values shown in the
+     *  an item is selected to the array of item field values shown in the
      *  autocompletion list.
      * @param itemFieldArrays the array of item field arrays (one array per
      *  item

@@ -836,7 +836,7 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Returns the value of a list item (minus any sequence number an
+     *  Returns the value of a list item (minus any sequence number and
      *  separator.)
      * @param itemElem a list item DOM element.
      */
@@ -1233,13 +1233,11 @@ if (typeof Def === 'undefined')
           this.entryCount = domItems.length;
           if (this.suggestionMode_ !== Def.Autocompleter.NO_COMPLETION_SUGGESTIONS) {
             var i;
-            if (this.entryCount > 0 && !this.focusInProgress_) {
-              if (pickedByNum) {
-                // Use the first non-heading entry (whose number should match
-                // what was typed) as the default
-                for(this.index = 0; this.liIsHeading(domItems[i]) &&
-                       this.index < this.entryCount; ++this.index);
-              }
+            if (this.entryCount > 0 && !this.focusInProgress_ && pickedByNum) {
+              // Use the first non-heading entry (whose number should match
+              // what was typed) as the default
+              for(this.index = 0; this.liIsHeading(domItems[i]) &&
+                     this.index < this.entryCount; ++this.index);
             }
           } // If we are making a suggestion
 
@@ -2207,7 +2205,10 @@ if (typeof Def === 'undefined')
     },
 
 
-    // Copied as-is from controls.js  (remove this comment if you modify it).
+    /**
+     *  Returns the DOM node corresponding to the list item at the given index.
+     * @param index the zero-based index of the list item to retrieve.
+     */
     getEntry: function(index) {
       var rtn;
       if (this.options.tableFormat)

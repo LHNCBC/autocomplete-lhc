@@ -456,7 +456,7 @@
       }
 
       var rtn = '<ul>';
-      // Process the first item separatly, because it might be a suggestion.
+      // Process the first item separately, because it might be a suggestion.
       i = 0;
       if (topItemIndex >= 0) {
         rtn += '<li class="suggestion">' + itemToHTMLData[topItem][0] + '</li>'
