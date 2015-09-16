@@ -163,7 +163,8 @@ describe('autocomp', function() {
     // in autoCompEvents.js (observeListSelections) is also up to date.
     expect(eventData).toEqual({val_typed_in: '', final_val: 'Spanish',
       used_list: true, input_method: 'clicked', on_list: true,
-      item_code: 'LA44-3', removed: false, list: ['Spanish', 'French', 'Other'],
+      item_code: 'LA44-3', removed: false,
+      list: ['Spanish', 'French', 'Other', 'escape<test>&'],
       field_id: po.prefetchCWEID});
   });
 

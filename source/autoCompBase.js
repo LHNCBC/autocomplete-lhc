@@ -1231,13 +1231,13 @@ if (typeof Def === 'undefined')
 
         if (domItems) {
           this.entryCount = domItems.length;
+          var i;
           if (this.suggestionMode_ !== Def.Autocompleter.NO_COMPLETION_SUGGESTIONS) {
-            var i;
             if (this.entryCount > 0 && !this.focusInProgress_ && pickedByNum) {
               // Use the first non-heading entry (whose number should match
               // what was typed) as the default
-              for(this.index = 0; this.liIsHeading(domItems[i]) &&
-                     this.index < this.entryCount; ++this.index);
+              for(i=0; this.liIsHeading(domItems[i]) && i<this.entryCount; ++i);
+              this.index = i;
             }
           } // If we are making a suggestion
 
@@ -1287,7 +1287,7 @@ if (typeof Def === 'undefined')
       // 1) the shortest choice with the field value at the beginning, or
       // 2) the shortest choice with the field value somewhere, or
       // 3) the shortest choice
-      var elemValue = this.elemVal.toLowerCase();
+      var elemValue = this.elemVal.trim().toLowerCase();
       var numItems = listItems.length;
       var rtn = -1;
 
@@ -1303,7 +1303,7 @@ if (typeof Def === 'undefined')
         for (var i=0; i<numItems; ++i) {
           // Make sure the entry is not a header before considering it
           var itemText = listItems[i];
-          if (!this.itemTextIsHeading(listItems[i])) {
+          if (!this.itemTextIsHeading(itemText)) {
             var itemTextLC = itemText.toLowerCase();
             // Also remove non-word characters from the start of the string.
             itemTextLC = itemTextLC.replace(/^\W+/, '');
@@ -2012,7 +2012,6 @@ if (typeof Def === 'undefined')
     liIsHeading: function(li) {
       var rtn = !!this.numHeadings_; // true if headings exist
       if (rtn) {  // if there are headings
-        var itemVal = this.listItemValue(li);
         rtn = this.itemTextIsHeading(this.listItemValue(li));
       }
       return rtn;

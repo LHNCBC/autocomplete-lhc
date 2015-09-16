@@ -11,10 +11,11 @@ var fe_race_or_ethnicity_autoComp = new
   "Hispanic or Latino","Native Hawaiian or Pacific Islander","White",
   "Unknown"], opts);
 var opts = {};
-opts['codes']=["LA44-3","LA45-0","LA46-8"]
+opts['codes']=["LA44-3","LA45-0","LA46-8", "ZZZ"]
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
 opts['autoFill']=true
-var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe', ["Spanish","French","Other"], opts);
+var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe',
+  ["Spanish","French","Other", "escape<test>&"], opts);
 var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true

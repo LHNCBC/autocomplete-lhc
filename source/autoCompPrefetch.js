@@ -332,7 +332,7 @@
           var rawItemText = instance.rawList_[i];
           if (useFullList) {
             ++totalCount;
-            itemText = rawItemText;
+            itemText = escapeHTML(rawItemText);
           }
 
           // We need to be careful not to match the HTML we've put around the

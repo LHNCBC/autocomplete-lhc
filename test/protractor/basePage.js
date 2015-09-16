@@ -93,6 +93,17 @@ function BasePage() {
       'return $("completionOptions").down().childNodes.length'
     );
   };
+
+
+  /**
+   *  Erases the value in the given field.  Leaves the focus in the field
+   *  afterward.
+   */
+  this.clearField = function(field) {
+    field.click();
+    field.sendKeys(protractor.Key.CONTROL, 'a'); // select all
+    field.sendKeys(protractor.Key.BACK_SPACE); // clear the field
+  };
 };
 
 module.exports = {BasePage: BasePage};
