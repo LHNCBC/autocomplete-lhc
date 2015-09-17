@@ -19,6 +19,17 @@ function BasePage() {
     return $(searchResCSS + ' li:nth-child('+pos+')');
   };
 
+  /**
+   *  Returns the item in the search results list at the given position
+   *  number (starting at 1), assuming the table format is being used.  (This is
+   *  the same thing as "searchResult" but for the table format.)  The returned
+   *  item might be a heading.
+   * @param pos the item position number (starting at 1).
+   */
+  this.tableSearchResult = function(pos) {
+    return $(searchResCSS + ' tr:nth-child('+pos+')');
+  };
+
   this.firstSearchRes = this.searchResult(1);
   this.secondSearchRes = this.searchResult(2);
   this.thirdSearchRes = this.searchResult(3);
@@ -81,6 +92,17 @@ function BasePage() {
     return browser.driver.executeScript(
       'return $("completionOptions").down().childNodes.length'
     );
+  };
+
+
+  /**
+   *  Erases the value in the given field.  Leaves the focus in the field
+   *  afterward.
+   */
+  this.clearField = function(field) {
+    field.click();
+    field.sendKeys(protractor.Key.CONTROL, 'a'); // select all
+    field.sendKeys(protractor.Key.BACK_SPACE); // clear the field
   };
 };
 

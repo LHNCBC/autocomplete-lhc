@@ -1,6 +1,5 @@
 var helpers = require('../test_helpers.js');
 var hasClass = helpers.hasClass;
-var firstSearchRes = $('#searchResults li:first-child');
 var po = require('../autocompPage.js');
 
 describe('autocomp', function() {
@@ -19,7 +18,7 @@ describe('autocomp', function() {
     expect(searchResults.isDisplayed()).toBeTruthy();
     // In suggestion mode 0, the first element should be what is alphabetically
     // first.
-    expect(firstSearchRes.getInnerHtml()).toEqual('Arm painzzzzz');
+    expect(po.firstSearchRes.getInnerHtml()).toEqual('Arm painzzzzz');
     // Backspace to erase the field, or the non-match suggestions dialog will
     // appear (for the other kind of suggestion).
     suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -30,7 +29,7 @@ describe('autocomp', function() {
     suggestionMode1CWE.sendKeys('arm');
     // In suggesion mode 1, the first element should be the shortest item
     // starting with the input text.
-    expect(firstSearchRes.getInnerHtml()).toEqual('Arm z');
+    expect(po.firstSearchRes.getInnerHtml()).toEqual('Arm z');
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -39,7 +38,26 @@ describe('autocomp', function() {
     suggestionMode2CWE.sendKeys('arm');
     // In suggestion mode 2, the first element should be the first returned in
     // the AJAX call.
-    expect(firstSearchRes.getInnerHtml()).toEqual('Coronary artery disease (CAD)');
+    expect(po.firstSearchRes.getInnerHtml()).toEqual('Coronary artery disease (CAD)');
+    suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
+    suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
+    suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
+
+    // Confirm that the default is mode 1.
+    // "Asian" is the short match and should be offered as a default
+    po.prefetchCNE.click();
+    po.prefetchCNE.sendKeys('a');
+    po.firstSearchRes.click();
+    expect(po.prefetchCNE.getAttribute('value')).toEqual('Asian');
+
+    // The suggestion should not be offered if the user clicks in the field to
+    // see the full list.  (A suggestion should be made only when the user is
+    // typing.)
+    po.nonField.click();
+    po.prefetchCNE.click();
+    po.firstSearchRes.click();
+    expect(po.prefetchCNE.getAttribute('value')).toEqual(
+      'American Indian or Alaska Native');
   });
 
 
@@ -145,7 +163,8 @@ describe('autocomp', function() {
     // in autoCompEvents.js (observeListSelections) is also up to date.
     expect(eventData).toEqual({val_typed_in: '', final_val: 'Spanish',
       used_list: true, input_method: 'clicked', on_list: true,
-      item_code: 'LA44-3', removed: false, list: ['Spanish', 'French', 'Other'],
+      item_code: 'LA44-3', removed: false,
+      list: ['Spanish', 'French', 'Other', 'escape<test>&'],
       field_id: po.prefetchCWEID});
   });
 
@@ -192,6 +211,26 @@ describe('autocomp', function() {
     po.headings1ColCWE.sendKeys(protractor.Key.ARROW_RIGHT);
     expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
     expect(po.headings1ColCWE.getAttribute('value')).toBe('Chocolate');
+  });
+
+
+  it('should not use twoColumnFlow for a tableFormat list', function() {
+    // Re-open the page so the multiFieldSearch field is not scrolled up.
+    po.openTestPage();
+    // Resize the window so the two-column layout would be in effect for a
+    // non-tableFormat list.
+    browser.manage().window().setSize(1100, 473);
+    po.multiFieldSearch.click();
+    po.multiFieldSearch.sendKeys("mtest");
+    // Arrow down to first item
+    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(po.multiFieldSearch.getAttribute('value')).toBe(
+      'pain in arm');
+    // In a two column list, the right arrow key would move to a different item.
+    // Confirm that it does not.
+    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_RIGHT);
+    expect(po.multiFieldSearch.getAttribute('value')).toBe(
+      'pain in arm');
   });
 
 });
