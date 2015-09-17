@@ -133,14 +133,12 @@ if (typeof Def === 'undefined')
      *  to store information about a particular field (or maybe a column of
      *  identical fields) and are also used to store/retrieve the associated
      *  fields themselves.  In systems where every field is unique, this can
-     *  be the field's name attribute, but it can also be a key shared by fields
+     *  be the field's name or ID attribute, but it can also be a key shared by fields
      *  that have the same supporting list.  If this is overridden, be sure to
      *  also override lookupFields.
      * @param field a DOM field element
      */
-    getFieldLookupKey: function(field) {
-      return field.name; // default implementation
-    },
+    getFieldLookupKey: Def.Observable.lookupKey, // default implementation
 
 
     /**
