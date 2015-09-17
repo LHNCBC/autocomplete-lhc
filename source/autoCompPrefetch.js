@@ -89,11 +89,7 @@
      * @param id the ID of the form field for which the list is displayed
      * @param listItems the array of completion options (list values).  If not
      *  specified here, the list will be supplied later by a call to the
-     *  setListAndField function.  An example of this would be a list that
-     *  contains values from the current form, such as the group headers
-     *  list.  The list contents are not actually retrieved until the
-     *  field receives focus, so that all currently defined group header
-     *  fields are included on the list.
+     *  setListAndField function.
      * @param options A hash of optional parameters.  The allowed keys and their
      *  values are:
      *  <ul>
@@ -179,7 +175,8 @@
      *  Populates the list based on the field content.
      */
     getUpdatedChoices: function() {
-      this.updateChoices(this.options.selector(this));
+      this.elemVal = this.element.value;
+      this.updateChoices(this.options.selector(this), this.pickedByNumber());
     },
 
 
@@ -311,11 +308,13 @@
         maxItemsPerHeading = 1;
       var countForLastHeading = 0; // number of items for the last header
 
-      var rtnBuffer = ['<ul>'];
+      var itemsInList = []
+      var itemToHTMLData = {};
       var lastHeading = null;
       var foundItemForLastHeading = false;
       var headerCount = 0;
       var subListIndex = 0; // an index into the list we're building
+      var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
       if (instance.options.ignoreCase)
         entry = entry.toLowerCase();
       for (var i=0, max=instance.rawList_.length; i<max; ++i) {
@@ -330,10 +329,10 @@
           // Find all of the matches, even though we don't return them all,
           // so we can give the user a count.
           // This part does not yet support multi-level headings
-          var elem = instance.rawList_[i];
+          var rawItemText = instance.rawList_[i];
           if (useFullList) {
             ++totalCount;
-            itemText = elem;
+            itemText = escapeHTML(rawItemText);
           }
 
           // We need to be careful not to match the HTML we've put around the
@@ -350,7 +349,7 @@
                   '</strong>' + itemNumStr.substr(entry.length);
                 matchesItemNum = true;
                 itemText = instance.SEQ_NUM_PREFIX + itemNumStr +
-                           instance.SEQ_NUM_SEPARATOR+ elem;
+                           instance.SEQ_NUM_SEPARATOR + escapeHTML(rawItemText);
               }
             }
           } // if we're adding sequence numbers to this list
@@ -358,16 +357,17 @@
           if (!matchesItemNum && !useFullList) {
             // See if it matches the item at the beginning
             var foundMatch = false;
-            var elemComp = elem;
+            var elemComp = rawItemText;
             if (instance.options.ignoreCase)
-              elemComp = elem.toLowerCase();
+              elemComp = rawItemText.toLowerCase();
             var foundPos = elemComp.indexOf(entry);
             while (!foundMatch && foundPos !== -1) {
               if (totalCount < maxReturn) {
                 if (foundPos === 0) {
                   ++totalCount;
-                  itemText = '<strong>' + elem.substr(0, entry.length)+
-                    '</strong>' + elem.substr(entry.length);
+                  itemText = '<strong>' +
+                    escapeHTML(rawItemText.substr(0, entry.length))+'</strong>'+
+                    escapeHTML(rawItemText.substr(entry.length));
                   foundMatch = true;
                 }
                 else { // foundPos > 0
@@ -375,10 +375,11 @@
                   if (instance.options.fullSearch ||
                     /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) {
                     ++totalCount;
-                    var prefix = elem.substr(0, foundPos);
+                    var prefix = escapeHTML(rawItemText.substr(0, foundPos));
                     itemText = prefix + '<strong>' +
-                      elem.substr(foundPos, entry.length) + '</strong>' +
-                      elem.substr(foundPos + entry.length);
+                      escapeHTML(rawItemText.substr(foundPos, entry.length)) +
+                     '</strong>' +
+                      escapeHTML(rawItemText.substr(foundPos + entry.length));
                     foundMatch = true;
                   }
                 }
@@ -390,14 +391,13 @@
 
           // For multi-select lists, filter out currently selected items.
           // Then, only add it if we haven't exceeded the limit.
-          if ((!instance.multiSelect_ || !instance.isSelected(elem)) &&
+          if ((!instance.multiSelect_ || !instance.isSelected(rawItemText)) &&
               itemText && (totalCount <= maxReturn ||
                             (instance.numHeadings_>0 && useFullList))) {
             if (lastHeading && !foundItemForLastHeading) {
               foundItemForLastHeading = true;
-              rtnBuffer.push('<li class="heading">');
-              rtnBuffer.push(lastHeading);
-              rtnBuffer.push('</li>');
+              itemsInList.push(lastHeading);
+              itemToHTMLData[lastHeading] = [escapeHTML(lastHeading), 'heading'];
               countForLastHeading = 0;
             }
             if (!useFullList || !instance.numHeadings_ ||
@@ -406,9 +406,8 @@
                 itemText = instance.SEQ_NUM_PREFIX + itemNumStr +
                   instance.SEQ_NUM_SEPARATOR + itemText;
               }
-              rtnBuffer.push('<li>');
-              rtnBuffer.push(itemText);
-              rtnBuffer.push('</li>');
+              itemsInList.push(rawItemText);
+              itemToHTMLData[rawItemText] = [itemText];
               if (useFullList)
                 ++countForLastHeading;
             }
@@ -427,13 +426,52 @@
         $('searchCount').style.display = 'none';
       }
 
-      if (useFullList || totalCount > 0) {
-        rtnBuffer.push('</ul>');
-        var rtnStr = rtnBuffer.join('');
+      return instance.buildHTML(itemsInList, itemToHTMLData);
+    },
+
+
+    /**
+     *  Constructs the HTML for the list.
+     * @param itemsInList an array of the raw item text for the items to shown
+     * @param itemToHTMLData a hash from raw item texts to an array of data for
+     *  the HTML output.  The first item should be the item text with any needed
+     *  HTML markup.  The second item, if present, should be a class to apply to
+     *  the item's row in the list.
+     */
+    buildHTML: function(itemsInList, itemToHTMLData) {
+      // Don't use suggestions if there are headings, or if we are showing the
+      // full list.
+      var topItemIndex = -1;
+      var i, topItem;
+      if (!this.numHeadings_ && this.matchListItemsToField_ &&
+          this.suggestionMode_ === Def.Autocompleter.SUGGEST_SHORTEST) {
+        var topItemIndex = this.pickBestMatch(itemsInList);
+        if (topItemIndex >= 0) {
+          // Move that item to the start of the list
+          var topItem = itemsInList[topItemIndex]
+          for (i=topItemIndex; i>0; --i)
+            itemsInList[i] = itemsInList[i-1];
+          itemsInList[0] = topItem;
+        }
       }
-      else
-        rtnStr = '<ul></ul>';
-      return rtnStr;
+
+      var rtn = '<ul>';
+      // Process the first item separately, because it might be a suggestion.
+      i = 0;
+      if (topItemIndex >= 0) {
+        rtn += '<li class="suggestion">' + itemToHTMLData[topItem][0] + '</li>'
+        ++i;
+      }
+      for (var len=itemsInList.length; i<len; ++i) {
+        var itemData = itemToHTMLData[itemsInList[i]];
+        var cls = itemData[1];
+        if (cls)
+          rtn += '<li class="'+cls+'">'+itemData[0]+'</li>';
+        else
+          rtn += '<li>'+itemData[0]+'</li>';
+      }
+      rtn += '</ul>';
+      return rtn;
     },
 
 

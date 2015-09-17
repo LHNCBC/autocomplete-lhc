@@ -4,7 +4,6 @@ jQuery.noConflict();
 var opts = {};
 opts['matchListValue']=true
 opts['codes']=["LA6155-1","LA6156-9","LA6162-7","LA6214-6","LA6266-6","LA4457-3","LA4489-6"]
-opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
 opts['autoFill']=true
 var fe_race_or_ethnicity_autoComp = new
   Def.Autocompleter.Prefetch('race_or_ethnicity', [
@@ -12,10 +11,11 @@ var fe_race_or_ethnicity_autoComp = new
   "Hispanic or Latino","Native Hawaiian or Pacific Islander","White",
   "Unknown"], opts);
 var opts = {};
-opts['codes']=["LA44-3","LA45-0","LA46-8"]
+opts['codes']=["LA44-3","LA45-0","LA46-8", "ZZZ"]
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
 opts['autoFill']=true
-var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe', ["Spanish","French","Other"], opts);
+var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe',
+  ["Spanish","French","Other", "escape<test>&"], opts);
 var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true
@@ -25,28 +25,19 @@ var fe_search_cne_autoComp =
 
 var opts = {'matchListValue': false,
  'suggestionMode': Def.Autocompleter.SUGGEST_SHORTEST, 'autocomp': true};
-var fe_search_cwe_autoComp =
-  new Def.Autocompleter.Search('fe_search_cwe',
+new Def.Autocompleter.Search('fe_search_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
 
 var opts = {'matchListValue': false,
  'suggestionMode': Def.Autocompleter.NO_COMPLETION_SUGGESTIONS, 'autocomp': true};
-var fe_search_cwe_autoComp =
-  new Def.Autocompleter.Search('fe_search0_cwe',
+new Def.Autocompleter.Search('fe_search0_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
 
 var opts = {'matchListValue': false,
  'suggestionMode': Def.Autocompleter.USE_STATISTICS, 'autocomp': true};
-var fe_search_cwe_autoComp =
-  new Def.Autocompleter.Search('fe_search2_cwe',
+new Def.Autocompleter.Search('fe_search2_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
 
-var opts = {};
-opts['matchListValue']=true
-opts['codes']=["LA6155-1","LA6156-9","LA6162-7","LA6214-6","LA6266-6","LA4457-3","LA4489-6"]
-opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
-opts['autoFill']=true
-var fe_table_prefetch_cne_autoComp = new Def.Autocompleter.Prefetch('fe_table_prefetch_cne', ["LA6155-1 - American Indian or Alaska Native","LA6156-9 - Asian","LA6162-7 - Black or African-American","LA6214-6 - Hispanic or Latino","LA6266-6 - Native Hawaiian or Pacific Islander","LA4457-3 - White","LA4489-6 - Unknown"], opts);
 var opts = {};
 opts['matchListValue']=true
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
@@ -128,4 +119,23 @@ opts = JSON.parse(JSON.stringify(opts)); // clone opts
 opts['twoColumnFlow'] = false;
 delete opts['maxSelect'];
 new Def.Autocompleter.Prefetch('headings_1col_cwe', ["Food allergies","Chocolate","Crab","Egg","Fish","Gluten","Milk","Monosodium Glutamate (MSG)","Peanut","Pork","Sesame","Shellfish","Shrimp","Soy","Tomatoes","Tree Nuts","Wheat","Cochineal extract (Carmine) red dye","FD\u0026C Blue No. 1 dye","FD\u0026C Yellow No. 2 dye","Environmental allergies","Cat","Cockroach","Cold Weather","Dog","Dust Mites","Hay Fever","Iodinated x-ray contrast","Latex","Mold","Nickel","Pet Dander","Pollen","Ragweed","Semen","Sun","Wasp, hornet, bee sting","Medication class allergies","ACE Inhibitors","Aminoglycosides","Antihistamines","Benzodiazepines","Beta Blockers","Calcium Channel Blockers","Cephalosporins","Diuretics","H2 Blockers","Insulins","Iodine Containing Medications","Local Anesthetics","Macrolides (like Erythromycin)","Muscle Relaxants, Skeletal","Narcotic Analgesics","Nonsteroidal Anti Inflam. Agents (NSAID)","Penicillin and Derivatives","Phenothiazines","Proton Pump Inhibitors","Quinolone Antibiotics","Serotonin Re-Uptake Inhibitors","Statins","Sulfa Drugs","Tetracycline","Medication allergies","ALEVE (Naproxen)","AMBIEN (Zolpedem)","Amoxicillin","Aspirin (ASA)","ATIVAN  (Lorazapam)","ATROVENT  (Ipartropium)","AVINZA (Morphine)","Bacitracin","BACTRIM  (Sulfamethoxazol/trimethaprim)","BENADRYL  (Diphenhydramine )","BUMEX  (Bumetanide)","CARDIZEM  (Diltizzam)","CEFZIL (Cefprozil)","CIPROFLOXACIN  (Cipro)","Codeine","COLACE (Docusate Sodium)","COMPAZINE (Prochlorperazine Maleate)","COUMADIN (Warfarin)","DALMANE  (Flurazepam)","DEMEROL (Meperidine)","DEPAKOTE ER (Valproic Acid)","DILANTIN (Phenytoin)","DULCOLAX (Bisacodyl)","E-MYCIN (Erythromycin)","GASTROGRAFIN(Diatrizoate Meglumine)","GLUCOPHAGE (Metformin)","HALCION (Triazolam)","HALDOL (Haloperidol)","HUMALIN (human insulin)","IMDUR (Isosorbide)","ISONIAZID (Isoniazide)","KAYEVELATE (Sodium Polystyrene Sulfonate)","KLONOPIN (Clonazepam)","Lactose","LASIX (Furosemide)","LEVAQUIN (Levofloxacin)","LIBRIUM (Chlordiazepoxide)","Lidocaine, Local","LIPITOR (Atorvastatin)","LOPRESSOR (Metroprolol)","LOVENOX (Enoxaparin)","MELLARIL (Thioridazine)","MOTRIN/ADVIL (Ibuprofen)","NORVASC (Amlodipine)","OMNICEF (Cefdinir)","Penicillin","PEPCID (Famotidine)","PERMITIL (Fluphenazine)","PLAVIX (Clopidogrel)","PREVACID (Lansoprazole)","PROLIXIN (Fluphenazine)","REGLAN (Metoclopramide)","RESTORIL (Temazepam)","ROBAXIN (Methocarbamol)","SENOKOT (Senna)","SERAX (Oxazepam)","SERENTIL (Mesoridazine)","SLOW-K (Potassium)","SOLU MEDROL (Methylprednisolone )","STELAZINE (Trifluoperazine)","SYNTHROID (Thyroxin)","TEGRETOL (Carbamazepine)","THORAZINE (Chlorpromazine)","TOPROL (Metoprolol)","TRANXENE (Clorazepate)","TRILAFON (Perphenazie)","TYLENOL (Acetaminophen)","VALIUM (Diastat)","VALIUM (Diazepam)","VASOTEC (Enalapril)","VITAMIN K1 (Phytonadione)","XANAX (Alprazolam)","ZAROXOLYN (Metolazone)","ZOLOFT (Sertraline)","ZOSYN (Piperacillin/Tazobactam)","ZYPREXA (Olanzapine)"], opts);
+
+// Multi-field prefetch CWE
+opts = {tableFormat: true};
+opts['codes']=["LA44-3","LA45-0","LA46-8"];
+// Commenting out the multi-field prefetch lists until we support that
+//new Def.Autocompleter.Prefetch('multi_field_cwe', [["Spanish", "Español"],
+//  ["French", "Francais"], ["Other"]], opts);
+
+// Multi-field prefetch CWE with a column specification
+opts.valueCols = [1];
+//new Def.Autocompleter.Prefetch('multi_field_cwe2', [["Spanish", "Español"],
+//  ["French", "Francais"], ["Other", "???"]], opts);
+
+/// multi-field search CWE
+opts.autocomp = true;
+var fe_search_cwe_autoComp =
+  new Def.Autocompleter.Search('multi_field_search_cwe',
+    '/form/get_search_res_list?fd_id=2163', opts);
+
 

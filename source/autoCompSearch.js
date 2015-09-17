@@ -64,14 +64,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
     /**
      * The superclass.
      */
-    superclass: Def.Autocompleter.Base.prototype,
-
-    /**
-     *  If the list items returned by the AJAX search call consist of multiple
-     *  strings (fields) each, this is the string used to join together each list
-     *  item's fields to produce the list item string the user sees in the list.
-     */
-    LIST_ITEM_FIELD_SEP: ' - '
+    superclass: Def.Autocompleter.Base.prototype
   };
   Object.extend(Def.Autocompleter.Search, ctmp);
   ctmp = null;
@@ -210,6 +203,15 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      *     that so that when scrolling to show the list it doesn't scroll the current
      *     field under the header bar.  This is the element ID for such a header
      *     bar.</li>
+     *    <li>tableFormat - If true, then if the list's items contain
+     *     multiple fields, the list will be formatted in a table instead of just
+     *     concatenating the fields together for each list item.</li>
+     *    <li>valueCols - Used when tableFormat is true to indicate
+     *     which columns in the table should be combined to form the field value
+     *     when the row is selected.  This should be an array of column indices
+     *     (starting with 0).  If absent, all columns will be combined for the
+     *     value.  Note that the specification here must result in unique field
+     *     values for each table row.</li>
      *  </ul>
      */
     initialize: function(fieldID, url, options) {
@@ -282,15 +284,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         Event.observe(buttonID, 'keypress', this.buttonKeyPress.bind(this));
       }
       this.element.addClassName('search_field');
-    },
-
-
-    /**
-     *  The function that gets called after an AJAX request for an updated list.
-     * @param the AJAX request object
-     */
-    onComplete: function(request) {
-      this.updateChoices(request.responseText);
     },
 
 
@@ -437,43 +430,200 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
     /**
      *  Processes a returned set of choices in preparation for building
-     *  the HTML for the update (choices) area.
-     * @param listItemData the list items received from the AJAX call
-     * @param codes the codes for the list items
-     * @param highlighting true if highlighting of matches is being used.
-     * @return the processed list items, ready for being put into the HTML
-     *  (escaped as needed).
+     *  the HTML for the update (choices) area.  This filters out selected
+     *  items, sorts the items, and picks the default item.  In the process, it
+     *  also initializes itemToDataIndex_.
+     * @param fieldValToItemFields a hash from field value version of the list
+     *  items to the list item arrays received from the AJAX call
+     * @return an array of three elements, an array of field value strings from
+     *  fieldValToItemFields ordered in the way the items should appear in the
+     *  list, a boolean indicating whether the
+     *  topmost item is placed as a suggested item, and a boolean indicating
+     *  whether the user picked by number.
      */
-    processChoices: function(listItemData, codes, highlighting) {
-      var listItems;
-      if (highlighting)
-        listItems = this.sortHighlightedResults(listItemData);
-      else
-        listItems = this.sortResults(listItemData);
-      return listItems;
+    processChoices: function(fieldValToItemFields) {
+      // Filter out already selected items for multi-select lists
+      var pickedByNum = false;
+      var filteredItems = [];
+      var fieldVals = Object.keys(fieldValToItemFields);
+      this.itemToDataIndex_ = {};
+      for (var i=0, len=fieldVals.length; i<len; ++i) {
+        var item = fieldVals[i];
+        this.itemToDataIndex_[item] = i;
+        if (!this.multiSelect_ || !this.isSelected(item))
+          filteredItems.push(item);
+      }
+
+      var suggestionFound = false;
+      if (filteredItems.length > 0 && !this.numHeadings_) {
+        // Sort items, but first see if there is a best match we want to move to
+        // the top.
+        var useStats = this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
+        var topItem = null;
+        var topItemIndex = -1;
+        if (useStats) {
+          // For this kind of suggestion mode, we want to rely on the statistical
+          // ordering of results returned by the server, which provides the
+          // statistically best option at the top, so we work to keep this
+          // item at the top of the list when sorting.
+          var topItemIndex = 0;
+        }
+        else {
+          pickedByNum = this.pickedByNumber();
+          if (!pickedByNum &&
+              this.suggestionMode_ === Def.Autocompleter.SUGGEST_SHORTEST) {
+            var topItemIndex = this.pickBestMatch(filteredItems);
+            if (topItemIndex > -1)
+              suggestionFound = true;
+          }
+        }
+
+        if (topItemIndex > -1) {
+          topItem = filteredItems[topItemIndex];
+          // Set the top item to '', so it will sort to the top of the list.
+          // That way, after the sort, we don't have to push it into the top
+          // of the list.  (It should be faster this way.)
+          filteredItems[topItemIndex] = '';
+        }
+        filteredItems = filteredItems.sort(Def.Autocompleter.Base.noCaseSort);
+        if (topItemIndex > -1)
+          filteredItems[0] = topItem;
+      }
+      return [filteredItems, suggestionFound, pickedByNum];
+    },
+
+
+    /**
+     *  HTML-escapes a string of text for display in a search list.
+     *  Allows <span> tags to pass through.
+     * @param text the string to escape
+     * @return the escaped string
+     */
+    escapeHTML: function(text) {
+      var f = Def.Autocompleter.Base.escapeAttribute(text);
+      // Allow (unescape) span tags to mark matches.
+      return f.replace(/&lt;(\/)?span&gt;/g, '<$1span>');
     },
 
 
     /**
      *  Builds and returns the HTML for the selection area.
-     * @param responseData the array of data received from by onComplete.
+     * @param listItems the array of item strings to be shown in the list.
+     * @param bestMatchFound whether a best match was found as a recommenation
+     * @param fieldValToItemFields a hash from field value version of the list
+     *  items to the list item arrays received from the AJAX call
      */
-    buildUpdateHTML: function(responseData) {
-      this.itemCodes_ = responseData[1];
-      this.listExtraData_ = responseData[2];
-      var listItemData = responseData[3];
-      var highlighting = responseData[4];
-      var listItems = this.processChoices(listItemData, this.itemCodes_, highlighting);
-      this.rawList_ = listItems;
-
-      var output;
-      if (listItemData.length > 0) {
-        output = '<ul><li>' + listItems.join('</li><li>') + '</li></ul>';
+    buildUpdateHTML: function(listItems, bestMatchFound, fieldValToItemFields) {
+      var rtn, htmlStart, htmlEnd, rowStartOpen, rowStartClose, fieldSep, rowEnd;
+      var tableFormat = this.options.tableFormat;
+      if (tableFormat) {
+        htmlStart = '<table><tbody>';
+        htmlEnd = '</tbody></table>';
+        rowStartOpen = '<tr';
+        rowStartClose = '><td>';
+        fieldSep = '</td><td>';
+        rowEnd = '</td></tr>';
       }
       else {
-        output = '<ul></ul>';
+        htmlStart = '<ul>';
+        htmlEnd = '</ul>'
+        rowStartOpen = '<li';
+        rowStartClose = '>';
+        fieldSep = Def.Autocompleter.LIST_ITEM_FIELD_SEP;
+        rowEnd = '</li>';
       }
-      return output;
+
+      rtn = htmlStart;
+      for (var i=0, len=listItems.length; i<len; ++i) {
+        var itemText = listItems[i];
+        var itemFields = fieldValToItemFields[itemText];
+        var escapedFields = [];
+        for (var c=0, flen=itemFields.length; c<flen; ++c)
+          escapedFields[c] = this.escapeHTML(itemFields[c]);
+        rtn += rowStartOpen;
+        if (i===0 && bestMatchFound)
+          rtn += ' class="suggestion"';
+        if (tableFormat)
+          rtn += ' data-fieldval="' + this.escapeHTML(itemText) + '"';
+        rtn += rowStartClose;
+        rtn += escapedFields.join(fieldSep)
+        rtn += rowEnd;
+      }
+      rtn += htmlEnd;
+      return rtn;
+    },
+
+
+    /**
+     *  Updates the contents of the search count div below the list, if
+     *  there were any results.
+     * @param totalCount the total hits found on the server (possibly more than
+     *  returned.)
+     * @param shownCount the number of hits to be shown in the list
+     * @param responseLength the number of characters in the returned data
+     */
+    setSearchCountDiv: function(totalCount, shownCount, responseLength) {
+      var searchCountElem = $('searchCount');
+      var searchCountStr = '';
+      if (totalCount > 0) {
+        searchCountStr = shownCount + ' of ' + totalCount + ' total';
+
+        // Dan Clark of Freedom Scientific reported that the search count made
+        // the output for JAWS too verbose, so I am commenting out this call.
+        // this.readSearchCount();
+
+        // Now display the counts and the elapsed time
+        var timestamp = new Date();
+        // In computing the elapsed time, add the delay from the last keystroke,
+        // so the user gets the total time from that point.
+        var elapsedTime = timestamp.getTime() - this.searchStartTime +
+          this.options.frequency*1000 + '';
+
+        // bytes count of the total response data
+        var bytes = responseLength + '';
+        // Add some padding so the string stays roughly the same size
+        if (bytes.length < 3)
+          bytes += '&nbsp;';
+
+        var resultInfo = '; ' + bytes + ' bytes in ' + elapsedTime + ' ms';
+        if (elapsedTime.length < 3)
+          resultInfo += '&nbsp;';
+
+        searchCountStr += resultInfo;
+        searchCountElem.innerHTML = searchCountStr;
+      }
+    },
+
+
+    /**
+     *  Returns a hash from the values that get placed into the form field when
+     *  an item is selected to the array of item field values shown in the
+     *  autocompletion list.
+     * @param itemFieldArrays the array of item field arrays (one array per
+     *  item
+     */
+    createFieldVals: function(itemFieldArrays) {
+      var rtn = {};
+      var valCols = this.options.valueCols;
+      var joinSep = Def.Autocompleter.LIST_ITEM_FIELD_SEP;
+      if (valCols)
+        var numValCols = valCols.length;
+      for (var i=0, len=itemFieldArrays.length; i<len; ++i) {
+        var itemFields = itemFieldArrays[i];
+        var selectedFields;
+        if (valCols) {
+          selectedFields = [];
+          for (var c=0; c<numValCols; ++c)
+            selectedFields[c] = itemFields[valCols[c]];
+        }
+        else
+          selectedFields = itemFields;
+        var fieldVal = selectedFields.join(joinSep);
+        // Remove any <span> tags added for highlighting
+        fieldVal = fieldVal.replace(/<\/?span>/g, '');
+        rtn[fieldVal] = itemFields;
+      }
+      return rtn;
     },
 
 
@@ -486,6 +636,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      * @param fromCache whether "response" is from the cache (optional).
      */
     onComplete: function(xhrObj, textStatus, fromCache) {
+      this.elemVal = this.element.value.trim();
       if (this.lastAjaxRequest_ === xhrObj) {
         this.lastAjaxRequest_ = null;
       }
@@ -519,49 +670,32 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
 
           // Retrieve the response data, which is in JSON format.
           var responseData = xhrObj.responseJSON || JSON.parse(xhrObj.responseText);
+
           var totalCount = responseData[0];
-          if (totalCount > 0) {
-            var shownCount = responseData[3].length;
-            var resultStr = shownCount + ' of ' + totalCount + ' total';
-            $('searchCount').innerHTML = resultStr;
-            $('searchCount').style.display='block';
-          }
-          this.updateChoices(this.buildUpdateHTML(responseData));
+          this.itemCodes_ = responseData[1];
+          this.listExtraData_ = responseData[2];
+          this.rawList_ = responseData[3]; // rawList_ is used in list selection events
+          var fieldValToItemFields = this.createFieldVals(this.rawList_);
+          var data = this.processChoices(fieldValToItemFields);
+          var listFieldVals=data[0], bestMatchFound=data[1],
+            pickedByNum=data[3];
+          var listHTML = this.buildUpdateHTML(listFieldVals, bestMatchFound,
+            fieldValToItemFields);
+          this.updateChoices(listHTML, pickedByNum);
 
-          this.searchInProgress = false;
-
-          var eleOpt = $('completionOptions');
+          var shownCount = listFieldVals.length;
+          this.setSearchCountDiv(totalCount, shownCount,
+            xhrObj.responseText.length);
 
           // Show "see more" link depending on whether this was an autocompletion
           // event and whether there are more items to see.
-          if (this.entryCount < totalCount && reqParams['autocomp'])
+          if (shownCount < totalCount && autocomp)
             $('moreResults').style.display ='block';
           else {
             $('moreResults').style.display ='none';
           }
-          // Dan Clark of Freedom Scientific reported that the search count made
-          // the output for JAWS too verbose, so I am commenting out this call.
-          // this.readSearchCount();
 
-          // Now display the counts and the elapsed time
-          var timestamp = new Date();
-          // In computing the elapsed time, add the delay from the last keystroke,
-          // so the user gets the total time from that point.
-          var elapsed_time = timestamp.getTime() - this.searchStartTime +
-            this.options.frequency*1000 + '';
-
-
-          // bytes count of the total response data
-          var bytes = xhrObj.responseText.length + '';
-
-          var resultInfo = '; ' + bytes + ' bytes in ' + elapsed_time + ' ms';
-          // Add some padding so the string stays roughly the same size
-          if (elapsed_time.length < 3)
-            resultInfo += '&nbsp;';
-          if (bytes.length < 3)
-            bytes += '&nbsp;';
-
-          $('searchCount').innerHTML += resultInfo;
+          this.searchInProgress = false;
 
           // If the number of list items is too large, use the split area, otherwise
           // put the list below the field.
@@ -598,104 +732,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         }
       }
       return itemData;
-    },
-
-
-    /**
-     *  Returns a list of sorted search result items based on the returned
-     *  data from the AJAX search request.  In the process, it also initializes
-     *  this.itemToDataIndex_.  This method assumes that highlighting is
-     *  off.  For sorting hightlighted search results, use
-     *  sortHightlightedResults.
-     * @param listItemData an array of item data arrays (one for each seach
-     *  result), in the format returned by the get_search_res_list AJAX call.
-     * @param extraData the extra data for each item returned with the
-     *  autocompletion AJAX request.  For the format, see "position 2" in the
-     *  initialize method's comments.
-     */
-    sortResults: function(listItemData) {
-      var numItems = listItemData.length;
-      this.itemToDataIndex_ = {};
-      var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
-      // Filter out already selected items for multi-select lists
-      var filteredItems = [];
-      for (var i=0; i<numItems; ++i) {
-        var item = listItemData[i].join(joinStr);
-        this.itemToDataIndex_[item] = i; // unescaped item string
-        if (!this.multiSelect_ || !this.isSelected(item)) {
-          filteredItems.push(item.escapeHTML());
-        }
-      }
-      var listItems = filteredItems;
-      var useStats = this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
-      if (useStats) {
-        // For this kind of suggestion, we want to rely on the statistical
-        // ordering of results returned by the server, which provides the
-        // statistically best option at the top, so we work to keep this
-        // item at the top of the list when sorting.
-        var topItem = listItems[0];
-        // Set the top item to '', so it will sort to the top of the list.
-        // That way, after the sort, we don't have to push it into the top
-        // of the list.  (It should be faster this way.)
-        listItems[0] = '';
-      }
-      listItems = listItems.sort(Def.Autocompleter.Base.noCaseSort);
-      if (useStats)
-        listItems[0] = topItem;
-      return listItems;
-    },
-
-
-    /**
-     *  Returns a list of sorted search result items based on the returned
-     *  data from the AJAX search request.  In the process, it also initializes
-     *  this.itemToDataIndex_.  This method assumes that highlighting is
-     *  ON.  For sorting unhightlighted search results, use
-     *  sortResults.
-     * @param listItemData an array of item data arrays (one for each seach
-     *  result), in the format returned by the get_search_res_list AJAX call.
-     */
-    sortHighlightedResults: function(listItemData) {
-      var numItems = listItemData.length;
-      this.itemToDataIndex_ = {};
-      var taglessItems = [];
-      var taglessItemToOriginal = {};
-      var joinStr = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
-      for (var i=0; i<numItems; ++i) {
-        var item = listItemData[i].join(joinStr);
-        this.itemToDataIndex_[item] = i; // unescaped item string
-        item = item.escapeHTML();
-        // Decode the span tags, and create a version of the string without
-        // the tags so we can sort it.  Also keep a map so that after the
-        // sorting we can get back to the original item that has the tags.
-        item = item.replace(/&lt;(\/)?span&gt;/g, '<$1span>');
-        // Filter out already selected items.
-        if (!this.multiSelect_ || !!this.isSelected(item)) {
-          var taglessItem = item.replace(/<\/?span>/g, '');
-          taglessItemToOriginal[taglessItem] = item;
-          taglessItems.push(taglessItem);
-        }
-      }
-
-      // Sort the "tagless" results.
-      var useStats = this.suggestionMode_ === Def.Autocompleter.USE_STATISTICS;
-      if (useStats) {
-        // (See sortResults for an explanation.)
-        var topItem = taglessItems[0];
-        taglessItems[0] = '';
-      }
-      taglessItems = taglessItems.sort(Def.Autocompleter.Base.noCaseSort);
-      if (useStats)
-        taglessItems[0] = topItem;
-
-      // Now get the original version of the list items (the ones with tags)
-      // in the order of the sorted taglessItems array.
-      numItems = taglessItems.length; // might have changed due to filtering done above
-      var listItems = [];
-      for (i=0; i<numItems; ++i)
-        listItems.push(taglessItemToOriginal[taglessItems[i]]);
-
-      return listItems;
     },
 
 
@@ -899,7 +935,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
           var listItems = responseData[1];
           this.suggestionList_ = responseData;
           var lowerCaseFieldVal = this.element.value.toLowerCase();
-          var fieldSep = Def.Autocompleter.Search.LIST_ITEM_FIELD_SEP;
+          var fieldSep = Def.Autocompleter.LIST_ITEM_FIELD_SEP;
           for (var i=0, max=listItems.length; !foundMatch && i<max; ++i) {
             // The suggestion comes as an array (for the different fields that
             // might be displayed).  Fix that, and store it in hopes of

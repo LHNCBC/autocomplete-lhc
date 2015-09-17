@@ -49,6 +49,12 @@ var AutocompPage = function() {
   // CWE prefetch list with headings without two-column flow
   this.headings1ColCWE = $('#headings_1col_cwe');
 
+  // Multi-field lists
+  this.multiFieldPrefetch = $('#multi_field_cwe');
+  this.multiFieldPrefetchCol2 = $('#multi_field_cwe2'); // 2nd column
+  this.multiFieldSearch = $('#multi_field_search_cwe');
+
+
   this.openTestPage = function() {
     browser.get('http://localhost:'+config.port+
       '/test/protractor/autocomp_atr.html');

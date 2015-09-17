@@ -6,8 +6,8 @@ var fe_other_list_field_autoComp =
  new Def.Autocompleter.Prefetch('fe_other_list_field',
    ['oranges and apples', 'apples', 'pears and (apples)', 'bananas', 'spinach'],
    {'matchListValue': false, 'addSeqNum': false,
-    'codes': ['oa', 'a', 'pa', 'b', 's'], 'dataRequester':
-        new Def.RecordDataRequester($('fe_other_list_field'),
+    'codes': ['oa', 'a', 'pa', 'b', 's'],
+    'dataRequester': new Def.RecordDataRequester($('fe_other_list_field'),
          '/someurl', ['fe_record_id'], ['fe_code', 'fe_pseudonym'])});
 
 // A list where a match is required
@@ -195,24 +195,28 @@ var testFunctions = {
 
 
     /**
-     *  Tests pickDefaultItem.
+     *  Tests pickBestMatch.
      */
-    testPickDefaultItem: function() {with(this) {
+    testPickBestMatch: function() {with(this) {
       // Test a case with matches at the beginning.
-      var list = '<ul><li>apples</li><li>arc</li><li>one two</li>'+
-       '<li>one three</li><li>zz</li></ul>';
+      var list = ['apples', 'arc', 'one two', 'one three', 'zz'];
       fe_other_list_field_autoComp.update.innerHTML = list;
       fe_other_list_field_autoComp.entryCount = 5;
-      fe_other_list_field_autoComp.element.value='a';
-      assertEqual(1, fe_other_list_field_autoComp.pickDefaultItem());
+      fe_other_list_field_autoComp.elemVal=
+        fe_other_list_field_autoComp.element.value='a';
+
+      assertEqual(1, fe_other_list_field_autoComp.pickBestMatch(list));
       // Test a case with matches inside
-      fe_other_list_field_autoComp.element.value='t';
-      assertEqual(2, fe_other_list_field_autoComp.pickDefaultItem());
+      fe_other_list_field_autoComp.elemVal=
+        fe_other_list_field_autoComp.element.value='t';
+      assertEqual(2, fe_other_list_field_autoComp.pickBestMatch(list));
       // Test a case with no match (e.g. a match due to a synonym)
-      fe_other_list_field_autoComp.element.value='q';
-      assertEqual(4, fe_other_list_field_autoComp.pickDefaultItem());
+      fe_other_list_field_autoComp.elemVal=
+       fe_other_list_field_autoComp.element.value='q';
+      assertEqual(4, fe_other_list_field_autoComp.pickBestMatch(list));
       // Fix the autocompleter for future tests
-      fe_other_list_field_autoComp.element.value='';
+      fe_other_list_field_autoComp.elemVal=
+        fe_other_list_field_autoComp.element.value='';
       fe_other_list_field_autoComp.hasFocus = true;
       fe_other_list_field_autoComp.getUpdatedChoices();
     }},
@@ -301,7 +305,8 @@ var testFunctions = {
      */
     testAttemptSelection: function() {with(this) {
       // If there are no matches, selection shouldn't happen.
-      fe_other_list_field_autoComp.element.value = 'xyz';
+      fe_other_list_field_autoComp.elemVal =
+        fe_other_list_field_autoComp.element.value = 'xyz';
       fe_other_list_field_autoComp.matchListItemsToField_ = true;
       fe_other_list_field_autoComp.active = true;
       fe_other_list_field_autoComp.show();
@@ -310,7 +315,8 @@ var testFunctions = {
       assertEqual('xyz', fe_other_list_field_autoComp.element.value);
 
       // If there is a match, selection should pick the default item.
-      fe_other_list_field_autoComp.element.value = 'ap';
+      fe_other_list_field_autoComp.elemVal =
+        fe_other_list_field_autoComp.element.value = 'ap';
       fe_other_list_field_autoComp.setMatchStatusIndicator(false);
       fe_other_list_field_autoComp.setInvalidValIndicator(true);
       // Set hasFocus so getUpdatedChoices will work
@@ -337,31 +343,31 @@ var testFunctions = {
      * Test the matching of text in a prefetch list.
      */
     testPrefetchListMatching: function() {with(this) {
-      $('fe_other_list_field').value = 'apple';
-      fe_other_list_field_autoComp.matchListItemsToField_ = true;
-      var htmlList = fe_other_list_field_autoComp.selector(
-                                                 fe_other_list_field_autoComp);
+      var testField = $('fe_other_list_field');
+      var testAC = testField.autocomp;
+      testAC.elemVal = testField.value = 'apple';
+      testAC.matchListItemsToField_ = true;
+      var htmlList = testAC.selector(testAC);
+
       // Confirm that the list contains the correct values.  There should be 3.
       var vals = AutoCompTestUtil.extractListVals(htmlList);
       assertEqual(3, vals.size(), 'first vals list size not as expected');
-      var expectedList = ['oranges and <strong>apple</strong>s',
-                          '<strong>apple</strong>s',
+      var expectedList = ['<strong>apple</strong>s',
+                          'oranges and <strong>apple</strong>s',
                           'pears and (<strong>apple</strong>s)'];
       assertEnumEqual(expectedList, vals,
                       'first vals list values not as expected');
 
       // Confirm that we don't match things like span tags we've inserted
       // (on the JavaScript side) for formatting of list numbers.
-      fe_other_list_field_autoComp.add_seqnum = true;
+      testAC.add_seqnum = true;
       // Reset the list to turn on the numbering
-      fe_other_list_field_autoComp.setList(
-        fe_other_list_field_autoComp.rawList_,
-        fe_other_list_field_autoComp.itemCodes_);
+      testAC.setList(testAC.rawList_, testAC.itemCodes_);
 
-      fe_other_list_field_autoComp.matchListItemsToField_ = true;
-      $('fe_other_list_field').value = 's';
-      htmlList = fe_other_list_field_autoComp.selector(
-                                                 fe_other_list_field_autoComp);
+      testAC.matchListItemsToField_ = true;
+      testAC.elemVal = testField.value = 's';
+      htmlList = testAC.selector(testAC);
+
       // Confirm that the list contains the correct values.  There should be 1.
       vals = AutoCompTestUtil.extractListVals(htmlList);
       assertEqual(1, vals.size(), 'second vals list size not as expected');
@@ -371,9 +377,8 @@ var testFunctions = {
                       'second vals list values not as expected');
 
       // Try picking by number.
-      $('fe_other_list_field').value = '5';
-      htmlList = fe_other_list_field_autoComp.selector(
-                                                 fe_other_list_field_autoComp);
+      testAC.elemVal = testField.value = '5';
+      htmlList = testAC.selector(testAC);
       // Confirm that the list contains the correct values.  There should be 1.
       vals = AutoCompTestUtil.extractListVals(htmlList);
       assertEqual(1, vals.size(), 'third vals list size not as expected');
@@ -384,28 +389,31 @@ var testFunctions = {
 
 
       // Reset the list back to what it was, for the other tests.
-      fe_other_list_field_autoComp.add_seqnum = false;
+      testAC.add_seqnum = false;
 
       // Test a large list that has more than the maximum number of items
       // to show.
-      htmlList = fe_big_list_autoComp.selector(fe_big_list_autoComp);
+      testField = $('fe_big_list');
+      testAC = testField.autocomp;
+      testAC.elemVal = testField.value;
+      htmlList = testAC.selector(testAC);
       vals = AutoCompTestUtil.extractListVals(htmlList);
       assertEqual(14, vals.length, 'big list should initially show 14 items');
       // Now let the user hit "see more"
       fe_big_list_autoComp.seeMoreItemsClicked_ = true;
-      htmlList = fe_big_list_autoComp.selector(fe_big_list_autoComp);
+      htmlList = testAC.selector(testAC);
       vals = AutoCompTestUtil.extractListVals(htmlList);
       assertEqual(fe_big_list_autoComp.options.array.length, vals.length,
          'big list should now show all items');
       // Now type something in the field
-      $('fe_big_list').value = 'a';
+      testAC.elemVal = testField.value = 'a';
       fe_big_list_autoComp.matchListItemsToField_ = true;
-      htmlList = fe_big_list_autoComp.selector(fe_big_list_autoComp);
+      htmlList = testAC.selector(testAC);
       vals = AutoCompTestUtil.extractListVals(htmlList);
       assertEqual(15, vals.length, 'big list should be showing all 15 matches');
       // Turn the "see more" flag back off
-      fe_big_list_autoComp.seeMoreItemsClicked_ = false;
-      htmlList = fe_big_list_autoComp.selector(fe_big_list_autoComp);
+      testAC.seeMoreItemsClicked_ = false;
+      htmlList = testAC.selector(testAC);
       vals = AutoCompTestUtil.extractListVals(htmlList);
       assertEqual(14, vals.length, 'big list should be showing 14 matches');
     }},
@@ -481,14 +489,23 @@ var testFunctions = {
       // Search autocompleters call processChoices prior to constructing
       // the HTML for the update area.  (Unlike prefetch autocompleters, they
       // don't save the choice data, except in itemToCode_.)
-      var processed = fe_search_test_autoComp.processChoices(
-                 [['<span><b>hi</b></span>']], ['one'], false);
-      assertEqual('&lt;span&gt;&lt;b&gt;hi&lt;/b&gt;&lt;/span&gt;',
-                  processed[0]);
-      processed = fe_search_test_autoComp.processChoices(
-                 [['<span><b>hi</b></span>']], ['one'], true);
-      assertEqual('<span>&lt;b&gt;hi&lt;/b&gt;</span>',
-                  processed[0]);
+      fe_search_test_autoComp.elemVal = '';
+      var html = fe_search_test_autoComp.buildUpdateHTML(
+        ['1 < 2 - > 0'], false, {'1 < 2 - > 0': ['1 < 2', '> 0']});
+      assertEqual('<ul><li>1 &lt; 2 - &gt; 0</li></ul>',
+                  html);
+      // Also check the table format
+      fe_search_test_autoComp.options.tableFormat = true;
+      var itemFields = ['1 < 2', '> 0'];
+      var itemText = itemFields.join(Def.Autocompleter.LIST_ITEM_FIELD_SEP);
+      var textToFields = {};
+      textToFields[itemText] = itemFields;
+      var html = fe_search_test_autoComp.buildUpdateHTML(
+        [itemText], false, textToFields);
+      assertEqual('<table><tbody><tr data-fieldval="1 &lt; 2 - &gt; 0">'+
+        '<td>1 &lt; 2</td><td>&gt; 0</td></tr></tbody></table>',
+                  html);
+      fe_search_test_autoComp.options.tableFormat = false; // reset it
     }},
 
 
@@ -795,40 +812,16 @@ var testFunctions = {
 
     // ---------------- Tests for the Search class ---------------------
     /**
-     *  Tests the sortResults function.
+     *  Tests the sorting in the processChoices function.
      */
-    testSortResults: function() {with(this) {
-      var listItemData = [['two', 'one'], ['one', 'one two']];
-      var codes = ['1', '2'];
+    testProcessChoices: function() {with(this) {
+      var fieldValToItemFields = {'two - one': ['<span>tw</span>o', 'one'],
+        'one - one two': ['one', 'one <span>tw</span>o']};
+      //fe_search_test_autoComp.elemVal = '';
+      var data = fe_search_test_autoComp.processChoices(fieldValToItemFields);
       var expectedList = ['one - one two', 'two - one'];
-      assertEnumEqual(expectedList,
-        fe_search_test_autoComp.sortResults(listItemData, codes));
-
-      // Also check the item to index mapping.
-      assertEqual(1, fe_search_test_autoComp.itemToDataIndex_['one - one two']);
-      assertEqual(0, fe_search_test_autoComp.itemToDataIndex_['two - one']);
-    }},
-
-
-    /**
-     *  Tests the sortHighlightedResults function.
-     */
-    testSortHighlightedResults: function() {with(this) {
-      var listItemData = [['<span>tw</span>o', 'one'],
-        ['one', 'one <span>tw</span>o']];
-      var codes = ['1', '2'];
-      var expectedList = ['one - one <span>tw</span>o',
-        '<span>tw</span>o - one'];
-      assertEnumEqual(expectedList,
-        fe_search_test_autoComp.sortHighlightedResults(listItemData, codes));
-
-      // Also check the item to code map.
-      assertEqual(1,
-        fe_search_test_autoComp.itemToDataIndex_['one - one <span>tw</span>o']);
-      assertEqual(0,
-        fe_search_test_autoComp.itemToDataIndex_['<span>tw</span>o - one']);
+      assertEnumEqual(data[0], expectedList);
     }}
-
 };
 
 new Test.Unit.Runner(testFunctions, "testlog");

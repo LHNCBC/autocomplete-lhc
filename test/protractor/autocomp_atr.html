@@ -9,7 +9,7 @@
     rel="stylesheet" />
    <style type="text/css">
      input[type="text"] { width: 20em }
-     body {margin: 0}
+     body {margin: 0; font-family: Verdana, Geneva, sans-serif}
      #content {margin: 8px}
    </style>
  </head>
@@ -69,18 +69,33 @@
     </div>
 
     <div class="field">
-
-    <label for="fe_table_prefetch_cne" id="fe_table_prefetch_cne_lbl">
-    A multi-field Prefetch autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" id="fe_table_prefetch_cne" type="text" />
-    </div>
-    <div class="field">
-
     <label for="fe_search_button_cne" id="fe_search_button_cne_lbl">
     A search CNE autocompleter with a button:&nbsp;&nbsp;</label>
   <input autocomplete="off" id="fe_search_button_cne"
   name="search_button_cne" style="width: 25em" tipValue="begin typing problem
   name.." type="text" /><button id="fe_search_button_cne_button" type="button">Search</button>
     </div>
+
+    <h2>Multi-field lists</h2>
+<!-- commenting out the prefetch multi-field examples until those are supported
+    <div class="field" id="multi_field_cwe_section">
+      <label for="mulit_field_cwe" id="multi_field_cwe_lbl">
+       A multi-field prefetch CWE list:&nbsp;&nbsp;</label>
+      <input autocomplete="off" id="multi_field_cwe" name="" type="text" />
+    </div>
+
+    <div class="field" id="multi_field_cwe_section2">
+      <label for="mulit_field_cwe2" id="multi_field_cwe_lbl2">
+       A multi-field prefetch CWE list with the second column specified:&nbsp;&nbsp;</label>
+      <input autocomplete="off" id="multi_field_cwe2" name="" type="text" />
+    </div>
+-->
+     <div class="field" id="multi_field_search_cwe_section">
+      <label for="mulit_field_search_cwe" id="multi_field_search_cwe_lbl">
+       A multi-field search CWE list:&nbsp;&nbsp;</label>
+      <input autocomplete="off" id="multi_field_search_cwe" name="" type="text" />
+    </div>
+
 
     <h2>Multi-select lists</h2>
     <div class="field">
@@ -128,7 +143,7 @@
       <input autocomplete="off" id="headings_1col_cwe" type="text" />
     </div>
 
-    <button class="rounded" id="fe_save" name="fe[save]" type="submit" value="1"><span>Save</span></button>
+   <button class="rounded" id="fe_save" name="fe[save]" type="submit" value="1"><span>Save</span></button>
 
 </form>
     <br>
@@ -141,27 +156,27 @@
   <!-- Notice displayed while a user-initiated save is being performed.-->
 
   <script src="/bower_components/prototypejs-bower/prototype.js"></script>
-<script src="/bower_components/jquery/dist/jquery.min.js"></script>
-<script src="/bower_components/jquery-no-conflict-exec/jquery-no-conflict.js"></script>
-<script src="/bower_components/jquery-ui/ui/core.js"></script>
-<script src="/bower_components/jquery-ui/ui/widget.js"></script>
-<script src="/bower_components/jquery-ui/ui/button.js"></script>
-<script src="/bower_components/jquery-ui/ui/dialog.js"></script>
-<script src="/source/effects.js"></script>
-<script src="/source/dialog.js"></script>
-<script src="/source/observable.js"></script>
-<script src="/source/screenReaderLog.js"></script>
-<script src="/source/recordDataRequester.js"></script>
-<script src="/source/fieldAlarms.js"></script>
-<script src="/soundmanager/bonk.js"></script>
-<script src="/source/autoCompBase.js"></script>
-<script src="/source/suggestionDialog.js"></script>
-<script src="/source/autoCompPrefetch.js"></script>
-<script src="/source/autoCompSearch.js"></script>
-<script src="/source/autoCompEvents.js"></script>
-<script src="/source/effectScroll.js"></script>
-<script src="/source/event.simulate.js"></script>
-<script src="/node_modules/protractor/testapp/lib/angular_v1.2.9/angular.min.js"></script>
+  <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="/bower_components/jquery-no-conflict-exec/jquery-no-conflict.js"></script>
+  <script src="/bower_components/jquery-ui/ui/core.js"></script>
+  <script src="/bower_components/jquery-ui/ui/widget.js"></script>
+  <script src="/bower_components/jquery-ui/ui/button.js"></script>
+  <script src="/bower_components/jquery-ui/ui/dialog.js"></script>
+  <script src="/source/effects.js"></script>
+  <script src="/source/dialog.js"></script>
+  <script src="/source/observable.js"></script>
+  <script src="/source/screenReaderLog.js"></script>
+  <script src="/source/recordDataRequester.js"></script>
+  <script src="/source/fieldAlarms.js"></script>
+  <script src="/soundmanager/bonk.js"></script>
+  <script src="/source/autoCompBase.js"></script>
+  <script src="/source/suggestionDialog.js"></script>
+  <script src="/source/autoCompPrefetch.js"></script>
+  <script src="/source/autoCompSearch.js"></script>
+  <script src="/source/autoCompEvents.js"></script>
+  <script src="/source/effectScroll.js"></script>
+  <script src="/source/event.simulate.js"></script>
+  <script src="/node_modules/protractor/testapp/lib/angular_v1.2.9/angular.min.js"></script>
  <!-- end of cache "part3"-->
 
  <!-- need to reload generated js file when its content changed -->
