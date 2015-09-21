@@ -245,7 +245,7 @@ describe('autocomp', function() {
     // non-tableFormat list.
     browser.manage().window().setSize(1100, 473);
     po.multiFieldSearch.click();
-    po.multiFieldSearch.sendKeys("mtest");
+    po.multiFieldSearch.sendKeys("ar");
     // Arrow down to first item
     po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
     expect(po.multiFieldSearch.getAttribute('value')).toBe(
