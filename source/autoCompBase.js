@@ -184,6 +184,33 @@ if (typeof Def === 'undefined')
 
 
     /**
+     *  Returns the DOM node immediately containing the list item elements.  This
+     *  could either be a tbody or a ul, depending on options.tableFormat.
+     *  If there is no list, the return value may be null.
+     */
+    listItemElementContainer: function() {
+      var rtn = jQuery("#completionOptions")[0].firstChild;
+      if (rtn && rtn.tagName === "TABLE")
+        rtn = rtn.firstChild; // tbody
+      return rtn;
+    },
+
+
+    /**
+     *  Returns the list items elements, which will be either
+     *  tr elements or li elements depending on options.tableFormat.
+     *  If there is no list, the return value may be null.
+     */
+    listItemElements: function() {
+      var rtn = null;
+      var itemContainer = this.listItemElementContainer();
+      if (itemContainer)
+        rtn = itemContainer.childNodes;
+      return rtn;
+    },
+
+
+    /**
      *  Sets off an alarm when a field is in an invalid state.
      * @param field the field that is invalid
      */
@@ -724,11 +751,11 @@ if (typeof Def === 'undefined')
       Def.Autocompleter.screenReaderLog('Selected '+escapedVal);
       if (this.index >= 0) { // i.e. if it is a list item
         // Delete selected item
-        var ul = this.update.firstChild;
-        ul.removeChild(this.getCurrentEntry());
+        var itemContainer = Def.Autocompleter.listItemElementContainer();
+        itemContainer.removeChild(this.getCurrentEntry());
         // Having deleted that item, we now need to update the the remaining ones
         --this.entryCount;
-        var itemNodes = ul.childNodes;
+        var itemNodes = itemContainer.childNodes;
         for (var i=this.index, len=itemNodes.length; i<len; ++i)
           itemNodes[i].autocompleteIndex = i;
         if (this.index == this.entryCount)
@@ -1222,10 +1249,7 @@ if (typeof Def === 'undefined')
       if (!this.changed && this.hasFocus) {
         this.update.innerHTML = choices;
         Element.cleanWhitespace(this.update);
-        var itemContainer = this.options.tableFormat ?
-          this.update.down('tbody') : this.update.down();
-        Element.cleanWhitespace(itemContainer);
-        var domItems = itemContainer.childNodes;
+        var domItems = Def.Autocompleter.listItemElements();
 
         if (domItems) {
           this.entryCount = domItems.length;
@@ -1292,7 +1316,6 @@ if (typeof Def === 'undefined')
       if (elemValue.length > 0 && numItems > 0) {
         var minLengthIndex = -1;
         var minLength = Infinity;
-         // this.update.firstChild.childNodes[minLengthIndex].innerHTML.length;
         var beginMatchMinLengthIndex = -1;
         var beginMatchMinLength = minLength;
         var innerMatchMinLengthIndex = -1;
@@ -2049,7 +2072,7 @@ if (typeof Def === 'undefined')
       // If the number of items is odd and the current index is the middle
       // value, then there is no item in the other column so we don't move it.
       // Note that the index starts at zero (so 0 to 6 for 7 items).
-      var numItems = this.update.firstChild.childNodes.length;
+      var numItems = Def.Autocompleter.listItemElements().length;
       var half = Math.floor(numItems/2);  // e.g. 3 if numItems == 6 or 7
       var shift = Math.ceil(numItems/2.0);  // e.g. 4 if numItems == 7
       var newIndex = this.index;
@@ -2207,12 +2230,7 @@ if (typeof Def === 'undefined')
      * @param index the zero-based index of the list item to retrieve.
      */
     getEntry: function(index) {
-      var rtn;
-      if (this.options.tableFormat)
-        rtn = this.update.firstChild.firstChild.childNodes[index];
-      else
-        rtn = this.update.firstChild.childNodes[index];
-      return rtn;
+      return Def.Autocompleter.listItemElements()[index];
     },
 
 

@@ -850,7 +850,7 @@
         }
         //check if the list item value matches field value
         else if (this.entryCount == 1) {
-          var value = this.listItemValue(this.update.firstChild.childNodes[0]);
+          var value = this.listItemValue(Def.Autocompleter.listItemElements()[0]);
           blnShowList = value != this.processedFieldVal_;
         }
       }
