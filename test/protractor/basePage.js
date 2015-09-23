@@ -8,6 +8,7 @@ function BasePage() {
   this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion
   this.suggestionDialog = element(by.css('.ui-dialog'));
   this.suggestionDialogClose = element(by.css('.ui-dialog button'));
+  this.completionOptionsCSS = '#completionOptions';
   this.completionOptionsScroller = $('#completionOptionsScroller');
 
   /**
@@ -54,6 +55,21 @@ function BasePage() {
 
 
   /**
+   *  Returns the results of getSelectedItems for the
+   *  autocompleter on the given field ID.
+   * @param fieldID the field for the autocompleter.
+   */
+  this.getSelectedItems = function(fieldID) {
+    // Use a string rather than a function object so fieldID can be passed to
+    // the browser.
+    return browser.driver.executeScript(
+      'var ac = $("'+fieldID+'").autocomp;'+
+      'return ac.getSelectedItems();'
+    );
+  };
+
+
+  /**
    *  Checks the values of getSelectedCodes and getSelectedItems for the
    *  autocompleter on the given field ID.
    * @param fieldID the field for the autocompleter.
@@ -90,7 +106,7 @@ function BasePage() {
    */
   this.shownItemCount = function() {
     return browser.driver.executeScript(
-      'return $("completionOptions").down().childNodes.length'
+      'return Def.Autocompleter.listItemElements().length;'
     );
   };
 

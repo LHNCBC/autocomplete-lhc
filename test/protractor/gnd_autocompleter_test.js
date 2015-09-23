@@ -142,7 +142,13 @@ var fe_search_cwe_autoComp =
 // Another multi-field search CNE but pointed at a URL that only returns one
 // column of data.
 delete opts['valueCols'];
-var fe_search_cwe_autoComp =
-  new Def.Autocompleter.Search('multi_field_search_cwe2',
+new Def.Autocompleter.Search('multi_field_search_cwe2',
+    '/form/get_search_res_list?fd_id=2165', opts);
+
+// A multi-field (table format) search CWE with only one column and that is
+// multi-select.
+opts.maxSelect = '*';
+opts.suggestionMode = Def.Autocompleter.NO_COMPLETION_SUGGESTIONS
+new Def.Autocompleter.Search('table_format_multi_sel_search_cwe',
     '/form/get_search_res_list?fd_id=2165', opts);
 

@@ -42,4 +42,22 @@ describe('multi-field lists', function() {
     expect(po.multiFieldSearch.getAttribute('value')).toBe('pain in arm');
   });
 
+
+  it('should function properly with the multi-select feature', function() {
+    po.multiSelectTableSearch.click();
+    po.multiSelectTableSearch.sendKeys('ar');
+    expect(po.tableSearchResult(1).getInnerHtml()).toBe('<td>NM_001113511</td>');
+    po.tableSearchResult(1).click();
+    expect(po.getSelectedItems(po.multiSelectTableSearchID)).toEqual(
+      ['NM_001113511']);
+    expect(po.shownItemCount()).toBe(6);
+    expect(po.tableSearchResult(1).getInnerHtml()).toNotBe('<td>NM_001113511</td>');
+    po.nonField.click();
+    po.multiSelectTableSearch.click();
+    po.multiSelectTableSearch.sendKeys('ar');
+    expect(po.shownItemCount()).toBe(6);
+    expect(po.tableSearchResult(1).getInnerHtml()).toNotBe('<td>NM_001113511</td>');
+
+  });
+
 });
