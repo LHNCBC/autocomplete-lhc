@@ -184,7 +184,7 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Returns the DOM node immediately containing the list item elents.  This
+     *  Returns the DOM node immediately containing the list item elements.  This
      *  could either be a tbody or a ul, depending on options.tableFormat.
      *  If there is no list, the return value may be null.
      */
@@ -2230,8 +2230,7 @@ if (typeof Def === 'undefined')
      * @param index the zero-based index of the list item to retrieve.
      */
     getEntry: function(index) {
-      var itemElements = Def.Autocompleter.listItemElements();
-      return itemElements[index];
+      return Def.Autocompleter.listItemElements()[index];
     },
 
 
