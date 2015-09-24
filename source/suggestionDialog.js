@@ -1,11 +1,13 @@
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  var Class = Def.PrototypeAPI.Class;
+
   /**
    *  A dialog for showing suggestion lists when the user leaves a search field
    *  without using its list.
    */
   Def.Autocompleter.SuggestionDialog = Class.create({});
-  Object.extend(Def.Autocompleter.SuggestionDialog.prototype,
+  jQuery.extend(Def.Autocompleter.SuggestionDialog.prototype,
     Def.NoticeDialog.prototype);
 
   var classMembers = {
@@ -23,7 +25,7 @@
       return rtn;
     }
   };
-  Object.extend(Def.Autocompleter.SuggestionDialog, classMembers);
+  jQuery.extend(Def.Autocompleter.SuggestionDialog, classMembers);
   classMembers = null;
 
   var instanceMembers = {
@@ -116,6 +118,6 @@
         "e.selectionStart = e.selectionEnd; return false'>return to the field</a>";
     }
   };
-  Object.extend(Def.Autocompleter.SuggestionDialog.prototype, instanceMembers);
+  jQuery.extend(Def.Autocompleter.SuggestionDialog.prototype, instanceMembers);
   instanceMembers = null;
-})($, jQuery, Def);
+})(Def.PrototypeAPI.$, jQuery, Def);

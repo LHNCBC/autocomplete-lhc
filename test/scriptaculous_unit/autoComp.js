@@ -1,3 +1,7 @@
+(function() {
+
+var $ = Def.PrototypeAPI.$;
+
 var fe_strength_and_form_1_autoComp =
  new Def.Autocompleter.Prefetch('fe_strength_and_form_1', [],
    {'matchListValue': false, 'codes': []});
@@ -127,12 +131,12 @@ var testFunctions = {
            ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
            {'addSeqNum': false});
 
-      assertEqual('combobox', elem.readAttribute('role'));
+      assertEqual('combobox', elem.getAttribute('role'));
       otherAutoComp.onFocus();
       otherAutoComp.showList();
-      assertEqual('true', elem.readAttribute('aria-expanded'));
+      assertEqual('true', elem.getAttribute('aria-expanded'));
       otherAutoComp.hideList();
-      assertEqual('false', elem.readAttribute('aria-expanded'));
+      assertEqual('false', elem.getAttribute('aria-expanded'));
     }},
 
 
@@ -229,9 +233,9 @@ var testFunctions = {
       fe_other_list_field_autoComp.setMatchStatusIndicator(false);
       // Currently, this method works by setting a CSS class name on the field.
       // If the implementation changes, this test will need to change.
-      assert(fe_other_list_field_autoComp.element.hasClassName('no_match'));
+      assert(jQuery(fe_other_list_field_autoComp.element).hasClass('no_match'));
       fe_other_list_field_autoComp.setMatchStatusIndicator(true);
-      assert(!fe_other_list_field_autoComp.element.hasClassName('no_match'));
+      assert(!jQuery(fe_other_list_field_autoComp.element).hasClass('no_match'));
     }},
 
 
@@ -240,9 +244,9 @@ var testFunctions = {
      */
     testSetInvalidValIndicator: function() {with(this) {
       fe_other_list_field2_autoComp.setInvalidValIndicator(true);
-      assert(fe_other_list_field2_autoComp.element.hasClassName('invalid'));
+      assert(jQuery(fe_other_list_field2_autoComp.element).hasClass('invalid'));
       fe_other_list_field2_autoComp.setInvalidValIndicator(false);
-      assert(!fe_other_list_field2_autoComp.element.hasClassName('invalid'));
+      assert(!jQuery(fe_other_list_field2_autoComp.element).hasClass('invalid'));
     }},
 
 
@@ -257,9 +261,10 @@ var testFunctions = {
       $('fe_pseudonym').value = 'abc';
       fe_other_list_field_autoComp.handleNonListEntry();
       // Check that the indicators are set appropriately.
-      assert(fe_other_list_field_autoComp.element.hasClassName('no_match'),
+      var jqElement = jQuery(fe_other_list_field_autoComp.element);
+      assert(jqElement.hasClass('no_match'),
         "fe_other_list_field should have had 'no_match' set");
-      assert(!fe_other_list_field_autoComp.element.hasClassName('invalid'),
+      assert(!jqElement.hasClass('invalid'),
         "fe_other_list_field should NOT have had 'invalid' set");
       // Check that the code and data_req_output fields are cleared.
       wait(1, function() {
@@ -273,9 +278,9 @@ var testFunctions = {
         $('fe_code').value = 'abc';
         $('fe_pseudonym').value = 'abc';
         fe_other_list_field_autoComp.handleNonListEntry();
-        assert(!fe_other_list_field_autoComp.element.hasClassName('no_match'),
+        assert(!jqElement.hasClass('no_match'),
           "fe_other_list_field should NOT have had 'no_match' set");
-        assert(!fe_other_list_field_autoComp.element.hasClassName('invalid'),
+        assert(!jqElement.hasClass('invalid'),
           "fe_other_list_field should NOT have had 'invalid' set");
         // Check that the code and data_req_output fields are cleared.
         wait(1, function() {
@@ -288,12 +293,13 @@ var testFunctions = {
           // the invalid value indicator should be set.
           fe_other_list_field2_autoComp.element.value = 'carrot';
           fe_other_list_field2_autoComp.handleNonListEntry();
-          assert(fe_other_list_field2_autoComp.element.hasClassName('invalid'),
+          var jqElem2 = jQuery(fe_other_list_field2_autoComp.element);
+          assert(jqElem2.hasClass('invalid'),
             "fe_other_list_field2 should have had 'invalid' set");
            // Test that an empty value is okay.  (No indicators should be set.)
           fe_other_list_field2_autoComp.element.value = '';
           fe_other_list_field2_autoComp.handleNonListEntry();
-          assert(!fe_other_list_field2_autoComp.element.hasClassName('invalid'),
+          assert(!jqElem2.hasClass('invalid'),
             "fe_other_list_field2 should NOT have had 'invalid' set");
         });
       });
@@ -328,9 +334,10 @@ var testFunctions = {
       assertEqual('apples', fe_other_list_field_autoComp.element.value);
 
       // Also check that the other things that should happen happened.
-      assert(!fe_other_list_field_autoComp.element.hasClassName('no_match'),
+      var jqElem = jQuery(fe_other_list_field_autoComp.element);
+      assert(!jqElem.hasClass('no_match'),
         "fe_other_list_field should NOT have had 'no_match' set");
-      assert(!fe_other_list_field_autoComp.element.hasClassName('invalid'),
+      assert(!jqElem.hasClass('invalid'),
         "fe_other_list_field should NOT have had 'invalid' set");
       wait(1, function() {
         assertEqual('a', listSelectionItemData_.item_code,
@@ -351,7 +358,7 @@ var testFunctions = {
 
       // Confirm that the list contains the correct values.  There should be 3.
       var vals = AutoCompTestUtil.extractListVals(htmlList);
-      assertEqual(3, vals.size(), 'first vals list size not as expected');
+      assertEqual(3, vals.length, 'first vals list size not as expected');
       var expectedList = ['<strong>apple</strong>s',
                           'oranges and <strong>apple</strong>s',
                           'pears and (<strong>apple</strong>s)'];
@@ -370,7 +377,7 @@ var testFunctions = {
 
       // Confirm that the list contains the correct values.  There should be 1.
       vals = AutoCompTestUtil.extractListVals(htmlList);
-      assertEqual(1, vals.size(), 'second vals list size not as expected');
+      assertEqual(1, vals.length, 'second vals list size not as expected');
       var expectedList = [
         '<span class="listNum">5:</span>&nbsp; <strong>s</strong>pinach'];
       assertEnumEqual(expectedList, vals,
@@ -381,7 +388,7 @@ var testFunctions = {
       htmlList = testAC.selector(testAC);
       // Confirm that the list contains the correct values.  There should be 1.
       vals = AutoCompTestUtil.extractListVals(htmlList);
-      assertEqual(1, vals.size(), 'third vals list size not as expected');
+      assertEqual(1, vals.length, 'third vals list size not as expected');
       expectedList = [
         '<span class="listNum"><strong>5</strong>:</span>&nbsp; spinach'];
       assertEnumEqual(expectedList, vals,
@@ -427,7 +434,7 @@ var testFunctions = {
       // items should be moved to the top of the list.
       // Lists with headings should not have the default item moved.
       var headingListComp = AutoCompTestUtil.createListWithHeadings();
-      Event.simulate(headingListComp.element, 'focus');
+      Def.Event.simulate(headingListComp.element, 'focus');
       headingListComp.matchListItemsToField_ = true; // would normally be set when the user types
       headingListComp.element.value = 'ca';
       headingListComp.getUpdatedChoices();
@@ -520,10 +527,11 @@ var testFunctions = {
       fe_other_list_field2_autoComp.setMatchStatusIndicator(false);
       fe_other_list_field2_autoComp.setInvalidValIndicator(true);
       listSelectionItemData_ = {item_code: 'Hi'};  // just putting something there
-      assert(fe_other_list_field2_autoComp.element.hasClassName('no_match'),
+      var jqElem = jQuery(fe_other_list_field2_autoComp.element);
+      assert(jqElem.hasClass('no_match'),
         "Precondition for fe_other_list_field2 (multiple values): should have "+
         "class no_match");
-      assert(fe_other_list_field2_autoComp.element.hasClassName('invalid'),
+      assert(jqElem.hasClass('invalid'),
         "Precondition for fe_other_list_field2 (multiple values): should have "+
         "class invalid");
       $('fe_other_list_field2').value = 'hello';
@@ -534,10 +542,10 @@ var testFunctions = {
         'fe_other_list_field2 should have been cleared');
       $('fe_strength_and_form_2').value = 'hello';
       // Match sure the no_match and invalid status has been cleared
-      assert(!fe_other_list_field2_autoComp.element.hasClassName('no_match'),
+      assert(!jqElem.hasClass('no_match'),
        "fe_other_list_field2 (multiple values): should NOT have "+
        "class no_match");
-      assert(!fe_other_list_field2_autoComp.element.hasClassName('invalid'),
+      assert(!jqElem.hasClass('invalid'),
        "fe_other_list_field2 (multiple values): should NOT have "+
        "class invalid");
       // Make sure the code field was cleared.
@@ -549,10 +557,10 @@ var testFunctions = {
         fe_other_list_field2_autoComp.setMatchStatusIndicator(false);
         fe_other_list_field2_autoComp.setInvalidValIndicator(true);
         listSelectionItemData_.item_code = '';
-        assert(fe_other_list_field2_autoComp.element.hasClassName('no_match'),
+        assert(jqElem.hasClass('no_match'),
           "Precondition for fe_other_list_field2 (one value): should have "+
           "class no_match");
-        assert(fe_other_list_field2_autoComp.element.hasClassName('invalid'),
+        assert(jqElem.hasClass('invalid'),
           "Precondition for fe_other_list_field2 (one value): should have "+
           "class invalid");
         $('fe_other_list_field2').value = 'abc - 123';
@@ -560,10 +568,10 @@ var testFunctions = {
         assertEnumEqual(['one'], fe_other_list_field2_autoComp.rawList_);
   	    assertEnumEqual(['1'], fe_other_list_field2_autoComp.itemCodes_);
   	    assertEqual('one', $('fe_other_list_field2').value);
-  	    assert(!fe_other_list_field2_autoComp.element.hasClassName('no_match'),
+  	    assert(!jqElem.hasClass('no_match'),
   	      "fe_other_list_field2 (one value): should NOT have "+
   	      "class no_match");
-        assert(!fe_other_list_field2_autoComp.element.hasClassName('invalid'),
+        assert(!jqElem.hasClass('invalid'),
           "fe_other_list_field2 (one value): should NOT have "+
           "class invalid");
         wait(1, function() {
@@ -672,7 +680,7 @@ var testFunctions = {
       // Confirm that the autocompleter wrapper is around the field now.
       var fieldWrapper = field.parentNode;
       assertEqual('SPAN', fieldWrapper.tagName);
-      assert(Element.hasClassName(fieldWrapper, 'autocomp_selected'));
+      assert(jQuery(fieldWrapper).hasClass('autocomp_selected'));
 
       // Set a field value and see what happens when we select it.
       // Try a value in the list first.
@@ -684,7 +692,7 @@ var testFunctions = {
       autoComp.onChange({stopped: true});
       // The value should be moved out of the field and into the selected item area.
       assertEqual('', field.value);
-      var selectedItem = Element.down(fieldWrapper, 'li');
+      var selectedItem = jQuery(fieldWrapper).find('li')[0];
       assertEqual('apples', selectedItem.childNodes[1].textContent);
       // The value we just picked should be filtered out of the list that is
       // displayed.
@@ -702,7 +710,7 @@ var testFunctions = {
       assert(jQuery('#searchResults')[0].style.visibility !== 'hidden');
 
       // Also select an item by clicking in the list
-      Event.simulate(listItems[0], 'mousedown');
+      Def.Event.simulate(listItems[0], 'mousedown');
       // The value should not be in the field.
       assertEqual('', field.value);
       var selectedItem = jQuery(fieldWrapper).find('li')[1];
@@ -752,16 +760,16 @@ var testFunctions = {
       // Test without a sequence number or HTML character.
       liContainer.innerHTML = '<li>hello</li>';
       assertEqual('hello',
-        fe_other_list_field_autoComp.listItemValue(liContainer.down()));
+        fe_other_list_field_autoComp.listItemValue(liContainer.firstChild));
       // Test without a sequence number but with an HTML character
       liContainer.innerHTML = '<li>hello &gt;</li>';
       assertEqual('hello >',
-        fe_other_list_field_autoComp.listItemValue(liContainer.down()));
+        fe_other_list_field_autoComp.listItemValue(liContainer.firstChild));
       // Test with a sequence number and an HTML character
       liContainer.innerHTML =
         '<li><span class="listNum">4:</span>&nbsp; GTE (&gt;=)</li>';
       assertEqual('GTE (>=)',
-        fe_seq_num_list_autoComp.listItemValue(liContainer.down()));
+        fe_seq_num_list_autoComp.listItemValue(liContainer.firstChild));
     }},
 
 
@@ -883,3 +891,5 @@ AutoCompTestUtil = {
     return autoComp;
   }
 };
+
+})();

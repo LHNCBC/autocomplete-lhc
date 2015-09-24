@@ -3,6 +3,8 @@ if (typeof Def === 'undefined')
 
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  var Class = Def.PrototypeAPI.Class;
+
   /**
    *  This class handles data requests that some fields (just autocompleting
    *  fields, at present) make to retrieve additional information about a record
@@ -217,9 +219,9 @@ if (typeof Def === 'undefined')
       // We can no longer cache the assignment of onComplete, which now
       // depends on the input parameter.  (We could cache the bound versions
       // of the functions, but I am not sure if it is worth it.)
-      this.dataRequestOptions_.complete = listDataOnly ?
-        this.onDataReqCompleteForListData.bind(this) :
-        this.onDataReqComplete.bind(this);
+      this.dataRequestOptions_.complete = jQuery.proxy(listDataOnly ?
+        this.onDataReqCompleteForListData :
+        this.onDataReqComplete, this);
 
       this.dataRequestOptions_.data = this.buildParameters();
       this.latestPendingAjaxRequest_ =
@@ -661,7 +663,7 @@ if (typeof Def === 'undefined')
         data.field_val = Def.Autocompleter.getFieldVal(this.formField_);
 
       if (this.dataReqInput_) {
-        for (var i=0, max=this.dataReqInput_.size(); i<max; ++i) {
+        for (var i=0, max=this.dataReqInput_.length; i<max; ++i) {
           var inputTargetFieldName = this.dataReqInput_[i];
           var inputField = this.inputFieldsHash_[inputTargetFieldName];
           if (inputField === undefined || inputField === null)
@@ -676,12 +678,12 @@ if (typeof Def === 'undefined')
   };
 
 
-  Object.extend(Def.RecordDataRequester.prototype, tmp);
+  jQuery.extend(Def.RecordDataRequester.prototype, tmp);
   tmp = null;
 
 
   // Additional class-level data members and methods.
-  Object.extend(Def.RecordDataRequester, {
+  jQuery.extend(Def.RecordDataRequester, {
 
     /**
      *  A hash map from data request output field target field names to the
@@ -717,4 +719,4 @@ if (typeof Def === 'undefined')
       return rtn;
     }
   });
-})($, jQuery, Def);
+})(Def.PrototypeAPI.$, jQuery, Def);

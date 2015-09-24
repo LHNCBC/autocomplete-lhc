@@ -16,15 +16,15 @@
       while (document.getElementById(logID))
         logID = baseID + ++counter;
       this.logElement_ = document.createElement('div')
-      this.logElement_.writeAttribute('id', logID);
+      this.logElement_.setAttribute('id', logID);
       document.body.appendChild(this.logElement_);
     }
     else
       this.logElement_ = document.getElementById(logID);
-    this.logElement_.writeAttribute('aria-live', 'assertive');
-    this.logElement_.writeAttribute('aria-relevant', 'additions');
-    this.logElement_.writeAttribute('role', 'log');
-    this.logElement_.writeAttribute('class', 'screen_reader_only');
+    this.logElement_.setAttribute('aria-live', 'assertive');
+    this.logElement_.setAttribute('aria-relevant', 'additions');
+    this.logElement_.setAttribute('role', 'log');
+    this.logElement_.setAttribute('class', 'screen_reader_only');
   }
 
   Def.ScreenReaderLog.prototype = {

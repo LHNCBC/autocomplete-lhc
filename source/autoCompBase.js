@@ -38,6 +38,7 @@ if (typeof Def === 'undefined')
   // A test for IE, borrowed from PrototypeJS -- and modified.
   var isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
   var isIE = !!window.attachEvent && !isOpera || navigator.userAgent.indexOf('Trident') >= 0;
+  var Browser = Def.PrototypeAPI.Browser;
 
   Def.Autocompleter = { // Namespace for DEF autocompletion stuff
     // Variables related to autocompleters but independent of any particular
@@ -96,7 +97,7 @@ if (typeof Def === 'undefined')
      *  to a replacement function.
      */
     setOptions: function(options) {
-      Object.extend(this, options);
+      jQuery.extend(this, options);
     },
 
 
@@ -123,7 +124,7 @@ if (typeof Def === 'undefined')
       var fieldVal = this.getFieldVal(field);
       field.value = val;
       if (fieldVal !== val && runChangeEventObservers) {
-        Element.simulate(field, 'change');
+        Def.Event.simulate(field, 'change');
       }
     },
 
@@ -223,7 +224,7 @@ if (typeof Def === 'undefined')
   /**
    *  Class-level stuff for Def.Autocompleter.Base.
    */
-  Object.extend(Def.Autocompleter.Base, {
+  jQuery.extend(Def.Autocompleter.Base, {
 
     /**
      *  The maximum number of items to show below a field if the user has not
@@ -241,7 +242,7 @@ if (typeof Def === 'undefined')
      */
     classInit: function() {
       if (!this.classInit_) {
-        Element.insert($(document.body),
+        jQuery(document.body).append(
            '<div id="searchResults" class="form_auto_complete"> \
            <div id="completionOptionsScroller">\
            <span class="auto_complete" id="completionOptions"></span> \
@@ -252,14 +253,14 @@ if (typeof Def === 'undefined')
            <div id="searchHint">Search Hint<!--place holder--></div> \
            </div>');
 
-        Event.observe('moreResults', 'mousedown', function(event) {
+        jQuery('#moreResults').mousedown(function(event) {
           var field = $(Def.Autocompleter.currentAutoCompField_);
           field.autocomp.handleSeeMoreItems(event);
           Def.Autocompleter.Event.notifyObservers(field, 'LIST_EXP',
           {list_expansion_method: 'clicked'});
         });
 
-        Event.observe('completionOptionsScroller', 'mousedown', function(event) {
+        jQuery('#completionOptionsScroller').mousedown(jQuery.proxy(function(event) {
           // Here is a work-around for an IE-only issue in which if you use the scrollbar
           // on the list, the field gets a blur event (and maybe a change event
           // as well.)  For IE, we set things to refocus the field and to ignore
@@ -273,7 +274,7 @@ if (typeof Def === 'undefined')
               setTimeout(function(){field.focus()}, 1);
             }
           }
-        }.bind(this));
+        }, this));
         this.classInit_ = true;
       }
     },
@@ -298,17 +299,7 @@ if (typeof Def === 'undefined')
      * @param val the string to be escaped
      * @return the escaped version of val
      */
-    escapeAttribute: function(val) {
-      // Note:  PrototypeJS' escapeHTML does not escape quotes, and for
-      // attributes quotes need to be escaped.
-      // JQuery does not provide an API for this at all.
-      //   (See:  http://bugs.jquery.com/ticket/11773)
-      // Various implementations are benchmarked here:
-      //   http://jsperf.com/htmlencoderegex
-      // This one is the fastest (at least in Chrome).
-      return val.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g,
-'&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    },
+    escapeAttribute: Def.PrototypeAPI.escapeAttribute,
 
 
     /**
@@ -557,10 +548,10 @@ if (typeof Def === 'undefined')
       this.entryCount  = 0;
       this.observer = null;
       this.element.setAttribute('autocomplete','off');
-      Element.hide(this.update);
-      Event.observe(this.element, 'blur', this.onBlur.bindAsEventListener(this));
-      Event.observe(this.element, 'keydown', this.onKeyPress.bindAsEventListener(this));
       // --- end of section copied from controls.js baseInitialize ---
+      jQuery(this.update).hide();
+      jQuery(this.element).blur(jQuery.proxy(this.onBlur, this));
+      jQuery(this.element).keydown(jQuery.proxy(this.onKeyPress, this));
 
       // If this is a multiselect list, put the field into a span.
       if (options.maxSelect > 1) {
@@ -568,36 +559,34 @@ if (typeof Def === 'undefined')
         var fieldParent = this.element.parentNode;
         fieldParent.replaceChild(fieldDiv, this.element);
         fieldDiv.appendChild(this.element);
-        this.selectedList = fieldDiv.down();
+        this.selectedList = fieldDiv.firstChild;
       }
 
       // ARIA markup for screen readers
       // See http://test.cita.illinois.edu/aria/combobox/combobox2.php
       // for an example that works with JAWS + Firefox.  (It behaves
       // like a regular combobox, according to a JAWS user.)
-      this.element.writeAttribute('role', 'combobox');
+      this.element.setAttribute('role', 'combobox');
       // For aria-expanded, I am following the example at:
       // http://www.w3.org/TR/wai-aria/roles#combobox
-      this.element.writeAttribute('aria-expanded', 'false');
+      this.element.setAttribute('aria-expanded', 'false');
 
       // Set up event handler functions.
-      this.onMouseDownListener = this.onMouseDown.bindAsEventListener(this);
-      Event.observe(this.element, 'change',
-        this.onChange.bindAsEventListener(this));
-      Event.observe(this.element, 'keypress',
-        this.changeToFieldByKeys.bindAsEventListener(this));
-      var fieldChanged = function() {this.typedSinceLastFocus_ = true;}.bind(this);
-      Event.observe(this.element, 'paste', fieldChanged);
-      Event.observe(this.element, 'cut', fieldChanged);
+      this.onMouseDownListener = jQuery.proxy(this.onMouseDown, this);
+      jQuery(this.element).change(jQuery.proxy(this.onChange, this));
+      jQuery(this.element).keypress(jQuery.proxy(this.changeToFieldByKeys, this));
+      var fieldChanged =
+        jQuery.proxy(function() {this.typedSinceLastFocus_ = true;}, this);
+      jQuery(this.element).bind('paste cut', fieldChanged);
 
       // Store a reference to the element that should be positioned in order
       // to align the list with the field.
       this.listContainer = $('searchResults');
 
       // Make the this.showList and this.hideList available to onShow and onHide
-      this.options.showList = this.showList.bind(this);
-      this.options.hideList = this.hideList.bind(this);
-      this.options.posAnsList = this.posAnsList.bind(this);
+      this.options.showList = jQuery.proxy(this.showList, this);
+      this.options.hideList = jQuery.proxy(this.hideList, this);
+      this.options.posAnsList = jQuery.proxy(this.posAnsList, this);
 
       // Undo the base class' hiding of the update element.  (We're hiding
       // the listContainer instead.)
@@ -831,7 +820,7 @@ if (typeof Def === 'undefined')
       // Listen for mousedown events (which arrive more quickly than
       // click events, presumably because click events probably have
       // to be distinguished from double-clicks.)
-      Event.observe(element, "mousedown", this.onMouseDownListener);
+      jQuery(element).mousedown(this.onMouseDownListener);
     },
 
 
@@ -927,8 +916,8 @@ if (typeof Def === 'undefined')
         if (!hidden) {
           this.listContainer.style.visibility = 'hidden';
           this.listShowing = false;
-          this.listContainer.writeAttribute('aria-hidden', 'true');
-          this.element.writeAttribute('aria-expanded', 'false');
+          this.listContainer.setAttribute('aria-hidden', 'true');
+          this.element.setAttribute('aria-expanded', 'false');
         }
       }
     },
@@ -941,8 +930,8 @@ if (typeof Def === 'undefined')
       var previouslyHidden = this.listContainer.style.visibility !== 'visible';
       this.listContainer.style.visibility = 'visible';
       this.listShowing = true;
-      this.listContainer.writeAttribute('aria-hidden', 'false');
-      this.element.writeAttribute('aria-expanded', 'true');
+      this.listContainer.setAttribute('aria-hidden', 'false');
+      this.element.setAttribute('aria-expanded', 'true');
       if (previouslyHidden && !this.temporaryHide_ && this.entryCount > 0) {
         Def.Autocompleter.screenReaderLog('A list has appeared below the '+
           this.getFieldName()+'.');
@@ -1108,7 +1097,7 @@ if (typeof Def === 'undefined')
                         case Event.KEY_LEFT:
                         case Event.KEY_RIGHT:
                           if (!event.ctrlKey && this.index>=0 &&
-                              this.update.hasClassName('multi_col')) {
+                              jQuery(this.update).hasClass('multi_col')) {
                             this.moveToOtherColumn(event);
                           }
                           break;
@@ -1141,8 +1130,8 @@ if (typeof Def === 'undefined')
 
             if (this.observer)
               clearTimeout(this.observer);
-            this.observer =
-              setTimeout(this.onObserverEvent.bind(this), this.options.frequency*1000);
+            this.observer = setTimeout(jQuery.proxy(this.onObserverEvent, this),
+              this.options.frequency*1000);
           }
         }
       }
@@ -1157,14 +1146,14 @@ if (typeof Def === 'undefined')
      */
     setMatchStatusIndicator: function(matchStatus) {
       if (matchStatus) {
-        if (this.element.hasClassName('no_match')) {
-          this.element.removeClassName('no_match');
+        if (jQuery(this.element).hasClass('no_match')) {
+          jQuery(this.element).removeClass('no_match');
           Def.Autocompleter.screenReaderLog(
             'The field no longer contains a non-matching value.');
         }
       }
       else {
-        this.element.addClassName('no_match');
+        jQuery(this.element).addClass('no_match');
         Def.Autocompleter.screenReaderLog(
           'The field\'s value does not match any items in the list.');
       }
@@ -1186,13 +1175,13 @@ if (typeof Def === 'undefined')
       if (invalid) {
         Def.Autocompleter.setOffAlarm(this.element);
         if (!this.invalidStatus_){
-          this.element.addClassName('invalid');
+          jQuery(this.element).addClass('invalid');
           this.element.setAttribute('invalid', true);
         }
       }
       else {
         if (this.invalidStatus_){
-          this.element.removeClassName('invalid');
+          jQuery(this.element).removeClass('invalid');
           this.element.setAttribute('invalid', false);
         }
       }
@@ -1213,7 +1202,8 @@ if (typeof Def === 'undefined')
     /**
      *  This is called to update the completion list area with new search results.
      *  We override this to change the default selection.
-     * @param choices the HTML for a ul list.
+     * @param choices the HTML for a ul list.  It should not contain whitespace
+     *  text between tags.
      * @param pickedByNum whether the user is picking by number
      */
     updateChoices: function(choices, pickedByNum) {
@@ -1223,10 +1213,8 @@ if (typeof Def === 'undefined')
       this.index = -1;
       if (!this.changed && this.hasFocus) {
         this.update.innerHTML = choices;
-        Element.cleanWhitespace(this.update);
         var itemContainer = this.options.tableFormat ?
-          this.update.down('tbody') : this.update.down();
-        Element.cleanWhitespace(itemContainer);
+          this.update.firstChild.firstChild : this.update.firstChild;
         var domItems = itemContainer.childNodes;
 
         if (domItems) {
@@ -1395,11 +1383,10 @@ if (typeof Def === 'undefined')
 
       var scrolledContainer = this.scrolledContainer_;
       var viewPortHeight = window.innerHeight;
-      this.update.removeClassName('multi_col');
-      var posElVPCoords = positionedElement.viewportOffset();
-      var posElVPVertOffset = posElVPCoords[1];
+      jQuery(this.update).removeClass('multi_col');
+      var posElVPCoords = positionedElement.getBoundingClientRect();
       var maxListContainerBottom = viewPortHeight; // bottom edge of viewport
-      var bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
+      var bottomOfListContainer = posElVPCoords.bottom;
       // If this list is not completely on the page, try making it a multi-column
       // list (unless it is a table format list, which already has columns).
       if (bottomOfListContainer > maxListContainerBottom) {
@@ -1416,11 +1403,11 @@ if (typeof Def === 'undefined')
           var newListWidth = firstEntry.offsetWidth * 2 + 4;
           // Make sure the new width will fit horizontally
           var viewPortWidth = window.innerWidth;
-          if (newListWidth > viewPortWidth - posElVPCoords[0])
+          if (newListWidth > viewPortWidth - posElVPCoords.left)
             tryMultiColumn = false;
           else {
             this.listContainer.style.width = newListWidth + 'px';
-            this.update.addClassName('multi_col');
+            jQuery(this.update).addClass('multi_col');
             bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
           }
         }
@@ -1481,11 +1468,10 @@ if (typeof Def === 'undefined')
               spacerDiv.setAttribute('id', 'spacer');
               document.body.appendChild(spacerDiv);
             }
-            var spacerCoords = spacerDiv.viewportOffset();
-            var bottomOfSpacer = spacerCoords[1] + spacerDiv.offsetHeight;
-            if (bottomOfListContainer > bottomOfSpacer) {
+            var spacerCoords = spacerDiv.getBoundingClientRect();
+            if (bottomOfListContainer > spacerCoords.bottom) {
               spacerDiv.style.height =
-                bottomOfListContainer - spacerCoords[1] + 'px';
+                bottomOfListContainer - spacerCoords.top + 'px';
             }
           }
         }
@@ -1741,7 +1727,7 @@ if (typeof Def === 'undefined')
           // to push this after the pending events.
           this.refocusInProgress_ = true;
           this.processedFieldVal_ = fieldVal;
-          setTimeout(function() {
+          setTimeout(jQuery.proxy(function() {
             this.element.focus();
             this.element.select(); // select the text
             // Clear refocusInProgress_, which onFocus also clears, because
@@ -1749,7 +1735,7 @@ if (typeof Def === 'undefined')
             // is called above.  That happens when you hit return to select an
             // invalid value.
             this.refocusInProgress_ = false;
-          }.bind(this), 1);
+          }, this), 1);
         }
         else {
           // Send a list selection notification for non-matching values too, but
@@ -1775,7 +1761,7 @@ if (typeof Def === 'undefined')
             // the status field, and then when focus() was called the dialog
             // somehow called blur() on the field (perhaps using event capturing)
             // before the autocompleter's focus event handler ran.)
-            setTimeout(function() {this.findSuggestions();}.bind(this), 1);
+            setTimeout(jQuery.proxy(function() {this.findSuggestions();}, this), 1);
           }
         }
       }
@@ -1813,7 +1799,7 @@ if (typeof Def === 'undefined')
         // we need to simulate the change event.
         var elemVal = Def.Autocompleter.getFieldVal(this.element);
         if (elemVal !== this.processedFieldVal_)
-          Element.simulate(this.element, 'change');
+          Def.Event.simulate(this.element, 'change');
 
         if (this.enabled_ &&
                 !(this.refocusInProgress_))
@@ -1919,7 +1905,7 @@ if (typeof Def === 'undefined')
     onMouseDown: function(event) {
       // Only process the event if the item is not a heading, but in all cases
       // stop the event so that the list stays open and the field retains focus.
-      Event.stop(event);
+      event.stopImmediatePropagation();
       var itemElem = event.target;
       while (itemElem && itemElem.autocompleteIndex === undefined)
         itemElem = itemElem.parentNode;
@@ -2157,45 +2143,55 @@ if (typeof Def === 'undefined')
 
 
 
-    // Copied as-is from controls.js  (remove this comment if you modify it).
+    /**
+     *  Shows the list.
+     */
     show: function() {
-      if(Element.getStyle(this.update, 'display')=='none') this.options.onShow(this.element, this.update);
-      if(!this.iefix &&
-        (Prototype.Browser.IE) &&
-        (Element.getStyle(this.update, 'position')=='absolute')) {
+      if(jQuery(this.update).css('display')=='none') this.options.onShow(this.element, this.update);
+      if(!this.iefix && Browser.IE &&
+        (jQuery(this.update).css('position')=='absolute')) {
         new Insertion.After(this.update,
          '<iframe id="' + this.update.id + '_iefix" '+
          'style="display:none;position:absolute;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);" ' +
          'src="javascript:false;" frameborder="0" scrolling="no"></iframe>');
         this.iefix = $(this.update.id+'_iefix');
       }
-      if(this.iefix) setTimeout(this.fixIEOverlapping.bind(this), 50);
+      if(this.iefix) setTimeout(jQuery.proxy(this.fixIEOverlapping, this), 50);
     },
 
 
-    // Copied as-is from controls.js  (remove this comment if you modify it).
+    // This originally came from controls.js in Scriptaculous.  It seems to be working
+    // around some IE bug.  (Rewritten to use jQuery.)
     fixIEOverlapping: function() {
-      Position.clone(this.update, this.iefix, {setTop:(!this.update.style.height)});
+      var updatePos = this.update.offset();
+      this.iefix.style.left = updatePos.left;
+      if (!this.update.style.height)
+        this.update.style.top = updatePos.top;
       this.iefix.style.zIndex = 1;
       this.update.style.zIndex = 2;
-      Element.show(this.iefix);
+      jQuery(this.iefix).show();
     },
 
 
-    // Copied as-is from controls.js  (remove this comment if you modify it).
+    /**
+     *  Hides the list.
+     */
     hide: function() {
-      if(Element.getStyle(this.update, 'display')!='none') this.options.onHide(this.element, this.update);
-      if(this.iefix) Element.hide(this.iefix);
+      if(jQuery(this.update).css('display')!='none') this.options.onHide(this.element, this.update);
+      if(this.iefix) jQuery(this.iefix).hide();
     },
 
 
-    // Copied as-is from controls.js  (remove this comment if you modify it).
+    /**
+     *  Determines the state of the list and its items and shows/hides it as
+     *  appropriate.
+     */
     render: function() {
       if(this.entryCount > 0) {
         for (var i = 0; i < this.entryCount; i++)
           this.index==i ?
-            Element.addClassName(this.getEntry(i),"selected") :
-            Element.removeClassName(this.getEntry(i),"selected");
+            jQuery(this.getEntry(i)).addClass("selected") :
+            jQuery(this.getEntry(i)).removeClass("selected");
         if(this.hasFocus) {
           this.show();
           this.active = true;
@@ -2239,6 +2235,6 @@ if (typeof Def === 'undefined')
 
   };  // end Def.Autocompleter.Base class
 
-  Object.extend(Def.Autocompleter.Base.prototype, tmp);
+  jQuery.extend(Def.Autocompleter.Base.prototype, tmp);
   tmp = null;
-})($, jQuery, Def);
+})(Def.PrototypeAPI.$, jQuery, Def);

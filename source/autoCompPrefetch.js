@@ -4,6 +4,9 @@
 // in the Script.aculo.us controls.js file.
 
 (function($, jQuery, Def) {
+  var Class = Def.PrototypeAPI.Class;
+  var Browser = Def.PrototypeAPI.Browser;
+
   /**
    *  A prefetched list autocompleter.  This is extended from the Scriptaculous
    *  local autocompleter, and then from our autocompleter base class (so
@@ -11,7 +14,7 @@
    */
   Def.Autocompleter.Prefetch = Class.create();
   Def.Autocompleter.Prefetch.constructor = Def.Autocompleter.Prefetch;
-  Object.extend(Def.Autocompleter.Prefetch.prototype,
+  jQuery.extend(Def.Autocompleter.Prefetch.prototype,
     Def.Autocompleter.Base.prototype);
   Def.Autocompleter.Prefetch.prototype.className = 'Def.Autocompleter.Prefetch' ;
   // Define a temporary object for extending the Prefetch.prototype, which we
@@ -131,7 +134,7 @@
     initialize: function(id, listItems, options) {
 
       // Add Scriptaculous defaults, modified
-      options = Object.extend({
+      options = jQuery.extend({
         ignoreCase: true,
         fullSearch: false,
         selector: this.selector,
@@ -153,21 +156,20 @@
       if (!Def.Autocompleter.Base.classInit_)
         Def.Autocompleter.Base.classInit();
 
-      // Set up event observers.  The "bind" stuff specifies what "this"
-      // should be inside the event callbacks.
-      Event.observe(id, 'focus', this.onFocus.bind(this));
-      Event.observe(id, 'click', this.onFieldClick.bind(this));
-      // The base class sets up one for a "blur" event.
-
       this.initHeadings(options);
       this.defAutocompleterBaseInit(id, options);
+      // Set up event observers.
+      jQuery(this.element).focus(jQuery.proxy(this.onFocus, this));
+      jQuery(this.element).click(jQuery.proxy(this.onFieldClick, this));
+      // The base class sets up one for a "blur" event.
+
       var codes = options['codes'];
       this.setList(listItems, codes);
       this.listIsOriginal_ = true; // reset this after calling setList
       this.originalCodes_ = codes;
       this.options.minChars = 0; // do autocompletion even if the field is blank
       this.splitAutocomp_ = false;
-      this.element.addClassName('ansList');
+      jQuery(this.element).addClass('ansList');
     },
 
 
@@ -209,7 +211,8 @@
      */
     dupForField: function(fieldID) {
       var dataReq = this.dupDataReqForField(fieldID);
-      var opts = Object.clone(this.constructorOpts_);
+      var opts = {};
+      jQuery.extend(true, opts, this.constructorOpts_);
       opts['dataRequester'] = dataReq;
       var rtn = new Def.Autocompleter.Prefetch(fieldID, this.rawList_, opts);
       this.dupItemToDataIndex(rtn);
@@ -255,7 +258,7 @@
         this.indexToHeadingLevel_ = indexToHeadingLevel;
         options['indexToHeadingLevel'] = indexToHeadingLevel;
 
-        this.numHeadings_ = $H(headingCodeLevels).keys().length;
+        this.numHeadings_ = Object.keys(headingCodeLevels).length;
         options['numHeadings'] = this.numHeadings_;
       }
       else if (options['indexToHeadingLevel']) {
@@ -499,8 +502,9 @@
       }
 
       var displayList = new Array(numItems);
+      var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
       for (var i=0; i<numItems; ++i) {
-        displayList[i] = (this.rawList_[i]).escapeHTML();
+        displayList[i] = escapeHTML(this.rawList_[i]);
         // preprocess option list to add a serial number in the beginning of the
         // each item in the list, except for list headers
         if (this.add_seqnum === true && !this.indexToHeadingLevel_[i]) {
@@ -519,9 +523,9 @@
       // Add a class to the field if there is more than 1 item in the list
       // (so that CSS can add a small arrow-shaped background image).
       if (listItems.length > 1)
-        this.element.addClassName('ac_multiple');
+        jQuery(this.element).addClass('ac_multiple');
       else
-        this.element.removeClassName('ac_multiple')
+        jQuery(this.element).removeClass('ac_multiple')
 
       // If the field has focus, call onFocus to re-render and decide what
       // to do about displaying the list.
@@ -597,7 +601,7 @@
       // Reset the contents of the field unless the fieldAlreadySet flag
       // is set to false
       var oldValue = this.element.value;
-      var lenList = listItems.size();
+      var lenList = listItems.length;
       var newVal;
       if (fieldAlreadySet === false) {
         if (this.autoFill_ && (lenList === 1 || (lenList > 1 && pickFirstItem)))
@@ -903,14 +907,21 @@
       if (this.add_seqnum) {
         // Check to see if browser is IE.
         // All versions of IE convert lower case tag names to upper case - anantha (11/17/09)
-        if (Prototype.Browser.IE)
+        if (Browser.IE)
           value = value.replace( "SPAN", "span" );
 
         var index = value.indexOf(this.SEQ_NUM_SEPARATOR);
         if (index >= 0)  // headings won't have the list number
           value = value.substring(index + this.SEQ_NUM_SEPARATOR.length);
+
+        // Strip out any remaining tags and unescape the HTML
+        value = value.replace(/(<([^>]+)>)/ig,"");
+        value = Def.Autocompleter.Base.unescapeAttribute(value);
       }
-      return value.stripTags().unescapeHTML();
+      else
+        value = li.textContent;
+
+      return value;
     },
 
 
@@ -994,6 +1005,6 @@
 
   };  // end Def.Autocompleter.Prefetch class
 
-  Object.extend(Def.Autocompleter.Prefetch.prototype, tmp);
+  jQuery.extend(Def.Autocompleter.Prefetch.prototype, tmp);
   tmp = null; // prevent other code here from accidentally using it
-})($, jQuery, Def);
+})(Def.PrototypeAPI.$, jQuery, Def);

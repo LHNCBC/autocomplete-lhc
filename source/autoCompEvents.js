@@ -171,5 +171,5 @@
     }
   };
 
-  Object.extend(Def.Autocompleter.Event, Def.Observable);
-})($, jQuery, Def);
+  jQuery.extend(Def.Autocompleter.Event, Def.Observable);
+})(Def.PrototypeAPI.$, jQuery, Def);

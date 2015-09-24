@@ -24,27 +24,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Element.collectTextNodesIgnoreClass = function(element, className) {
-  return $A($(element).childNodes).collect( function(node) {
-    return (node.nodeType==3 ? node.nodeValue :
-      ((node.hasChildNodes() && !Element.hasClassName(node,className)) ?
-        Element.collectTextNodesIgnoreClass(node, className) : ''));
-  }).flatten().join('');
-};
-
-
-
 if (typeof Def === 'undefined')
   Def = {};
 
 (function($, jQuery, Def) {
+
+  var Class = Def.PrototypeAPI.Class;
+  var Enumerable = Def.PrototypeAPI.Enumerable;
+  var $A = Def.PrototypeAPI.$A;
+  var isString = Def.PrototypeAPI.isString;
+
   var Effect = {
     _elementDoesNotExistError: {
       name: 'ElementDoesNotExistError',
       message: 'The specified DOM element does not exist, but is required for this effect to operate'
     },
      Transitions: {
-      linear: Prototype.K,
+      linear: function(a) {return a}, // identity function
       sinoidal: function(pos) {
         return (-Math.cos(pos*Math.PI)/2) + .5;
       },
@@ -95,7 +91,7 @@ if (typeof Def === 'undefined')
     add: function(effect) {
       var timestamp = new Date().getTime();
 
-      var position = Object.isString(effect.options.queue) ?
+      var position = isString(effect.options.queue) ?
         effect.options.queue : effect.options.queue.position;
 
       switch(position) {
@@ -122,10 +118,12 @@ if (typeof Def === 'undefined')
         this.effects.push(effect);
 
       if (!this.interval)
-        this.interval = setInterval(this.loop.bind(this), 15);
+        this.interval = setInterval(jQuery.proxy(this.loop, this), 15);
     },
     remove: function(effect) {
-      this.effects = this.effects.reject(function(e) { return e==effect });
+      var i = this.effects.indexOf(effect);
+      if (i > -1)
+        this.effects.splice(i, 1);
       if (this.effects.length == 0) {
         clearInterval(this.interval);
         this.interval = null;
@@ -139,12 +137,12 @@ if (typeof Def === 'undefined')
   });
 
   Effect.Queues = {
-    instances: $H(),
+    instances: {},
     get: function(queueName) {
-      if (!Object.isString(queueName)) return queueName;
+      if (!isString(queueName)) return queueName;
 
-      return this.instances.get(queueName) ||
-        this.instances.set(queueName, new Effect.ScopedQueue());
+      return (this.instances[queueName]) ||
+        (this.instances[queueName] = new Effect.ScopedQueue());
     }
   };
   Effect.Queue = Effect.Queues.get('global');
@@ -155,7 +153,7 @@ if (typeof Def === 'undefined')
     position: null,
     start: function(options) {
       if (options && options.transition === false) options.transition = Effect.Transitions.linear;
-      this.options      = Object.extend(Object.extend({ },Effect.DefaultOptions), options || { });
+      this.options      = jQuery.extend(jQuery.extend({ },Effect.DefaultOptions), options || { });
       this.currentFrame = 0;
       this.state        = 'idle';
       this.startOn      = this.options.delay*1000;
@@ -191,7 +189,7 @@ if (typeof Def === 'undefined')
 
       this.event('beforeStart');
       if (!this.options.sync)
-        Effect.Queues.get(Object.isString(this.options.queue) ?
+        Effect.Queues.get(isString(this.options.queue) ?
           'global' : this.options.queue.scope).add(this);
     },
     loop: function(timePos) {
@@ -205,7 +203,7 @@ if (typeof Def === 'undefined')
           return;
         }
         var pos   = (timePos - this.startOn) / this.totalTime,
-            frame = (pos * this.totalFrames).round();
+            frame = Math.round(pos * this.totalFrames);
         if (frame > this.currentFrame) {
           this.render(pos);
           this.currentFrame = frame;
@@ -214,7 +212,7 @@ if (typeof Def === 'undefined')
     },
     cancel: function() {
       if (!this.options.sync)
-        Effect.Queues.get(Object.isString(this.options.queue) ?
+        Effect.Queues.get(isString(this.options.queue) ?
           'global' : this.options.queue.scope).remove(this);
       this.state = 'finished';
     },
@@ -235,7 +233,7 @@ if (typeof Def === 'undefined')
     initialize: function(element) {
       this.element = $(element);
       if (!this.element) throw(Effect._elementDoesNotExistError);
-      var options = Object.extend({
+      var options = jQuery.extend({
         x:    0,
         y:    0,
         mode: 'relative'
@@ -243,33 +241,36 @@ if (typeof Def === 'undefined')
       this.start(options);
     },
     setup: function() {
-      this.element.makePositioned();
-      this.originalLeft = parseFloat(this.element.getStyle('left') || '0');
-      this.originalTop  = parseFloat(this.element.getStyle('top')  || '0');
+      Def.PrototypeAPI.makePositioned(this.element);
+      var offset = jQuery(this.element).offset();
+      this.originalLeft = offset.left;
+      this.originalTop  = offset.top;
       if (this.options.mode == 'absolute') {
         this.options.x = this.options.x - this.originalLeft;
         this.options.y = this.options.y - this.originalTop;
       }
     },
     update: function(position) {
-      this.element.setStyle({
-        left: (this.options.x  * position + this.originalLeft).round() + 'px',
-        top:  (this.options.y  * position + this.originalTop).round()  + 'px'
+      Def.PrototypeAPI.setStyle(this.element, {
+        left: Math.round(this.options.x  * position + this.originalLeft) + 'px',
+        top:  Math.round(this.options.y  * position + this.originalTop)  + 'px'
       });
     }
   });
 
   Effect.Shake = function(element) {
     element = $(element);
-    var options = Object.extend({
+    var options = jQuery.extend({
       distance: 20,
       duration: 0.5
     }, arguments[1] || {});
     var distance = parseFloat(options.distance);
     var split = parseFloat(options.duration) / 10.0;
+    var offset = jQuery(element).offset();
+    var dpapi = Def.PrototypeAPI;
     var oldStyle = {
-      top: element.getStyle('top'),
-      left: element.getStyle('left') };
+      top: offset.top,
+      left: offset.left };
       return new Effect.Move(element,
         { x:  distance, y: 0, duration: split, afterFinishInternal: function(effect) {
       new Effect.Move(effect.element,
@@ -282,10 +283,10 @@ if (typeof Def === 'undefined')
         { x:  distance*2, y: 0, duration: split*2,  afterFinishInternal: function(effect) {
       new Effect.Move(effect.element,
         { x: -distance, y: 0, duration: split, afterFinishInternal: function(effect) {
-          effect.element.undoPositioned().setStyle(oldStyle);
+          dpapi.setStyle(dpapi.undoPositioned(effect.element), oldStyle);
     }}); }}); }}); }}); }}); }});
   };
 
   Def.Effect = Effect;
-})($, jQuery, Def);
+})(Def.PrototypeAPI.$, jQuery, Def);
 

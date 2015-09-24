@@ -1,24 +1,11 @@
-// This file contains auto-completer code for the Data Entry Framework project.
+// This file defines the "search" (AJAX) autocompleter.
 
 // These autocompleters are based on the Autocompleter.Base class defined
 // in the Script.aculo.us controls.js file.
 
-// Patch for IE 9 Bug.  See:
-// http://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
-Ajax.Request.prototype.respondToReadyState_orig =
-  Ajax.Request.prototype.respondToReadyState;
-Ajax.Request.prototype.respondToReadyState = function(readyState) {
-  // Catch the exception, if there is one.
-  try {
-    this.respondToReadyState_orig(readyState);
-  }
-  catch(e) {
-    this.dispatchException(e);
-  }
-};
-
-
 (function($, jQuery, Def) {
+  var Class = Def.PrototypeAPI.Class;
+
   /**
    *  An Ajax completer that provides list options when the user clicks
    *  on a search button.
@@ -66,10 +53,10 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      */
     superclass: Def.Autocompleter.Base.prototype
   };
-  Object.extend(Def.Autocompleter.Search, ctmp);
+  jQuery.extend(Def.Autocompleter.Search, ctmp);
   ctmp = null;
 
-  Object.extend(Def.Autocompleter.Search.prototype,
+  jQuery.extend(Def.Autocompleter.Search.prototype,
     Def.Autocompleter.Base.prototype);
   Def.Autocompleter.Search.prototype.className = 'Def.Autocompleter.Search' ;
 
@@ -216,23 +203,23 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
      */
     initialize: function(fieldID, url, options) {
 
-      options = Object.extend({
+      options = jQuery.extend({
         partialChars: 2,
-        onHide: function(element, update) {
+        onHide: jQuery.proxy(function(element, update) {
           $('searchCount').style.display = 'none';
           $('moreResults').style.display = 'none';
           Def.Autocompleter.Base.prototype.hideList.apply(this);
-        }.bind(this),
+        }, this),
 
-        onShow: function(element, update) {
+        onShow: jQuery.proxy(function(element, update) {
           // Make the search count display before adjusting the list position.
           $('searchCount').style.display='block';
           $('moreResults').style.display = 'block';
 
           Def.Autocompleter.Base.prototype.showList.apply(this);
-        }.bind(this),
+        }, this),
 
-        onComplete: this.onComplete.bind(this)
+        onComplete: jQuery.proxy(this.onComplete, this)
       }, options || {});
 
       if (!Def.Autocompleter.Base.classInit_)
@@ -263,9 +250,8 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       // Also, the Prototype library recommends not to use synchronous requests.
       //   this.options.asynchronous = false;
 
-      // Set up event observers.  The "bind" stuff specifies what "this"
-      // should be inside the event callbacks.
-      Event.observe(fieldID, 'focus', this.onFocus.bind(this));
+      // Set up event observers.
+      jQuery(this.element).focus(jQuery.proxy(this.onFocus, this));
       // The base class sets up one for a "blur" event.
 
       var buttonID = options['buttonID'];
@@ -280,10 +266,11 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
         // occuring -- though I don't understand why.  (If I comment out the
         // Ajax.Request, the blur event occurs, but if I uncomment that and
         // comment out the onComplete code, it does not.)
-        Event.observe(buttonID, 'mousedown', this.buttonClick.bind(this));
-        Event.observe(buttonID, 'keypress', this.buttonKeyPress.bind(this));
+        var button = jQuery('#'+buttonID);
+        button.mousedown(jQuery.proxy(this.buttonClick, this));
+        button.keypress(jQuery.proxy(this.buttonKeyPress, this));
       }
-      this.element.addClassName('search_field');
+      jQuery(this.element).addClass('search_field');
     },
 
 
@@ -902,7 +889,7 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       };
       var options = {
         data: paramData,
-        complete: this.onFindSuggestionComplete.bind(this)
+        complete: jQuery.proxy(this.onFindSuggestionComplete, this)
       };
       var suggestionDialog = Def.Autocompleter.SuggestionDialog.getSuggestionDialog();
       suggestionDialog.resetDialog();
@@ -1004,6 +991,6 @@ Ajax.Request.prototype.respondToReadyState = function(readyState) {
       this.element.focus();
     }
   };
-  Object.extend(Def.Autocompleter.Search.prototype, tmp);
+  jQuery.extend(Def.Autocompleter.Search.prototype, tmp);
   tmp = null;
-})($, jQuery, Def);
+})(Def.PrototypeAPI.$, jQuery, Def);

@@ -39,4 +39,4 @@ if (typeof Def === 'undefined')
       this.bonk.currentTime = 0;
     }
   };
-})($, jQuery, Def);
+})(Def.PrototypeAPI.$, jQuery, Def);
