@@ -204,6 +204,17 @@ if (typeof Def === 'undefined')
 
 
     /**
+     *  Stops further event handlers from runing on the element and prevents the
+     *  default action.
+     * @param event a jQuery Event object
+     */
+    stopEvent: function(event) {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+    },
+
+
+    /**
      *  Logs a message for a screen reader to read.  By default, this
      *  uses an instance of Def.ScreenReaderLog.
      * @param msg the message to log
@@ -266,8 +277,7 @@ if (typeof Def === 'undefined')
           // as well.)  For IE, we set things to refocus the field and to ignore
           // the change, blur, and focus events.
           if (Def.Autocompleter.isIE && event.target.id === 'completionOptionsScroller') {
-            Event.stop(event);
-            event.stopImmediatePropagation();
+            Def.Autocompleter.stopEvent(event);
             Def.Autocompleter.completionOptionsScrollerClicked_ = true;
             if ($(Def.Autocompleter.currentAutoCompField_) != -1) {
               var field = $(Def.Autocompleter.currentAutoCompField_);
@@ -1051,7 +1061,7 @@ if (typeof Def === 'undefined')
               // field.  The user might be trying to select more than one item
               // by hitting return more than once.
               if (this.multiSelect_)
-                Event.stop(event);
+                Def.Autocompleter.stopEvent(event);
               this.handleDataEntry(event);
               break;
             case Event.KEY_TAB:
@@ -1092,7 +1102,7 @@ if (typeof Def === 'undefined')
                         case Event.KEY_UP:
                           charCode===Event.KEY_UP ? this.markPrevious() : this.markNext();
                           this.render();
-                          Event.stop(event);
+                          Def.Autocompleter.stopEvent(event);
                           break;
                         case Event.KEY_LEFT:
                         case Event.KEY_RIGHT:
@@ -1968,7 +1978,7 @@ if (typeof Def === 'undefined')
         // Stop the event if the field is in an invalid state (to avoid form
         // submission.)
         if (!event.stopped && this.matchListValue_ && this.invalidStatus_)
-          Event.stop(event);
+          Def.Autocompleter.stopEvent(event);
       }
     },
 
@@ -2059,7 +2069,7 @@ if (typeof Def === 'undefined')
           this.element.value = this.listItemValue(newItem);
           this.element.select();
           this.render();
-          Event.stop(event);
+          Def.Autocompleter.stopEvent(event);
         }
       }
     },

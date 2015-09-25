@@ -767,7 +767,7 @@
       this.searchInProgress = true;
 
       this.runSearch();
-      Event.stop(event);
+      Def.Autocompleter.stopEvent(event);
     },
 
 

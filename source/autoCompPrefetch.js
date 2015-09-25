@@ -950,7 +950,7 @@
       this.posAnsList() ;
       this.seeMoreItemsClicked_ = false;
       this.splitAutocomp_ = false;
-      Event.stop(event);
+      Def.Autocompleter.stopEvent(event);
     },
 
 
