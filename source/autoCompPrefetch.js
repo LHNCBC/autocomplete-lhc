@@ -932,7 +932,7 @@
      *  function name).
      */
     fieldEventIsBigList: function(event) {
-      return event.keyCode===Event.KEY_RETURN && event.ctrlKey;
+      return event.ctrlKey && event.keyCode===jQuery.ui.keyCode.ENTER;
     },
 
 

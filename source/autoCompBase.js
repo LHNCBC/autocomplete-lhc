@@ -1022,7 +1022,7 @@ if (typeof Def === 'undefined')
      *  Returns true if the given key event is a search request.
      */
     isSearchKey: function (event) {
-      return event.keyCode === Event.KEY_RETURN && event.ctrlKey;
+      return event.ctrlKey && event.keyCode === jQuery.ui.keyCode.ENTER;
     },
 
 
@@ -1055,8 +1055,9 @@ if (typeof Def === 'undefined')
             {list_expansion_method: 'CtrlRet'});
         }
         else {
+          var keys = jQuery.ui.keyCode;
           switch(charCode) {
-            case Event.KEY_RETURN:
+            case keys.ENTER:
               // Step the event for multiselect lists so the focus stays in the
               // field.  The user might be trying to select more than one item
               // by hitting return more than once.
@@ -1064,7 +1065,7 @@ if (typeof Def === 'undefined')
                 Def.Autocompleter.stopEvent(event);
               this.handleDataEntry(event);
               break;
-            case Event.KEY_TAB:
+            case keys.TAB:
               // For a tab, only try to select a value if there is something in
               // the field.  An item might be highlighted from a return-key
               // selection (in a multi-select list), but if the field is empty we
@@ -1073,7 +1074,7 @@ if (typeof Def === 'undefined')
               if (this.element.value !== '')
                 this.handleDataEntry(event);
               break;
-            case Event.KEY_ESC:
+            case keysEscape:
               if (this.preFieldFillVal_!==null) {
                 // Restore the field value
                 this.element.value = this.preFieldFillVal_;
@@ -1089,23 +1090,23 @@ if (typeof Def === 'undefined')
             default:
               if (this.active) {
                 switch(charCode) {
-                  case Event.KEY_PAGEUP:
+                  case keys.UP:
                     this.pageOptionsUpOrDown(true);
                     break;
-                  case Event.KEY_PAGEDOWN:
+                  case keys.DOWN:
                     this.pageOptionsUpOrDown(false);
                     break;
                   default:
                     if (!event.ctrlKey) {
                       switch(charCode) {
-                        case Event.KEY_DOWN:
-                        case Event.KEY_UP:
-                          charCode===Event.KEY_UP ? this.markPrevious() : this.markNext();
+                        case keys.DOWN:
+                        case keys.UP:
+                          charCode===keys.UP ? this.markPrevious() : this.markNext();
                           this.render();
                           Def.Autocompleter.stopEvent(event);
                           break;
-                        case Event.KEY_LEFT:
-                        case Event.KEY_RIGHT:
+                        case keys.LEFT:
+                        case keys.RIGHT:
                           if (!event.ctrlKey && this.index>=0 &&
                               jQuery(this.update).hasClass('multi_col')) {
                             this.moveToOtherColumn(event);

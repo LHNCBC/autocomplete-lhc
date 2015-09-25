@@ -397,7 +397,7 @@
      * @param event the key event
      */
     fieldEventIsBigList: function(event) {
-       return event.keyCode===Event.KEY_RETURN && (event.ctrlKey ||
+       return event.keyCode===jQuery.ui.keyCode.ENTER && (event.ctrlKey ||
            (!this.autocomp &&
            this.element.value !== this.processedFieldVal_ &&
            this.element.value.trim() !== ''));
@@ -409,7 +409,7 @@
      * @param event the key event
      */
     buttonKeyPress: function(event) {
-      if (event.keyCode === Event.KEY_RETURN) {
+      if (event.keyCode === jQuery.ui.keyCode.ENTER) {
         this.runSearch();
       }
     },
