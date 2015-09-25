@@ -242,9 +242,9 @@ if (typeof Def === 'undefined')
     },
     setup: function() {
       Def.PrototypeAPI.makePositioned(this.element);
-      var offset = jQuery(this.element).offset();
-      this.originalLeft = offset.left;
-      this.originalTop  = offset.top;
+      var dpapi = Def.PrototypeAPI;
+      this.originalLeft = parseFloat(dpapi.getStyle(this.element, 'left') || '0');
+      this.originalTop  = parseFloat(dpapi.getStyle(this.element, 'top')  || '0');
       if (this.options.mode == 'absolute') {
         this.options.x = this.options.x - this.originalLeft;
         this.options.y = this.options.y - this.originalTop;
