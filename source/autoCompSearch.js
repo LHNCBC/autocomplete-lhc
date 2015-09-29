@@ -894,7 +894,8 @@
       var suggestionDialog = Def.Autocompleter.SuggestionDialog.getSuggestionDialog();
       suggestionDialog.resetDialog();
       suggestionDialog.show();
-      $('suggestionFieldVal').innerHTML = this.element.value.escapeHTML();
+      $('suggestionFieldVal').innerHTML =
+        Def.PrototypeAPI.escapeHTML(this.element.value);
 
       jQuery.ajax(this.url, options);
     },

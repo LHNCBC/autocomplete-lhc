@@ -27,6 +27,7 @@ describe('multi-field lists', function() {
   });
 */
 
+
   it('should show both fields in the list for search fields', function() {
     po.openTestPage();
     po.multiFieldSearch.click();
@@ -57,7 +58,6 @@ describe('multi-field lists', function() {
     po.multiSelectTableSearch.sendKeys('ar');
     expect(po.shownItemCount()).toBe(6);
     expect(po.tableSearchResult(1).getInnerHtml()).toNotBe('<td>NM_001113511</td>');
-
   });
 
 });

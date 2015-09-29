@@ -74,7 +74,8 @@ if (typeof Def === 'undefined')
         // calling focus directly does not work.  We need to call it from within
         // a timeout.
         setTimeout(jQuery.proxy(function(){
-          this.dialog_[0].up().down('.ui-dialog-titlebar-close').focus()
+          var closeButtonContainer = jQuery(this.dialog_[0].parentNode);
+          closeButtonContainer.find('.ui-dialog-titlebar-close')[0].focus()
         }, this), 1);
 
         this.opening_ = false;

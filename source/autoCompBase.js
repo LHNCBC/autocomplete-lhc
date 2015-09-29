@@ -998,7 +998,7 @@ if (typeof Def === 'undefined')
         container.scrollTop = item.offsetTop;
       }
       else {
-        var itemHeight = item.getHeight();
+        var itemHeight = item.clientHeight;
         // Get the height of the container, less border and scroll bar pixels
         var containerHeight = container.clientHeight;
         if (item.offsetTop + itemHeight - container.scrollTop > containerHeight) {
@@ -1016,9 +1016,8 @@ if (typeof Def === 'undefined')
     pageOptionsUpOrDown: function(pageUp) {
       // Get the height of the search results, which might be constrained by
       // span tag (id completionOptions).
-      var compOpts = $('completionOptions');
+      var compOpts = jQuery('#completionOptionsScroller')[0];
       var compOptHeight = compOpts.clientHeight; // the inner height, minus border
-      var searchResHeight = compOpts.firstChild.getHeight();
       var newScrollTop;
       if (pageUp) {
         if (compOpts.scrollTop>0) {
@@ -1030,7 +1029,8 @@ if (typeof Def === 'undefined')
       }
       else {
         // PAGE DOWN
-        var maxScrollTop = searchResHeight - compOptHeight;
+        var fullListHeight = jQuery('#completionOptions')[0].clientHeight;
+        var maxScrollTop = fullListHeight - compOptHeight;
         if (maxScrollTop < 0)
           maxScrollTop = 0;
         if (compOpts.scrollTop < maxScrollTop) {
@@ -1099,7 +1099,7 @@ if (typeof Def === 'undefined')
               if (this.element.value !== '')
                 this.handleDataEntry(event);
               break;
-            case keysEscape:
+            case keys.ESCAPE:
               if (this.preFieldFillVal_!==null) {
                 // Restore the field value
                 this.element.value = this.preFieldFillVal_;
@@ -1115,10 +1115,10 @@ if (typeof Def === 'undefined')
             default:
               if (this.active) {
                 switch(charCode) {
-                  case keys.UP:
+                  case keys.PAGE_UP:
                     this.pageOptionsUpOrDown(true);
                     break;
-                  case keys.DOWN:
+                  case keys.PAGE_DOWN:
                     this.pageOptionsUpOrDown(false);
                     break;
                   default:

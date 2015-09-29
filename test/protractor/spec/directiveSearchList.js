@@ -24,7 +24,7 @@ describe('directive', function() {
 
       // Try the expanded results list
       // Clear the field first
-      browser.driver.executeScript(function() {$('list3').value = '';});
+      dp.clearField(dp.searchList);
       dp.searchList.sendKeys('ar');
       expect(dp.searchList.isDisplayed()).toBeTruthy();
       expect(dp.expandLink.isDisplayed()).toBeTruthy();
@@ -35,7 +35,7 @@ describe('directive', function() {
         {text: 'Arrhythmia', code: '3140', term_icd9_code: '427.9'});
 
       // Try a case with more than one field in the extra item data hash.
-      browser.driver.executeScript(function() {$('list3').value = '';}); // clear field
+      dp.clearField(dp.searchList);
       dp.searchList.sendKeys('abc');
       dp.secondSearchRes.click();
       expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(
