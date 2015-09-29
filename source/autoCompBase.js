@@ -134,14 +134,12 @@ if (typeof Def === 'undefined')
      *  to store information about a particular field (or maybe a column of
      *  identical fields) and are also used to store/retrieve the associated
      *  fields themselves.  In systems where every field is unique, this can
-     *  be the field's name attribute, but it can also be a key shared by fields
+     *  be the field's name or ID attribute, but it can also be a key shared by fields
      *  that have the same supporting list.  If this is overridden, be sure to
      *  also override lookupFields.
      * @param field a DOM field element
      */
-    getFieldLookupKey: function(field) {
-      return field.name; // default implementation
-    },
+    getFieldLookupKey: Def.Observable.lookupKey, // default implementation
 
 
     /**
@@ -183,6 +181,33 @@ if (typeof Def === 'undefined')
      */
     getFieldLabel: function(fieldID) {
       return null;
+    },
+
+
+    /**
+     *  Returns the DOM node immediately containing the list item elements.  This
+     *  could either be a tbody or a ul, depending on options.tableFormat.
+     *  If there is no list, the return value may be null.
+     */
+    listItemElementContainer: function() {
+      var rtn = jQuery("#completionOptions")[0].firstChild;
+      if (rtn && rtn.tagName === "TABLE")
+        rtn = rtn.firstChild; // tbody
+      return rtn;
+    },
+
+
+    /**
+     *  Returns the list items elements, which will be either
+     *  tr elements or li elements depending on options.tableFormat.
+     *  If there is no list, the return value may be null.
+     */
+    listItemElements: function() {
+      var rtn = null;
+      var itemContainer = this.listItemElementContainer();
+      if (itemContainer)
+        rtn = itemContainer.childNodes;
+      return rtn;
     },
 
 
@@ -725,11 +750,11 @@ if (typeof Def === 'undefined')
       Def.Autocompleter.screenReaderLog('Selected '+escapedVal);
       if (this.index >= 0) { // i.e. if it is a list item
         // Delete selected item
-        var ul = this.update.firstChild;
-        ul.removeChild(this.getCurrentEntry());
+        var itemContainer = Def.Autocompleter.listItemElementContainer();
+        itemContainer.removeChild(this.getCurrentEntry());
         // Having deleted that item, we now need to update the the remaining ones
         --this.entryCount;
-        var itemNodes = ul.childNodes;
+        var itemNodes = itemContainer.childNodes;
         for (var i=this.index, len=itemNodes.length; i<len; ++i)
           itemNodes[i].autocompleteIndex = i;
         if (this.index == this.entryCount)
@@ -835,7 +860,7 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Returns the value of a list item (minus any sequence number an
+     *  Returns the value of a list item (minus any sequence number and
      *  separator.)
      * @param itemElem a list item DOM element.
      */
@@ -1224,21 +1249,17 @@ if (typeof Def === 'undefined')
       this.index = -1;
       if (!this.changed && this.hasFocus) {
         this.update.innerHTML = choices;
-        var itemContainer = this.options.tableFormat ?
-          this.update.firstChild.firstChild : this.update.firstChild;
-        var domItems = itemContainer.childNodes;
+        var domItems = Def.Autocompleter.listItemElements();
 
         if (domItems) {
           this.entryCount = domItems.length;
+          var i;
           if (this.suggestionMode_ !== Def.Autocompleter.NO_COMPLETION_SUGGESTIONS) {
-            var i;
-            if (this.entryCount > 0 && !this.focusInProgress_) {
-              if (pickedByNum) {
-                // Use the first non-heading entry (whose number should match
-                // what was typed) as the default
-                for(this.index = 0; this.liIsHeading(domItems[i]) &&
-                       this.index < this.entryCount; ++this.index);
-              }
+            if (this.entryCount > 0 && !this.focusInProgress_ && pickedByNum) {
+              // Use the first non-heading entry (whose number should match
+              // what was typed) as the default
+              for(i=0; this.liIsHeading(domItems[i]) && i<this.entryCount; ++i);
+              this.index = i;
             }
           } // If we are making a suggestion
 
@@ -1288,14 +1309,13 @@ if (typeof Def === 'undefined')
       // 1) the shortest choice with the field value at the beginning, or
       // 2) the shortest choice with the field value somewhere, or
       // 3) the shortest choice
-      var elemValue = this.elemVal.toLowerCase();
+      var elemValue = this.elemVal.trim().toLowerCase();
       var numItems = listItems.length;
       var rtn = -1;
 
       if (elemValue.length > 0 && numItems > 0) {
         var minLengthIndex = -1;
         var minLength = Infinity;
-         // this.update.firstChild.childNodes[minLengthIndex].innerHTML.length;
         var beginMatchMinLengthIndex = -1;
         var beginMatchMinLength = minLength;
         var innerMatchMinLengthIndex = -1;
@@ -1304,7 +1324,7 @@ if (typeof Def === 'undefined')
         for (var i=0; i<numItems; ++i) {
           // Make sure the entry is not a header before considering it
           var itemText = listItems[i];
-          if (!this.itemTextIsHeading(listItems[i])) {
+          if (!this.itemTextIsHeading(itemText)) {
             var itemTextLC = itemText.toLowerCase();
             // Also remove non-word characters from the start of the string.
             itemTextLC = itemTextLC.replace(/^\W+/, '');
@@ -2011,7 +2031,6 @@ if (typeof Def === 'undefined')
     liIsHeading: function(li) {
       var rtn = !!this.numHeadings_; // true if headings exist
       if (rtn) {  // if there are headings
-        var itemVal = this.listItemValue(li);
         rtn = this.itemTextIsHeading(this.listItemValue(li));
       }
       return rtn;
@@ -2051,7 +2070,7 @@ if (typeof Def === 'undefined')
       // If the number of items is odd and the current index is the middle
       // value, then there is no item in the other column so we don't move it.
       // Note that the index starts at zero (so 0 to 6 for 7 items).
-      var numItems = this.update.firstChild.childNodes.length;
+      var numItems = Def.Autocompleter.listItemElements().length;
       var half = Math.floor(numItems/2);  // e.g. 3 if numItems == 6 or 7
       var shift = Math.ceil(numItems/2.0);  // e.g. 4 if numItems == 7
       var newIndex = this.index;
@@ -2214,14 +2233,12 @@ if (typeof Def === 'undefined')
     },
 
 
-    // Copied as-is from controls.js  (remove this comment if you modify it).
+    /**
+     *  Returns the DOM node corresponding to the list item at the given index.
+     * @param index the zero-based index of the list item to retrieve.
+     */
     getEntry: function(index) {
-      var rtn;
-      if (this.options.tableFormat)
-        rtn = this.update.firstChild.firstChild.childNodes[index];
-      else
-        rtn = this.update.firstChild.childNodes[index];
-      return rtn;
+      return Def.Autocompleter.listItemElements()[index];
     },
 
 

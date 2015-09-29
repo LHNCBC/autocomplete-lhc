@@ -335,7 +335,7 @@
           var rawItemText = instance.rawList_[i];
           if (useFullList) {
             ++totalCount;
-            itemText = rawItemText;
+            itemText = escapeHTML(rawItemText);
           }
 
           // We need to be careful not to match the HTML we've put around the
@@ -459,7 +459,7 @@
       }
 
       var rtn = '<ul>';
-      // Process the first item separatly, because it might be a suggestion.
+      // Process the first item separately, because it might be a suggestion.
       i = 0;
       if (topItemIndex >= 0) {
         rtn += '<li class="suggestion">' + itemToHTMLData[topItem][0] + '</li>'
@@ -854,7 +854,7 @@
         }
         //check if the list item value matches field value
         else if (this.entryCount == 1) {
-          var value = this.listItemValue(this.update.firstChild.childNodes[0]);
+          var value = this.listItemValue(Def.Autocompleter.listItemElements()[0]);
           blnShowList = value != this.processedFieldVal_;
         }
       }

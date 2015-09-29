@@ -11,10 +11,11 @@ var fe_race_or_ethnicity_autoComp = new
   "Hispanic or Latino","Native Hawaiian or Pacific Islander","White",
   "Unknown"], opts);
 var opts = {};
-opts['codes']=["LA44-3","LA45-0","LA46-8"]
+opts['codes']=["LA44-3","LA45-0","LA46-8", "ZZZ"]
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
 opts['autoFill']=true
-var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe', ["Spanish","French","Other"], opts);
+var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe',
+  ["Spanish","French","Other", "escape<test>&"], opts);
 var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true
@@ -45,13 +46,6 @@ opts['autocomp']=true
 var fe_search_button_cne_autoComp =
   new Def.Autocompleter.Search('fe_search_button_cne',
     '/form/get_search_res_list?fd_id=1285', opts);var opts = {};
-opts['matchListValue']=true
-opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
-opts['autocomp']=true
-var fe_table_search_cne_autoComp =
-  new Def.Autocompleter.Search('fe_table_search_cne',
-    '/form/get_search_res_list?fd_id=1286', opts);      Def.dataFieldlabelNames_ = {"race_or_ethnicity":[["A Prefetch CNE autocompleter"],""],"prefetch_cwe":[["A Prefetch CWE autocompleter"],""],"search_cne":[["A search CNE autocompleter"],""],"search_cwe":[["A search CWE autocompleter"],""],"table_prefetch_cne":[["A TablePrefetch autocompleter"],""],"search_button_cne":[["A search CNE autocompleter with a button"],""],"table_search_cne":[["A TableSearch CNE autocompleter with a button"],""]};
-      Def.tipFields_ = {"race_or_ethnicity":["race_or_ethnicity"],"prefetch_cwe":["prefetch_cwe"],"search_cne":["search_cne"],"search_cwe":["search_cwe"],"table_prefetch_cne":["table_prefetch_cne"],"search_button_cne":["search_button_cne"],"table_search_cne":["table_search_cne"]};
 
 // prefetch list with match required and a default
 opts = {};
@@ -140,8 +134,21 @@ opts.valueCols = [1];
 
 /// multi-field search CWE
 opts.autocomp = true;
+opts.nonMatchSuggestions = false;
 var fe_search_cwe_autoComp =
   new Def.Autocompleter.Search('multi_field_search_cwe',
-    '/form/get_search_res_list?fd_id=2163', opts);
+    '/form/get_search_res_list?fd_id=2164', opts);
 
+// Another multi-field search CNE but pointed at a URL that only returns one
+// column of data.
+delete opts['valueCols'];
+new Def.Autocompleter.Search('multi_field_search_cwe2',
+    '/form/get_search_res_list?fd_id=2165', opts);
+
+// A multi-field (table format) search CWE with only one column and that is
+// multi-select.
+opts.maxSelect = '*';
+opts.suggestionMode = Def.Autocompleter.NO_COMPLETION_SUGGESTIONS
+new Def.Autocompleter.Search('table_format_multi_sel_search_cwe',
+    '/form/get_search_res_list?fd_id=2165', opts);
 

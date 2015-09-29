@@ -16,6 +16,7 @@ var AutocompPage = function() {
   this.prefetchCWEID = 'prefetch_cwe';  // single-select
   this.prefetchCWE = $('#'+this.prefetchCWEID);  // single-select
   this.prefetchWithDefault = $('#prefetch_default_cne');
+  this.searchCNE = $('#fe_search_cne');
 
   // Multi-select CNE prefetch list
   this.multiPrefetchCNEID = 'multi_sel_cne';
@@ -52,7 +53,8 @@ var AutocompPage = function() {
   this.multiFieldPrefetch = $('#multi_field_cwe');
   this.multiFieldPrefetchCol2 = $('#multi_field_cwe2'); // 2nd column
   this.multiFieldSearch = $('#multi_field_search_cwe');
-
+  this.multiSelectTableSearchID = 'table_format_multi_sel_search_cwe';
+  this.multiSelectTableSearch = $('#'+this.multiSelectTableSearchID);
 
   this.openTestPage = function() {
     browser.get('http://localhost:'+config.port+

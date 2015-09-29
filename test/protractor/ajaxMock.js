@@ -37,8 +37,19 @@ mockData_ = {
              '[["Coronary artery disease (CAD)"],["Arm painzzzzz"],["Eye pain"],'+
              ' ["Arm z"],["Shoulder or upper arm injury"],'+
              ' ["Kidney failure (short-term renal failure)"],'+
-             ' ["Rheumatoid arthritis (RA)"]],false]',
-      'mtest': '[9,["2212","2958","2189","2319","29959","11458","2311"],'+
+             ' ["Rheumatoid arthritis (RA)"]],false]'
+    },
+    'full' : {
+      'ar' : '[52,["2212","2958","2189","2319","29959","11458","2311","9893","21729","5631","18602","9728","2216","2886","8353","6546","1988","6701","22663","5396","3860","8344","2956","2323","11397","8342","10684","9594","8640","8311","8337","11077","4351","10856","10552","5838","9131","11524","13949","10728","11105","11114","10008","10357","4737","8785","2894","8752","3717","X43","X203","X211"],{"term_icd9_code":["414.9","729.5","379.91","719.40","959.2","584.9","714.0","812.20","704.01","427.5","414.00","433.10","427.9","424.1","696.0","711.90","","714.30","290.40","799.1","440.1","524.60","446.5","099.3","427.9","518.82","274.0","473.8","427.9","098.50","446.7","440.9","447.0","284.9","446.5","747.60","042","403.90","322.9","","","692.4","362.31","","390","","747.0","","","","",""]},[["Coronary artery disease (CAD)"],["Arm pain"],["Eye pain"],["Joint pain (arthralgia)"],["Shoulder or upper arm injury"],["Kidney failure (short-term renal failure)"],["Rheumatoid arthritis (RA)"],["Humerus fracture"],["Alopecia areata"],["Cardiac arrest"],["Three vessel coronary artery disease"],["Carotid artery disease"],["Arrhythmia"],["Aortic insufficiency"],["Arthritis - psoriatic"],["Arthritis - septic"],["Pulmonary artery hypertension (PAH)"],["Juvenile rheumatoid arthritis (JRA)"],["Dementia - multi-infarction"],["Respiratory arrest"],["Renal artery stenosis"],["Temporomandibular arthritis"],["Temporal arteritis"],["Reiter\'s syndrome"],["Sinus arrhythmia"],["Adult respiratory distress syndrome (ARDS)"],["Tophus"],["Sinus tenderness"],["Ventricular arrhythmia"],["Arthritis - gonococcal"],["Takayasu\'s arteritis"],["Arteriosclerosis"],["Arteriovenous (AV) fistula"],["Anemia - refractory"],["Giant cell arteritis"],["Arteriovenous malformation (AVM)"],["AIDS-related complex"],["Nephrosclerosis - arteriolar"],["Arachnoiditis"],["Spermatogenic arrest"],["Myeloid maturation arrest"],["Keratosis - arsenical"],["Retinal central artery occlusion"],["Androblastoma"],["Rheumatic fever"],["Arteriovenous shunt"],["Patent ductus arteriosus (PDA)"],["Lyme arthritis"],["Pulmonary artery - large"],["Arthritis"],["Transposition of the great arteries (TGA)"],["Truncus arteriosus (TA)"]],false]'
+    },
+    'suggest' : {
+      'ar' : '[["2886"],[["Aortic insufficiency"]], {"term_icd9_code": ["424.1"]}]'
+    }
+  },
+
+  '2164': { // multi-column
+    'partial': {
+      'ar': '[9,["2212","2958","2189","2319","29959","11458","2311"],'+
                '{"term_icd9_code":["414.9","729.5","379.91","719.40","959.2","584.9","714.0"]},'+
                '[["CAD", "Coronary artery disease"],["Arm pain", "pain in arm"],'+
                '["Eye pain", "pain in eye"],["Arm z", "z for zebra"],'+
@@ -47,7 +58,7 @@ mockData_ = {
                '["RA", "Rheumatoid arthritis"]],false]'
     },
     'full' : {
-      'mtest': '[9,["2212","2958","2189","2319","29959","11458","2311","9893",'+
+      'ar': '[9,["2212","2958","2189","2319","29959","11458","2311","9893",'+
                    '"21729"],'+
                '{"term_icd9_code":["414.9","729.5","379.91","719.40","959.2",'+
                    '"584.9","714.0","812.20","704.01"]},'+
@@ -57,13 +68,25 @@ mockData_ = {
                '["kf", "Kidney failure (short-term renal failure)"],'+
                '["RA", "Rheumatoid arthritis"], ["Hf", "Humerus fracture"],'+
                '["Al. ar.", "Alopecia areata"]],false]',
+    }
+  },
 
-      'ar' : '[52,["2212","2958","2189","2319","29959","11458","2311","9893","21729","5631","18602","9728","2216","2886","8353","6546","1988","6701","22663","5396","3860","8344","2956","2323","11397","8342","10684","9594","8640","8311","8337","11077","4351","10856","10552","5838","9131","11524","13949","10728","11105","11114","10008","10357","4737","8785","2894","8752","3717","X43","X203","X211"],{"term_icd9_code":["414.9","729.5","379.91","719.40","959.2","584.9","714.0","812.20","704.01","427.5","414.00","433.10","427.9","424.1","696.0","711.90","","714.30","290.40","799.1","440.1","524.60","446.5","099.3","427.9","518.82","274.0","473.8","427.9","098.50","446.7","440.9","447.0","284.9","446.5","747.60","042","403.90","322.9","","","692.4","362.31","","390","","747.0","","","","",""]},[["Coronary artery disease (CAD)"],["Arm pain"],["Eye pain"],["Joint pain (arthralgia)"],["Shoulder or upper arm injury"],["Kidney failure (short-term renal failure)"],["Rheumatoid arthritis (RA)"],["Humerus fracture"],["Alopecia areata"],["Cardiac arrest"],["Three vessel coronary artery disease"],["Carotid artery disease"],["Arrhythmia"],["Aortic insufficiency"],["Arthritis - psoriatic"],["Arthritis - septic"],["Pulmonary artery hypertension (PAH)"],["Juvenile rheumatoid arthritis (JRA)"],["Dementia - multi-infarction"],["Respiratory arrest"],["Renal artery stenosis"],["Temporomandibular arthritis"],["Temporal arteritis"],["Reiter\'s syndrome"],["Sinus arrhythmia"],["Adult respiratory distress syndrome (ARDS)"],["Tophus"],["Sinus tenderness"],["Ventricular arrhythmia"],["Arthritis - gonococcal"],["Takayasu\'s arteritis"],["Arteriosclerosis"],["Arteriovenous (AV) fistula"],["Anemia - refractory"],["Giant cell arteritis"],["Arteriovenous malformation (AVM)"],["AIDS-related complex"],["Nephrosclerosis - arteriolar"],["Arachnoiditis"],["Spermatogenic arrest"],["Myeloid maturation arrest"],["Keratosis - arsenical"],["Retinal central artery occlusion"],["Androblastoma"],["Rheumatic fever"],["Arteriovenous shunt"],["Patent ductus arteriosus (PDA)"],["Lyme arthritis"],["Pulmonary artery - large"],["Arthritis"],["Transposition of the great arteries (TGA)"],["Truncus arteriosus (TA)"]],false]'
+  '2165': { // narrow, single column
+    'partial': {
+      'ar': '[260,["39816","15607","37252","25968","25516","15550","692"],null,'+
+        '[["NR_046516"],["NM_001113511"],["NM_001145451"],["NM_017700"],'+
+        '["NM_001278529"],["NM_016374"],["NM_001177"]]]'
     },
-    'suggest' : {
-      'ar' : '[["2886"],[["Aortic insufficiency"]], {"term_icd9_code": ["424.1"]}]'
+    'full' : {
+      'ar': '[14,["2634","435","39027","429","13742","431","434","430","433",'+
+         '"436","432","13743","44238","3604"],null,[["NM_000775"],'+
+         '["NM_001256153"],["NG_028727"],["NM_000697"],["NG_009476"],'+
+         '["NG_000844"],["NM_001039130"],["NM_001139"],["NM_001140"],'+
+         '["NM_001629"],["NR_002710"],["NM_021628"],["NG_026215"],'+
+         '["NM_001999"]]]'
     }
   }
+
 };
 
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.

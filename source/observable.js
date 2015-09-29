@@ -57,14 +57,15 @@ if (typeof Def === 'undefined')
 
     /**
      *  Returns a lookup key for finding callbacks for the given field.
-     *  This is overridable.  By default it returns the field's name, but it
+     *  This is overridable.  By default it returns the field's name (or if
+     *  that is not present, the ID, but it
      *  could be something more general, e.g. a part of a field's ID that is shared
      *  by several fields so that an event observer can be easily registered on a
      *  set of similar fields.
      * @param field the field for which the lookup key is needed.
      */
     lookupKey: function(field) {
-      return field.name;
+      return field.name || field.id;
     },
 
 

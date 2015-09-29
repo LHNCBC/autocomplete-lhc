@@ -20,14 +20,14 @@ describe('Prefetch lists', function() {
     expect(po.shownItemCount()).toBe(1);
     // Now click in the field.  The full list should show.
     po.prefetchCWE.click();
-    expect(po.shownItemCount()).toBe(3);
+    expect(po.shownItemCount()).toBe(4);
     // The list should not have a default selection, either.  The first item
     // should still be the first item.
     expect(po.firstSearchRes.getText()).toEqual('1:  Spanish');
     // Try again but with a non-matching value
     po.prefetchCWE.sendKeys('z');
     po.prefetchCWE.click();
-    expect(po.shownItemCount()).toBe(3);
+    expect(po.shownItemCount()).toBe(4);
     expect(po.firstSearchRes.getText()).toEqual('1:  Spanish');
   });
 
@@ -55,6 +55,19 @@ describe('Prefetch lists', function() {
     // search result.  Protractor won't let us see the first result if the list
     // is hidden.
     expect(po.firstSearchRes.getText()).toEqual('1:  Spanish');
+  });
+
+  it('should escape HTML markup characters in list items', function() {
+    po.prefetchCWE.click();
+    expect(po.fourthSearchRes.getText()).toEqual('4:  escape<test>&');
+    po.fourthSearchRes.click();
+    expect(po.prefetchCWE.getAttribute('value')).toBe('escape<test>&');
+    po.clearField(po.prefetchCWE);
+    expect(po.prefetchCWE.getAttribute('value')).toBe('');
+    po.prefetchCWE.sendKeys('e');
+    expect(po.firstSearchRes.getText()).toEqual('4:  escape<test>&');
+    po.firstSearchRes.click();
+    expect(po.prefetchCWE.getAttribute('value')).toBe('escape<test>&');
   });
 });
 

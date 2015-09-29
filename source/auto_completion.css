@@ -246,11 +246,17 @@ input.search_field, textarea.search_field {
 }
 
 /* Table format */
-table {
+#completionOptionsScroller table {
   border-collapse: collapse;
+  border-style: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
-td {
+#completionOptionsScroller td {
   border: 1px solid #DFDFDF;
+  margin: 0;
+  padding: 0;
   padding-left: 0.25em;
   padding-right: 0.75em;
 }

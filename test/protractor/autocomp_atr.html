@@ -29,12 +29,12 @@
     <div class="field">
 
     <label for="race_or_ethnicity" id="race_or_ethnicity_lbl">
-    A Prefetch CNE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" id="race_or_ethnicity" name="race_or_ethnicity" type="text" />
+    A Prefetch CNE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" id="race_or_ethnicity" type="text" />
     </div>
 
     <div class="field">
     <label for="prefetch_cwe" id="prefetch_cwe_lbl">
-    A Prefetch CWE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" id="prefetch_cwe" name="prefetch_cwe" type="text" />
+    A Prefetch CWE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" id="prefetch_cwe" type="text" />
     </div>
     <div class="field">
 
@@ -45,7 +45,7 @@
 
     <label for="fe_search_cne" id="fe_search_cne_lbl">
     A search CNE autocompleter:&nbsp;&nbsp;</label>
-  <input autocomplete="off" id="fe_search_cne" name="search_cne" style="width: 25em" type="text" />
+  <input autocomplete="off" id="fe_search_cne" style="width: 25em" type="text" />
 
 
     </div>
@@ -65,28 +65,15 @@
     <div class="field">
       <label for="fe_search2_cwe" id="fe_search2_cwe_lbl">
         A search CWE autocompleter (suggestion mode 2):&nbsp;&nbsp;</label>
-      <input autocomplete="off" id="fe_search2_cwe" name="search2_cwe" style="width: 25em" type="text" />
+      <input autocomplete="off" id="fe_search2_cwe" style="width: 25em" type="text" />
     </div>
 
     <div class="field">
-
     <label for="fe_search_button_cne" id="fe_search_button_cne_lbl">
     A search CNE autocompleter with a button:&nbsp;&nbsp;</label>
   <input autocomplete="off" id="fe_search_button_cne"
   name="search_button_cne" style="width: 25em" tipValue="begin typing problem
   name.." type="text" /><button id="fe_search_button_cne_button" type="button">Search</button>
-
-
-
-    </div>
-    <div class="field">
-
-    <label for="fe_table_search_cne" id="fe_table_search_cne_lbl">
-    A multi-field Search CNE autocompleter:&nbsp;&nbsp;</label>
-  <input autocomplete="off" id="fe_table_search_cne" name="table_search_cne" style="width: 25em" type="text" />
-
-
-
     </div>
 
     <h2>Multi-field lists</h2>
@@ -103,10 +90,19 @@
       <input autocomplete="off" id="multi_field_cwe2" name="" type="text" />
     </div>
 -->
-     <div class="field" id="multi_field_search_cwe_section">
-      <label for="mulit_field_search_cwe" id="multi_field_search_cwe_lbl">
+    <div class="field" id="multi_field_search_cwe_section">
+      (This is the table format list, with a response that has two columns.)<br>
+      <label for="multi_field_search_cwe" id="multi_field_search_cwe_lbl">
        A multi-field search CWE list:&nbsp;&nbsp;</label>
       <input autocomplete="off" id="multi_field_search_cwe" name="" type="text" />
+    </div>
+
+    <div class="field" id="multi_field_search_cwe_section2">
+      (This is the table format list but the responses only contain one
+       column.)<br>
+      <label for="multi_field_search_cwe2" id="multi_field_search_cwe_lbl2">
+       A multi-field search CWE list:&nbsp;&nbsp;</label>
+      <input autocomplete="off" id="multi_field_search_cwe2" name="" type="text" />
     </div>
 
 
@@ -114,19 +110,25 @@
     <div class="field">
       <label for="fe_multi_sel_cne" id="fe_multi_sel_cne_lbl">
        A Prefetch CNE multi-select autocompleter:&nbsp;&nbsp;</label>
-      <input autocomplete="off" id="fe_multi_sel_cne" name="multi_sel_cne" type="text" />
+      <input autocomplete="off" id="fe_multi_sel_cne" type="text" />
     </div>
 
     <div class="field" id="multiPrefetchCWESection">
       <label for="multi_sel_cwe" id="multi_sel_cwe_lbl">
        A Prefetch CWE multi-select autocompleter:&nbsp;&nbsp;</label>
-      <input autocomplete="off" id="multi_sel_cwe" name="multi_sel_cwe" type="text" />
+      <input autocomplete="off" id="multi_sel_cwe" type="text" />
     </div>
 
     <div class="field" id="multiSearchCWESection">
       <label for="multi_sel_search_cwe" id="multi_sel_search_cwe_lbl">
        A Search CWE multi-select autocompleter:&nbsp;&nbsp;</label>
-      <input autocomplete="off" id="multi_sel_search_cwe" name="multi_sel_search_cwe" type="text" />
+      <input autocomplete="off" id="multi_sel_search_cwe" type="text" />
+    </div>
+
+    <div class="field" id="tableFormatMultiSearchCWESection">
+      <label for="table_format_multi_sel_search_cwe" id="table_format_multi_sel_search_cwe_lbl">
+       A table-format (with one column) search CWE multi-select autocompleter:&nbsp;&nbsp;</label>
+      <input autocomplete="off" id="table_format_multi_sel_search_cwe" type="text" />
     </div>
 
     <h2>Long lists</h2>
@@ -134,26 +136,26 @@
       <label for="long_odd_cne" id="long_odd_cne_lbl">
        A Prefetch CNE with a long list of an odd number of items<br> (for testing
        multi-column displays):&nbsp;&nbsp;</label>
-      <input autocomplete="off" id="long_odd_cne" name="" type="text" />
+      <input autocomplete="off" id="long_odd_cne" type="text" />
     </div>
 
     <div class="field">
       <label for="long_odd_cne_no_scroll" id="long_odd_cne_no_scroll_lbl">
        A Prefetch CNE with a long list of an odd number of items<br> (with
        window scrolling disabled):&nbsp;&nbsp;</label>
-      <input autocomplete="off" id="long_odd_cne_no_scroll" name="" type="text" />
+      <input autocomplete="off" id="long_odd_cne_no_scroll" type="text" />
     </div>
 
     <div class="field" id="multi_headings_cwe_section">
       <label for="multi_headings_cwe" id="multi_headings_cwe_lbl">
        A multi-select prefetch CWE with headings:&nbsp;&nbsp;</label>
-      <input autocomplete="off" id="multi_headings_cwe" name="" type="text" />
+      <input autocomplete="off" id="multi_headings_cwe" type="text" />
     </div>
 
     <div class="field" id="headings_1col_cwe_section">
       <label for="headings_1col_cwe" id="headings_1col_cwe_lbl">
        A CWE list with headings without two-column flow:&nbsp;&nbsp;</label>
-      <input autocomplete="off" id="headings_1col_cwe" name="" type="text" />
+      <input autocomplete="off" id="headings_1col_cwe" type="text" />
     </div>
 
    <button class="rounded" id="fe_save" name="fe[save]" type="submit" value="1"><span>Save</span></button>

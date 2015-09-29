@@ -3,7 +3,7 @@
 # Tests for callbacks. Start with a test for list expansions
 | storeExpression | javascript{0} | callbackCount |
 # Set up a callback on a search field
-| assertExpression | javascript{Def.Autocompleter.Event.observeListExpansions('search_cne', function(){++storedVars['callbackCount']}); 1} | 1|
+| assertExpression | javascript{Def.Autocompleter.Event.observeListExpansions('fe_search_cne', function(){++storedVars['callbackCount']}); 1} | 1|
 # Bring up a list with a "see more" link
 | fireEvent | fe_search_cne | focus |
 | typeKeys | fe_search_cne | ar |
