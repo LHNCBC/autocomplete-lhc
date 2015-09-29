@@ -14,7 +14,6 @@
 
 #searchCount {
   display: none;
-  font-weight: bold;
   font-size: 90%;
   background-color: #e0e2d7;
   padding-left: 3px;
@@ -76,7 +75,6 @@
 .auto_complete > ul > li{
   border-bottom: 1px solid #DFDFDF;
   font-size: 90%;
-  font-weight: bold;
   padding: 3px 10px 3px 10px;
   /* Prevent wrapping of padding and border in IE */
   break-inside: avoid;
@@ -98,25 +96,16 @@
 }
 
 
-li.suggestion {
-  border-bottom: 1px dashed gray;
-  padding-bottom: 0px;
-  /* In two-column lists, we need to make up for the space taken up by
-   the bottom border or the left column is shorter than the right for
-   lists with odd numbers of items.  So, we take 1 px off the top. */
-  /* the above observation does not apply in firefox v15.0.1 */
-  /*margin-top: -1px;  */
-  /*background-color: #EFE;*/
-  font-weight: bold;
+.suggestion {
+  color: DarkBlue;
 }
 
 
-.auto_complete > ul > li.selected {
+.auto_complete .selected {
   background-color: #daeae9;
-  display: block;
 }
 
-.auto_complete > ul > li:hover {
+.auto_complete li:hover,  .auto_complete tr:hover {
   background-color: #d1e1f0;
 }
 
@@ -255,3 +244,20 @@ input.search_field, textarea.search_field {
   left: -1000px;
   top: -1000px;
 }
+
+/* Table format */
+#completionOptionsScroller table {
+  border-collapse: collapse;
+  border-style: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+#completionOptionsScroller td {
+  border: 1px solid #DFDFDF;
+  margin: 0;
+  padding: 0;
+  padding-left: 0.25em;
+  padding-right: 0.75em;
+}
+
