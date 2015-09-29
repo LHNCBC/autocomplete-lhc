@@ -250,9 +250,13 @@ input.search_field, textarea.search_field {
   border-collapse: collapse;
   border-style: hidden;
   width: 100%;
+  margin: 0;
+  padding: 0;
 }
 #completionOptionsScroller td {
   border: 1px solid #DFDFDF;
+  margin: 0;
+  padding: 0;
   padding-left: 0.25em;
   padding-right: 0.75em;
 }
