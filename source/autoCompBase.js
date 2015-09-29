@@ -1936,7 +1936,7 @@ if (typeof Def === 'undefined')
     onMouseDown: function(event) {
       // Only process the event if the item is not a heading, but in all cases
       // stop the event so that the list stays open and the field retains focus.
-      event.stopImmediatePropagation();
+      Def.Autocompleter.stopEvent(event);
       var itemElem = event.target;
       while (itemElem && itemElem.autocompleteIndex === undefined)
         itemElem = itemElem.parentNode;
