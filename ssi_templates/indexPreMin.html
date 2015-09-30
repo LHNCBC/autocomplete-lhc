@@ -55,12 +55,7 @@ href="#features">features</a> and the code to use them.</p>
   <!-- build:js dist/demo.min.js -->
     <script src="bower_components/prototypejs-bower/prototype.js"></script>
 
-    <!-- Scriptaculous subset -->
-    <script src="bower_components/scriptaculous-bower/effects.js"></script>
-    <script src="bower_components/scriptaculous-bower/controls.js"></script>
-
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
-
     <script src="bower_components/jquery-no-conflict-exec/jquery-no-conflict.js"></script>
 
     <!-- jquery-ui subset -->
@@ -70,6 +65,7 @@ href="#features">features</a> and the code to use them.</p>
     <script src="bower_components/jquery-ui/ui/dialog.js"></script>
 
     <!-- autocomplete-lhc files -->
+    <script src="bower_components/autocomplete-lhc/source/effects.js"></script>
     <script src="bower_components/autocomplete-lhc/source/effectScroll.js"></script>
     <script src="bower_components/autocomplete-lhc/source/event.simulate.js"></script>
     <script src="bower_components/autocomplete-lhc/source/observable.js"></script>
@@ -121,6 +117,10 @@ A prefetch autocompleter via an AngularJS directive:
 A multi-select prefetch autocompleter:
 <!--#include file="../demos/demo10.html-plusSource" -->
 
+A table-format search autocompleter (having two columns, with only the first
+column being selected for the input field):
+<!--#include file="../demos/demo11.html-plusSource" -->
+
 <script>
   function showSource(e) {
     e.target.style.display='none';
@@ -144,10 +144,11 @@ A multi-select prefetch autocompleter:
   in a single column.</li>
   <li>Numbered list items (optional).</li>
   <li>Can require that an entry in the field match the list.</li>
+  <li>Multi-select lists</li>
+  <li>Table-format for list items with multiple fields</li>
   <li>Event listeners for various things like "list selection".</li>
   <li>Provides a way to get extra information about the record associated with a
   list item.  (See recordDataRequester.js.)</li>
-  <li>Multi-select lists.</li>
   <li>Support for list suggestions in the search (AJAX) autocompleter, when the user does
   not pick an item in the list.  (Currently this is for single-select lists only.)</li>
   <li>"autofill" option, which fills in the field automatically if there is just one
