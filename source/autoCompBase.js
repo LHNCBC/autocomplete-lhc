@@ -36,9 +36,8 @@ if (typeof Def === 'undefined')
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
   // A test for IE, borrowed from PrototypeJS -- and modified.
-  var isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
-  var isIE = !!window.attachEvent && !isOpera || navigator.userAgent.indexOf('Trident') >= 0;
   var Browser = Def.PrototypeAPI.Browser;
+  var isIE = !!window.attachEvent && !Browser.isOpera || navigator.userAgent.indexOf('Trident') >= 0;
 
   Def.Autocompleter = { // Namespace for DEF autocompletion stuff
     // Variables related to autocompleters but independent of any particular

@@ -8,6 +8,7 @@ if (typeof Def === 'undefined')
   Def = {};
 
 Def.PrototypeAPI = function() {
+  var $break = { };
 
   /**
    *  Constructs and returns an array from the given iterable.

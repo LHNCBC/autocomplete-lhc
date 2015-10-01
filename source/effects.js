@@ -121,8 +121,8 @@ if (typeof Def === 'undefined')
         this.interval = setInterval(jQuery.proxy(this.loop, this), 15);
     },
     remove: function(effect) {
-      var i = this.effects.indexOf(effect);
-      if (i > -1)
+      var i;
+      while((i = this.effects.indexOf(effect)) > -1)
         this.effects.splice(i, 1);
       if (this.effects.length == 0) {
         clearInterval(this.interval);
