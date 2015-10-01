@@ -163,7 +163,7 @@ ATR = {
       // var elem = element(by.id(fieldID)).getWebElement();
       // There is probably some way to set a value on the element, but the API
       // docs are down.
-      ATR.CommandUtil.remoteEval('$("'+fieldID+'").setValue("'+chars+'")');
+      ATR.CommandUtil.remoteEval('jQuery("#'+fieldID+'")[0].value = "'+chars+'"');
     },
 
 

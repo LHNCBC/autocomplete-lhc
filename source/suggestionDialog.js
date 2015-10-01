@@ -1,11 +1,13 @@
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  var Class = Def.PrototypeAPI.Class;
+
   /**
    *  A dialog for showing suggestion lists when the user leaves a search field
    *  without using its list.
    */
   Def.Autocompleter.SuggestionDialog = Class.create({});
-  Object.extend(Def.Autocompleter.SuggestionDialog.prototype,
+  jQuery.extend(Def.Autocompleter.SuggestionDialog.prototype,
     Def.NoticeDialog.prototype);
 
   var classMembers = {
@@ -23,7 +25,7 @@
       return rtn;
     }
   };
-  Object.extend(Def.Autocompleter.SuggestionDialog, classMembers);
+  jQuery.extend(Def.Autocompleter.SuggestionDialog, classMembers);
   classMembers = null;
 
   var instanceMembers = {
@@ -39,7 +41,7 @@
         'is not on our standard list of possible values.'+
         '<div id="suggestionList" style="margin-top: 1em; margin-bottom: 1em">'+
         '</div>');
-      $('suggestionFieldVal').innerHTML = element.value.escapeHTML();
+      $('suggestionFieldVal').innerHTML = Def.PrototypeAPI.escapeHTML(element.value);
     },
 
 
@@ -64,9 +66,9 @@
       for (var i=0, max=listItems.length; i<max; ++i) {
         listItemParts.push('<li><a href="" onclick="');
         listItemParts.push('Def.Autocompleter.SuggestionDialog.getSuggestionDialog().hide();');
-        listItemParts.push('$(\'');
+        listItemParts.push('jQuery(\'#');
         listItemParts.push(field.id);
-        listItemParts.push('\').autocomp.acceptSuggestion(\'');
+        listItemParts.push('\')[0].autocomp.acceptSuggestion(\'');
         listItemParts.push(i);
         listItemParts.push('\'); return false">');
         listItemParts.push(listItems[i]);
@@ -116,6 +118,6 @@
         "e.selectionStart = e.selectionEnd; return false'>return to the field</a>";
     }
   };
-  Object.extend(Def.Autocompleter.SuggestionDialog.prototype, instanceMembers);
+  jQuery.extend(Def.Autocompleter.SuggestionDialog.prototype, instanceMembers);
   instanceMembers = null;
-})($, jQuery, Def);
+})(Def.PrototypeAPI.$, jQuery, Def);

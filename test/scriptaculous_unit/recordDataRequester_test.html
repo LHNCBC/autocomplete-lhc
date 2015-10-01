@@ -34,9 +34,8 @@
   </div>
 </div>
 
-  <script src="../../bower_components/prototypejs-bower/prototype.js" type="text/javascript"></script>
   <script src="../../bower_components/jquery/dist/jquery.js" type="text/javascript"></script>
-  <script src="../../bower_components/jquery-no-conflict-exec/jquery-no-conflict.js" type="text/javascript"></script>
+  <script src="../../source/prototype_api.js" type="text/javascript"></script>
   <script src="../../source/effects.js" type="text/javascript"></script>
   <script src="../../source/observable.js" type="text/javascript"></script>
   <script src="../../source/event.simulate.js" type="text/javascript"></script>
@@ -75,6 +74,10 @@
 <script type="text/javascript">
 // <![CDATA[
 
+// Wrap the code in a function so we can safely redefine $.
+(function() {
+  var $ = Def.PrototypeAPI.$;
+
   new Test.Unit.Runner({
 
     // replace this with your real tests
@@ -100,8 +103,8 @@
       assertNull(dataReq.outputFieldsHash_);
       dataReq.initFieldsHash();
       // Check that it has been intiailized
-      assertEqual(1, $H(dataReq.inputFieldsHash_).keys().size());
-      assertEqual(2, $H(dataReq.outputFieldsHash_).keys().size());
+      assertEqual(1, Object.keys(dataReq.inputFieldsHash_).length);
+      assertEqual(2, Object.keys(dataReq.outputFieldsHash_).length);
       assertNotNull(dataReq.inputFieldsHash_['record_id']);
       assertNotNull(dataReq.outputFieldsHash_['code']);
       assertNotNull(dataReq.outputFieldsHash_['pseudonym']);
@@ -111,8 +114,8 @@
         '/someurl', null, ['code', 'pseudonym'], true);
       dataReq.initFieldsHash();
       // Check that it has been initialized
-      assertEqual(0, $H(dataReq.inputFieldsHash_).keys().size());
-      assertEqual(2, $H(dataReq.outputFieldsHash_).keys().size());
+      assertEqual(0, Object.keys(dataReq.inputFieldsHash_).length);
+      assertEqual(2, Object.keys(dataReq.outputFieldsHash_).length);
     }},
 
 
@@ -259,6 +262,7 @@
     }}
 
   }, "testlog");
+})();
 // ]]>
 </script>
 </body>

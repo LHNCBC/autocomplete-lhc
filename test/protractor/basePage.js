@@ -9,7 +9,8 @@ function BasePage() {
   this.suggestionDialog = element(by.css('.ui-dialog'));
   this.suggestionDialogClose = element(by.css('.ui-dialog button'));
   this.completionOptionsCSS = '#completionOptions';
-  this.completionOptionsScroller = $('#completionOptionsScroller');
+  this.completionOptionsScrollerCSS = '#completionOptionsScroller';
+  this.completionOptionsScroller = $(this.completionOptionsScrollerCSS);
 
   /**
    *  Returns the list item in the search results list at the given position
@@ -48,7 +49,7 @@ function BasePage() {
     // Use a string rather than a function object so fieldID can be passed to
     // the browser.
     return browser.driver.executeScript(
-      'var ac = $("'+fieldID+'").autocomp;'+
+      'var ac = jQuery("#'+fieldID+'")[0].autocomp;'+
       'return [ac.getSelectedCodes(), ac.getSelectedItems()];'
     );
   };
@@ -63,7 +64,7 @@ function BasePage() {
     // Use a string rather than a function object so fieldID can be passed to
     // the browser.
     return browser.driver.executeScript(
-      'var ac = $("'+fieldID+'").autocomp;'+
+      'var ac = jQuery("#'+fieldID+'")[0].autocomp;'+
       'return ac.getSelectedItems();'
     );
   };
@@ -97,7 +98,7 @@ function BasePage() {
    */
   this.listIsVisible = function() {
     return browser.driver.executeScript(
-      'return $("'+searchResID+'").style.visibility === "visible"'
+      'return jQuery("#'+searchResID+'")[0].style.visibility === "visible"'
     );
   };
 
@@ -119,6 +120,16 @@ function BasePage() {
     field.click();
     field.sendKeys(protractor.Key.CONTROL, 'a'); // select all
     field.sendKeys(protractor.Key.BACK_SPACE); // clear the field
+  };
+
+
+  /**
+   *  Returns the scroll position of the list's scrollbar.
+   */
+  this.listScrollPos = function() {
+    return browser.driver.executeScript(
+      'return jQuery("'+this.completionOptionsScrollerCSS+'")[0].scrollTop;'
+    );
   };
 };
 

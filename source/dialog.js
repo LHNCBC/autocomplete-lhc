@@ -10,6 +10,7 @@ if (typeof Def === 'undefined')
 
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  var Class = Def.PrototypeAPI.Class;
   Def.NoticeDialog = Class.create({});
 
   var instanceMembers = {
@@ -55,26 +56,27 @@ if (typeof Def === 'undefined')
         // the click event (on the background) to close the dialog.
         var containerNode = this.dialog_[0].parentNode.parentNode;
         this.backgroundListener_ =
-          function() {this.dialog_.dialog('close')}.bindAsEventListener(this);
+          jQuery.proxy(function() {this.dialog_.dialog('close')}, this);
         jQuery(containerNode).delegate('.ui-widget-overlay', 'click',
           this.backgroundListener_);
 
         // When the dialog closes, we need to unregister the event handler, or we
         // will create multiple copies of them.  Note that below we are using
         // JQuery's bind (not Prototype's), defined on the dialog_ array.
-        this.dialog_.bind('dialogclose', function() {
+        this.dialog_.bind('dialogclose', jQuery.proxy(function() {
           jQuery(containerNode).undelegate('.ui-widget-overlay', 'click',
             this.backgroundListener_);
-        }.bindAsEventListener(this));
+        }, this));
 
         this.dialog_.dialog('open');
         // Remove the focus from the fields on the form by putting the focus
         // on the dialog box (in particular, the X button).  For some reason,
         // calling focus directly does not work.  We need to call it from within
         // a timeout.
-        setTimeout(function(){
-          this.dialog_[0].up().down('.ui-dialog-titlebar-close').focus()
-        }.bind(this), 1);
+        setTimeout(jQuery.proxy(function(){
+          var closeButtonContainer = jQuery(this.dialog_[0].parentNode);
+          closeButtonContainer.find('.ui-dialog-titlebar-close')[0].focus()
+        }, this), 1);
 
         this.opening_ = false;
       }
@@ -128,7 +130,7 @@ if (typeof Def === 'undefined')
    *  similar pattern as NoticeDialog but is truely modal.
    */
   Def.ModalPopupDialog = Class.create({});
-  Object.extend(Def.ModalPopupDialog.prototype,Def.NoticeDialog.prototype) ;
+  jQuery.extend(Def.ModalPopupDialog.prototype, Def.NoticeDialog.prototype) ;
 
   var modInstanceMembers = {
 
@@ -156,4 +158,4 @@ if (typeof Def === 'undefined')
   }
 
   Def.ModalPopupDialog.addMethods(modInstanceMembers);
-})($, jQuery, Def);
+})(Def.PrototypeAPI.$, jQuery, Def);

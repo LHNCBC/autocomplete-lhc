@@ -257,4 +257,18 @@ describe('autocomp', function() {
       'pain in arm');
   });
 
+
+  it('should respond to page up and down keys', function() {
+    po.openTestPage();
+    po.headings1ColCWE.click();
+    po.expandLink.click();
+    // Current scroll position of the list should be zero
+    expect(po.listScrollPos()).toBe(0);
+    po.headings1ColCWE.sendKeys(protractor.Key.PAGE_DOWN);
+    // Now it should be something more than zero.
+    expect(po.listScrollPos()).toBeGreaterThan(0);
+    po.headings1ColCWE.sendKeys(protractor.Key.PAGE_UP);
+    // Now it should be back at the top (zero) again
+    expect(po.listScrollPos()).toBe(0);
+  });
 });

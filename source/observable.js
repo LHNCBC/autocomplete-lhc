@@ -31,7 +31,7 @@ if (typeof Def === 'undefined')
     notifyObservers: function(field, eventType, data) {
       if (this.callbacks_ !== null) {
         data['field_id'] = field ? field.id : null;
-        setTimeout(function() {
+        setTimeout(jQuery.proxy(function() {
           var eventCallbacks = this.callbacks_[eventType];
           if (eventCallbacks !== undefined) {
             if (field !== null) {
@@ -50,7 +50,7 @@ if (typeof Def === 'undefined')
               }
             }
           }
-        }.bind(this),1);
+        }, this),1);
       }
     },
 

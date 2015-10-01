@@ -11,7 +11,7 @@
  *    $('foo').simulate('click'); // => fires "click" event on an element with id=foo
  *
  **/
-(function($, Event, Element){
+(function($, Def){
 
   var eventMatchers = {
     'HTMLEvents': /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
@@ -29,8 +29,9 @@
     cancelable: true
   }
 
-  Event.simulate = function(element, eventName) {
-    var options = Object.extend(defaultOptions, arguments[2] || { });
+  Def.Event = {};
+  Def.Event.simulate = function(element, eventName) {
+    var options = jQuery.extend(defaultOptions, arguments[2] || { });
     var oEvent, eventType = null;
 
     element = $(element);
@@ -57,11 +58,10 @@
     else {
       options.clientX = options.pointerX;
       options.clientY = options.pointerY;
-      oEvent = Object.extend(document.createEventObject(), options);
+      oEvent = jQuery.extend(document.createEventObject(), options);
       element.fireEvent('on' + eventName, oEvent);
     }
     return element;
   }
 
-  Element.addMethods({ simulate: Event.simulate });
-})($, Event, Element)
+})(Def.PrototypeAPI.$, Def)

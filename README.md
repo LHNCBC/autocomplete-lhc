@@ -1,7 +1,7 @@
 # autocomplete-lhc
 
-This is a package of JavaScript autocompleters based on Scriptaculous, with
-extensive revisions and additions.  These were developed to meet the
+This is a package of JavaScript-based input field autocompleters.
+These were developed to meet the
 requirements of the
 [NLM PHR](https://phr-demo.nlm.nih.gov) and
 [LForms](https://lforms-demo.nlm.nih.gov) projects.  The package
