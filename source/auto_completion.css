@@ -78,6 +78,9 @@
   padding: 3px 10px 3px 10px;
   /* Prevent wrapping of padding and border in IE */
   break-inside: avoid;
+  /* Prevent wrapping of padding and border in Chrome */
+  /* This happened for multi-column lists with an odd number of items */
+  -webkit-column-break-inside: avoid;
 }
 /* We don't need a border on the last item */
 .auto_complete > ul > li:last-child {
