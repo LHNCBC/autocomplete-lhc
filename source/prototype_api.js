@@ -29,7 +29,7 @@ Def.PrototypeAPI = function() {
   function $(id) {
     var rtn = id; // "id" might be an element
     if (Def.PrototypeAPI.isString(id))
-      rtn = jQuery('#'+id)[0];
+      rtn = document.getElementById(id);
     return rtn;
   }
 
