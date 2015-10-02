@@ -266,7 +266,7 @@
         // occuring -- though I don't understand why.  (If I comment out the
         // Ajax.Request, the blur event occurs, but if I uncomment that and
         // comment out the onComplete code, it does not.)
-        var button = jQuery('#'+buttonID);
+        var button = jQuery(document.getElementById(buttonID));
         button.mousedown(jQuery.proxy(this.buttonClick, this));
         button.keypress(jQuery.proxy(this.buttonKeyPress, this));
       }

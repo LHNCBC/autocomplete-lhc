@@ -1459,7 +1459,7 @@ if (typeof Def === 'undefined')
             var scrollDownAmount =
               bottomOfListContainer - maxListContainerBottom;
             var elementTop = elementBoundingRect.top;
-            var headerBar = jQuery('#'+this.constructorOpts_.headerBar)[0];
+            var headerBar = document.getElementById(this.constructorOpts_.headerBar);
             var topNavBarHeight = headerBar ? headerBar.offsetHeight : 0;
 
             var maxScroll;
