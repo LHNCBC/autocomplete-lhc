@@ -30,11 +30,13 @@
 
 
 if (typeof Def === 'undefined')
-  Def = {};
+  window.Def = {};
 
 
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  "use strict";
+
   // A test for IE, borrowed from PrototypeJS -- and modified.
   var Browser = Def.PrototypeAPI.Browser;
   var isIE = !!window.attachEvent && !Browser.isOpera || navigator.userAgent.indexOf('Trident') >= 0;

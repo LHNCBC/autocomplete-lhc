@@ -5,9 +5,11 @@
 // http://prototypejs.org/
 
 if (typeof Def === 'undefined')
-  Def = {};
+  window.Def = {};
 
 Def.PrototypeAPI = function() {
+  "use strict";
+
   var $break = { };
 
   /**

@@ -25,9 +25,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 if (typeof Def === 'undefined')
-  Def = {};
+  window.Def = {};
 
 (function($, jQuery, Def) {
+  "use strict";
 
   var Class = Def.PrototypeAPI.Class;
   var Enumerable = Def.PrototypeAPI.Enumerable;

@@ -1,8 +1,10 @@
 if (typeof Def === 'undefined')
-  Def = {};
+  window.Def = {};
 
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  "use strict";
+
   Def.FieldAlarms = {
     /**
      * Sets off an alarm with few shakes and a "bonk" sound

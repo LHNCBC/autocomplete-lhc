@@ -1,5 +1,7 @@
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  "use strict";
+
   var Class = Def.PrototypeAPI.Class;
 
   /**

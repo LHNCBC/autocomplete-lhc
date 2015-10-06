@@ -1,4 +1,6 @@
 (function(Def) {
+  "use strict";
+
   /**
    *  This manages a log meant to be used in assisting users with screen readers.
    *  For backwards compatibility, in addition to the constructor,

@@ -1,7 +1,9 @@
 if (typeof Def === 'undefined')
-  Def = {};
+  window.Def = {};
 
 (function(Def) {
+  "use strict";
+
   /*
    *  This is a mix-in for objects/classes that want to provide hooks for
    *  custom events.  See Def.Autocompleter.Event for an example of the usage.

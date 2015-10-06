@@ -1,5 +1,7 @@
 // Wrap the definitions in a function to protect our version of global variables
 (function($, jQuery, Def) {
+  "use strict";
+
   /*
    *  This contains code for the custom "events" the autocompleter generates.
    *  Other code can use one of the "observe" methods to register to be notified

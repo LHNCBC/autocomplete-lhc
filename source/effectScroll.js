@@ -7,6 +7,8 @@
 
 // Wrap the definitions in a function to protect our version of global variables
 (function($, Effect) {
+  "use strict";
+
   var Class = Def.PrototypeAPI.Class;
 
   /**

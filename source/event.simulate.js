@@ -12,6 +12,7 @@
  *
  **/
 (function($, Def){
+  "use strict";
 
   var eventMatchers = {
     'HTMLEvents': /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
