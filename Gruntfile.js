@@ -85,5 +85,4 @@ module.exports = function(grunt) {
       {includeSelf: true, exclude: [/jquery-ui\.js/]}).js.join("\n"));
   });
 
-//  grunt.registerTask('default', ['useminPrepare', 'copy', 'concat', 'uglify', 'usemin']);
 };
