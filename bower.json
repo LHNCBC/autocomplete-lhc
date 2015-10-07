@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "7.0.2",
+  "version": "7.0.3",
   "main": [
     "source/auto_completion.css",
     "bower_components/jquery-ui/ui/core.js",
