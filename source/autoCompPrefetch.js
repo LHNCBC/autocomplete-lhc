@@ -4,6 +4,8 @@
 // in the Script.aculo.us controls.js file.
 
 (function($, jQuery, Def) {
+  "use strict";
+
   var Class = Def.PrototypeAPI.Class;
   var Browser = Def.PrototypeAPI.Browser;
 
