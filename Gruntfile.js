@@ -4,6 +4,7 @@ module.exports = function(grunt) {
     compress: 'grunt-contrib-compress',
     copy: 'grunt-contrib-copy',
     cssmin: 'grunt-contrib-cssmin',
+    protractor: 'grunt-protractor-runner',
     shell: 'grunt-shell',
     uglify: 'grunt-contrib-uglify'
   });
@@ -12,6 +13,8 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+
+    clean: ['dist'],
 
     compress: {
       main: {
@@ -81,6 +84,15 @@ module.exports = function(grunt) {
 
 
     shell: {
+      dist_dir_link: {
+        // Make a softlink to the versioned dist directory, for the tests
+        command: 'ln -s <%= versionedName %> latest',
+        options: {
+          execOptions: {
+            cwd: 'dist'
+          }
+        }
+      },
       run_tests: {
         command: './test/run_tests.sh'
       }
@@ -98,8 +110,8 @@ module.exports = function(grunt) {
   grunt.registerTask('compressDist', ['readBowerVersion',
     'compress']);
 
-  grunt.registerTask('dist', ['readBowerVersion', 'copy:dist', 'cssmin',
-        'uglify', 'compress']);
+  grunt.registerTask('dist', ['clean', 'readBowerVersion', 'copy:dist', 'cssmin',
+        'uglify', 'compress', 'shell:dist_dir_link']);
 
   grunt.registerTask('test', ['dist', 'shell:run_tests']);
 
