@@ -16,12 +16,15 @@ then
   cp soundmanager/bonk.mp3 bonk.mp3
 fi
 
-echo 'Running unit tests.  Check the result in the browser, and quit'
-echo 'the browser when finished.'
+if [ "$1" != "skip_unit_tests" ]
+then
+  echo 'Running unit tests.  Check the result in the browser, and quit'
+  echo 'the browser when finished.'
 
-port=`grep port test/config.js | grep -oP '(\d+)'`
-firefox http://localhost:${port}/test/scriptaculous_unit/autoComp_test.html \
-        http://localhost:${port}/test/scriptaculous_unit/recordDataRequester_test.html
+  port=`grep port test/config.js | grep -oP '(\d+)'`
+  firefox http://localhost:${port}/test/scriptaculous_unit/autoComp_test.html \
+          http://localhost:${port}/test/scriptaculous_unit/recordDataRequester_test.html
+fi
 
 # Now run the e2e tests
 grunt protractor

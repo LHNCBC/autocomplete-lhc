@@ -90,6 +90,9 @@ module.exports = function(grunt) {
       },
       run_tests: {
         command: './test/run_tests.sh'
+      },
+      run_e2e_tests: {
+        command: './test/run_tests.sh skip_unit_tests'
       }
     },
 
@@ -130,6 +133,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['dist', 'shell:run_tests']);
 
+  grunt.registerTask('test:e2e', ['shell:run_e2e_tests']);
 
   // This task is just for debugging the "uglify" configuration
   grunt.registerTask('listDepJS', function() {

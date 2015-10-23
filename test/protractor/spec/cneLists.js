@@ -72,10 +72,10 @@ describe('CNE lists', function() {
     po.prefetchCNE.click();
     po.prefetchCNE.sendKeys('zzz');
     po.prefetchCNE.sendKeys(protractor.Key.ENTER);
-    // If the form wasn't submitted, angular will still be defined.  (The
-    // response to the submit does not have angular.)
-    expect(browser.driver.executeScript('return window.angular !== undefined')
-          ).toBe(true);
+    // If the form wasn't submitted, the page URL will have changed.
+    expect(browser.driver.executeScript('return ""+window.location.href')
+          ).toBe(po.testPageURL);
+
     // Try to hit enter a second time.  This time the field should be cleared.
     // We also let the event go through, which submits the form.  To test that
     // the field is cleared, we need to prevent the form from submitting.
@@ -83,20 +83,20 @@ describe('CNE lists', function() {
       'keydown(function(event) {event.preventDefault()})');
     expect(po.prefetchCNE.getAttribute('value')).not.toBe('');
     po.prefetchCNE.sendKeys(protractor.Key.ENTER);
-    expect(browser.driver.executeScript('return window.angular !== undefined')
-          ).toBe(true);
+    expect(browser.driver.executeScript('return window.location.href')
+          ).toBe(po.testPageURL);
     expect(po.prefetchCNE.getAttribute('value')).toBe('');
 
     // Repeat the above but without the preventDefault() call, to confirm that
-    // the form is allowed to be submitted (which means angular won't be
-    // present).
+    // the form is allowed to be submitted (which means the page URL will have
+    // chanegd).
     po.openTestPage();
     po.prefetchCNE.click();
     po.prefetchCNE.sendKeys('zzz');
     po.prefetchCNE.sendKeys(protractor.Key.ENTER);
     po.prefetchCNE.sendKeys(protractor.Key.ENTER);
-    expect(browser.driver.executeScript('return window.angular !== undefined')
-          ).toBe(false);
+    expect(browser.driver.executeScript('return window.location.href')
+          ).not.toBe(po.testPageURL);
   });
 
 
