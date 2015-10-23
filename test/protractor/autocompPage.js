@@ -56,9 +56,12 @@ var AutocompPage = function() {
   this.multiSelectTableSearchID = 'table_format_multi_sel_search_cwe';
   this.multiSelectTableSearch = $('#'+this.multiSelectTableSearchID);
 
+  this.testPageURL = 'http://localhost:'+config.port+
+    '/test/protractor/autocomp_atr.html';
+
   this.openTestPage = function() {
-    browser.get('http://localhost:'+config.port+
-      '/test/protractor/autocomp_atr.html');
+    setAngularSite(false);
+    browser.get(this.testPageURL);
   }
 
   // Returns the scroll position of the window

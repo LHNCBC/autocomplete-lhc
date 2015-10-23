@@ -30,6 +30,9 @@ describe('autocomp scroll function', function() {
 
     browser.driver.executeScript('return jQuery("'+po.longOddCNECSS+
       '").offset().top').then(function(fieldTop) {
+      // Make sure our test field in in the viewport
+      browser.manage().window().setSize(1100, fieldTop+100);
+
       // Add a top header bar.
       // Extend the height down to the top of the field, so that it doesn't
       // scroll.
@@ -40,13 +43,15 @@ describe('autocomp scroll function', function() {
         expect(po.windowScrollTop()).toBe(0); // precondition
         // Now click in the field.  The field shouldn't move upward.
         po.longOddCNE.click();
+        browser.sleep(100); // allow for scrolling to happen
         expect(po.windowScrollTop()).toBe(0);
         // Now shorten the header and confirm that the field scrolls
         browser.executeScript('jQuery("#testHeaderBar")[0].style.height="10px"').
             then(function() {
           po.nonField.click();
           po.longOddCNE.click();
-          expect(po.windowScrollTop()).toNotBe(0);
+          browser.sleep(100); // allow for scrolling to happen
+          expect(po.windowScrollTop()).not.toBe(0);
         });
       })
     });

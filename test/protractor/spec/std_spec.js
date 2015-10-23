@@ -233,7 +233,7 @@ describe('autocomp', function() {
     po.searchCNE.sendKeys('ar');
     // The search result list should be different (even though the name
     // attribute is the same/missing for both).
-    expect(po.firstSearchRes.getInnerHtml()).toNotBe("Arm pain");
+    expect(po.firstSearchRes.getInnerHtml()).not.toBe("Arm pain");
     expect(po.firstSearchRes.getInnerHtml()).toBe("Arachnoiditis");
   });
 
