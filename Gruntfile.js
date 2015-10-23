@@ -64,20 +64,15 @@ module.exports = function(grunt) {
     },
 
 
-    uglify: {
-      options: { compress: true },
-      my_target: {
-        files: {
-          // Minified version of just the autocomplete-lhc files
-          '<%= uncompressedDist %>/autocomplete-lhc.min.js':
-            wiredep({includeSelf: true, exclude: [/jquery/]}).js,
-          // Minified version of the autocomplete-lhc files with the needed
-          // jQuery-UI components.
-          '<%= uncompressedDist %>/autocomplete-lhc_jQueryUI.min.js':
-            wiredep({includeSelf: true, exclude: [/jquery(-ui)?\.js/]}).js,
-          // Minified version of autocomplete-lhc and all its dependencies
-          '<%= uncompressedDist %>/autocomplete-lhc_jQuery.min.js':
-            wiredep({includeSelf: true, exclude: [/jquery-ui\.js/]}).js
+    protractor: {
+      options: {
+        configFile: 'test/protractor/conf.js'
+      },
+      chrome: {
+        options: {
+          args: {
+            browser: 'firefox'
+          }
         }
       }
     },
@@ -96,9 +91,29 @@ module.exports = function(grunt) {
       run_tests: {
         command: './test/run_tests.sh'
       }
+    },
+
+
+    uglify: {
+      options: { compress: true },
+      my_target: {
+        files: {
+          // Minified version of just the autocomplete-lhc files
+          '<%= uncompressedDist %>/autocomplete-lhc.min.js':
+            wiredep({includeSelf: true, exclude: [/jquery/]}).js,
+          // Minified version of the autocomplete-lhc files with the needed
+          // jQuery-UI components.
+          '<%= uncompressedDist %>/autocomplete-lhc_jQueryUI.min.js':
+            wiredep({includeSelf: true, exclude: [/jquery(-ui)?\.js/]}).js,
+          // Minified version of autocomplete-lhc and all its dependencies
+          '<%= uncompressedDist %>/autocomplete-lhc_jQuery.min.js':
+            wiredep({includeSelf: true, exclude: [/jquery-ui\.js/]}).js
+        }
+      }
     }
 
   });
+
 
   grunt.registerTask('readBowerVersion', function () {
     var bowerVersion = grunt.file.readJSON('./bower.json').version;
