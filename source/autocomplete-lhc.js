@@ -221,7 +221,7 @@
                 // it before prefetchList runs below, which might store a default
                 // value in the model).
                 var md = scope.modelData;
-                var hasPrepoluatedModel = md !== undefined;
+                var hasPrepoluatedModel = (md !== undefined) && (md !== null);
 
                 var ac = autoOpts.url ? searchList(pElem, autoOpts) :
                   prefetchList(pElem, autoOpts);
