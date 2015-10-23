@@ -13,7 +13,7 @@ Please cite as: http://lhncbc.nlm.nih.gov/project/nlm-personal-health-record-phr
 The software includes the following third-party elements, which are released
 under open-source licenses (as noted):
   * Portions of PrototypeJS (https://github.com/sstephenson/prototype/blob/master/LICENSE)
-  * Portions of Scrictaculous (MIT License)
+  * Portions of Scriptaculous (MIT License)
   * bonk.mp3 sound from SoundManager 2 (BSD License)
   * [Event.Simulate](https://github.com/kangax/protolicious/blob/5b56fdafcd7d7662c9d648534225039b2e78e371/event.simulate.js)  (MIT License)
 
