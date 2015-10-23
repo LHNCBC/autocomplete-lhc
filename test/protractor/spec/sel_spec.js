@@ -355,16 +355,5 @@ describe('autocomp selenese (modified) test', function() {
       it('should pass at line '+(i+1)+':  '+line, ATR.selCommandFn(line));
     }
   }
-
-  // Make the tests stop after the first failure.
-  // From:  https://github.com/angular/protractor/issues/499
-  afterEach(function() {
-    var passed = jasmine.getEnv().currentSpec.results().passed();
-    if(!passed) {
-        jasmine.getEnv().specFilter = function(spec) {
-            return false;
-        };
-    }
-  });
 });
 

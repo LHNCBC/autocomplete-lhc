@@ -46,7 +46,7 @@ describe('autocomp scroll function', function() {
             then(function() {
           po.nonField.click();
           po.longOddCNE.click();
-          expect(po.windowScrollTop()).toNotBe(0);
+          expect(po.windowScrollTop()).not.toBe(0);
         });
       })
     });

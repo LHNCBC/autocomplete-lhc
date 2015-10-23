@@ -52,12 +52,12 @@ describe('multi-field lists', function() {
     expect(po.getSelectedItems(po.multiSelectTableSearchID)).toEqual(
       ['NM_001113511']);
     expect(po.shownItemCount()).toBe(6);
-    expect(po.tableSearchResult(1).getInnerHtml()).toNotBe('<td>NM_001113511</td>');
+    expect(po.tableSearchResult(1).getInnerHtml()).not.toBe('<td>NM_001113511</td>');
     po.nonField.click();
     po.multiSelectTableSearch.click();
     po.multiSelectTableSearch.sendKeys('ar');
     expect(po.shownItemCount()).toBe(6);
-    expect(po.tableSearchResult(1).getInnerHtml()).toNotBe('<td>NM_001113511</td>');
+    expect(po.tableSearchResult(1).getInnerHtml()).not.toBe('<td>NM_001113511</td>');
   });
 
 });

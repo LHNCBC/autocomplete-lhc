@@ -174,7 +174,7 @@ describe('multi-select lists', function() {
     po.multiPrefetchCWE.sendKeys(protractor.Key.SHIFT, protractor.Key.TAB);
     // Focus should be on the button for the selected item now
     expect(browser.driver.switchTo().activeElement().getAttribute('id')).
-      toNotEqual(po.multiPrefetchCWEID);
+      not.toEqual(po.multiPrefetchCWEID);
   });
 
   it('should not select an item when the tab key is pressed if there is nothing' +

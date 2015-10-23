@@ -81,7 +81,7 @@ describe('CNE lists', function() {
     // the field is cleared, we need to prevent the form from submitting.
     browser.driver.executeScript('jQuery("#'+po.prefetchCNEFieldName+'").'+
       'keydown(function(event) {event.preventDefault()})');
-    expect(po.prefetchCNE.getAttribute('value')).toNotBe('');
+    expect(po.prefetchCNE.getAttribute('value')).not.toBe('');
     po.prefetchCNE.sendKeys(protractor.Key.ENTER);
     expect(browser.driver.executeScript('return window.angular !== undefined')
           ).toBe(true);
