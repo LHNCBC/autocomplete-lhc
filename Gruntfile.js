@@ -143,6 +143,8 @@ module.exports = function(grunt) {
       {includeSelf: true, exclude: [/jquery(-ui)?\.js/]}).js.join("\n"));
     console.log("\n\n" + wiredep(
       {includeSelf: true, exclude: [/jquery-ui\.js/]}).js.join("\n"));
+    console.log("\n\n" + wiredep(
+      {includeSelf: true}).js.join("\n"));
   });
 
 };

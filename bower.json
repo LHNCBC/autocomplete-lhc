@@ -3,10 +3,6 @@
   "version": "7.0.4",
   "main": [
     "source/auto_completion.css",
-    "bower_components/jquery-ui/ui/core.js",
-    "bower_components/jquery-ui/ui/widget.js",
-    "bower_components/jquery-ui/ui/button.js",
-    "bower_components/jquery-ui/ui/dialog.js",
     "source/prototype_api.js",
     "source/effects.js",
     "source/effectScroll.js",
@@ -29,6 +25,17 @@
   },
   "devDependencies": {
     "angular": "~1.3.1"
+  },
+  "overrides": {
+    "jquery-ui": {
+      "main": [
+        "ui/core.js",
+        "ui/widget.js",
+        "ui/button.js",
+        "ui/dialog.js",
+        "themes/ui-lightness/jquery-ui.min.css"
+      ]
+    }
   },
   "ignore": ["cshrc.autocomp", "bin", "packages", "package.json", "test"]
 }
