@@ -16,6 +16,14 @@ module.exports = function(grunt) {
       }
     },
 
+     // Automatically inject Bower components into the app
+    wiredep: {
+      target: {
+        src: 'indexPreMin.html'
+      }
+    },
+
+
     'useminPrepare': {
       options: {
         dest: '.'
@@ -28,10 +36,11 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-wiredep');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-usemin');
 
-  grunt.registerTask('default', ['useminPrepare', 'copy', 'concat', 'uglify', 'usemin']);
+  grunt.registerTask('default', ['wiredep', 'useminPrepare', 'copy', 'concat', 'uglify', 'usemin']);
 };
