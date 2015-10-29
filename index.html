@@ -22,10 +22,18 @@
 
           <h1 id="project_title">Autocomplete-lhc</h1>
           <h2 id="project_tagline">An autocompleter package used by the PHR project and lforms widget</h2>
-
+            <div id="header_buttons">
+              <a href="#features">Features</a>
+              <a href="#demos">Demos</a>
+              <a href="#installation">Installation</a>
+            </div>
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/lhncbc/autocomplete-lhc/zipball/master">Download this project as a .zip file</a>
+              <a class="zip_download_link"
+               href="https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/latest.zip"
+              >Download pre-built JavaScript and CSS as a .zip file</a>
+              <!--<a class="zip_download_link" href="https://github.com/lhncbc/autocomplete-lhc/zipball/master">Download this project as a .zip file</a>
               <a class="tar_download_link" href="https://github.com/lhncbc/autocomplete-lhc/tarball/master">Download this project as a tar.gz file</a>
+              -->
             </section>
         </header>
     </div>
@@ -36,8 +44,7 @@
         <h1>
 <a id="autocomplete-lhc" class="anchor" href="#autocomplete-lhc" aria-hidden="true"><span class="octicon octicon-link"></span></a>autocomplete-lhc</h1>
 
-<p>This is a package of JavaScript autocompleters based on Scriptaculous, with
-extensive revisions and additions.  These were developed to meet the requirements of the
+<p>This is a package of JavaScript autocompleters that were developed to meet the requirements of the
 <a href="https://phr-demo.nlm.nih.gov">NLM PHR</a> and <a
 href="https://lforms-demo.nlm.nih.gov">LForms</a> projects</a>.  The package
 includes an AngularJS directive, but can be used without Angular.</p>
@@ -57,7 +64,7 @@ href="#features">features</a> and the code to use them.</p>
 
 <h2><a id="demos"></a>A Few Demos</h2>
 
-A prefetch autocompleter that allows off-list items:
+A prefetch autocompleter that allows entry of off-list items:
 <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
 <div class="demo"><input type="text" id="demo1">
 <script>
@@ -75,7 +82,7 @@ new Def.Autocompleter.Prefetch(&#39;demo1&#39;, dessertArray);
 &lt;/script&gt;
     </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
-Lists can also require the entered value to match:
+Autocompleters can also require the entered value to match:
 <div class="demo"><input type="text" id="demo2">
 <script>
 var opts = {'matchListValue': true}
@@ -289,7 +296,7 @@ new Def.Autocompleter.Search(&#39;demo11&#39;,
 <ol>
   <li>Section 508-compliant (i.e., accessible to screen readers)</li>
   <li>Supports coded-value lists</li>
-  <li>Heading items in lists</li>
+  <li>Supports headings for groups of items in lists</li>
   <li>Two-column lists when there is not enough space on the page to show the list
   in a single column.</li>
   <li>Numbered list items (optional).</li>
@@ -313,6 +320,44 @@ new Def.Autocompleter.Search(&#39;demo11&#39;,
   for the same list items are not necessary.</li>
 </ol>
 
+<h2><a id="installation"></a>Installation:</h2>
+<p>The autocomplete-lhc files can be installed as a <a href="http://bower.io">bower</a>
+package ("bower install autocomplete-lhc") or if you are not using bower, you can either download
+the <a
+href="https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/latest.zip">latest
+pre-built version</a> from the lforms-service website, or you can use the files
+directly from the lforms-service website.  There are three flavors of the
+minified JavaScript, depending on what dependencies you already have.
+<table>
+  <thead>
+    <tr><th>If your website already has</th><th>Use</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>jQuery & jQueryUI</td><td
+     >https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/latest/autocomplete-lhc.min.js</td>
+    <tr><td>jQuery </td><td
+     >https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/latest/autocomplete-lhc_jQueryUI.min.js</td>
+    <tr><td>(neither)</td><td
+     >https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/latest/autocomplete-lhc_jQuery.min.js</td>
+  </tbody>
+</table>
+
+If you want to stick with a particular version, you can replace "latest" in the
+above URLs with a version number (starting with version 7.0.3).
+
+<p>For the CSS, a minified file is available with or without a jQueryUI theme as:
+ <ul>
+   <li>https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/latest/autocomplete-lhc.min.css</li>
+   <li>https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/latest/autocomplete-lhc_jQueryUI.min.css</li>
+ </ul>
+You will only need the jQueryUI style part of the CSS if you are using the
+suggestion dialog feature with the "search" (AJAX) list.  (To disable that
+dialog, you can set nonMatchSuggestions to false when constructing the
+autocompleter.)
+</p>
+
+
+<h2>License, etc.</h2>
 <p>This software, autocomplete-lhc, was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH).</p>
 
 <p>Please cite as:</p>

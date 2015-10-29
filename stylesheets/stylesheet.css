@@ -315,9 +315,29 @@ Full-Width Styles
   text-shadow: #111 0px 0px 10px;
 }
 
+#header_buttons {
+  position: absolute;
+  width: 545px;
+  z-index: 10;
+  bottom: -1em;
+}
+
+#header_buttons a {
+  display: block;
+  float: right;
+  overflow: hidden;
+  background-color: #555;
+  font-weight: bold;
+  text-align: center;
+  padding: 0.25em 1em 0.5em;
+  margin-right: 1.5em;
+  color: white;
+}
+
+
 #downloads {
   position: absolute;
-  width: 210px;
+  width: 112px;
   z-index: 10;
   bottom: -40px;
   right: 0;
