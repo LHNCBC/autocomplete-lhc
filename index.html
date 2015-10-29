@@ -64,7 +64,7 @@ href="#features">features</a> and the code to use them.</p>
 
 <h2><a id="demos"></a>A Few Demos</h2>
 
-A prefetch autocompleter that allows off-list items:
+A prefetch autocompleter that allows entry of off-list items:
 <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
 <div class="demo"><input type="text" id="demo1">
 <script>
@@ -82,7 +82,7 @@ new Def.Autocompleter.Prefetch(&#39;demo1&#39;, dessertArray);
 &lt;/script&gt;
     </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
-Lists can also require the entered value to match:
+Autocompleters can also require the entered value to match:
 <div class="demo"><input type="text" id="demo2">
 <script>
 var opts = {'matchListValue': true}
@@ -296,7 +296,7 @@ new Def.Autocompleter.Search(&#39;demo11&#39;,
 <ol>
   <li>Section 508-compliant (i.e., accessible to screen readers)</li>
   <li>Supports coded-value lists</li>
-  <li>Heading items in lists</li>
+  <li>Supports headings for groups of items in lists</li>
   <li>Two-column lists when there is not enough space on the page to show the list
   in a single column.</li>
   <li>Numbered list items (optional).</li>
