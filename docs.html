@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Autocomplete-lhc : An autocompleter package used by the PHR project and lforms widget">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Autocomplete-lhc Documentation</title>
+    <link href="dist/autocomplete-lhc/auto_completion.css" media="screen" rel="stylesheet" />
+    <link href="dist/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen" rel="stylesheet" />
+  </head>
+
+  <body ng-app="demoApp">
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/lhncbc/autocomplete-lhc">View on GitHub</a>
+
+          <h1 id="project_title">Autocomplete-lhc</h1>
+          <h2 id="project_tagline">An autocompleter package used by the PHR project and lforms widget</h2>
+            <div id="header_buttons">
+              <div>Documentation</div>
+              <a href="index.html#features">Features</a>
+              <a href="index.html#demos">Demos</a>
+              <a href="index.html#installation">Installation</a>
+            </div>
+            <section id="downloads">
+              <a class="zip_download_link"
+               href="https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/latest.zip"
+              >Download pre-built JavaScript and CSS as a .zip file</a>
+              <!--<a class="zip_download_link" href="https://github.com/lhncbc/autocomplete-lhc/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/lhncbc/autocomplete-lhc/tarball/master">Download this project as a tar.gz file</a>
+              -->
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <ul id="toc" class="col">
+        <li><a href="#construction">Constructing an autocompleter</a></li>
+        <ul>
+          <li><a href="#construction_common">Common options</a></li>
+          <li><a href="#prefetch">Prefetch lists (non-AJAX)</a></li>
+          <li><a href="#searchList">Search lists (AJAX)</a></li>
+        </ul>
+        <li>Notifications
+          <ul>
+            <li>List selections</li>
+          </ul>
+        </li>
+      </ul>
+      <section id="main_content" class="col">
+        <h1></a>Documentation for autocomplete-lhc</h1>
+
+        <p>The easiest way to get started is to check the <a
+        href="index.html#demos">demos</a>.  Below each demo is a "show source" link that
+        shows the code needed to construct an autocompleter with the options in the
+        demo.  What follows here is detailed documentation for the various constructor
+        options, list events (e.g. item selection) and the AngularJS directive.</p>
+
+        <h2 id="construction">Constructing an Autocompleter</h2>
+
+        <h3 id="construction_common">Options supported by both "search" (AJAX) and "prefetch"
+        (non-AJAX) lists</h3>
+        The constructors for both types of lists (Def.Autocompleter.Prefetch and
+        Def.Autocompleter.Search) take an options argument as their third parameter.
+        The following options are supported by both:
+
+        <ul>
+          <li>matchListValue - whether the field should validate its value
+            against the list (default: false)</li>
+          <li>maxSelect - (default 1) The maximum number of items that can be
+           selected.  Use '*' for unlimited.</li>
+          <li>twoColumnFlow - (default: true) Whether to allow long lists to
+           flow into two columns to show more of the list on the page.</li>
+          <li>suggestionMode - an integer specifying what type of suggestion
+           should be offered based on what the user has typed.  The suggestion is placed
+           as the top-most item in the list.  If this is not
+           specified, the default is [Def.Autocompleter.]SUGGEST_SHORTEST, which
+           means "pick the shortest match."  A value of
+           NO_COMPLETION_SUGGESTIONS means no suggestions, and a value of
+           USE_STATISTICS means that the suggestion is based on statistics, and
+           that we will rely on the server to return the best item as the first
+           item in the list.</li>
+          <li>nonMatchSuggestions - (default: true) Whether the user should be
+           given a list of suggestions if they enter a non-matching value.
+           This only applies when matchListValue is false.</li>
+          <li>headerBar - If the page has a fixed-position element at the top of
+           the page (e.g. a top navigation bar), the autocompleter needs to know
+           that so that when scrolling to show the list it doesn't scroll the
+           current
+           field under the header bar.  This is the element ID for such a header
+           bar.</li>
+          <li>scrolledContainer - the element that should be scrolled to bring
+           the list into view if it would otherwise extend below the edge of the
+           window. The default is document.documentElement (i.e. the whole
+           window).  This may be null if no scrolling is desired (e.g. if the
+           list field is in a fixed position on the window), but in that
+           case the list element might be unusually short.
+           Note:  At present the only tested cases of this parameter are the
+           default value and null.</li>
+        </ul>
+
+        <h3 id="prefetch">Constructing a "prefetch" (non-AJAX) autocompleter</h3>
+        A "prefetch" list gets its name from the having all of its list items
+        "fetched" in advance, i.e. loaded with the page and not via AJAX,
+        although it is possible to completely replace the list with another after the
+        page loads (via the setListAndField method).  The syntax is as follows:
+
+        <p><code>new Def.Autocompleter.Prefetch(fieldID, [array, of, items],
+        options);</code></p>
+
+        <div>Parameters:
+          <ol>
+            <li>the ID of the form field for which the list is displayed</li>
+            <li>the array of completion options (list values).  If not
+               specified here, the list can be supplied later by a call to the
+               setListAndField function.</li>
+            <li>(optional) an options hash, which can include:
+              <ul>
+                <li>addSeqNum - whether sequence numbers should be added to the items
+                    in the prefetched answer list (default true).</li>
+                <li>defaultValue - Either the code or the item text of the default value
+                 for this list's field.  The default value is placed in the
+                 field the first time the user focuses the field.</li>
+                <li>codes - an array of code strings for the list values, for use in
+                  contexts where answer lists have associated codes which are relied on rather
+                  than the display strings for the users.  This should
+                  be the same length as the list values array.</li>
+                <li>autoFill - If true, the field will be filled in with
+                  the list's value if setListAndField is called with a one-item
+                  list.</li>
+                <li>itemToHeading - a hash of item codes to codes of item headings,
+                 where both items and headings appear in the listItems array.  This
+                 parameter requires that the codes parameter also be supplied.</li>
+              <ul>
+            </li>
+          </ol>
+        </div>
+
+        <h3 id="searchList">Constructing a "search" (non-AJAX) autocompleter</h3>
+        A "search" list is an AJAX-based autocompleter, where AJAX requests
+        return result lists which match the user's input in the field.  The
+        syntax is as follows:
+
+        <p><code>new Def.Autocompleter.Search(fieldID, url, options);</code></p>
+
+        <p></p>
+
+      </section>
+    </div>
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Autocomplete-lhc maintained by <a href="https://github.com/lhncbc">lhncbc</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+  </body>
+</html>

@@ -322,7 +322,7 @@ Full-Width Styles
   bottom: -1em;
 }
 
-#header_buttons a {
+#header_buttons a, #header_buttons div {
   display: block;
   float: right;
   overflow: hidden;
@@ -331,7 +331,12 @@ Full-Width Styles
   text-align: center;
   padding: 0.25em 1em 0.5em;
   margin-right: 1.5em;
+}
+#header_buttons a {
   color: white;
+}
+#header_buttons div {
+  color: gray;
 }
 
 
@@ -378,6 +383,7 @@ Full-Width Styles
   background: #f2f2f2;
   border-top: 1px solid #111;
   border-bottom: 1px solid #111;
+  position: relative;
 }
 
 #main_content {
@@ -388,6 +394,23 @@ Full-Width Styles
   background: #212121;
 }
 
+
+.col {
+  background-color: #f2f2f2;
+}
+
+#toc {
+  width: 20%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 2em;
+}
+
+#main_content {
+  width: 50%;
+  margin-left: 25%;
+}
 
 
 /*******************************************************************************
