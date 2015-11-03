@@ -48,11 +48,12 @@
           <li><a href="#prefetch">Prefetch lists (non-AJAX)</a></li>
           <li><a href="#searchList">Search lists (AJAX)</a></li>
         </ul>
-        <li>Notifications
+        <li><a href="#notifications">Notifications</a>
           <ul>
-            <li>List selections</li>
+            <li><a href="#listSelection">List selections</a></li>
           </ul>
         </li>
+        <li><a href="#selectionData">Getting the selection data</a></li>
       </ul>
       <section id="main_content" class="col">
         <h1></a>Documentation for autocomplete-lhc</h1>
@@ -142,7 +143,7 @@
           </ol>
         </div>
 
-        <h3 id="searchList">Constructing a "search" (non-AJAX) autocompleter</h3>
+        <h3 id="searchList">Constructing a "search" (AJAX) autocompleter</h3>
         A "search" list is an AJAX-based autocompleter, where AJAX requests
         return result lists which match the user's input in the field.  The
         syntax is as follows:
@@ -152,7 +153,7 @@
         <div>Parameters:
           <ol>
             <li>the ID of the form field for which the list is displayed</li>
-            <li>url for getting the completion list.  The website answering the
+            <li id="url">url for getting the completion list.  The website answering the
              URL is expected to understand the following parameters:
               <ul>
                 <li>terms - the text from the field.  This should be used to find
@@ -179,7 +180,7 @@
                  returned, if autocomp==1).</li>
                 <li>position 1 - the list of codes for the list items (if the items are
                  coded)</li>
-                <li>position 2 - A hash of extra data about the list items (e.g.
+                <li id="extraData">position 2 - A hash of extra data about the list items (e.g.
                  an extra set of codes), or null if there is none.
                  The keys in the hash should be names for the
                  data elements, and the values should be an array of values, one for
@@ -242,10 +243,94 @@
           </ol>
         </div>
 
+        <h2 id="notifications">Notifications</h2>
+        <p>The autocompleter allows you to register callbacks for certain
+         events.  The source file <a
+         href="https://github.com/lhncbc/autocomplete-lhc/blob/master/source/autoCompEvents.js"
+         >autoCompEvents.js</a> provides the full list; here we'll just document
+         the list selection event, which is the most likely to be useful.</a>
+
+        <h3 id="listSelection">List Selection Events</h3>
+        <p>Sometimes you might need to get notified when the user has picked a
+         value from a list, or has entered a non-list value.  In that case you can
+         register a callback like this:
+        <p><code>Def.Autocompleter.Event.observeListSelections(fieldKey, callback);</code></p>
+
+        <p>The parameters are as follows:
+          <ul>
+            <li>fieldKey - This is usually the name (or ID) of the field, unless
+              you have overridden Def.Observer.lookupKey (which you might do if you wanted the
+              same callback to apply to multiple fields).  Fields whose lookupKey() value matches
+              fieldKey will trigger the callback for this event.
+              This parameter can be null, in which case the function will be called for every
+              event of this kind, regardless of the field for which it
+              occurred.</li>
+            <li>callback - the function to be called when the event occurs.
+              The function will be called with a hash argument with the following keys:
+              <ul>
+                <li>val_typed_in (what the user actually typed in)</li>
+                <li>final_val (the final value for the field)</li>
+                <li>used_list (boolean indicating whether or not the final was
+                 selected from a list, whether by clicking or by arrows)</li>
+                <li>on_list - boolean indicating whether or not the final value was on
+                 the list</li>
+                <li>input_method ('clicked', 'arrows', or 'typed')</li>
+                <li>item_code - the code for the selected item, or null if there isn't
+                 a code</li>
+                <li>removed - For multi-select lists, this indicates whether the
+                 selection was actual an unselection, removing the named item from the
+                 list of selected items.  When true, final_val is the removed value
+                 (although for multi-select fields the field is blank afterward).
+                 (Optional; default false)</li>
+                <li>list - the items that were in the list (which is the full list for a
+                 prefetched list, or the portion shown to the user for a search
+                 list).</li>
+                <li>field_id - the ID of the list field</li>
+              </ul>
+            </li>
+          </ul>
+        </p>
+
+        <h2 id="selectionData">Getting the selection data</h2>
+        <p>For simple use cases, getting what the user picked is as simple as
+          looking in the field.  For more complicated ones, APIs are provided
+          for getting the code for the selected item, for getting selected items for
+          multi-select lists (for which the field itself will be blank), and for getting
+          the extra item data returned for a search list's AJAX call.  These
+          APIs are defined on the autocompleter instance, and if you don't have a reference to
+          that, you can access it from the field's DOM element as element.autocomp</p>
+
+        <dl>
+          <dt>getSelectedItems()</dt>
+          <dd>Returns the display strings for the currently selected items or an
+            empty array if there are none.</dd>
+          <dt>getSelectedCodes()</dt>
+          <dd>Returns the codes for the currently selected items or an empty
+            array if there are none.
+            If some of the selected items do not have a code, there will be null in
+            that place in the returned array.</dd>
+          <dt>getItemCode(itemText)</dt>
+          <dd>Returns the code for the given item text, or null if there isn't
+            one.</dd>
+          <dt>getItemExtraData(itemText)</dt>
+          <dd><b>(For search lists only.)</b>This returns the "extra data" for
+            the item returned by the server along with the autocompletion list,
+            as mentioned in <a href="#extraData">position 2</a> of the expected
+            return data for the <a href="#url">url parameter</a> for the
+            <a href="#searchList">search autocompleter</a> constructor.  The
+            getItemExtraData returns a hash of of the extra data for the given
+            list item (itemText).  Currently, this assumes that itemText was present
+            in the last list shown for this field; if subsequent autocompletion
+            requests take place in which itemText is not present, the return
+            value will be empty.</dd>
+        </dl>
+
+
       </section>
     </div>
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
+
       <footer class="inner">
         <p class="copyright">Autocomplete-lhc maintained by <a href="https://github.com/lhncbc">lhncbc</a></p>
         <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
