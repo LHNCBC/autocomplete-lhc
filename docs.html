@@ -87,9 +87,6 @@
            USE_STATISTICS means that the suggestion is based on statistics, and
            that we will rely on the server to return the best item as the first
            item in the list.</li>
-          <li>nonMatchSuggestions - (default: true) Whether the user should be
-           given a list of suggestions if they enter a non-matching value.
-           This only applies when matchListValue is false.</li>
           <li>headerBar - If the page has a fixed-position element at the top of
            the page (e.g. a top navigation bar), the autocompleter needs to know
            that so that when scrolling to show the list it doesn't scroll the
@@ -123,6 +120,8 @@
                setListAndField function.</li>
             <li>(optional) an options hash, which can include:
               <ul>
+                <li>any of the <a href="#construction_common">common options</a>
+                  described above</li>
                 <li>addSeqNum - whether sequence numbers should be added to the items
                     in the prefetched answer list (default true).</li>
                 <li>defaultValue - Either the code or the item text of the default value
@@ -150,7 +149,98 @@
 
         <p><code>new Def.Autocompleter.Search(fieldID, url, options);</code></p>
 
-        <p></p>
+        <div>Parameters:
+          <ol>
+            <li>the ID of the form field for which the list is displayed</li>
+            <li>url for getting the completion list.  The website answering the
+             URL is expected to understand the following parameters:
+              <ul>
+                <li>terms - the text from the field.  This should be used to find
+                 matching list items.</li>
+                <li>autocomp - whether this is an autocompletion event, or a request
+                 for a large list of search results (e.g. by using the "see more" link
+                 on the list).  If autocomp==1, that means this is an autocompletion
+                 request and the server should return a short list (e.g. 7 items) as
+                 quickly as possible.</li>
+                <li>authenticity_token - (optional) This is an anti-CSRF parameter.
+                 If the page has a value in window._token, it will get sent in this
+                 parameter.</li>
+                <li>suggest - (optional) User input that does not match a list value
+                 will trigger a request for suggestions that are close to what the
+                 user typed.  A "suggest" parameter value of "1" means the request
+                 is for suggestions.</li>
+                <li>field_val - When "suggest"==1, this contains the value the user
+                 typed.</li>
+              </ul>
+              The URL's response should be an array.  For a non-suggestion request
+              (suggest != '1'), it should have the following elements:
+              <ul>
+                <li>position 0 - the total search result count (including the ones not
+                 returned, if autocomp==1).</li>
+                <li>position 1 - the list of codes for the list items (if the items are
+                 coded)</li>
+                <li>position 2 - A hash of extra data about the list items (e.g.
+                 an extra set of codes), or null if there is none.
+                 The keys in the hash should be names for the
+                 data elements, and the values should be an array of values, one for
+                 each returned item.  Configuration controlling what gets returned here is out
+                 of scope for this class; the search autocompleter just sends the
+                 parameters above to the given URL.  The extra data for the selected item (when the
+                 user makes a selection) can get be retrieved with
+                 getSelectedItemData().</li>
+                <li>position 3 - the list item data; each item is an array of display
+                 string fields which will be joined together.  (At a mimimum, each item
+                 should be an array of one string.)</li>
+                <li>position 4 - if present, this indicates that display strings
+                 (position 3) contain span tags for highlighting matched sub-strings.
+                 (This affects the routine used to sort the strings.)</li>
+              </ul>
+              For a suggest request, the response should have the following elements:
+              <ul>
+                <li>position 0 - the list of codes for the suggested items (if the
+                 items have codes)</li>
+                <li>position 1 - the list of display strings (an array of strings, not
+                 of arrays) for the suggested items.</li>
+                <li>position 2 - A hash of extra data about the list items (the same
+                 as position 2 for the non-suggestion request above.)</li>
+              </ul>
+            </li>
+            <li>(optional) an options hash, which can include:
+              <ul>
+                <li>any of the <a href="#construction_common">common options</a>
+                 described above</li>
+                <li>matchListValue - Whether the field value is required to be one from
+                 the list (default: false).  When this field is false, for a
+                 non-matching value a dialog will be shown with a list of suggestions
+                 that are on the list-- unless that is disabled by setting
+                 nonMatchSuggestions to false.</li>
+                <li>buttonID - (optional) the ID of a button to initiate a search based on
+                 the field's value.  This is useful if you do not want the field
+                 to autocomplete (i.e. autocomp==false) but you still want to show a list of search
+                 results in response to a button.</li>
+                <li>autocomp - a boolean that controls whether the field should
+                 also autocomplete as the user types.  When this is false, the user
+                 won't see an autocompletion list until they hit return.  (Default:  true)</li>
+                <li>nonMatchSuggestions - (default: true) Whether the user should be
+                 given a list of suggestions if they enter a non-matching value.
+                 This only applies when matchListValue is false.</li>
+                <li>tableFormat - If true, then if the list's items contain
+                 multiple fields, the list will be formatted in a table instead of just
+                 concatenating the fields together for each list item.</li>
+                <li>valueCols - Used when tableFormat is true to indicate
+                 which columns in the table should be combined to form the field value
+                 when the row is selected.  This should be an array of column indices
+                 (starting with 0).  If absent, all columns will be combined for the
+                 value.  Note that the specification here must result in unique field
+                 values for each table row.</li>
+                <li>useResultCache - (default: true) Whether or not the results
+                 should be cached.  By default, the same cache is used for all fields that share
+                 the same name, but that can be changed by overriding
+                 Def.Autocompleter.getFieldLookupKey.</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
 
       </section>
     </div>
