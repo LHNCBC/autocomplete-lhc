@@ -39,6 +39,17 @@ describe('Prefetch lists', function() {
     expect(po.firstSearchRes.getText()).toEqual('2:  French');
   });
 
+  it('should default when picked by number to the item who number is a full'+
+     ' match even when that item is not the shortest matching item', function() {
+
+    expect(po.longOddCNE.getAttribute('value')).toBe(''); // precondition
+    po.longOddCNE.click();
+    po.longOddCNE.sendKeys('1');
+    // The sortest matching item is "11: Nutrition".  Make sure it picks #1.
+    po.longOddCNE.sendKeys(protractor.Key.TAB);
+    expect(po.longOddCNE.getAttribute('value')).toBe('Allergies and such');
+  });
+
   it('should still show the list when there is a default', function() {
     // If the user tabs to a field with a default value, the list should be
     // open.
