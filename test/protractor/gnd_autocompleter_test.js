@@ -152,3 +152,11 @@ opts.suggestionMode = Def.Autocompleter.NO_COMPLETION_SUGGESTIONS
 new Def.Autocompleter.Search('table_format_multi_sel_search_cwe',
     '/form/get_search_res_list?fd_id=2165', opts);
 
+
+// A long list with a lot of matches for "20" (which will also be an item
+// number).
+opts = {};
+var longList = [];
+for (var i=1; i<=25; ++i)
+  longList.push('item '+i+' containing 20');
+new Def.Autocompleter.Prefetch('item_num_match_test', longList, opts);

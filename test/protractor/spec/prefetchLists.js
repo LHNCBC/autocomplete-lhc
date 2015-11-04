@@ -50,6 +50,18 @@ describe('Prefetch lists', function() {
     expect(po.longOddCNE.getAttribute('value')).toBe('Allergies and such');
   });
 
+  it('should default when picked by number to the item who number is a full'+
+     ' match even when that item is found after the desired number of matches',
+     function() {
+
+    expect(po.itemNumMatchField.getAttribute('value')).toBe(''); // precondition
+    po.itemNumMatchField.click();
+    po.itemNumMatchField.sendKeys('20');
+    // All the items match "20".  Make sure it picks #20.
+    po.itemNumMatchField.sendKeys(protractor.Key.TAB);
+    expect(po.itemNumMatchField.getAttribute('value')).toBe('item 20 containing 20');
+  });
+
   it('should still show the list when there is a default', function() {
     // If the user tabs to a field with a default value, the list should be
     // open.

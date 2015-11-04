@@ -298,6 +298,7 @@
       var partial   = []; // Inside matches
       var entry     = instance.getToken();
       var totalCount     = 0;
+      var suggestionIndex = null;
       var useFullList =
         !instance.matchListItemsToField_ || instance.element.value.trim() === '';
 
@@ -318,12 +319,12 @@
       var lastHeading = null;
       var foundItemForLastHeading = false;
       var headerCount = 0;
-      var subListIndex = 0; // an index into the list we're building
       var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
       if (instance.options.ignoreCase)
         entry = entry.toLowerCase();
       for (var i=0, max=instance.rawList_.length; i<max; ++i) {
         var tmp = instance.indexToHeadingLevel_[i];
+        var isSelectedByNumber = false;
         if (tmp) {
           lastHeading = instance.rawList_[i];
           foundItemForLastHeading = false;
@@ -347,9 +348,11 @@
           var matchesItemNum = false;
           if (instance.add_seqnum) {
             itemNumStr = (i+1-headerCount)+'';
-            if (!useFullList && itemNumStr.indexOf(entry) === 0) {
+            var isSelectedByNumber = (itemNumStr === entry);
+            if (!useFullList &&
+                (isSelectedByNumber || itemNumStr.indexOf(entry) === 0)) {
               ++totalCount;
-              if (totalCount < maxReturn) {
+              if (isSelectedByNumber || totalCount < maxReturn) {
                 itemNumStr = '<strong>' + itemNumStr.substr(0, entry.length) +
                   '</strong>' + itemNumStr.substr(entry.length);
                 matchesItemNum = true;
@@ -394,10 +397,13 @@
             } // while we haven't found a match at a word boundary
           } // if it didn't match the item number
 
+          // Make sure that if the item's number is an exact match for what was
+          // typed, it gets into the list (unless already selected).
+
           // For multi-select lists, filter out currently selected items.
           // Then, only add it if we haven't exceeded the limit.
           if ((!instance.multiSelect_ || !instance.isSelected(rawItemText)) &&
-              itemText && (totalCount <= maxReturn ||
+              itemText && (isSelectedByNumber || totalCount <= maxReturn ||
                             (instance.numHeadings_>0 && useFullList))) {
             if (lastHeading && !foundItemForLastHeading) {
               foundItemForLastHeading = true;
@@ -406,12 +412,14 @@
               countForLastHeading = 0;
             }
             if (!useFullList || !instance.numHeadings_ ||
-                countForLastHeading < maxItemsPerHeading) {
+                countForLastHeading < maxItemsPerHeading || isSelectedByNumber) {
               if (!matchesItemNum && instance.add_seqnum) {
                 itemText = instance.SEQ_NUM_PREFIX + itemNumStr +
                   instance.SEQ_NUM_SEPARATOR + itemText;
               }
               itemsInList.push(rawItemText);
+              if (isSelectedByNumber)
+                suggestionIndex = itemsInList.length-1;
               itemToHTMLData[rawItemText] = [itemText];
               if (useFullList)
                 ++countForLastHeading;
@@ -431,7 +439,7 @@
         $('searchCount').style.display = 'none';
       }
 
-      return instance.buildHTML(itemsInList, itemToHTMLData);
+      return instance.buildHTML(itemsInList, itemToHTMLData, suggestionIndex);
     },
 
 
@@ -442,15 +450,19 @@
      *  the HTML output.  The first item should be the item text with any needed
      *  HTML markup.  The second item, if present, should be a class to apply to
      *  the item's row in the list.
+     * @param suggestionIndex the index of the item found for the suggested
+     *  item, or null if one is not known yet.
      */
-    buildHTML: function(itemsInList, itemToHTMLData) {
+    buildHTML: function(itemsInList, itemToHTMLData, suggestionIndex) {
       // Don't use suggestions if there are headings, or if we are showing the
       // full list.
       var topItemIndex = -1;
       var i, topItem;
+      var haveSug = suggestionIndex !== null;
       if (!this.numHeadings_ && this.matchListItemsToField_ &&
-          this.suggestionMode_ === Def.Autocompleter.SUGGEST_SHORTEST) {
-        var topItemIndex = this.pickBestMatch(itemsInList);
+          (haveSug || this.suggestionMode_ === Def.Autocompleter.SUGGEST_SHORTEST)) {
+        var topItemIndex = haveSug ?
+          suggestionIndex : this.pickBestMatch(itemsInList);
         if (topItemIndex >= 0) {
           // Move that item to the start of the list
           var topItem = itemsInList[topItemIndex]

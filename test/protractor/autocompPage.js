@@ -17,6 +17,7 @@ var AutocompPage = function() {
   this.prefetchCWE = $('#'+this.prefetchCWEID);  // single-select
   this.prefetchWithDefault = $('#prefetch_default_cne');
   this.searchCNE = $('#fe_search_cne');
+  this.itemNumMatchField = $('#item_num_match_test');
 
   // Multi-select CNE prefetch list
   this.multiPrefetchCNEID = 'multi_sel_cne';
