@@ -21,7 +21,7 @@
         <li><a href="#directive">AngularJS Directive</a></li>
       </ul>
       <section id="main_content" class="col">
-        <h1></a>Documentation for autocomplete-lhc</h1>
+        <h1>Documentation for autocomplete-lhc</h1>
 
         <p>The easiest way to get started is to check the <a
         href="index.html#demos">demos</a>.  Below each demo is a "show source" link that
@@ -121,13 +121,14 @@
             <li id="url">url for getting the completion list.  The website answering the
              URL is expected to understand the following parameters:
               <ul>
-                <li>terms - the text from the field.  This should be used to find
+                <li>terms - the text the user entered in the field.  This should be used to find
                  matching list items.</li>
                 <li>autocomp - whether this is an autocompletion event, or a request
                  for a large list of search results (e.g. by using the "see more" link
                  on the list).  If autocomp==1, that means this is an autocompletion
                  request and the server should return a short list (e.g. 7 items) as
-                 quickly as possible.</li>
+                 quickly as possible.  If this parameter is omitted, a large
+                 list (e.g. 500 items) should be returned.</li>
                 <li>authenticity_token - (optional) This is an anti-CSRF parameter.
                  If the page has a value in window._token, it will get sent in this
                  parameter.</li>
@@ -135,8 +136,8 @@
                  will trigger a request for suggestions that are close to what the
                  user typed.  A "suggest" parameter value of "1" means the request
                  is for suggestions.</li>
-                <li>field_val - When "suggest"==1, this contains the value the user
-                 typed.</li>
+                <li>field_val - When "suggest"==1, this will contain the value the user
+                 typed in the field (instead of the "terms" parameter).</li>
               </ul>
               The URL's response should be an array.  For a non-suggestion request
               (suggest != '1'), it should have the following elements:
