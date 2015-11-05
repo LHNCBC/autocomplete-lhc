@@ -91,7 +91,7 @@ opts['headerBar'] = 'testHeaderBar';
 opts['codes']=["QUE-13","QUE-21","QUE-7","QUE-0","QUE-20","QUE-8","QUE-16",
   "QUE-15","QUE-11","QUE-5","QUE-4","QUE-3","QUE-6","QUE-12","QUE-14","QUE-17",
   "QUE-18","QUE-2","QUE-9","QUE-10","QUE-19"];
-var longList = ["Allergies",
+var longList = ["Allergies and such",
   "Disease risk based on family history","Exercise","General symptoms",
   "Genetic testing","Herbal or alternative remedies",
   "Infant or child development","Insurance","Lab tests and/or results",
@@ -152,3 +152,11 @@ opts.suggestionMode = Def.Autocompleter.NO_COMPLETION_SUGGESTIONS
 new Def.Autocompleter.Search('table_format_multi_sel_search_cwe',
     '/form/get_search_res_list?fd_id=2165', opts);
 
+
+// A long list with a lot of matches for "20" (which will also be an item
+// number).
+opts = {};
+var longList = [];
+for (var i=1; i<=25; ++i)
+  longList.push('item '+i+' containing 20');
+new Def.Autocompleter.Prefetch('item_num_match_test', longList, opts);
