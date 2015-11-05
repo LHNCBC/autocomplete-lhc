@@ -21,7 +21,8 @@
           <a id="forkme_banner" href="https://github.com/lhncbc/autocomplete-lhc">View on GitHub</a>
 
           <h1 id="project_title">Autocomplete-lhc</h1>
-          <h2 id="project_tagline">An autocompleter package used by the PHR project and lforms widget</h2>
+          <h2 id="project_tagline">An autocompleter package used by the NLM LForms
+and PHR projects</h2>
             <div id="header_buttons">
               <div>Documentation</div>
               <a href="index.html#features">Features</a>
@@ -54,6 +55,7 @@
           </ul>
         </li>
         <li><a href="#selectionData">Getting the selection data</a></li>
+        <li><a href="#directive">AngularJS Directive</a></li>
       </ul>
       <section id="main_content" class="col">
         <h1></a>Documentation for autocomplete-lhc</h1>
@@ -188,7 +190,7 @@
                  of scope for this class; the search autocompleter just sends the
                  parameters above to the given URL.  The extra data for the selected item (when the
                  user makes a selection) can get be retrieved with
-                 getSelectedItemData().</li>
+                 <a href="#getItemExtraData">getItemExtraData(itemText)</a>.</li>
                 <li>position 3 - the list item data; each item is an array of display
                  string fields which will be joined together.  (At a mimimum, each item
                  should be an array of one string.)</li>
@@ -312,7 +314,7 @@
           <dt>getItemCode(itemText)</dt>
           <dd>Returns the code for the given item text, or null if there isn't
             one.</dd>
-          <dt>getItemExtraData(itemText)</dt>
+          <dt id="getItemExtraData">getItemExtraData(itemText)</dt>
           <dd><b>(For search lists only.)</b>This returns the "extra data" for
             the item returned by the server along with the autocompletion list,
             as mentioned in <a href="#extraData">position 2</a> of the expected
@@ -325,6 +327,62 @@
             value will be empty.</dd>
         </dl>
 
+        <h2 id="directive">AngularJS Directive</h2>
+        <p>If you are using AngularJS, you can set up your autocompleters via
+          directive.  For example:</p>
+
+        <p><code>&lt;input id="myfield" autocomplete-lhc="opts" ng-model="selectedVal"&gt;</code></p>
+
+        <p>The opts object contains the options normally passed into the
+         constructor.  As mentioned above, there are two types of autocompleters.  You can
+         either have a "prefetch" list where all the items are given to the autocompleter
+         at construction time, or a "search" list where the list items are discovered
+         as the user types, via AJAX calls.  For both types, opts is a hash, but the
+         keys on the hash differ.</p>
+
+        <p>For "prefetched lists", opts can contain:</p>
+        <ul>
+          <li>listItems - (required) This is the list item data.  It should be an array,
+            and each element in the array should have a "text" property which is the
+            display string the user sees.  The object containing that text property
+            is what will get stored on the model you have associated via ng-model
+            (selectedVal, in the example above).  So, if you wish you can have
+            other properties holding data about each item, and the whole object gets placed
+            in the model when the user selects an item.</li>
+          <li>maxSelect - (default: 1) the maximum number of items that can be selected
+            from the list.  If this is '*', an unlimited number can be selected.  When
+            more than one item can be selected, selected items are stored in an array
+            on the model (e.g., selectedVal in the example above becomes an array).</li>
+          <li>defaultValue - The default value for the field.  This setting also exists in
+            the non-directive prefetch lists, but there are two differences here:
+            <ul>
+              <li>defaultValue can either be one of the list item display strings (the
+               "text" property), or it can be a hash like {code: 'AF-5'}, where "code" is
+               a key on the list item object, and 'AF-5' is the value of that key
+               to select the item as the default.  This is to allow the default value
+               to be specified not just by the display string, but by other attributes
+               of the list item object.</li>
+              <li>the default list item is loaded into the field when the autocompletion
+               is set up.</li>
+            </ul>
+          </li>
+          <li>Any other parameters used by the Def.Autocompleter.Prefetch <a
+            href="#prefetch">constructor</a>.  (Look also at the <a
+            href="#construction_common">options</a> common to both
+            types of autocompleter.</li>
+        </ul>
+
+        <p>For "search" lists, opts can contain:</p>
+        <ul>
+          <li>url - (required) The URL to which requests for data should be sent.  For
+            details about expected query parameters and response data, see the
+            comments for the <a href="#url">url</a> parameter for the
+            Def.Autocompleter.Search <a href="#searchList">constructor</a></li>
+          <li>Any other parameters used by the Def.Autocompleter.Search
+            <a href="#searchList">constructor</a>.  (Look also at the <a
+            href="#construction_common">options</a> common to both
+            types of autocompleter.</li>
+        </ul>
 
       </section>
     </div>
@@ -332,7 +390,9 @@
     <div id="footer_wrap" class="outer">
 
       <footer class="inner">
-        <p class="copyright">Autocomplete-lhc maintained by <a href="https://github.com/lhncbc">lhncbc</a></p>
+        <p class="copyright">Autocomplete-lhc maintained by <a
+        href="http://lhncbc.nlm.nih.gov/">Lister Hill National Center for Biomedical
+        Communications, National Library of Medicine</a></p>
         <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
