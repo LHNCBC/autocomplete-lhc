@@ -1,7 +1,7 @@
 // An AngularJS directive (optional; for use if you are using AngularJS)
 //
 // Example:
-// <input name="myfield" autocomplete-lhc="opts" ng-model="selectedVal">
+// <input id="myfield" autocomplete-lhc="opts" ng-model="selectedVal">
 //
 // The opts object (which could be a function that returns an object) contains
 // the information needed for specifying the behavior of the autocompleter (e.g.
