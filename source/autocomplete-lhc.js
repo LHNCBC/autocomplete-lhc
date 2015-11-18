@@ -239,8 +239,12 @@
                     ac.element.value = '';
                   }
                   else {
-                    ac.storeSelectedItem(md.text, md.code);
-                    ac.element.value = md.text;
+                    if (md.text !== undefined) {
+                      ac.storeSelectedItem(md.text, md.code);
+                      ac.element.value = md.text;
+                    }
+                    else // handle the case of an empty object as a model
+                      ac.element.value = '';
                   }
                 }
 
@@ -261,10 +265,14 @@
                 // Also add a formatter to get the display string if the model is
                 // changed.
                 controller.$formatters.push(function(value) {
-                  var rtn = value;
+                  var rtn = '';
                   if (!ac.multiSelect_) {
-                    if (typeof value === 'object')
+                    if (typeof value === 'string')
+                      rtn = value;
+                    else if (value !== null && typeof value === 'object' &&
+                             typeof value.text === "string") {
                       rtn = value.text;
+                    }
                   }
                   else
                     rtn = '';

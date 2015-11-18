@@ -71,6 +71,54 @@ describe('directive', function() {
     expect(hasClass(dp.prefetchCNEBlank, 'ng-invalid-parse')).toBe(false);
   });
 
+  it('should handle invalid model value assignments', function() {
+    // list4b has been assigned a model value of {}, which used to put
+    // "undefined" in the the field.  For some reason, this is not reproducible
+    // after the page is loaded; it must be done when page is first set up,
+    // which is why it is set in directiveTest.html rather than here.
+
+    var testFieldCSS = '#list4b';
+    var modelAttrName = 'listFieldVal4b';
+    var testField = $(testFieldCSS);
+
+    // Returns the model data object for the test field
+    function getModel() {
+      return browser.executeScript('var testField = $("'+testFieldCSS+'");'+
+        'return testField.scope().'+modelAttrName+';');
+    }
+
+    // Updates the model data for the test field, assigning it the given object.
+    function setModel(model) {
+      var modelString = model === undefined ? 'undefined' :
+        JSON.stringify(model);
+      var script = 'var testField = $("'+testFieldCSS+'");'+
+        'testField.scope().'+modelAttrName+' = '+modelString+';'+
+        'testField.scope().$digest();'
+      return browser.executeScript(script);
+    }
+
+    dp.openDirectiveTestPage();
+    expect(getModel()).toEqual({}); // precondition
+    // Make sure the field value is empty, not "undefined"
+    expect(testField.getAttribute('value')).toEqual('');
+
+    // Allow a string value for the model
+    setModel('hello');
+    expect(testField.getAttribute('value')).toEqual('hello');
+
+    // Make sure a valid model still works
+    setModel({text: 'hi'});
+    expect(testField.getAttribute('value')).toEqual('hi');
+
+    // Now try setting the model value to null, which previously resulted in an
+    // exception being thrown.  I'm not sure how to make sure $digest doesn't
+    // result in a thrown exception, because that seems to run asynchronously,
+    // so we'll just check that the value gets set to the empty string.
+    var rtn = setModel(null)
+    expect(testField.getAttribute('value')).toEqual('');
+
+  });
+
 
   describe(': CNE lists', function() {
     it('should warn user about invalid values', function() {
