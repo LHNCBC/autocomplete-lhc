@@ -10,9 +10,9 @@
   "devDependencies": {
     "grunt": "^0.4.5",
     "connect": "~2.26.4",
-    "grunt-contrib-uglify": "~0.9.2",
+    "grunt-contrib-uglify": "gruntjs/grunt-contrib-uglify",
     "wiredep": "~3.0.0-beta",
-    "bower": "~1.5.3",
+    "bower": "^1.6",
     "grunt-cli": "~0.1.13",
     "grunt-contrib-cssmin": "~0.14.0",
     "grunt-shell": "~1.1.2",
