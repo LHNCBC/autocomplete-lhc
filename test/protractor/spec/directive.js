@@ -114,7 +114,7 @@ describe('directive', function() {
     // exception being thrown.  I'm not sure how to make sure $digest doesn't
     // result in a thrown exception, because that seems to run asynchronously,
     // so we'll just check that the value gets set to the empty string.
-    var rtn = setModel(null)
+    setModel(null)
     expect(testField.getAttribute('value')).toEqual('');
 
   });
