@@ -5,7 +5,7 @@
 #     You may set variables before sourcing this to change execution
 # of it.
 
-set NODE_PATH = /depot/packages/node-v0.10.24-linux-x64
+set NODE_PATH = /depot/packages/node-v0.10.40_lforms.v1
 
 set path = ($NODE_PATH/bin /bin /usr/local/bin /usr/bin /usr/sbin /sbin /etc)
 
