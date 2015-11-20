@@ -6,6 +6,11 @@
   "directories": {
     "test": "test"
   },
+  "commentsOnDeps": {
+    "grunt-contrib-uglify": ["was changed to master to avoid nsp vulnerability 48",
+       "with uglify.js.  When the next version of grunt-contrib-uglify is tagged",
+       "we can return to using a version number.  An issue was raised."]
+  },
   "dependencies": {},
   "devDependencies": {
     "grunt": "^0.4.5",
