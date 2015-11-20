@@ -137,7 +137,7 @@
      *     of scope of this class; this search autocompleter just sends the
      *     parameters above.  The extra data for the selected item (when the
      *     user makes a selection) can get be retrieved with
-     *     getSelectedItemData().</li>
+     *     getItemExtraData(itemText).</li>
      *    <li>position 3 - the list item data; each item is an array of display
      *     string fields which will be joined together.  (At a mimimum, each item
      *     should be an array of one string.)</li>
