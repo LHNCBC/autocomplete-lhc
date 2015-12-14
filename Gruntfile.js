@@ -4,6 +4,7 @@ module.exports = function(grunt) {
     compress: 'grunt-contrib-compress',
     copy: 'grunt-contrib-copy',
     cssmin: 'grunt-contrib-cssmin',
+    nsp: 'grunt-nsp',
     protractor: 'grunt-protractor-runner',
     shell: 'grunt-shell',
     uglify: 'grunt-contrib-uglify'
@@ -61,6 +62,12 @@ module.exports = function(grunt) {
           }
         ]
       }
+    },
+
+
+    nsp: {
+      package: grunt.file.readJSON('./package.json'),
+      shrinkwrap: grunt.file.readJSON('./npm-shrinkwrap.json')
     },
 
 

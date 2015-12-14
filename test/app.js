@@ -7,23 +7,14 @@ var connect = require('connect'),
     http = require('http'),
     path = require('path');
 var config = require('./config');
+var serveStatic = require('serve-static');
+var serveIndex = require('serve-index');
 
 // Set the document root to the package directory, which is the
 // parent of the directory containing this script.
 var docRoot = __dirname + '/..';
 
 connect()
-/*    .use(function(req, resp, next) {
-        // Restrict access to localhost
-        var remoteIP = req.connection.remoteAddress;
-        if(remoteIP !== '127.0.0.1' && remoteIP !== '::1') {
-          resp.statusCode = 403; // forbidden
-          resp.end('403 Forbidden');
-        }
-        else {
-          next();
-        }
-      })*/
     .use(function(req, resp, next) {
        // block access to files and directories beginning with '.'
        var p = req.url;
@@ -40,6 +31,6 @@ connect()
        if (pathOkay)
          next();
      })
-    .use(connect.static(docRoot))
-    .use(connect.directory(docRoot))
+    .use(serveIndex(docRoot))
+    .use(serveStatic(docRoot))
     .listen(config.port);
