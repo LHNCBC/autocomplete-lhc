@@ -5,8 +5,6 @@
     "48 - This is about uglify-js needing to be >=2.6.0.  bower does not plan to update",
     "  its version of handlebars, which has a patch to update its uglify-js.",
     "  (See closed issue 2016.)",
-    "  Additionally, grunt-angular-templates needs to update html-minifier to ",
-    "  1.0.0 or later to get a newer uglify-js.  (Issue 140 opened.)",
     "39-  Another case in which bower needs to update handlebars to update ",
     "  uglify-js."
   ],

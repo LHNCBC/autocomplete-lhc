@@ -2137,20 +2137,9 @@
       "resolved": "https://registry.npmjs.org/grunt-contrib-cssmin/-/grunt-contrib-cssmin-0.14.0.tgz"
     },
     "grunt-contrib-uglify": {
-      "version": "0.10.1",
-      "from": "gruntjs/grunt-contrib-uglify",
-      "resolved": "git://github.com/gruntjs/grunt-contrib-uglify.git#13e95a2be710f63d89920bcc8c35b1a949f1c429",
-      "dependencies": {
-        "source-map": {
-          "version": "0.5.3",
-          "from": "source-map@>=0.5.1 <0.6.0",
-          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.3.tgz"
-        },
-        "uglify-js": {
-          "version": "2.6.1",
-          "from": "uglify-js@>=2.6.0 <2.7.0"
-        }
-      }
+      "version": "0.11.0",
+      "from": "grunt-contrib-uglify@>=0.11.0 <0.12.0",
+      "resolved": "https://registry.npmjs.org/grunt-contrib-uglify/-/grunt-contrib-uglify-0.11.0.tgz"
     },
     "grunt-legacy-log": {
       "version": "0.1.2",
@@ -3283,6 +3272,11 @@
       "from": "signal-exit@>=2.1.2 <3.0.0",
       "resolved": "https://registry.npmjs.org/signal-exit/-/signal-exit-2.1.2.tgz"
     },
+    "source-map": {
+      "version": "0.5.3",
+      "from": "source-map@>=0.5.1 <0.6.0",
+      "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.3.tgz"
+    },
     "source-map-support": {
       "version": "0.2.10",
       "from": "source-map-support@>=0.2.6 <0.3.0",
@@ -3385,6 +3379,11 @@
     "typedarray": {
       "version": "0.0.6",
       "from": "typedarray@>=0.0.5 <0.1.0"
+    },
+    "uglify-js": {
+      "version": "2.6.1",
+      "from": "uglify-js@>=2.6.0 <2.7.0",
+      "resolved": "https://registry.npmjs.org/uglify-js/-/uglify-js-2.6.1.tgz"
     },
     "uglify-to-browserify": {
       "version": "1.0.2",
