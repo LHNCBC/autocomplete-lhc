@@ -2139,7 +2139,7 @@ if (typeof Def === 'undefined')
      *  This can be called to detach an autocompleter's event listeners.
      */
     stopObservingEvents: function() {
-      this.element.stopObserving();
+      jQuery(this.element).unbind();
     },
 
 

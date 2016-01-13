@@ -17,6 +17,9 @@ describe('Prefetch lists', function() {
     po.openTestPage();
     po.prefetchCWE.click();
     po.prefetchCWE.sendKeys('Span');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     expect(po.shownItemCount()).toBe(1);
     // Now click in the field.  The full list should show.
     po.prefetchCWE.click();
@@ -35,6 +38,9 @@ describe('Prefetch lists', function() {
     po.openTestPage();
     po.prefetchCWE.click();
     po.prefetchCWE.sendKeys('2');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     expect(po.shownItemCount()).toBe(1);
     expect(po.firstSearchRes.getText()).toEqual('2:  French');
   });
@@ -88,6 +94,9 @@ describe('Prefetch lists', function() {
     po.clearField(po.prefetchCWE);
     expect(po.prefetchCWE.getAttribute('value')).toBe('');
     po.prefetchCWE.sendKeys('e');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     expect(po.firstSearchRes.getText()).toEqual('4:  escape<test>&');
     po.firstSearchRes.click();
     expect(po.prefetchCWE.getAttribute('value')).toBe('escape<test>&');

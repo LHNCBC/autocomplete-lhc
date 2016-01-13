@@ -37,6 +37,9 @@ describe('directive', function() {
       // Try a case with more than one field in the extra item data hash.
       dp.clearField(dp.searchList);
       dp.searchList.sendKeys('abc');
+      browser.wait(function() {
+        return dp.searchResults.isDisplayed();
+      }, 5000);
       dp.secondSearchRes.click();
       expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(
         {text: 'zArm pain', code: '2958',

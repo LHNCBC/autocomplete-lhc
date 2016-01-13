@@ -66,6 +66,9 @@ describe('multi-select lists', function() {
     po.openTestPage();
     po.multiSearchCWE.click();
     po.multiSearchCWE.sendKeys('ar');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     po.firstSearchRes.click();
     // That element should be removed, and the new first element should now have
     // the "selected" class.
@@ -203,6 +206,9 @@ describe('multi-select lists', function() {
     po.openTestPage();
     po.multiSearchCWE.click();
     po.multiSearchCWE.sendKeys('ar');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     po.firstSearchRes.click();
     expect(po.expandLink.isDisplayed()).toBe(false); // i.e. not visible
   });

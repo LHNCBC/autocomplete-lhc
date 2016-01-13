@@ -15,6 +15,9 @@ describe('autocomp', function() {
     po.openTestPage();
     suggestionMode0CWE.click();
     suggestionMode0CWE.sendKeys('arm');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     expect(searchResults.isDisplayed()).toBeTruthy();
     // In suggestion mode 0, the first element should be what is alphabetically
     // first.
@@ -27,6 +30,9 @@ describe('autocomp', function() {
 
     suggestionMode1CWE.click();
     suggestionMode1CWE.sendKeys('arm');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     // In suggesion mode 1, the first element should be the shortest item
     // starting with the input text.
     expect(po.firstSearchRes.getInnerHtml()).toEqual('Arm z');
@@ -36,6 +42,10 @@ describe('autocomp', function() {
 
     suggestionMode2CWE.click();
     suggestionMode2CWE.sendKeys('arm');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
+
     // In suggestion mode 2, the first element should be the first returned in
     // the AJAX call.
     expect(po.firstSearchRes.getInnerHtml()).toEqual('Coronary artery disease (CAD)');
@@ -47,6 +57,9 @@ describe('autocomp', function() {
     // "Asian" is the short match and should be offered as a default
     po.prefetchCNE.click();
     po.prefetchCNE.sendKeys('a');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     po.firstSearchRes.click();
     expect(po.prefetchCNE.getAttribute('value')).toEqual('Asian');
 
@@ -224,6 +237,9 @@ describe('autocomp', function() {
     expect(po.searchCNE.getAttribute('name')).toBe('');
     po.multiSearchCWE.click();
     po.multiSearchCWE.sendKeys('ar');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     // A list should appear
     // This list is using statitics, so it pulls CAD to the top.  The second
     // result is what we can compare with the first result in the other list.
@@ -231,6 +247,9 @@ describe('autocomp', function() {
     // Now go to another field, which like multiSearchCWE has no name field.
     po.searchCNE.click();
     po.searchCNE.sendKeys('ar');
+    browser.wait(function() {
+      return po.searchResults.isDisplayed();
+    }, 5000);
     // The search result list should be different (even though the name
     // attribute is the same/missing for both).
     expect(po.firstSearchRes.getInnerHtml()).not.toBe("Arm pain");
