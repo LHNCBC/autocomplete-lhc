@@ -136,9 +136,7 @@ describe('directive', function() {
       // Add a list value
       dp.multiSearchCWE.click();
       dp.multiSearchCWE.sendKeys('ar');
-      browser.wait(function() {
-        return dp.searchResults.isDisplayed();
-      }, 5000);
+      dp.waitForSearchResults();
       dp.firstSearchRes.click();
       expect(dp.searchList.getAttribute('value')).toEqual('');
       expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
@@ -151,6 +149,7 @@ describe('directive', function() {
       dp.openDirectiveTestPage();
       dp.multiSearchCWE.click();
       dp.multiSearchCWE.sendKeys('ar');
+      dp.waitForSearchResults();
       dp.firstSearchRes.click();
       expect(dp.multiSearchCWESelected.count()).toEqual(1);
       expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
