@@ -52,9 +52,11 @@
 
       .directive('autocompleteLhc', ['$timeout', function (autocompleteConfig, $timeout) {
         return {
+          restrict: 'A',
           require:'?ngModel',
           scope: {
-            modelData: '=ngModel' // the ng-model attribute on the tag
+            modelData: '=ngModel', // the ng-model attribute on the tag
+            acOpts: '=autocompleteLhc'
           },
           link:function (scope, element, attrs, controller) {
             // Set the update options to 'none' so only the autocompleter code
@@ -109,7 +111,7 @@
                   if (!ac.multiSelect_) {
                     var finalVal = eventData.final_val;
                     item = itemTextToItem[finalVal] ||
-                      {text: finalVal};
+                        {text: finalVal};
                     scope.modelData = item;
                   }
                   else {
@@ -119,7 +121,7 @@
                     if (eventData.removed) {
                       // The item was removed
                       var removedVal = eventData.final_val;
-                      for (var i=0, len=selectedItems.length; i<len; ++i) {
+                      for (var i = 0, len = selectedItems.length; i < len; ++i) {
                         if (removedVal === selectedItems[i].text) {
                           selectedItems.splice(i, 1);
                           break;
@@ -179,7 +181,7 @@
                     if (eventData.removed) {
                       // The item was removed
                       var removedVal = eventData.final_val;
-                      for (var i=0, len=selectedItems.length; i<len; ++i) {
+                      for (var i = 0, len = selectedItems.length; i < len; ++i) {
                         if (removedVal === selectedItems[i].text) {
                           selectedItems.splice(i, 1);
                           break;
@@ -197,13 +199,21 @@
             }
 
 
-            var initWidget = function () {
-              // Because we created our own scope, we have to evaluate
-              // attrs.autocompleteLhc in the parent scope.
-              var autoOpts = scope.$parent.$eval(attrs.autocompleteLhc);
+            var initWidget = function (options) {
+
+              var autoOpts = options;
 
               if (controller) { // ngModelController, from the "require"
                 var pElem = element[0];
+
+                // if there's an autocomp already
+                if (pElem.autocomp) {
+                  //destroy the exisitng autocomp
+                  pElem.autocomp.destroy();
+                  // clean up the modal data
+                  scope.modelData = null;
+                }
+
                 // The autocompleter uses the ID attribute of the element. If pElem
                 // does not have an ID, give it one.
                 if (pElem.id === '') {
@@ -281,9 +291,8 @@
               } // if controller
             };
 
-            // Run initWiget once after the name attribute has been filled in (for
-            // situations where the name is coming from the data model).
-            scope.$watch({}, initWidget, true); // i.e. run once
+            // Re-initialize the autocomplete widget whenever the options change
+            scope.$watch("acOpts", initWidget, true);
           }
         };
       }]

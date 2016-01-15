@@ -32,6 +32,7 @@ describe('multi-field lists', function() {
     po.openTestPage();
     po.multiFieldSearch.click();
     po.multiFieldSearch.sendKeys('ar');
+    po.waitForSearchResults();
     expect(po.tableSearchResult(1).isPresent(0)).toBe(true);
     expect(po.tableSearchResult(1).getInnerHtml()).toBe(
       '<td>Arm pain</td><td>pain in arm</td>');
@@ -47,6 +48,7 @@ describe('multi-field lists', function() {
   it('should function properly with the multi-select feature', function() {
     po.multiSelectTableSearch.click();
     po.multiSelectTableSearch.sendKeys('ar');
+    po.waitForSearchResults();
     expect(po.tableSearchResult(1).getInnerHtml()).toBe('<td>NM_001113511</td>');
     po.tableSearchResult(1).click();
     expect(po.getSelectedItems(po.multiSelectTableSearchID)).toEqual(

@@ -562,8 +562,8 @@ Def.PrototypeAPI = function() {
     /* See PrototypeJS API */
     undoPositioned: function(element) {
       element = $(element);
-      jqElem = jQuery(element);
-      madePositioned = jqElem.data('prototype_made_positioned');
+      var jqElem = jQuery(element);
+      var madePositioned = jqElem.data('prototype_made_positioned');
 
       if (madePositioned) {
         jqElem.removeData('prototype_made_positioned');

@@ -2,7 +2,7 @@
 function BasePage() {
   var searchResID = 'searchResults';
   var searchResCSS = '#'+searchResID;
-  this.searchResults = $(searchResCSS);
+  var searchResults = this.searchResults = $(searchResCSS);
   this.allSearchRes = element.all(by.css(searchResCSS + ' li'));
   this.expandLink = $('#moreResults');
   this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion
@@ -131,6 +131,16 @@ function BasePage() {
       'return jQuery("'+this.completionOptionsScrollerCSS+'")[0].scrollTop;'
     );
   };
+
+  /**
+   * Wait for the autocomplete results to be shown
+   */
+  this.waitForSearchResults = function() {
+    browser.wait(function() {
+      return searchResults.isDisplayed();
+    }, 5000);
+  };
+
 };
 
 module.exports = {BasePage: BasePage};
