@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "7.1.0",
+  "version": "8.0.0",
   "main": [
     "source/auto_completion.css",
     "source/prototype_api.js",
