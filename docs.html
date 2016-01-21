@@ -337,8 +337,8 @@
         <p><code>&lt;input id="myfield" autocomplete-lhc="opts" ng-model="selectedVal"&gt;</code></p>
 
         <p>The opts object contains the options normally passed into the
-         constructor.  As of version 8.0.0, the autocompleter will watch for
-         changes to this object, so if you return it via a function call, the
+         constructor.  As of version 8.0.0 of the autocompleter, this object
+         is watched for changes, so if you return it via a function call, the
          function should return the same object unless the options really change.
          As mentioned above, there are two types of autocompleters.  You can
          either have a "prefetch" list where all the items are given to the autocompleter
