@@ -5,7 +5,7 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    
+
     <meta name="description" content="Autocomplete-lhc : An autocompleter package used by the NLM LForms and PHR projects">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
@@ -337,7 +337,10 @@
         <p><code>&lt;input id="myfield" autocomplete-lhc="opts" ng-model="selectedVal"&gt;</code></p>
 
         <p>The opts object contains the options normally passed into the
-         constructor.  As mentioned above, there are two types of autocompleters.  You can
+         constructor.  As of version 8.0.0, the autocompleter will watch for
+         changes to this object, so if you return it via a function call, the
+         function should return the same object unless the options really change.
+         As mentioned above, there are two types of autocompleters.  You can
          either have a "prefetch" list where all the items are given to the autocompleter
          at construction time, or a "search" list where the list items are discovered
          as the user types, via AJAX calls.  For both types, opts is a hash, but the
