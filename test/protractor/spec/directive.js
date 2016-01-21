@@ -125,7 +125,7 @@ describe('directive', function() {
     browser.waitForAngular();
     expect(dp.optChangeTest.getAttribute('value')).toEqual('');
     dp.optChangeTest.click();
-    // pick the 2st item,
+    // pick the 2nd item,
     dp.optChangeTest.sendKeys(protractor.Key.ARROW_DOWN);
     dp.optChangeTest.sendKeys(protractor.Key.ARROW_DOWN);
     dp.optChangeTest.sendKeys(protractor.Key.TAB);
