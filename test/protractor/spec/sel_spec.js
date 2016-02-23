@@ -31,6 +31,7 @@ ATR = {
         switch(cmd) {
           case 'open':
             var config = require('../../config');
+            browser.ignoreSynchronization = true; // run without AngularJS
             browser.get('http://localhost:'+config.port+arg1);
             break;
           case 'mouseDown':

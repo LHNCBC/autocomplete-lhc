@@ -85,6 +85,22 @@ mockData_ = {
          '["NM_001629"],["NR_002710"],["NM_021628"],["NG_026215"],'+
          '["NM_001999"]]]'
     }
+  },
+
+  'alleles': {
+    'partial': {
+      'rs':
+         '[110336,["20644","20663","20668","20665","20680","20685","20694"],'+
+         '{"RefSeqID":["NM_012144.3","NM_001099274.1","NM_000154.1","NM_001099274.1",'+
+         '"NM_000030.2","NM_000030.2","NM_005807.4"],"GeneSymbol":["DNAI1","TINF2",'+
+         '"GALK1","TINF2","AGXT","AGXT","-"]},[["20644","NM_012144.3","DNAI1",'+
+         '"c.282_283insAATA","p.Gly95Asnfs"],["20663","NM_001099274.1","TINF2",'+
+         '"c.838A>G","p.Lys280Glu"],["20668","NM_000154.1","GALK1","c.238G>T",'+
+         '"p.Glu80Ter"],["20665","NM_001099274.1","TINF2","c.844C>A","p.Arg282Ser"],'+
+         '["20680","NM_000030.2","AGXT","c.32C>T","p.Pro11Leu"],["20685","NM_000030.2",'+
+         '"AGXT","c.731T>C","p.Ile244Thr"],["20694","NM_005807.4","-",'+
+         '"c.4190_4191delCCinsAG","p.Ser1397Ter"]]]'
+    }
   }
 
 };
@@ -94,7 +110,7 @@ jQuery.ajax = function(url, options) {
   var params = options.data;
   var resultType = params.autocomp ? 'partial' : params.suggest ? 'suggest' : 'full'
   // This is just for testing, so assume the right parameters.
-  var fd_id = url.match(/fd_id=(\d+)/)[1];
+  var fd_id = url.match(/fd_id=(\w+)/)[1];
   var terms = params.terms || params.field_val; // suggest uses field_val
   var responseText = mockData_[fd_id][resultType][terms];
   if (!responseText) {
