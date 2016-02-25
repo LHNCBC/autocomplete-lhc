@@ -160,3 +160,11 @@ var longList = [];
 for (var i=1; i<=25; ++i)
   longList.push('item '+i+' containing 20');
 new Def.Autocompleter.Prefetch('item_num_match_test', longList, opts);
+
+
+// A list to test for correct sorting of results.
+var opts = {valueCols: [0], tableFormat: true};
+new Def.Autocompleter.Search('allele_search',
+    '/form/get_search_res_list?fd_id=alleles', opts);
+
+
