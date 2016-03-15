@@ -1,4 +1,4 @@
-// Make jQuery and PrototypeJS get along
+// Use our own $ function
 jQuery.noConflict();
 
 var opts = {};
@@ -167,4 +167,16 @@ var opts = {valueCols: [0], tableFormat: true};
 new Def.Autocompleter.Search('allele_search',
     '/form/get_search_res_list?fd_id=alleles', opts);
 
+// Lists to test passing an element instead of an ID.
+opts = {};
+opts['matchListValue']=true;
+opts['codes']=["LA44-3","LA45-0","LA46-8"];
+opts['defaultValue']="LA45-0";
+new Def.Autocompleter.Prefetch(jQuery('#prefetch_for_el')[0], ["Spanish","French","Other"], opts);
+
+var opts = {};
+opts.matchListValue = true;
+var fe_search_cne_autoComp =
+  new Def.Autocompleter.Search(jQuery('#search_for_el')[0],
+    '/form/get_search_res_list?fd_id=1284', opts);
 

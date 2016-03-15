@@ -104,7 +104,8 @@
                   modelDefault = item;
               }
 
-              var ac = new Def.Autocompleter.Prefetch(pElem.id, itemText, autoOpts);
+              var ac = new Def.Autocompleter.Prefetch(pElem, itemText, autoOpts);
+              addNameAttr(pElem);
               Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
                 scope.$apply(function() {
                   var item;
@@ -162,12 +163,29 @@
 
 
             /**
+             *  Assigns a name to the field if it is missing one.
+             *  Names are used to register listeners.  We don't do this in the
+             *  autocompleter base class to avoid polluting submitted form data
+             *  with unintended fields.
+             * @param pElem the field for which the name attribute will be
+             *  needed.
+             */
+            function addNameAttr(pElem) {
+              // If the element does not have a name, use the ID.  The name
+              // to register listeners.
+              if (pElem.name === '')
+                pElem.name = pElem.id;
+            }
+
+
+            /**
              *  Sets up a search list on the field.
              * @param pElem the element on which the autocompleter is to run
              * @param autoOpts the options from the directive attribute
              */
             function searchList(pElem, autoOpts) {
-              var ac = new Def.Autocompleter.Search(pElem.id, autoOpts.url, autoOpts);
+              var ac = new Def.Autocompleter.Search(pElem, autoOpts.url, autoOpts);
+              addNameAttr(pElem);
               Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
                 scope.$apply(function() {
                   var itemText = eventData.final_val;
@@ -213,19 +231,6 @@
                   // clean up the modal data
                   scope.modelData = null;
                 }
-
-                // The autocompleter uses the ID attribute of the element. If pElem
-                // does not have an ID, give it one.
-                if (pElem.id === '') {
-                  // In this case just make up an ID.
-                  if (!Def.Autocompleter.lastGeneratedID_)
-                    Def.Autocompleter.lastGeneratedID_ = 0;
-                  pElem.id = 'ac' + ++Def.Autocompleter.lastGeneratedID_;
-                }
-                // If it also does not have a name, use the ID.  We use the name
-                // to register a listener below.
-                if (pElem.name === '')
-                  pElem.name = pElem.id;
 
                 // See if there is an existing model value for the field (and do
                 // it before prefetchList runs below, which might store a default

@@ -101,7 +101,9 @@
 
     /**
      *  The constructor.  (See Prototype's Class.create method.)
-     * @param fieldID the ID of the field for which the list is displayed
+     * @param field the ID or the DOM element of the field for which the
+     *  list is displayed.  If an element is provided, it must contain an ID
+     *  attribute, or one will be assigned.
      * @param url for getting the completion list.  The website answering the
      *  URL is expected to understand the following parameters:
      *  <ul>

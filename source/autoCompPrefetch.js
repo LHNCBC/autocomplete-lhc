@@ -91,7 +91,9 @@
     /**
      *  The constructor.  (See Prototype's Class.create method.)
      *
-     * @param id the ID of the form field for which the list is displayed
+     * @param field the ID or the DOM element of the field for which the
+     *  list is displayed.  If an element is provided, it must contain an ID
+     *  attribute, or one will be assigned.
      * @param listItems the array of completion options (list values).  If not
      *  specified here, the list will be supplied later by a call to the
      *  setListAndField function.
