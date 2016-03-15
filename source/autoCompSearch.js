@@ -420,8 +420,7 @@
     /**
      *  Processes a returned set of choices in preparation for building
      *  the HTML for the update (choices) area.  This filters out selected
-     *  items, sorts the items, and picks the default item.  In the process, it
-     *  also initializes itemToDataIndex_.
+     *  items, sorts the items, and picks the default item.
      * @param fieldValToItemFields a hash from field value version of the list
      *  items to the list item arrays received from the AJAX call
      * @return an array of three elements, an array of field value strings from
@@ -435,10 +434,8 @@
       var pickedByNum = false;
       var filteredItems = [];
       var fieldVals = Object.keys(fieldValToItemFields);
-      this.itemToDataIndex_ = {};
       for (var i=0, len=fieldVals.length; i<len; ++i) {
         var item = fieldVals[i];
-        this.itemToDataIndex_[item] = i;
         if (!this.multiSelect_ || !this.isSelected(item))
           filteredItems.push(item);
       }
@@ -587,7 +584,8 @@
     /**
      *  Returns a hash from the values that get placed into the form field when
      *  an item is selected to the array of item field values shown in the
-     *  autocompletion list.
+     *  autocompletion list.  While doing this it also initializes
+     *  itemToDataIndex_.
      * @param itemFieldArrays the array of item field arrays (one array per
      *  item
      */
@@ -595,6 +593,7 @@
       var rtn = {};
       var valCols = this.options.valueCols;
       var joinSep = Def.Autocompleter.LIST_ITEM_FIELD_SEP;
+      this.itemToDataIndex_ = {};
       if (valCols)
         var numValCols = valCols.length;
       for (var i=0, len=itemFieldArrays.length; i<len; ++i) {
@@ -610,6 +609,7 @@
         var fieldVal = selectedFields.join(joinSep);
         // Remove any <span> tags added for highlighting
         fieldVal = fieldVal.replace(/<\/?span>/g, '');
+        this.itemToDataIndex_[fieldVal] = i;
         rtn[fieldVal] = itemFields;
       }
       return rtn;
