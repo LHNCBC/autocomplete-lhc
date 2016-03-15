@@ -128,6 +128,18 @@ describe('directive', function() {
 
   });
 
+  it('should watch on changes of autocomplete options', function() {
+    expect(dp.optChangeTest.getAttribute('value')).toEqual('Green');
+    dp.btnOptChangeTest.click();
+    browser.waitForAngular();
+    expect(dp.optChangeTest.getAttribute('value')).toEqual('');
+    dp.optChangeTest.click();
+    // pick the 2nd item,
+    dp.optChangeTest.sendKeys(protractor.Key.ARROW_DOWN);
+    dp.optChangeTest.sendKeys(protractor.Key.ARROW_DOWN);
+    dp.optChangeTest.sendKeys(protractor.Key.TAB);
+    expect(dp.optChangeTest.getAttribute('value')).toEqual('Blue_NEW');
+  });
 
   describe(': CNE lists', function() {
     it('should warn user about invalid values', function() {

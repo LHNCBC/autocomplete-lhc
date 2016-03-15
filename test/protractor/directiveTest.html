@@ -94,6 +94,13 @@
         ng-model="listFieldVal7"
         autocomplete-lhc="list7Opts" id="list7">
        <p>
+      <input name="list8" type="text"
+             ng-required="false"
+             ng-model="listFieldVal8"
+             autocomplete-lhc="list8Opts" id="list8">
+      <p>
+      <button id="btnList8" ng-click="updateList8Opts()">Update list8Opts</button>
+
       <input name="nonlist" type="text">
     </div>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
@@ -220,6 +227,24 @@
           ],
           defaultValue: {code: 'G'}
         };
+
+        $scope.list8Opts = {
+          listItems: [
+            {text: 'Green', code: 'G'},
+            {text: 'Blue', code: 'B'},
+          ],
+          defaultValue: {code: 'G'}
+        };
+        $scope.updateList8Opts = function() {
+          $scope.list8Opts = {
+            listItems: [
+              {text: 'Green_NEW', code: 'G'},
+              {text: 'Blue_NEW', code: 'B'},
+              {text: 'Red_NEW', code: 'R'}
+            ]
+          };
+        };
+
      }]);
     </script>
   </body>
