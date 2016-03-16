@@ -73,13 +73,13 @@ describe('autocomp scroll function', function() {
     // during the automated testing.  When done by hand it is still zero.  So,
     // allow one pixel.
     var positionTest =
-        'return jQuery("#'+po.multiHeadingCWEID+ '")[0].parentNode.offsetTop - '+
-        '(document.body.scrollTop || document.documentElement.scrollTop) <= 1';
+      'return jQuery("#'+po.multiHeadingCWEID+ '")[0].parentNode.offsetTop - '+
+      '(document.body.scrollTop || document.documentElement.scrollTop) <= 1';
 
     // The scrolling takes place over about 0.5s, so wait a bit for it.
     browser.driver.wait(
       function() {
-         return browser.driver.executeScript(positionTest);
+        return browser.driver.executeScript(positionTest);
       },
       5000
     );
