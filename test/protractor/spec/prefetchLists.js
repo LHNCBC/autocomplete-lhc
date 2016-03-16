@@ -13,6 +13,7 @@ describe('Prefetch lists', function() {
     po.prefetchCWE.click();
     expect(po.listIsVisible()).toBeTruthy();
   });
+
   it('should show the full list when clicked even after typing', function() {
     po.openTestPage();
     po.prefetchCWE.click();
@@ -94,6 +95,16 @@ describe('Prefetch lists', function() {
     expect(po.firstSearchRes.getText()).toEqual('4:  escape<test>&');
     po.firstSearchRes.click();
     expect(po.prefetchCWE.getAttribute('value')).toBe('escape<test>&');
+  });
+
+  it('should allow an element to be passed to the constructor', function() {
+    var p = $('#prefetch_for_el');
+    expect(po.listIsVisible()).toBeFalsy();
+    p.click();
+    po.waitForSearchResults();
+    expect(po.listIsVisible()).toBeTruthy();
+    po.firstSearchRes.click();
+    expect(p.getAttribute('value')).toBe('Spanish');
   });
 });
 

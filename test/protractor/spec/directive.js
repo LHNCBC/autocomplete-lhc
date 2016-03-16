@@ -7,21 +7,30 @@ describe('directive', function() {
     dp.openDirectiveTestPage();
     expect(dp.searchResults).not.toBeNull();
   });
+
   it('should assign an ID to the autocompleting field', function() {
     expect(dp.inputElem).not.toBeNull();
   });
+
+  it('should assign a name attribute to the autocompleting field', function() {
+    expect(dp.inputElem.getAttribute('name')).toBe('ac1');
+  });
+
   it('should show the list when the field is clicked', function() {
     expect(dp.searchResults.isDisplayed()).toBeFalsy();
     dp.inputElem.click();
     expect(dp.searchResults.isDisplayed()).toBeTruthy();
   });
+
   it('should load the default item code and value', function() {
     expect(dp.inputElem.getAttribute("value")).toEqual('Blue');
     expect(dp.codeField.getAttribute("value")).toEqual('B');
   });
+
   it('should not load the default item code and value when the model is already populated', function() {
     expect(dp.prePopElem.getAttribute("value")).toEqual('a pre-populated model value');
   });
+
   it('should allow specification of the default by a code', function() {
     expect(dp.prefetchWithCodeDefault.getAttribute('value')).toEqual('Green');
   });

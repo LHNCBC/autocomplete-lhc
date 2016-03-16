@@ -41,4 +41,13 @@ describe('search lists', function() {
       expect(extraData).toEqual(expected[recID]);
     }
   });
+
+  it('should allow an element to be passed to the constructor', function() {
+    var s = $('#search_for_el');
+    expect(po.listIsVisible()).toBeFalsy();
+    s.click();
+    s.sendKeys('ar');
+    po.waitForSearchResults();
+    expect(po.listIsVisible()).toBeTruthy();
+  });
 });

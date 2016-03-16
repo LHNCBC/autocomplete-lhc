@@ -497,7 +497,9 @@ if (typeof Def === 'undefined')
 
     /**
      *  An initialization method for the base Def.Autocompleter class.
-     * @param fieldID the ID of the field for which the list is displayed
+     * @param field the ID or the DOM element of the field for which the
+     *  list is displayed.  If an element is provided, it must contain an ID
+     *  attribute, or one will be assigned.
      * @param options A hash of optional parameters.  For the allowed keys see the
      *  subclasses.  The base class uses the following keys:
      *  <ul>
@@ -536,7 +538,7 @@ if (typeof Def === 'undefined')
      *     flow into two columns to show more of the list on the page.</li>
      *  </ul>
      */
-    defAutocompleterBaseInit: function(fieldID, options) {
+    defAutocompleterBaseInit: function(field, options) {
       if (!options)
         options = {};
       if (options['suggestionMode'] !== undefined)
@@ -575,8 +577,10 @@ if (typeof Def === 'undefined')
       this.options.frequency    = this.options.frequency || 0.01;
       this.options.minChars     = this.options.minChars || 2;
 
+      this.element     = typeof field === 'string' ? $(field) : field;
+      this.ensureNeededAttrs();
+
       // --- start of section copied from controls.js baseInitialize ---
-      this.element     = $(fieldID);
       this.hasFocus    = false;
       this.changed     = false;
       this.active      = false;
@@ -635,6 +639,22 @@ if (typeof Def === 'undefined')
       // Set the active list item index to -1, instead of 0 as in controls.js,
       // because there might not be any list items.
       this.index = -1;
+    },
+
+
+    /**
+     *  Ensures there is an ID on the list's element, creating one if necessary.
+     */
+    ensureNeededAttrs: function () {
+      // The autocompleter uses the ID attribute of the element. If pElem
+      // does not have an ID, give it one.
+      var pElem = this.element;
+      if (pElem.id === '') {
+        // In this case just make up an ID.
+        if (!Def.Autocompleter.lastGeneratedID_)
+          Def.Autocompleter.lastGeneratedID_ = 0;
+        pElem.id = 'ac' + ++Def.Autocompleter.lastGeneratedID_;
+      }
     },
 
 
