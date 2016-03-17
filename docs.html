@@ -115,12 +115,14 @@
         although it is possible to completely replace the list with another after the
         page loads (via the setListAndField method).  The syntax is as follows:
 
-        <p><code>new Def.Autocompleter.Prefetch(fieldID, [array, of, items],
+        <p><code>new Def.Autocompleter.Prefetch(field, [array, of, items],
         options);</code></p>
 
         <div>Parameters:
           <ol>
-            <li>the ID of the form field for which the list is displayed</li>
+            <li>the ID or DOM Element of the form field for which the list is
+              displayed.  If an element is provided, it must contain an ID
+              attribute, or one will be assigned.</li>
             <li>the array of completion options (list values).  If not
                specified here, the list can be supplied later by a call to the
                setListAndField function.</li>
@@ -157,7 +159,9 @@
 
         <div>Parameters:
           <ol>
-            <li>the ID of the form field for which the list is displayed</li>
+            <li>the ID or DOM Element of the form field for which the list is
+              displayed.  If an element is provided, it must contain an ID
+              attribute, or one will be assigned.</li>
             <li id="url">url for getting the completion list.  The website answering the
              URL is expected to understand the following parameters:
               <ul>
@@ -335,6 +339,9 @@
           directive.  For example:</p>
 
         <p><code>&lt;input id="myfield" autocomplete-lhc="opts" ng-model="selectedVal"&gt;</code></p>
+
+        <p>The "id" and "name" attributes can be omitted, in which case values
+         will be assigned.</p>
 
         <p>The opts object contains the options normally passed into the
          constructor.  As of version 8.0.0 of the autocompleter, this object
