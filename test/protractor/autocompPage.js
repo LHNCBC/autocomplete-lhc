@@ -16,7 +16,8 @@ var AutocompPage = function() {
   this.prefetchCWEID = 'prefetch_cwe';  // single-select
   this.prefetchCWE = $('#'+this.prefetchCWEID);  // single-select
   this.prefetchWithDefault = $('#prefetch_default_cne');
-  this.searchCNE = $('#fe_search_cne');
+  this.searchCNECSS = '#fe_search_cne';
+  this.searchCNE = $(this.searchCNECSS);
   this.itemNumMatchField = $('#item_num_match_test');
   this.alleleSearch = $('#allele_search');
 
