@@ -50,4 +50,51 @@ describe('search lists', function() {
     po.waitForSearchResults();
     expect(po.listIsVisible()).toBeTruthy();
   });
+
+  describe('clearCachedResults', function() {
+    it('should cause new results to be fetched for the next search', function () {
+      po.searchCNE.click();
+      po.searchCNE.sendKeys('ar');
+      po.firstSearchRes.click();
+      expect(po.searchCNE.getAttribute('value')).toEqual('Arachnoiditis');
+      // Now change the URL and reset the cache
+      po.nonField.click(); // hide the list
+      browser.driver.executeScript(
+        'jQuery("'+po.searchCNECSS+'")[0].autocomp.url = "/form/get_search_res_list?fd_id=2163"');
+      browser.driver.executeScript(
+        'jQuery("'+po.searchCNECSS+'")[0].autocomp.clearCachedResults()');
+      // Try the search again-- it should be different
+      po.clearField(po.searchCNE);
+      po.searchCNE.click();
+      po.searchCNE.sendKeys('ar');
+      po.waitForSearchResults();
+      po.firstSearchRes.click();
+      expect(po.searchCNE.getAttribute('value')).toEqual('Arm pain');
+      // Note:  Subsequent tests (if there are any) should reload the page to avoid odd results
+    });
+  });
+
+  describe('setURL', function() {
+    it('should cause new results to be fetched for the next search', function () {
+      // This is the same test as for clearCachedResults, but I wanted to test
+      // both functions directly, because both will documented.
+      po.openTestPage();
+      po.searchCNE.click();
+      po.searchCNE.sendKeys('ar');
+      po.firstSearchRes.click();
+      expect(po.searchCNE.getAttribute('value')).toEqual('Arachnoiditis');
+      // Now change the URL and reset the cache
+      po.nonField.click(); // hide the list
+      browser.driver.executeScript(
+        'jQuery("'+po.searchCNECSS+'")[0].autocomp.setURL("/form/get_search_res_list?fd_id=2163")');
+      // Try the search again-- it should be different
+      po.clearField(po.searchCNE);
+      po.searchCNE.click();
+      po.searchCNE.sendKeys('ar');
+      po.waitForSearchResults();
+      po.firstSearchRes.click();
+      expect(po.searchCNE.getAttribute('value')).toEqual('Arm pain');
+      // Note:  Subsequent tests (if there are any) should reload the page to avoid odd results
+    });
+  });
 });

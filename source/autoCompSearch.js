@@ -396,6 +396,28 @@
 
 
     /**
+     *  Forgets previously cached results.
+     */
+    clearCachedResults: function() {
+      var targetField = Def.Autocompleter.getFieldLookupKey(this.element);
+      this.resultCache_ = [{}, {}];
+      Def.Autocompleter.Search.fieldToCache_[targetField] = this.resultCache_;
+    },
+
+
+    /**
+     *  Changes the autocompleter's URL to the given URL, and clears any
+     *  previously cached results.
+     * @param url The new url for getting the completion list.  See the "url"
+     *  parameter in the constructor.
+     */
+    setURL: function(url) {
+      this.url = url;
+      this.clearCachedResults();
+    },
+
+
+    /**
      *  Returns true if the given key event (from the input field) is a request
      *  for showing the expanded list.
      * @param event the key event
