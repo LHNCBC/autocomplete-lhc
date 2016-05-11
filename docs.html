@@ -5,7 +5,7 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
+    
     <meta name="description" content="Autocomplete-lhc : An autocompleter package used by the NLM LForms and PHR projects">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
@@ -33,7 +33,7 @@
             </div>
             <section id="downloads">
               <a class="zip_download_link"
-               href="https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/latest.zip"
+               href="https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/"
               >Download pre-built JavaScript and CSS as a .zip file</a>
               <!--<a class="zip_download_link" href="https://github.com/lhncbc/autocomplete-lhc/zipball/master">Download this project as a .zip file</a>
               <a class="tar_download_link" href="https://github.com/lhncbc/autocomplete-lhc/tarball/master">Download this project as a tar.gz file</a>
@@ -61,7 +61,7 @@
         <li><a href="#directive">AngularJS Directive</a></li>
       </ul>
       <section id="main_content" class="col">
-        <h1></a>Documentation for autocomplete-lhc</h1>
+        <h1>Documentation for autocomplete-lhc</h1>
 
         <p>The easiest way to get started is to check the <a
         href="index.html#demos">demos</a>.  Below each demo is a "show source" link that
@@ -115,14 +115,12 @@
         although it is possible to completely replace the list with another after the
         page loads (via the setListAndField method).  The syntax is as follows:
 
-        <p><code>new Def.Autocompleter.Prefetch(field, [array, of, items],
+        <p><code>new Def.Autocompleter.Prefetch(fieldID, [array, of, items],
         options);</code></p>
 
         <div>Parameters:
           <ol>
-            <li>the ID or DOM Element of the form field for which the list is
-              displayed.  If an element is provided, it must contain an ID
-              attribute, or one will be assigned.</li>
+            <li>the ID of the form field for which the list is displayed</li>
             <li>the array of completion options (list values).  If not
                specified here, the list can be supplied later by a call to the
                setListAndField function.</li>
@@ -159,19 +157,18 @@
 
         <div>Parameters:
           <ol>
-            <li>the ID or DOM Element of the form field for which the list is
-              displayed.  If an element is provided, it must contain an ID
-              attribute, or one will be assigned.</li>
+            <li>the ID of the form field for which the list is displayed</li>
             <li id="url">url for getting the completion list.  The website answering the
              URL is expected to understand the following parameters:
               <ul>
-                <li>terms - the text from the field.  This should be used to find
+                <li>terms - the text the user entered in the field.  This should be used to find
                  matching list items.</li>
                 <li>autocomp - whether this is an autocompletion event, or a request
                  for a large list of search results (e.g. by using the "see more" link
                  on the list).  If autocomp==1, that means this is an autocompletion
                  request and the server should return a short list (e.g. 7 items) as
-                 quickly as possible.</li>
+                 quickly as possible.  If this parameter is omitted, a large
+                 list (e.g. 500 items) should be returned.</li>
                 <li>authenticity_token - (optional) This is an anti-CSRF parameter.
                  If the page has a value in window._token, it will get sent in this
                  parameter.</li>
@@ -179,8 +176,8 @@
                  will trigger a request for suggestions that are close to what the
                  user typed.  A "suggest" parameter value of "1" means the request
                  is for suggestions.</li>
-                <li>field_val - When "suggest"==1, this contains the value the user
-                 typed.</li>
+                <li>field_val - When "suggest"==1, this will contain the value the user
+                 typed in the field (instead of the "terms" parameter).</li>
               </ul>
               The URL's response should be an array.  For a non-suggestion request
               (suggest != '1'), it should have the following elements:
@@ -340,14 +337,8 @@
 
         <p><code>&lt;input id="myfield" autocomplete-lhc="opts" ng-model="selectedVal"&gt;</code></p>
 
-        <p>The "id" and "name" attributes can be omitted, in which case values
-         will be assigned.</p>
-
         <p>The opts object contains the options normally passed into the
-         constructor.  As of version 8.0.0 of the autocompleter, this object
-         is watched for changes, so if you return it via a function call, the
-         function should return the same object unless the options really change.
-         As mentioned above, there are two types of autocompleters.  You can
+         constructor.  As mentioned above, there are two types of autocompleters.  You can
          either have a "prefetch" list where all the items are given to the autocompleter
          at construction time, or a "search" list where the list items are discovered
          as the user types, via AJAX calls.  For both types, opts is a hash, but the
