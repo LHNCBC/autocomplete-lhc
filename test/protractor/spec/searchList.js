@@ -53,6 +53,7 @@ describe('search lists', function() {
 
   describe('clearCachedResults', function() {
     it('should cause new results to be fetched for the next search', function () {
+      po.nonField.click(); // hide the list (from previous test)
       po.searchCNE.click();
       po.searchCNE.sendKeys('ar');
       po.firstSearchRes.click();

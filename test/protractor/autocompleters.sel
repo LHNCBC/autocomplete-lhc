@@ -193,8 +193,6 @@
 | fireEvent | race_or_ethnicity | focus |
 | mouseDown | css=span#completionOptions > ul > li:first-child |
 | waitForValue | race_or_ethnicity | American Indian or Alaska Native |
-# (refocus, because clicking on an item now moves the focus)
-| fireEvent | race_or_ethnicity | focus |
 
 # Test an invalid value
 | typeKeys | race_or_ethnicity | z |
@@ -248,6 +246,9 @@
 # Confirm that the no_match indicator is still present
 | assertExpression | javascript{jQuery('#prefetch_cwe').hasClass('no_match')} | true |
 | waitForExpression | javascript{jQuery('#prefetch_cwe')[0].autocomp.hasFocus} | false |
+
+# Close existing list
+| click | main_title |
 
 # Tests for a search CNE field
 | fireEvent | fe_search_cne | focus |

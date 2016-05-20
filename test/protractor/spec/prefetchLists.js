@@ -58,6 +58,7 @@ describe('Prefetch lists', function() {
      function() {
 
     expect(po.itemNumMatchField.getAttribute('value')).toBe(''); // precondition
+    po.nonField.click(); // close open list
     po.itemNumMatchField.click();
     po.itemNumMatchField.sendKeys('20');
     // All the items match "20".  Make sure it picks #20.
