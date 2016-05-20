@@ -5,7 +5,7 @@
 #     You may set variables before sourcing this to change execution
 # of it.
 
-set NODE_PATH = /depot/packages/node-v0.10.40_lforms.v1
+set NODE_PATH = /depot/packages/node-v4.4.3-linux-x64
 
 set path = ($NODE_PATH/bin /bin /usr/local/bin /usr/bin /usr/sbin /sbin /etc)
 
@@ -45,3 +45,7 @@ if ($?prompt) then
   unset autologout
 endif
 
+# Set LD_LIBRARY_PATH, which is needed for the protrator tests while we are
+# using Chrome instead of Firefox, which are doing because of this issue:
+#   https://github.com/angular/protractor/issues/3200
+setenv LD_LIBRARY_PATH /opt/google/chrome/lib

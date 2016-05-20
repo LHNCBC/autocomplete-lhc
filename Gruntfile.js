@@ -78,7 +78,7 @@ module.exports = function(grunt) {
       chrome: {
         options: {
           args: {
-            browser: 'firefox'
+            browser: 'chrome'
           }
         }
       }
