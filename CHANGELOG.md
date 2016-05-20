@@ -11,8 +11,8 @@ This log documents significant changes for each release.  This project follows
 
 ## [8.1.0] - 2016-04-07
 ### Added 
-- search autocompleters now have a "seturl" method for updating the url which
+- Search autocompleters now have a "setURL" method for updating the URL which
   also takes care of clearing the cached autocompletion results (from the
-  previous url), as well as a clearcachedresults method for clearing the cache
-  (called by seturl).
+  previous URL), as well as a clearCachedResults method for clearing the cache
+  (called by setURL).
 
