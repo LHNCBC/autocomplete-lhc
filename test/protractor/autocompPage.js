@@ -5,7 +5,7 @@ var config = require('../config');
 var AutocompPage = function() {
   BasePage.call(this);
 
-  this.nonField = $('#content');
+  this.nonField = $('#main_title');
   this.prefetchCNEFieldName = 'race_or_ethnicity';
   this.prefetchCNE = $('#'+this.prefetchCNEFieldName);
 

@@ -1,5 +1,19 @@
 var po = require('../autocompPage.js');
 describe('autocomp scroll function', function() {
+  var windowSize;
+
+  beforeAll(function() {
+    // Store the current size of the window before we run the test below which
+    // resize the window.
+    browser.manage().window().getSize().then(function(size) {
+      windowSize=size;
+    });
+  });
+
+  afterAll(function() {
+    // Reset the window to its full size for subsequent tests
+    browser.manage().window().setSize(windowSize.width, windowSize.height);
+  });
 
   it('should scroll the list into view', function() {
     po.openTestPage();
