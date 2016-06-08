@@ -226,7 +226,10 @@
 
                 // if there's an autocomp already
                 if (pElem.autocomp) {
-                  //destroy the exisitng autocomp
+                  // If the URL is changing, clear the cache
+                  if (pElem.autocomp.url !== options.url)
+                    pElem.autocomp.clearCachedResults();
+                  // Destroy the exisitng autocomp
                   pElem.autocomp.destroy();
                   // clean up the modal data
                   scope.modelData = null;
