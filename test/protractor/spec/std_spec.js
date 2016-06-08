@@ -7,7 +7,7 @@ describe('autocomp', function() {
   var raceField = po.prefetchCNE;
   var searchCNE =  po.searchCNE;
   var suggestionMode0CWE = $('#fe_search0_cwe');
-  var suggestionMode1CWE = $('#fe_search_cwe');
+  var suggestionMode1CWE = po.searchCWE;
   var suggestionMode2CWE = $('#fe_search2_cwe');
 
   it('should respond to the suggestion mode setting',
