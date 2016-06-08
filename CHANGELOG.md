@@ -3,6 +3,14 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [9.0.1] - 2016-06-08
+### Fixed
+- The field separator character is now removed from search strings before
+  querying.  This solves a problem in which a selected list item could look
+  invalid if a query was sent for the combined field value of a multi-field list.
+- The AngularJS directive now clears a search field's result cache if its URL
+  changes. 
+
 ## [9.0.0] - 2016-06-07
 ### Fixed
 - Removed the field's background image for print media.
