@@ -307,6 +307,23 @@
 
 
     /**
+     *  Returns the field value with any field separator strings replaced by
+     *  spaces, so it is ready to use as a search string.
+     * @param fieldVal (optional) the field value if already obtained from this.element
+     */
+    getSearchStr: function(fieldVal) {
+      // Use a cached version of the regular expression so we don't need to
+      // create one for every autocompletion request.
+      var ac = Def.Autocompleter;
+      if (!ac.LIST_ITEM_FIELD_SEP_REGEX)
+        ac.LIST_ITEM_FIELD_SEP_REGEX = new RegExp(ac.LIST_ITEM_FIELD_SEP, 'g');
+      if (!fieldVal)
+        fieldVal = this.element.value;
+      return fieldVal.replace(ac.LIST_ITEM_FIELD_SEP_REGEX, ' ');
+    },
+
+
+    /**
      *  Runs the search (asynchronously).  This gets called when the search
      *  button is clicked.  When the search completes, onComplete
      *  will be called to update the choice list.
@@ -322,7 +339,7 @@
       this.searchStartTime = new Date().getTime();
 
       // See if the search has been run before.
-      var searchStr = this.element.value;
+      var searchStr = this.getSearchStr();
       var results = null;
       if (this.useResultCache_) {
         results = this.getCachedResults(searchStr,
@@ -649,7 +666,7 @@
      * @param fromCache whether "response" is from the cache (optional).
      */
     onComplete: function(xhrObj, textStatus, fromCache) {
-      this.elemVal = this.element.value.trim();
+      this.elemVal = this.element.value.trim(); // used in autoCompBase
       if (this.lastAjaxRequest_ === xhrObj) {
         this.lastAjaxRequest_ = null;
       }
@@ -669,9 +686,11 @@
         // The search string is a truncated version of the field value for
         // autocompletion requests.  Compute what the search string would be
         // if it were sent for the current field value.
-        var searchStrForFieldVal = autocomp ?
-          this.element.value.substr(0, searchAC.MAX_VALUE_SIZE_FOR_AUTOCOMP) :
-          this.element.value;
+        var searchStrForFieldVal = this.getSearchStr(this.elemVal);
+        if (autocomp) {
+          searchStrForFieldVal =
+            searchStrForFieldVal.substr(0, searchAC.MAX_VALUE_SIZE_FOR_AUTOCOMP);
+        }
 
         // If the user is not in the field, don't try to display the returned
         // results.   (Note:  Refocusing does not work well, because it
@@ -871,7 +890,7 @@
 
       var results = null;
       var autocompSearch =  Def.Autocompleter.Search;
-      var fieldVal = this.element.value;
+      var fieldVal = this.getSearchStr();
       // Truncate fieldVal to some maximum length so we limit the number of
       // autocompletion requests that get generated if a user sets a book on the
       // keyboard.
@@ -908,9 +927,10 @@
      *  not match the list.
      */
     findSuggestions: function() {
+      var fieldVal = this.getSearchStr();
       var paramData = {
         authenticity_token: window._token || '',
-        field_val: this.element.value,
+        field_val: fieldVal,
         suggest: 1
       };
       var options = {
@@ -921,7 +941,7 @@
       suggestionDialog.resetDialog();
       suggestionDialog.show();
       $('suggestionFieldVal').innerHTML =
-        Def.PrototypeAPI.escapeHTML(this.element.value);
+        Def.PrototypeAPI.escapeHTML(fieldVal);
 
       jQuery.ajax(this.url, options);
     },

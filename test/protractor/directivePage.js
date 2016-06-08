@@ -49,7 +49,8 @@ var DirectivePage = function() {
     element.all(by.css(multiPrefetchCWESectionCSS + ' button'));
 
   // Multi-select CWE search list
-  this.multiSearchCWE = $('#multiSearchCWE');
+  this.multiSearchCWECSS = '#multiSearchCWE';
+  this.multiSearchCWE = $(this.multiSearchCWECSS);
   var multiSearchCWESectionCSS = '#multiSearchCWESection'
   this.multiSearchCWEFirstSelected =
     element(by.css(multiSearchCWESectionCSS + ' li:first-child button'));

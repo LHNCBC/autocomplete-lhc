@@ -165,13 +165,15 @@
           maxSelect: '*'
         };
 
-        $scope.multiSearchCWEOpts = {
+        // Make this field's options globally accessible so we can change them.
+        window.multiSearchCWEOpts = {
           url: '/form/get_search_res_list?fd_id=1284',
           matchListValue: false,
           autocomp: true,
           maxSelect: '*',
           suggestionMode: 0
         };
+        $scope.multiSearchCWEOpts = multiSearchCWEOpts;
 
         $scope.multiSearchCWEPrePopVal = [
           {text: 'item1', code: 'a'},

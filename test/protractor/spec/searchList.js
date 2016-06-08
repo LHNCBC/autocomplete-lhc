@@ -51,8 +51,33 @@ describe('search lists', function() {
     expect(po.listIsVisible()).toBeTruthy();
   });
 
+  it('should remove LIST_ITEM_FIELD_SEP from search strings', function() {
+    po.nonField.click(); // hide the list (from previous test)
+    po.searchCNE.click();
+    po.searchCNE.sendKeys('ab - c');
+    // Check that the result is the same as 'ab c'
+    po.waitForSearchResults();
+    expect(po.listIsVisible()).toBeTruthy();
+    expect(po.firstSearchRes.getInnerHtml()).toEqual('CAD3');
+    expect(po.secondSearchRes.getInnerHtml()).toEqual('zArm pain3');
+
+    // Now try the non-match suggestion list.
+    po.searchCWE.click();
+    po.searchCWE.sendKeys('ab - c');
+    po.nonField.click(); // leave the field to trigger the suggestions
+    browser.wait(function() {
+      return po.suggestionDialog.isPresent();
+    }, 5000);
+    expect(po.suggestionDialog.isDisplayed()).toBeTruthy();
+    expect(po.firstSugLink.isDisplayed()).toBeTruthy();
+    expect(po.firstSugLink.getInnerHtml()).toEqual('Blue');
+    // Close the dialog before continuing to the next test
+    po.suggestionDialogClose.click();
+  });
+
   describe('clearCachedResults', function() {
     it('should cause new results to be fetched for the next search', function () {
+      po.openTestPage(); // clear field values
       po.nonField.click(); // hide the list (from previous test)
       po.searchCNE.click();
       po.searchCNE.sendKeys('ar');

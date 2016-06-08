@@ -181,7 +181,7 @@
      *  Populates the list based on the field content.
      */
     getUpdatedChoices: function() {
-      this.elemVal = this.element.value;
+      this.elemVal = this.element.value.trim();
       this.updateChoices(this.options.selector(this), this.pickedByNumber());
     },
 

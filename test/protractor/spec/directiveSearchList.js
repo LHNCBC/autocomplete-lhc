@@ -67,6 +67,28 @@ describe('directive', function() {
         {text: 'ar'});
     });
 
+    it('should clear its cache if the URL changes', function() {
+      // Confirm we get a certain result before changing the URL.  (It should be
+      // different than the result that follows after changing the URL.)
+      dp.clearField(dp.multiSearchCWE);
+      dp.multiSearchCWE.sendKeys('ar');
+      dp.waitForSearchResults();
+      expect(dp.firstSearchRes.getInnerHtml()).toEqual('Adult respiratory distress syndrome (ARDS)');
+      // Change the URL and confirm we get different results for the new list
+      browser.driver.executeScript(
+        "window.multiSearchCWEOpts.originalUrl = window.multiSearchCWEOpts.url;"+
+        "window.multiSearchCWEOpts.url = '/form/get_search_res_list?fd_id=2163';"+
+        "angular.element('"+dp.multiSearchCWECSS+"').scope().$digest();");
+      dp.clearField(dp.multiSearchCWE);
+      dp.multiSearchCWE.sendKeys('ar');
+      dp.waitForSearchResults();
+      expect(dp.firstSearchRes.getInnerHtml()).toEqual('Arm pain');
+      // Restore the url
+      browser.driver.executeScript(
+        "window.multiSearchCWEOpts.url = window.multiSearchCWEOpts.originalUrl;"+
+        "angular.element('"+dp.multiSearchCWECSS+"').scope().$digest();");
+    });
+
     it('should provide suggestions when no list has been brought up', function() {
       // This was added for issue LF-95.  The suggestions box failed to appear
       // if the field had not previously shown a list when the field was left

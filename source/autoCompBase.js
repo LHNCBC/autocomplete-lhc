@@ -1330,7 +1330,7 @@ if (typeof Def === 'undefined')
       // 1) the shortest choice with the field value at the beginning, or
       // 2) the shortest choice with the field value somewhere, or
       // 3) the shortest choice
-      var elemValue = this.elemVal.trim().toLowerCase();
+      var elemValue = this.elemVal.toLowerCase();
       var numItems = listItems.length;
       var rtn = -1;
 
