@@ -3,10 +3,14 @@ var po = require('../autocompPage.js');
 var hasClass = require('../test_helpers').hasClass;
 
 describe('multi-field lists', function() {
+  beforeAll(function() {
+    po.openTestPage();
+  });
+
+
 /* Commenting out multi-field prefetch tests until we support that
 
   it('should show both fields in the list', function() {
-    po.openTestPage();
     po.multiFieldPrefetch.click();
     expect(po.firstSearchRes).toBe('Spanish - Español');
   });
@@ -29,7 +33,6 @@ describe('multi-field lists', function() {
 
 
   it('should show both fields in the list for search fields', function() {
-    po.openTestPage();
     po.multiFieldSearch.click();
     po.multiFieldSearch.sendKeys('ar');
     po.waitForSearchResults();
@@ -62,4 +65,22 @@ describe('multi-field lists', function() {
     expect(po.tableSearchResult(1).getInnerHtml()).not.toBe('<td>NM_001113511</td>');
   });
 
+
+  it('should show the column headers when those are specified', function() {
+    po.multiFieldSearchHeaders.click();
+    po.multiFieldSearchHeaders.sendKeys('ar');
+    expect(po.tableSearchResult(1).getInnerHtml()).toBe('<th>C1</th><th>C2</th>');
+    // Make sure we can't click on the header and select it
+    po.tableSearchResult(1).click();
+    expect(po.multiFieldSearchHeaders.getAttribute('value')).toBe('ar');
+    // Make sure we don't select the header by arrowing down
+    po.multiFieldSearchHeaders.sendKeys(protractor.Key.ARROW_DOWN);
+    element.all(by.css(po.searchResCSS + ' tr:nth-child(1)')).then(
+         function(firstRows) {
+      // firstRows contains the header row and then the first row of tbody.
+      expect(firstRows.length).toBe(2);
+      expect(hasClass(firstRows[0], 'selected')).toBe(false);
+      expect(hasClass(firstRows[1], 'selected')).toBe(true);
+    });
+  });
 });

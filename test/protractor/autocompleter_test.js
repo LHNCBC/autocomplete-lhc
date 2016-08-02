@@ -139,11 +139,19 @@ var fe_search_cwe_autoComp =
   new Def.Autocompleter.Search('multi_field_search_cwe',
     '/form/get_search_res_list?fd_id=2164', opts);
 
+// A multi-field search CNE with column headers
+opts.colHeaders = ['C1', 'C2'];
+new Def.Autocompleter.Search('multi_field_search_headers',
+    '/form/get_search_res_list?fd_id=2164', opts);
+
+
 // Another multi-field search CNE but pointed at a URL that only returns one
 // column of data.
 delete opts['valueCols'];
+delete opts['colHeaders'];
 new Def.Autocompleter.Search('multi_field_search_cwe2',
     '/form/get_search_res_list?fd_id=2165', opts);
+
 
 // A multi-field (table format) search CWE with only one column and that is
 // multi-select.

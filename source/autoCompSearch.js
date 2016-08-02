@@ -203,6 +203,9 @@
      *     (starting with 0).  If absent, all columns will be combined for the
      *     value.  Note that the specification here must result in unique field
      *     values for each table row.</li>
+     *    <li>colHeaders - Used when tableFormat is true, this is an array of
+     *     column headers for the columns in the table.  If this is not supplied, no header
+     *     row will be created.</li>
      *  </ul>
      */
     initialize: function(fieldID, url, options) {
@@ -275,6 +278,11 @@
         button.keypress(jQuery.proxy(this.buttonKeyPress, this));
       }
       jQuery(this.element).addClass('search_field');
+
+      if (options.colHeaders) {
+        this.colHeaderHTML = '<table><thead><th>'+
+          options.colHeaders.join('</th><th>') + '</th></thead><tbody>';
+      }
     },
 
 
@@ -544,7 +552,7 @@
       var rtn, htmlStart, htmlEnd, rowStartOpen, rowStartClose, fieldSep, rowEnd;
       var tableFormat = this.options.tableFormat;
       if (tableFormat) {
-        htmlStart = '<table><tbody>';
+        htmlStart = this.colHeaderHTML || '<table><tbody>';
         htmlEnd = '</tbody></table>';
         rowStartOpen = '<tr';
         rowStartClose = '><td>';

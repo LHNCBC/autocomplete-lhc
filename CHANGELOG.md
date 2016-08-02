@@ -3,6 +3,13 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [9.1.0] - 2016-08-02
+### Added
+- The ability to specify column headers for search lists
+
+### Changed
+- The color scheme, as a part of selecting the color for the heading.
+
 ## [9.0.1] - 2016-06-08
 ### Fixed
 - The field separator character is now removed from search strings before

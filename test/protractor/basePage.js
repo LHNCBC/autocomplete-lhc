@@ -3,6 +3,7 @@ function BasePage() {
   var searchResID = 'searchResults';
   var searchResCSS = '#'+searchResID;
   var searchResults = this.searchResults = $(searchResCSS);
+  this.searchResCSS = searchResCSS;
   this.allSearchRes = element.all(by.css(searchResCSS + ' li'));
   this.expandLink = $('#moreResults');
   this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion

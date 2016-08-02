@@ -193,7 +193,7 @@ if (typeof Def === 'undefined')
     listItemElementContainer: function() {
       var rtn = jQuery("#completionOptions")[0].firstChild;
       if (rtn && rtn.tagName === "TABLE")
-        rtn = rtn.firstChild; // tbody
+        rtn = rtn.tBodies[0]; // tbody
       return rtn;
     },
 
@@ -1270,6 +1270,13 @@ if (typeof Def === 'undefined')
       this.index = -1;
       if (!this.changed && this.hasFocus) {
         this.update.innerHTML = choices;
+        // If the HTML has a header row, disable clicks on that row
+        var fc = this.update.firstChild;
+        if (fc && fc.tHead) {
+          jQuery(fc.tHead).mousedown(function (e) {
+            Def.Autocompleter.stopEvent(e)});
+        }
+
         var domItems = Def.Autocompleter.listItemElements();
 
         if (domItems) {

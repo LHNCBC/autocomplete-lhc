@@ -1,5 +1,9 @@
 /**
  * auto-completion.css - AutoCompletion-specific style specifications
+ *
+ * Colors (mostly) selected from palette generated at
+ * http://www.perbang.dk/color+scheme/,
+ * Using a base of D1E1F0, with color scheme "Monochromatic".
  */
 
 /**
@@ -15,7 +19,7 @@
 #searchCount {
   display: none;
   font-size: 90%;
-  background-color: #e0e2d7;
+  background-color: #E3E7EA;
   padding-left: 3px;
   padding-right: 3px;
   overflow: hidden;
@@ -26,7 +30,7 @@
   font-weight: normal;
   font-style: italic;
   font-size: 90%;
-  background-color: #e0e2d7;
+  background-color: #E3E7EA;
   padding-left: 3px;
   padding-right: 3px;
   overflow: hidden;
@@ -39,7 +43,7 @@
   color: #00F;
   padding-left: 3px;
   padding-right: 3px;
-  border: 2px solid #2E5373;
+  border: 2px solid #225599;
   border-top-width: 0px;
   cursor: pointer;
 }
@@ -100,12 +104,12 @@
 
 
 .suggestion {
-  color: DarkBlue;
+  color: #001A33;
 }
 
 
 .auto_complete .selected {
-  background-color: #daeae9;
+  background-color: #BBCCDD;
 }
 
 .auto_complete li:hover,  .auto_complete tr:hover {
@@ -113,11 +117,11 @@
 }
 
 .auto_complete > ul > li.heading:hover {
-  background-color: #622;
+  background-color: #001A33;
 }
 
 .heading {
-  background-color: #622;
+  background-color: #001A33;
   color: white;
 }
 
@@ -224,7 +228,7 @@ input.search_field, textarea.search_field {
   display: inline-block;
   border-radius: 5px;
   border: 1px solid #444;
-  background-color: #DDD;
+  background-color: #D7DADD;
   padding-left: 0.25em;
   padding-right: 0.25em;
   margin-right: 0.25em;
@@ -233,7 +237,7 @@ input.search_field, textarea.search_field {
 }
 .autocomp_selected li > button {
   border: 0;
-  background-color: #DDD;
+  background-color: #D7DADD;
   font-weight: 800;
   padding-left: 0.25em;
   padding-right: 0.25em;
@@ -271,3 +275,8 @@ input.search_field, textarea.search_field {
   padding-right: 0.75em;
 }
 
+#completionOptionsScroller th {
+  border-right: 1px solid gray;
+  font-size: 85%;
+  background-color: #D7DADD;
+}

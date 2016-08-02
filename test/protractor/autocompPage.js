@@ -59,6 +59,7 @@ var AutocompPage = function() {
   this.multiFieldSearch = $('#multi_field_search_cwe');
   this.multiSelectTableSearchID = 'table_format_multi_sel_search_cwe';
   this.multiSelectTableSearch = $('#'+this.multiSelectTableSearchID);
+  this.multiFieldSearchHeaders = $('#multi_field_search_headers');
 
   this.testPageURL = 'http://localhost:'+config.port+
     '/test/protractor/autocomp_atr.html';
