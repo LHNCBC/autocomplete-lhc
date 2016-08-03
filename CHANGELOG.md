@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [9.1.1] - 2016-08-03
+### Fixed
+- Missing padding around column headers
+
 ## [9.1.0] - 2016-08-02
 ### Added
 - The ability to specify column headers for search lists

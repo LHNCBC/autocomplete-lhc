@@ -279,4 +279,6 @@ input.search_field, textarea.search_field {
   border-right: 1px solid gray;
   font-size: 85%;
   background-color: #D7DADD;
+  padding-left: 0.25em;
+  padding-right: 0.75em;
 }
