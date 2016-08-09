@@ -3,8 +3,6 @@ Slate Theme for GitHub Pages
 by Jason Costello, @jsncostello
 *******************************************************************************/
 
-@import url(pygment_trac.css);
-
 /*******************************************************************************
 MeyerWeb Reset
 *******************************************************************************/
@@ -317,14 +315,14 @@ Full-Width Styles
 
 #header_buttons {
   position: absolute;
-  width: 545px;
+  width: 560px; /* linux Chrome needs 560 */
   z-index: 10;
   bottom: -1em;
 }
 
 #header_buttons a, #header_buttons div {
   display: block;
-  float: right;
+  float: left;
   overflow: hidden;
   background-color: #555;
   font-weight: bold;
@@ -409,7 +407,7 @@ Full-Width Styles
 
 #main_content {
   width: 50%;
-  margin-left: 25%;
+  /*margin-left: 25%;*/
 }
 
 
@@ -417,7 +415,7 @@ Full-Width Styles
 Small Device Styles
 *******************************************************************************/
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 560px) {
   body {
     font-size:14px;
   }
@@ -433,6 +431,16 @@ Small Device Styles
 
   #project_title {
   font-size: 32px;
+  }
+
+  #main_content {
+    width: auto;
+    padding-top: 0;
+  }
+
+  #toc {
+    position: static;
+    width: auto;
   }
 
   h1 {

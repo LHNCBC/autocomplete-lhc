@@ -2,21 +2,33 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    copy: {
-      dist: {
-        files: [ {src: 'indexPreMin.html', dest: 'index.html'},
-                 {src: ['autocomplete-lhc/source/*.css',
-                        'autocomplete-lhc/source/*.png'],
-                  dest: 'dist/autocomplete-lhc', expand: true, flatten: true,
-                  cwd: 'bower_components'},
-                 {src: ['autocomplete-lhc/source/*.css',
-                        'autocomplete-lhc/source/*.png',
-                        'jquery-ui/themes/ui-lightness/**'],
-                  dest: 'dist/', expand: true, cwd: 'bower_components'} ]
+    clean: {
+      default: {
+        files: [{
+          source: ['dist']
+        }]
       }
     },
 
-     // Automatically inject Bower components into the app
+    copy: {
+      dist: {
+        files: [ {src: 'indexPreMin.html', dest: 'index.html'},
+                 {src: ['autocomplete-lhc/source/*.png'],
+                  dest: 'dist/', expand: true, flatten: true,
+                  cwd: 'bower_components'} ]
+      }
+    },
+
+    cssmin: {
+      default: {
+        files: [{
+          dest: 'dist/demo.min.css',
+          src: ['.tmp/concat/dist/demo.min.css']
+        }]
+      }
+    },
+
+    // Automatically inject Bower components into the app
     wiredep: {
       target: {
         src: 'indexPreMin.html'
@@ -24,7 +36,7 @@ module.exports = function(grunt) {
     },
 
 
-    'useminPrepare': {
+    useminPrepare: {
       options: {
         dest: '.'
       },
@@ -32,15 +44,18 @@ module.exports = function(grunt) {
     },
 
     usemin: {
-      html: ['index.html']
+      html: ['index.html', 'docs.html']
     }
   });
 
-  grunt.loadNpmTasks('grunt-wiredep');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-usemin');
+  grunt.loadNpmTasks('grunt-wiredep');
 
-  grunt.registerTask('default', ['wiredep', 'useminPrepare', 'copy', 'concat', 'uglify', 'usemin']);
+  grunt.registerTask('default', ['clean', 'wiredep', 'useminPrepare', 'copy',
+    'concat', 'uglify', 'cssmin', 'usemin']);
 };
