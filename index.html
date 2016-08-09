@@ -272,13 +272,15 @@ column being selected for the input field):
 <script>
 new Def.Autocompleter.Search('demo11',
   'https://lforms-service.nlm.nih.gov/genes?df=symbol,name_mod',
-  {nonMatchSuggestions: false, tableFormat: true, valueCols: [0]});
+  {nonMatchSuggestions: false, tableFormat: true, valueCols: [0],
+   colHeaders: ['Symbol', 'Name']});
 </script>
 </div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo11&quot;&gt;
 &lt;script&gt;
 new Def.Autocompleter.Search(&#39;demo11&#39;,
   &#39;https://lforms-service.nlm.nih.gov/genes?df=symbol,name_mod&#39;,
-  {nonMatchSuggestions: false, tableFormat: true, valueCols: [0]});
+  {nonMatchSuggestions: false, tableFormat: true, valueCols: [0],
+   colHeaders: [&#39;Symbol&#39;, &#39;Name&#39;]});
 &lt;/script&gt;
     </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 

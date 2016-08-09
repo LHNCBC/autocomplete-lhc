@@ -407,9 +407,15 @@ Full-Width Styles
 
 #main_content {
   width: 50%;
-  /*margin-left: 25%;*/
 }
 
+/* Override some styles for the autocompleter (restoring the autocompleter's
+ * CSS). */
+
+#searchResults th {
+  padding: initial;
+  color: black;
+}
 
 /*******************************************************************************
 Small Device Styles
