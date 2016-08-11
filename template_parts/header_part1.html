@@ -4,14 +4,17 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <!--#set var="tagline" value="An autocompleter package used by the NLM LForms and PHR projects" -->
-    <meta name="description" content="Autocomplete-lhc : <!--#echo var="tagline" -->">
+    <!--#set var="tagline" value="An autocompleter package used by the NLM PHR and LHC-Forms projects" -->
+    <meta name="description" content="Autocomplete-lhc: <!--#echo var="tagline" -->">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <title>Autocomplete-lhc<!--#echo var="titleFragment" --></title>
+    <!-- build:css dist/demo.min.css -->
+      <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/pygment_trac.css">
+      <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+      <link href="bower_components/autocomplete-lhc/source/auto_completion.css" media="screen" rel="stylesheet" />
+      <link href="bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen" rel="stylesheet" />
+    <!-- endbuild -->
 
-    <title>Autocomplete-lhc <!--#echo var="titleFragment" --></title>
-    <link href="dist/autocomplete-lhc/auto_completion.css" media="screen" rel="stylesheet" />
-    <link href="dist/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen" rel="stylesheet" />
   </head>
 
   <body ng-app="demoApp">
@@ -24,3 +27,6 @@
           <h1 id="project_title">Autocomplete-lhc</h1>
           <h2 id="project_tagline"><!--#echo var="tagline" --></h2>
             <div id="header_buttons">
+              <a href="index.html#installation">Installation</a>
+              <a href="index.html#demos">Demos</a>
+              <a href="index.html#features">Features</a>
