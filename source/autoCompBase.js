@@ -1432,9 +1432,13 @@ if (typeof Def === 'undefined')
       // Element.clonePosition does not work in Prototype 1.7.2 when the parent
       // element is document.body.  This is yet another of many position bugs in
       // the 1.7.x Prototype, so I am switching to JQuery.
+      // Moving the list can result in the scrollbar either appearing or
+      // disappearing, which can change the position of the field.  After
+      // setting top, recompute the offset for left.
       var elemPos = jQuery(element).offset();
-      positionedElement.style.left = elemPos.left + 'px';
       positionedElement.style.top = elemPos.top + element.offsetHeight + 'px';
+      elemPos = jQuery(element).offset();
+      positionedElement.style.left = elemPos.left + 'px';
 
       update.style.width = 'auto';
       this.listContainer.style.width = ''; // reset it
