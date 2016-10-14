@@ -12,7 +12,6 @@
       "latest chrome.  There has been an open pull request to update protractor",
       "to version 4 since July 18, 2016 (about 3 months)."
     ],
-    "webdriver-manager": "angular/webdriver-manager#5241fc14ea",
     "webdriver-manager": [
       "This used to be installed by protractor, but chrome and chrome driver",
       "have updated and the latest tagged version of webdriver-manager does not",
