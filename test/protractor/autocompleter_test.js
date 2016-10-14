@@ -23,7 +23,7 @@ var fe_search_cne_autoComp =
   new Def.Autocompleter.Search('fe_search_cne',
     '/form/get_search_res_list?fd_id=1284', opts);
 
-var opts = {'matchListValue': false,
+var opts = {'matchListValue': false, nonMatchSuggestions: true,
  'suggestionMode': Def.Autocompleter.SUGGEST_SHORTEST, 'autocomp': true};
 new Def.Autocompleter.Search('fe_search_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
@@ -78,9 +78,8 @@ opts = {
   'suggestionMode': Def.Autocompleter.USE_STATISTICS,
   'autocomp': true
 };
-var fe_search_cwe_autoComp =
-  new Def.Autocompleter.Search('multi_sel_search_cwe',
-    '/form/get_search_res_list?fd_id=2163', opts);
+new Def.Autocompleter.Search('multi_sel_search_cwe',
+  '/form/get_search_res_list?fd_id=2163', opts);
 
 
 // Long prefetched list autocompleter with an odd number of items (for checking
@@ -134,10 +133,8 @@ opts.valueCols = [1];
 
 /// multi-field search CWE
 opts.autocomp = true;
-opts.nonMatchSuggestions = false;
-var fe_search_cwe_autoComp =
-  new Def.Autocompleter.Search('multi_field_search_cwe',
-    '/form/get_search_res_list?fd_id=2164', opts);
+new Def.Autocompleter.Search('multi_field_search_cwe',
+  '/form/get_search_res_list?fd_id=2164', opts);
 
 // A multi-field search CNE with column headers
 opts.colHeaders = ['C1', 'C2'];

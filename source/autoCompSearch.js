@@ -186,7 +186,7 @@
      *     case the list element might be unusually short.
      *     Note:  At present the only tested cases of this parameter are the
      *     default value and null.</li>
-     *    <li>nonMatchSuggestions - (default: true) Whether the user should be
+     *    <li>nonMatchSuggestions - (default: false) Whether the user should be
      *     given a list of suggestions if they enter a non-matching value.
      *     This only applies when matchListValue is false.</li>
      *    <li>headerBar - If the page has a fixed-position element at the top of
