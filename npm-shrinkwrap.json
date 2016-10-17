@@ -2795,9 +2795,9 @@
       }
     },
     "grunt-protractor-runner": {
-      "version": "3.2.0",
-      "from": "jessechezenko-ai/grunt-protractor-runner#d2ca1aa9b9c9666efc7fd43f8e39d918c47b0fb4",
-      "resolved": "git://github.com/jessechezenko-ai/grunt-protractor-runner.git#d2ca1aa9b9c9666efc7fd43f8e39d918c47b0fb4",
+      "version": "4.0.0",
+      "from": "grunt-protractor-runner@>=4.0.0 <5.0.0",
+      "resolved": "https://registry.npmjs.org/grunt-protractor-runner/-/grunt-protractor-runner-4.0.0.tgz",
       "dependencies": {
         "protractor": {
           "version": "4.0.9",
