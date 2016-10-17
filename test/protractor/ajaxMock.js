@@ -114,7 +114,8 @@ mockData_ = {
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.
 jQuery.ajax = function(url, options) {
   var params = options.data;
-  var resultType = params.autocomp ? 'partial' : params.suggest ? 'suggest' : 'full'
+  var resultType =
+    params.suggest ? 'suggest' : params.maxList === undefined ? 'partial' : 'full';
   // This is just for testing, so assume the right parameters.
   var fd_id = url.match(/fd_id=(\w+)/)[1];
   var terms = params.terms || params.field_val; // suggest uses field_val
