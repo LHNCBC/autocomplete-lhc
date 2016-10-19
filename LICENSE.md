@@ -1,14 +1,14 @@
 # LICENSE
 
-Owner Notice: The Owner of this software, autocomp-phr, is the National Institutes of Health/Department of Health and Human Services, Bethesda, MD, U.S.A.
+Owner Notice: The Owner of this software, autocomplete-lhc, is the National Institutes of Health/Department of Health and Human Services, Bethesda, MD, U.S.A.
 All rights reserved.
 
-This software, autocomp-phr, was developed by the National Library of Medicine
+This software, autocomplete-lhc, was developed by the National Library of Medicine
 (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part
 of the National Institutes of Health (NIH). More details available at
 [README.md](README.md).
 
-Please cite as: http://lhncbc.nlm.nih.gov/project/nlm-personal-health-record-phr
+Please cite as: http://lhncbc.nlm.nih.gov/project/lforms
 
 The software includes the following third-party elements, which are released
 under open-source licenses (as noted):
