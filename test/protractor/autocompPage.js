@@ -66,6 +66,11 @@ var AutocompPage = function() {
 
   this.openTestPage = function() {
     setAngularSite(false);
+    // For some reason, reopening the same page leaves the window's scroll
+    // position intact.  (This didn't used to happen, and is probably a bug, but
+    // whether it is a bug with protractor, or webdriver-manager, I don't know.)
+    // Get a blank page first, and then get the test page.
+    browser.get('about:blank');
     browser.get(this.testPageURL);
   }
 

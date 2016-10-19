@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [9.1.2] - 2016-10-14
+### Fixed
+- A positioning problem which occured if the positioning process changed whether
+  the scrollbar was showing.
+
 ## [9.1.1] - 2016-08-03
 ### Fixed
 - Missing padding around column headers
