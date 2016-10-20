@@ -1419,10 +1419,8 @@ if (typeof Def === 'undefined')
      *  always below the field.
      */
     posListBelowFieldInMultiCol: function() {
-      // Set "element" to the container of the element and the selected list
-      // when this is a multi-select list, so that when the list is scrolled
-      // into view, the selected items remain visible.
-      var element = this.multiSelect_ ? this.element.parentNode : this.element;
+var s = new Date();
+      var element = this.listPositioningElem();
       var update = this.update;
       update.style.height = '';  // Turn off height setting, if any
 
@@ -1432,23 +1430,20 @@ if (typeof Def === 'undefined')
       // Element.clonePosition does not work in Prototype 1.7.2 when the parent
       // element is document.body.  This is yet another of many position bugs in
       // the 1.7.x Prototype, so I am switching to JQuery.
-      // Moving the list can result in the scrollbar either appearing or
+      // Moving the list can result in the window scrollbar either appearing or
       // disappearing, which can change the position of the field.  After
       // setting top, recompute the offset for left.
       var elemPos = jQuery(element).offset();
       positionedElement.style.top = elemPos.top + element.offsetHeight + 'px';
-      elemPos = jQuery(element).offset();
-      positionedElement.style.left = elemPos.left + 'px';
-
+      this.setListWrap(false);
       update.style.width = 'auto';
-      this.listContainer.style.width = ''; // reset it
+      this.setListLeft();
       $('completionOptionsScroller').style.height = '';
 
       var scrolledContainer = this.scrolledContainer_;
-      var viewPortHeight = window.innerHeight;
-      jQuery(this.update).removeClass('multi_col');
-      var posElVPCoords = positionedElement.getBoundingClientRect();
+      var viewPortHeight = document.documentElement.clientHeight;
       var maxListContainerBottom = viewPortHeight; // bottom edge of viewport
+      var posElVPCoords = positionedElement.getBoundingClientRect();
       var bottomOfListContainer = posElVPCoords.bottom;
       // If this list is not completely on the page, try making it a multi-column
       // list (unless it is a table format list, which already has columns).
@@ -1456,21 +1451,9 @@ if (typeof Def === 'undefined')
         var tryMultiColumn = this.twoColumnFlow_ && !this.options.tableFormat &&
           this.entryCount > 4; // otherwise it's too short
         if (tryMultiColumn) {
-          // Try as a multi column list
-          var firstEntry = this.getEntry(0);
-          // For Chrome, but not Firefox, we need to set the width of the
-          // list container; otherwise it will not adjust when the multiple
-          // columns are turned on.
-          // We set it to be twice the width of a list item plus 4 pixels for
-          // the border.
-          var newListWidth = firstEntry.offsetWidth * 2 + 4;
-          // Make sure the new width will fit horizontally
-          var viewPortWidth = window.innerWidth;
-          if (newListWidth > viewPortWidth - posElVPCoords.left)
-            tryMultiColumn = false;
-          else {
-            this.listContainer.style.width = newListWidth + 'px';
-            jQuery(this.update).addClass('multi_col');
+          tryMultiColumn = this.setListWrap(true);
+          if (this.listWrap) {
+            // We wrapped the list, so update the bottom position
             bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
           }
         }
@@ -1539,6 +1522,91 @@ if (typeof Def === 'undefined')
           }
         }
       }
+console.log("%%% done positioning in "+((new Date())-s));
+    },
+
+
+    /**
+     *  Returns the element used for positioning the answer list.
+     */
+    listPositioningElem: function() {
+      // Set "element" to the container of the element and the selected list
+      // when this is a multi-select list, so that when the list is scrolled
+      // into view, the selected items remain visible.
+      return this.multiSelect_ ? this.element.parentNode : this.element;
+    },
+
+
+    /**
+     *  Sets whether the list is wrapped to two columns or not.  If there is not
+     *  enough space for two columns, then there will be no effect when "wrap"
+     *  is true.  Updates this.listWrap.
+     * @param wrap if true, the list will be set to flow into two columns; if
+     *  false, it will be set to be just one column.
+     *  otherwise.
+     * @return the value of this.listWrap, indicating the new state.
+     */
+    setListWrap: function(wrap) {
+      if (wrap !== this.listWrap) {
+        if (wrap) {
+          var firstEntry = this.getEntry(0);
+          // For Chrome, but not Firefox, we need to set the width of the
+          // list container; otherwise it will not adjust when the multiple
+          // columns are turned on.
+          // We set it to be twice the width of a list item plus 4 pixels for
+          // the border.
+          // There might also be a scrollbar on the list, but we won't know that
+          // until we set the height.
+          var newListWidth = firstEntry.offsetWidth * 2 + 4;
+          // Make sure the new width will fit horizontally
+          var viewPortWidth = document.documentElement.clientWidth;
+          if (newListWidth <= viewPortWidth) {
+            this.listContainer.style.width = newListWidth + 'px';
+            jQuery(this.update).addClass('multi_col');
+            this.listWrap = true;
+            this.setListLeft();
+          }
+        }
+        else {
+          jQuery(this.update).removeClass('multi_col');
+          this.listContainer.style.width = ''; // reset it
+          this.listWrap = false;
+        }
+      }
+      return this.listWrap;
+    },
+
+
+    /**
+     *  Sets the list's left position to bring it as close as possible to the
+     *  left edge of the field and to show as much of the list as possible.
+     */
+    setListLeft: function() {
+      // The window's scrollbar might be showing, and which might or might not
+      // be due to the placement of the list, so move that to the left first.
+      var positionedElement = this.listContainer;
+      positionedElement.style.left = 0;
+      var viewPortWidth = document.documentElement.clientWidth;
+      var posElVPCoords = positionedElement.getBoundingClientRect();
+      var elemPos = jQuery(this.listPositioningElem()).offset();
+      var recalc = false;
+      if (posElVPCoords.width > viewPortWidth) {
+        // Even the whole window is not wide enough.
+        // If the list was wrapped, unset that and try again.
+        if (this.listWrap) {
+          this.setListWrap(false);
+          recalc = true;
+        }
+        // else leave the list flush left, to show as much as possible
+      }
+      else {
+        var leftShift = posElVPCoords.width - (viewPortWidth - elemPos.left);
+        if (leftShift < 0) // no need to shift
+          leftShift = 0;
+        positionedElement.style.left = elemPos.left - leftShift + 'px';
+      }
+      if (recalc)
+        this.setListLeft();
     },
 
 
@@ -1566,8 +1634,13 @@ if (typeof Def === 'undefined')
       // scrolled vertically instead of horizontally (with lots of short
       // columns).
       // Require at least 20 px of height, or give up
-      if (height >= 20)
+      if (height >= 20) {
         $('completionOptionsScroller').style.height = height + 'px';
+        // Setting this list height likely introduced a scrollbar on the list,
+        // so we might need to adjust the left position again to make sure the
+        // scrollbar is visible.
+        this.setListLeft();
+      }
     },
 
 
