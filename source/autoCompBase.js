@@ -1420,52 +1420,108 @@ if (typeof Def === 'undefined')
      */
     posListBelowFieldInMultiCol: function() {
 var s = new Date();
-      var element = this.listPositioningElem();
+      var acInstance = this;
+      this.domCache = {
+        data: {},
+        element: this.listPositioningElem(),
+        get: function(item) {
+          var rtn = this.data[item]
+          if (rtn === undefined)
+            rtn = this.data[item] = this.refresh[item]();
+          return rtn;
+        },
+        invalidate: function(item) {
+          if (item)
+            delete this.data[item];
+          else
+            this.data = {};
+        },
+        refresh: {
+          elemPos: function() {
+            return jQuery(element).offset();
+          },
+          firstEntryWidth: function() {
+            return acInstance.getEntry(0).offsetWidth;
+          },
+          listBoundingRect: function() {
+            return acInstance.listContainer.getBoundingClientRect();
+          },
+          viewPortWidth: function() {
+            return document.documentElement.clientWidth;
+          }
+        }
+      }; // position and size information from the DOM
+
+      var element = this.domCache.element;
       var update = this.update;
-      update.style.height = '';  // Turn off height setting, if any
 
-      var positionedElement = this.listContainer;
-
-      // First put the list below the field as a single column list.
-      // Element.clonePosition does not work in Prototype 1.7.2 when the parent
-      // element is document.body.  This is yet another of many position bugs in
-      // the 1.7.x Prototype, so I am switching to JQuery.
-      // Moving the list can result in the window scrollbar either appearing or
-      // disappearing, which can change the position of the field.  After
-      // setting top, recompute the offset for left.
-      var elemPos = jQuery(element).offset();
-      positionedElement.style.top = elemPos.top + element.offsetHeight + 'px';
+      // Clear previous settings
+      if (update.style.height)
+        update.style.height = '';  // Turn off height setting, if any
       this.setListWrap(false);
       update.style.width = 'auto';
-      this.setListLeft();
       $('completionOptionsScroller').style.height = '';
+      this.listContainer.style.width = '';
+      this.listHeight = undefined;
 
+      // Positioning strategies (in order of attempt) to show all of the list
+      // element within the viewport.
+      // 1) list below field as a single column list, with no constraint on
+      // height.  If that fits in the viewport's height, adjust left position as
+      // necessary.
+      // 2) list below field as a two column wrapped list.  If that fits in the
+      // viewports height, and the wider form can fit within the viewport width,
+      // adjust the left position as necessary.  If the new width is too wide
+      // for the viewport, revert to the single column list, and adjust the left
+      // position as needed.
+      // 3) scroll page up to make room for the list below field
+      // 4) constrain the list height.  If the addition of a scrollbar on the
+      // list makes a two-column list too wide for the viewport, revert to a
+      // single column list.  Adjust the left position as necessary.
+      // 5) If we can't constrain the list height (because it would be too
+      // short), then just adjust the left position.
+
+      // First put the list below the field as a single column list.
+      // Moving the list can result in the window scrollbar either appearing or
+      // disappearing, which can change the position of the field.  So, first
+      // hide the list to determine the element position.
+      var positionedElement = this.listContainer;
+      positionedElement.style.display = 'none';
+      var elemPos = this.domCache.get('elemPos');
+      positionedElement.style.display = '';
+
+      positionedElement.style.top = elemPos.top + element.offsetHeight + 'px';
       var scrolledContainer = this.scrolledContainer_;
       var viewPortHeight = document.documentElement.clientHeight;
       var maxListContainerBottom = viewPortHeight; // bottom edge of viewport
-      var posElVPCoords = positionedElement.getBoundingClientRect();
+      var posElVPCoords = this.domCache.get('listBoundingRect');
       var bottomOfListContainer = posElVPCoords.bottom;
-      // If this list is not completely on the page, try making it a multi-column
-      // list (unless it is a table format list, which already has columns).
-      if (bottomOfListContainer > maxListContainerBottom) {
+      if (bottomOfListContainer <= maxListContainerBottom) {
+        this.setListLeft();  // We're done positioning the list
+      }
+      else {
+        // If this list is not completely on the page, try making it a multi-column
+        // list (unless it is a table format list, which already has columns).
         var tryMultiColumn = this.twoColumnFlow_ && !this.options.tableFormat &&
           this.entryCount > 4; // otherwise it's too short
         if (tryMultiColumn) {
           tryMultiColumn = this.setListWrap(true);
           if (this.listWrap) {
             // We wrapped the list, so update the bottom position
-            bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
+            bottomOfListContainer =
+              this.domCache.get('listBoundingRect').bottom;
           }
         }
-        // If the multi-column list is still not on the page, try scrolling the
-        // page down (making the list go up).
-        if (!tryMultiColumn || bottomOfListContainer > maxListContainerBottom) {
+        if (tryMultiColumn && bottomOfListContainer <= maxListContainerBottom) {
+          this.setListLeft();  // We're done positioning the list
+        }
+        else {
+          // The multi-column list is still not on the page, try scrolling the
+          // page down (making the list go up).
           var elementBoundingRect = element.getBoundingClientRect();
+          var heightConstraint = undefined;
           if (!scrolledContainer) {
-            // If we can't scroll the list into view, just constrain the height so
-            // the list is visible.
-            var elementRect =
-              this.setListHeight(window.innerHeight - elementBoundingRect.bottom);
+            heightConstraint = window.innerHeight - elementBoundingRect.bottom;
           }
           else {
             // Cancel any active scroll effect
@@ -1475,8 +1531,12 @@ var s = new Date();
             var scrollDownAmount =
               bottomOfListContainer - maxListContainerBottom;
             var elementTop = elementBoundingRect.top;
-            var headerBar = document.getElementById(this.constructorOpts_.headerBar);
-            var topNavBarHeight = headerBar ? headerBar.offsetHeight : 0;
+            var topNavBarHeight = 0;
+            if (headerBar) {
+              var headerBar = document.getElementById(this.constructorOpts_.headerBar);
+              if (headerBar)
+                topNavBarHeight = headerBar.offsetHeight;
+            }
 
             var maxScroll;
             var scrolledContainerViewportTop =
@@ -1493,12 +1553,12 @@ var s = new Date();
               // The maximum allowable space is the viewport height minus the field
               // height minus the top nav bar height minus the part of the list
               // container that is not for list items (e.g. "See more results")).
-              this.setListHeight(viewPortHeight - elementBoundingRect.height - topNavBarHeight);
-              bottomOfListContainer = positionedElement.getBoundingClientRect().bottom;
+              heightConstraint = viewPortHeight - elementBoundingRect.height -
+                topNavBarHeight;
             }
 
-            this.lastScrollEffect_ = new Def.Effect.Scroll(scrolledContainer,
-              {y: scrollDownAmount, duration: 0.4});
+            bottomOfListContainer = this.domCache.get('listBoundingRect').top +
+              heightConstraint;
 
             // If the list is extending beyond the bottom of the page's normal
             // limits, increasing the page's length, extend the spacer div to make
@@ -1519,7 +1579,25 @@ var s = new Date();
               spacerDiv.style.height =
                 bottomOfListContainer - spacerCoords.top + 'px';
             }
+
+            this.lastScrollEffect_ = new Def.Effect.Scroll(scrolledContainer,
+              {y: scrollDownAmount, duration: 0.4});
           }
+
+          if (heightConstraint !== undefined) {
+            // If we can't scroll the list into view, just constrain the height so
+            // the list is visible.
+            var elementRect = this.setListHeight(heightConstraint);
+            // Setting this list height likely introduced a scrollbar on the list.
+            var viewPortWidth = this.domCache.get('viewPortWidth');
+            var posElVPCoords = this.domCache.get('listBoundingRect');
+            if (this.listWrap && posElVPCoords.width > viewPortWidth) {
+              // The list is too wide, so remove the wrap
+              this.setListWrap(false);
+            }
+          }
+
+          this.setListLeft();
         }
       }
 console.log("%%% done positioning in "+((new Date())-s));
@@ -1549,7 +1627,6 @@ console.log("%%% done positioning in "+((new Date())-s));
     setListWrap: function(wrap) {
       if (wrap !== this.listWrap) {
         if (wrap) {
-          var firstEntry = this.getEntry(0);
           // For Chrome, but not Firefox, we need to set the width of the
           // list container; otherwise it will not adjust when the multiple
           // columns are turned on.
@@ -1557,21 +1634,27 @@ console.log("%%% done positioning in "+((new Date())-s));
           // the border.
           // There might also be a scrollbar on the list, but we won't know that
           // until we set the height.
-          var newListWidth = firstEntry.offsetWidth * 2 + 4;
+          var newListWidth = this.domCache.get('firstEntryWidth') * 2 + 4;
           // Make sure the new width will fit horizontally
-          var viewPortWidth = document.documentElement.clientWidth;
+          var viewPortWidth = this.domCache.get('viewPortWidth');
           if (newListWidth <= viewPortWidth) {
             this.listContainer.style.width = newListWidth + 'px';
             jQuery(this.update).addClass('multi_col');
             this.listWrap = true;
-            this.setListLeft();
           }
         }
         else {
           jQuery(this.update).removeClass('multi_col');
           this.listContainer.style.width = ''; // reset it
           this.listWrap = false;
+          // There could now be a vertical scrollbar on the window, reducing
+          // horizontal viewport space.
+          this.domCache.invalidate('viewPortWidth');
         }
+        this.domCache.invalidate('listBoundingRect');
+        // The window vertical scrollbar might have appeared/disappeared,
+        // causing the field's horizontal position to change
+        this.domCache.invalidate('elemPos');
       }
       return this.listWrap;
     },
@@ -1583,30 +1666,21 @@ console.log("%%% done positioning in "+((new Date())-s));
      */
     setListLeft: function() {
       // The window's scrollbar might be showing, and which might or might not
-      // be due to the placement of the list, so move that to the left first.
+      // be due to the placement of the list.  We could potentially reclaim that
+      // space if we move the list left so the scrollbar isn't needed, but that might
+      // take time, so don't.
       var positionedElement = this.listContainer;
-      positionedElement.style.left = 0;
-      var viewPortWidth = document.documentElement.clientWidth;
-      var posElVPCoords = positionedElement.getBoundingClientRect();
-      var elemPos = jQuery(this.listPositioningElem()).offset();
-      var recalc = false;
-      if (posElVPCoords.width > viewPortWidth) {
-        // Even the whole window is not wide enough.
-        // If the list was wrapped, unset that and try again.
-        if (this.listWrap) {
-          this.setListWrap(false);
-          recalc = true;
-        }
-        // else leave the list flush left, to show as much as possible
+      var viewPortWidth = this.domCache.get('viewPortWidth');
+      var posElVPCoords = this.domCache.get('listBoundingRect');
+      var elemPos = this.domCache.get('elemPos');
+      var leftShift = posElVPCoords.width - (viewPortWidth - elemPos.left);
+      if (leftShift < 0) // no need to shift
+        leftShift = 0;
+      var newLeftPos = elemPos.left - leftShift;
+      if (this.listLeftPos !== newLeftPos) {
+        positionedElement.style.left = newLeftPos + 'px';
+        this.listLeftPos = newLeftPos;
       }
-      else {
-        var leftShift = posElVPCoords.width - (viewPortWidth - elemPos.left);
-        if (leftShift < 0) // no need to shift
-          leftShift = 0;
-        positionedElement.style.left = elemPos.left - leftShift + 'px';
-      }
-      if (recalc)
-        this.setListLeft();
     },
 
 
@@ -1620,12 +1694,12 @@ console.log("%%% done positioning in "+((new Date())-s));
       // This will usually be called when the list needs to scroll.
       // First make the list wider to allow room for the scrollbar (which will
       // mostly likely appear) and to avoid squeezing and wrapping the list items.
-      this.listContainer.style.width = this.listContainer.offsetWidth +
-        20 + 'px';
+      var posElVPCoords = this.domCache.get('listBoundingRect');
+      this.listContainer.style.width = posElVPCoords.width + 20 + 'px';
 
       // Subtract from the height the height of the "see more" and hit count
       // divs.
-      height = height - this.listContainer.offsetHeight +  // listContainer = everything
+      var height = height - posElVPCoords.height +  // listContainer = everything
                         this.update.offsetHeight;  // update = list items only
 
       // Multi-column lists typical scroll/overflow to the right, so we have put
@@ -1634,12 +1708,10 @@ console.log("%%% done positioning in "+((new Date())-s));
       // scrolled vertically instead of horizontally (with lots of short
       // columns).
       // Require at least 20 px of height, or give up
-      if (height >= 20) {
+      if (height >= 20 && this.listHeight !== height) {
         $('completionOptionsScroller').style.height = height + 'px';
-        // Setting this list height likely introduced a scrollbar on the list,
-        // so we might need to adjust the left position again to make sure the
-        // scrollbar is visible.
-        this.setListLeft();
+        this.listHeight = height;
+        this.domCache.invalidate('listBoundingRect');
       }
     },
 
