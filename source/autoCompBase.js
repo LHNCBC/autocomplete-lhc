@@ -639,6 +639,8 @@ if (typeof Def === 'undefined')
       // Set the active list item index to -1, instead of 0 as in controls.js,
       // because there might not be any list items.
       this.index = -1;
+
+      this.initDomCache();
     },
 
 
@@ -1420,42 +1422,11 @@ if (typeof Def === 'undefined')
      */
     posListBelowFieldInMultiCol: function() {
 var s = new Date();
-      var acInstance = this;
-      this.domCache = {
-        data: {},
-        element: this.listPositioningElem(),
-        get: function(item) {
-          var rtn = this.data[item]
-          if (rtn === undefined)
-            rtn = this.data[item] = this.refresh[item]();
-          return rtn;
-        },
-        invalidate: function(item) {
-          if (item)
-            delete this.data[item];
-          else
-            this.data = {};
-        },
-        refresh: {
-          elemPos: function() {
-            return jQuery(element).offset();
-          },
-          firstEntryWidth: function() {
-            return acInstance.getEntry(0).offsetWidth;
-          },
-          listBoundingRect: function() {
-            return acInstance.listContainer.getBoundingClientRect();
-          },
-          viewPortWidth: function() {
-            return document.documentElement.clientWidth;
-          }
-        }
-      }; // position and size information from the DOM
-
       var element = this.domCache.element;
       var update = this.update;
 
       // Clear previous settings
+      this.domCache.invalidate();
       if (update.style.height)
         update.style.height = '';  // Turn off height setting, if any
       this.setListWrap(false);
@@ -1484,7 +1455,9 @@ var s = new Date();
       // First put the list below the field as a single column list.
       // Moving the list can result in the window scrollbar either appearing or
       // disappearing, which can change the position of the field.  So, first
-      // hide the list to determine the element position.
+      // hide the list to determine the element position.  Unfortunately this
+      // introduces an additional 1ms of positioning time, but I don't see a
+      // good way to avoid that.
       var positionedElement = this.listContainer;
       positionedElement.style.display = 'none';
       var elemPos = this.domCache.get('elemPos');
@@ -1601,6 +1574,44 @@ var s = new Date();
         }
       }
 console.log("%%% done positioning in "+((new Date())-s));
+    },
+
+
+    /**
+     *  Constructs a cache of DOM values for use during list positioning.
+     */
+    initDomCache: function() {
+      var acInstance = this;
+      this.domCache = {
+        data: {},
+        element: this.listPositioningElem(),
+        get: function(item) {
+          var rtn = this.data[item]
+          if (rtn === undefined)
+            rtn = this.data[item] = this.refresh[item]();
+          return rtn;
+        },
+        invalidate: function(item) {
+          if (item)
+            delete this.data[item];
+          else
+            this.data = {};
+        },
+        refresh: {
+          elemPos: function() {
+            return jQuery(acInstance.element).offset();
+          },
+          firstEntryWidth: function() {
+            return acInstance.getEntry(0).offsetWidth;
+          },
+          listBoundingRect: function() {
+            return acInstance.listContainer.getBoundingClientRect();
+          },
+          viewPortWidth: function() {
+            return document.documentElement.clientWidth;
+          }
+        }
+      }; // position and size information from the DOM
     },
 
 
