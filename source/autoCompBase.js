@@ -84,11 +84,11 @@ if (typeof Def === 'undefined')
      */
     LIST_ITEM_FIELD_SEP: ' - ',
 
-
     /**
      *  The screen reader log used by the autocompleter.
      */
     screenReaderLog_: new Def.ScreenReaderLog(),
+
 
     /**
      *  Sets global options for customizing behavior of all autocompleters.
@@ -247,9 +247,45 @@ if (typeof Def === 'undefined')
      */
     screenReaderLog: function(msg) {
       Def.Autocompleter.screenReaderLog_.add(msg);
-    }
-  };
+    },
 
+
+    /**
+     *  Creates a cache for storing DOM values.
+     * @param directProps a hash of properties that should be directly defined
+     *  on the hash.  These properties should not include "data", "get",
+     *  "invalidate", or "refresh".
+     * @param jitProps a hash of properties to functions that will be called
+     *  (just in time) to initialize the properties.  These properties will be
+     *  accessible via the "get" function on the cache, and can be cleared with
+     *  the "invalidate" function.
+     * @return the cache object
+     */
+    createDOMCache: function(directProps, jitProps) {
+      var rtn = {
+        data: {},
+        get: function(item) {
+          var rtn = this.data[item]
+          if (rtn === undefined)
+            rtn = this.data[item] = this.refresh[item].apply(this);
+          return rtn;
+        },
+        invalidate: function(item) {
+          if (item)
+            delete this.data[item];
+          else
+            this.data = {};
+        },
+        refresh: {
+        }
+      };
+
+      Object.assign(rtn, directProps);
+      Object.assign(rtn.refresh, jitProps);
+      return rtn;
+    }
+
+  };
 
 
   /**
@@ -347,6 +383,36 @@ if (typeof Def === 'undefined')
       return escapedVal.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, '\'').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     }
   });
+
+
+  /**
+   *  A cache of DOM values shared by all autocompleters on the page.
+   */
+  Def.Autocompleter.sharedDOMCache = Def.Autocompleter.createDOMCache({}, {
+    spacerDiv: function() {
+      var spacerDiv = $('spacer');
+      if (!spacerDiv) {
+        spacerDiv = document.createElement('div');
+        spacerDiv.setAttribute('id', 'spacer');
+        document.body.appendChild(spacerDiv);
+      }
+      return spacerDiv;
+    },
+    listContainer: function() {return $('searchResults')},
+    firstEntryWidth: function() {
+      return Def.Autocompleter.listItemElements()[0].offsetWidth;
+    },
+    listBoundingRect: function() {
+      return this.get('listContainer').getBoundingClientRect();
+    },
+    viewPortWidth: function() {
+      return document.documentElement.clientWidth;
+    },
+    spacerCoords: function() {
+      return this.get('spacerDiv').getBoundingClientRect();
+    }
+  });
+
 
 
   // This is the definition for the Base instance methods.  We define it in
@@ -621,7 +687,7 @@ if (typeof Def === 'undefined')
 
       // Store a reference to the element that should be positioned in order
       // to align the list with the field.
-      this.listContainer = $('searchResults');
+      this.listContainer = Def.Autocompleter.sharedDOMCache.get('listContainer');
 
       // Make the this.showList and this.hideList available to onShow and onHide
       this.options.showList = jQuery.proxy(this.showList, this);
@@ -640,7 +706,7 @@ if (typeof Def === 'undefined')
       // because there might not be any list items.
       this.index = -1;
 
-      this.initDomCache();
+      this.initDOMCache();
     },
 
 
@@ -1421,12 +1487,15 @@ if (typeof Def === 'undefined')
      *  always below the field.
      */
     posListBelowFieldInMultiCol: function() {
-var s = new Date();
+      var sharedDOMCache = Def.Autocompleter.sharedDOMCache;
       var element = this.domCache.element;
       var update = this.update;
 
       // Clear previous settings
-      this.domCache.invalidate();
+      this.domCache.invalidate('elemPos');
+      sharedDOMCache.invalidate('firstEntryWidth');
+      sharedDOMCache.invalidate('listBoundingRect');
+      sharedDOMCache.invalidate('viewPortWidth');
       if (update.style.height)
         update.style.height = '';  // Turn off height setting, if any
       this.setListWrap(false);
@@ -1467,7 +1536,7 @@ var s = new Date();
       var scrolledContainer = this.scrolledContainer_;
       var viewPortHeight = document.documentElement.clientHeight;
       var maxListContainerBottom = viewPortHeight; // bottom edge of viewport
-      var posElVPCoords = this.domCache.get('listBoundingRect');
+      var posElVPCoords = sharedDOMCache.get('listBoundingRect');
       var bottomOfListContainer = posElVPCoords.bottom;
       if (bottomOfListContainer <= maxListContainerBottom) {
         this.setListLeft();  // We're done positioning the list
@@ -1479,10 +1548,10 @@ var s = new Date();
           this.entryCount > 4; // otherwise it's too short
         if (tryMultiColumn) {
           tryMultiColumn = this.setListWrap(true);
-          if (this.listWrap) {
+          if (tryMultiColumn) {
             // We wrapped the list, so update the bottom position
             bottomOfListContainer =
-              this.domCache.get('listBoundingRect').bottom;
+              sharedDOMCache.get('listBoundingRect').bottom;
           }
         }
         if (tryMultiColumn && bottomOfListContainer <= maxListContainerBottom) {
@@ -1530,8 +1599,9 @@ var s = new Date();
                 topNavBarHeight;
             }
 
-            bottomOfListContainer = this.domCache.get('listBoundingRect').top +
-              heightConstraint;
+            bottomOfListContainer = heightConstraint === undefined ?
+              sharedDOMCache.get('listBoundingRect').bottom :
+              sharedDOMCache.get('listBoundingRect').top + heightConstraint;
 
             // If the list is extending beyond the bottom of the page's normal
             // limits, increasing the page's length, extend the spacer div to make
@@ -1541,16 +1611,13 @@ var s = new Date();
             // keystrokes were enterd the list got smaller, so the page scrolled
             // back down.  (The browser does that automatically when the page
             // shrinks.)
-            var spacerDiv = $('spacer');
-            if (!spacerDiv) {
-              spacerDiv = document.createElement('div');
-              spacerDiv.setAttribute('id', 'spacer');
-              document.body.appendChild(spacerDiv);
-            }
-            var spacerCoords = spacerDiv.getBoundingClientRect();
+            var spacerCoords = sharedDOMCache.get('spacerCoords');
+
             if (bottomOfListContainer > spacerCoords.bottom) {
+              var spacerDiv = sharedDOMCache.get('spacerDiv');
               spacerDiv.style.height =
                 bottomOfListContainer - spacerCoords.top + 'px';
+              sharedDOMCache.invalidate('spacerCoords');
             }
 
             this.lastScrollEffect_ = new Def.Effect.Scroll(scrolledContainer,
@@ -1562,9 +1629,9 @@ var s = new Date();
             // the list is visible.
             var elementRect = this.setListHeight(heightConstraint);
             // Setting this list height likely introduced a scrollbar on the list.
-            var viewPortWidth = this.domCache.get('viewPortWidth');
-            var posElVPCoords = this.domCache.get('listBoundingRect');
-            if (this.listWrap && posElVPCoords.width > viewPortWidth) {
+            var viewPortWidth = sharedDOMCache.get('viewPortWidth');
+            var posElVPCoords = sharedDOMCache.get('listBoundingRect');
+            if (sharedDOMCache.listWrap && posElVPCoords.width > viewPortWidth) {
               // The list is too wide, so remove the wrap
               this.setListWrap(false);
             }
@@ -1573,45 +1640,21 @@ var s = new Date();
           this.setListLeft();
         }
       }
-console.log("%%% done positioning in "+((new Date())-s));
     },
 
 
     /**
      *  Constructs a cache of DOM values for use during list positioning.
+     *  Unliked the sharedDOMCache, each autocompleter has its own one of these.
      */
-    initDomCache: function() {
+    initDOMCache: function() {
       var acInstance = this;
-      this.domCache = {
-        data: {},
-        element: this.listPositioningElem(),
-        get: function(item) {
-          var rtn = this.data[item]
-          if (rtn === undefined)
-            rtn = this.data[item] = this.refresh[item]();
-          return rtn;
-        },
-        invalidate: function(item) {
-          if (item)
-            delete this.data[item];
-          else
-            this.data = {};
-        },
-        refresh: {
-          elemPos: function() {
-            return jQuery(acInstance.element).offset();
-          },
-          firstEntryWidth: function() {
-            return acInstance.getEntry(0).offsetWidth;
-          },
-          listBoundingRect: function() {
-            return acInstance.listContainer.getBoundingClientRect();
-          },
-          viewPortWidth: function() {
-            return document.documentElement.clientWidth;
-          }
+      this.domCache = Def.Autocompleter.createDOMCache({
+        element: acInstance.listPositioningElem()}, {
+        elemPos: function() {
+          return jQuery(this.element).offset();
         }
-      }; // position and size information from the DOM
+      });
     },
 
 
@@ -1629,14 +1672,15 @@ console.log("%%% done positioning in "+((new Date())-s));
     /**
      *  Sets whether the list is wrapped to two columns or not.  If there is not
      *  enough space for two columns, then there will be no effect when "wrap"
-     *  is true.  Updates this.listWrap.
+     *  is true.
      * @param wrap if true, the list will be set to flow into two columns; if
      *  false, it will be set to be just one column.
      *  otherwise.
-     * @return the value of this.listWrap, indicating the new state.
+     * @return true if the list is wrapped
      */
     setListWrap: function(wrap) {
-      if (wrap !== this.listWrap) {
+      var sharedDOMCache = Def.Autocompleter.sharedDOMCache;
+      if (wrap !== sharedDOMCache.listWrap) {
         if (wrap) {
           // For Chrome, but not Firefox, we need to set the width of the
           // list container; otherwise it will not adjust when the multiple
@@ -1645,29 +1689,29 @@ console.log("%%% done positioning in "+((new Date())-s));
           // the border.
           // There might also be a scrollbar on the list, but we won't know that
           // until we set the height.
-          var newListWidth = this.domCache.get('firstEntryWidth') * 2 + 4;
+          var newListWidth = sharedDOMCache.get('firstEntryWidth') * 2 + 4;
           // Make sure the new width will fit horizontally
-          var viewPortWidth = this.domCache.get('viewPortWidth');
+          var viewPortWidth = sharedDOMCache.get('viewPortWidth');
           if (newListWidth <= viewPortWidth) {
             this.listContainer.style.width = newListWidth + 'px';
             jQuery(this.update).addClass('multi_col');
-            this.listWrap = true;
+            sharedDOMCache.listWrap = true;
           }
         }
         else {
           jQuery(this.update).removeClass('multi_col');
           this.listContainer.style.width = ''; // reset it
-          this.listWrap = false;
+          sharedDOMCache.listWrap = false;
           // There could now be a vertical scrollbar on the window, reducing
           // horizontal viewport space.
-          this.domCache.invalidate('viewPortWidth');
+          sharedDOMCache.invalidate('viewPortWidth');
         }
-        this.domCache.invalidate('listBoundingRect');
+        sharedDOMCache.invalidate('listBoundingRect');
         // The window vertical scrollbar might have appeared/disappeared,
         // causing the field's horizontal position to change
         this.domCache.invalidate('elemPos');
       }
-      return this.listWrap;
+      return sharedDOMCache.listWrap;
     },
 
 
@@ -1681,16 +1725,18 @@ console.log("%%% done positioning in "+((new Date())-s));
       // space if we move the list left so the scrollbar isn't needed, but that might
       // take time, so don't.
       var positionedElement = this.listContainer;
-      var viewPortWidth = this.domCache.get('viewPortWidth');
-      var posElVPCoords = this.domCache.get('listBoundingRect');
+      var sharedDOMCache = Def.Autocompleter.sharedDOMCache;
+      var viewPortWidth = sharedDOMCache.get('viewPortWidth');
+      var posElVPCoords = sharedDOMCache.get('listBoundingRect');
       var elemPos = this.domCache.get('elemPos');
       var leftShift = posElVPCoords.width - (viewPortWidth - elemPos.left);
       if (leftShift < 0) // no need to shift
         leftShift = 0;
       var newLeftPos = elemPos.left - leftShift;
-      if (this.listLeftPos !== newLeftPos) {
+      var cache = Def.Autocompleter.sharedDOMCache;
+      if (cache.listPosLeft !== newLeftPos) {
         positionedElement.style.left = newLeftPos + 'px';
-        this.listLeftPos = newLeftPos;
+        cache.listPosLeft = newLeftPos;
       }
     },
 
@@ -1705,7 +1751,8 @@ console.log("%%% done positioning in "+((new Date())-s));
       // This will usually be called when the list needs to scroll.
       // First make the list wider to allow room for the scrollbar (which will
       // mostly likely appear) and to avoid squeezing and wrapping the list items.
-      var posElVPCoords = this.domCache.get('listBoundingRect');
+      var sharedDOMCache = Def.Autocompleter.sharedDOMCache;
+      var posElVPCoords = sharedDOMCache.get('listBoundingRect');
       this.listContainer.style.width = posElVPCoords.width + 20 + 'px';
 
       // Subtract from the height the height of the "see more" and hit count
@@ -1719,10 +1766,9 @@ console.log("%%% done positioning in "+((new Date())-s));
       // scrolled vertically instead of horizontally (with lots of short
       // columns).
       // Require at least 20 px of height, or give up
-      if (height >= 20 && this.listHeight !== height) {
+      if (height >= 20) {
         $('completionOptionsScroller').style.height = height + 'px';
-        this.listHeight = height;
-        this.domCache.invalidate('listBoundingRect');
+        sharedDOMCache.invalidate('listBoundingRect');
       }
     },
 
