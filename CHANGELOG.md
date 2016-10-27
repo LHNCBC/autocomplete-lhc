@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [9.2.1] - 2016-10-27
+### Fixed
+- A problem was introduced in 9.2.0 that allowed the input field to be scrolled
+  under a top navigation bar.
+
 ## [9.2.0] - 2016-10-26
 ### Added
 - The ability for the left edge of the list to be positioned left of the field
