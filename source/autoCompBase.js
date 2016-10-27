@@ -1734,6 +1734,8 @@ if (typeof Def === 'undefined')
       if (leftShift < 0) // no need to shift
         leftShift = 0;
       var newLeftPos = elemPos.left - leftShift;
+      if (newLeftPos < 0)
+        newLeftPos = 0;  // don't move the list past the left edge of the page
       var cache = Def.Autocompleter.sharedDOMCache;
       if (cache.listPosLeft !== newLeftPos) {
         positionedElement.style.left = newLeftPos + 'px';
@@ -1749,17 +1751,18 @@ if (typeof Def === 'undefined')
      *  pixels.
      */
     setListHeight: function(height) {
+      // Subtract from the height the height of the "see more" and hit count
+      // divs.  We do this before increasing the width below, because that can
+      // change update.height.
+      var sharedDOMCache = Def.Autocompleter.sharedDOMCache;
+      var posElVPCoords = sharedDOMCache.get('listBoundingRect');
+      var height = height - posElVPCoords.height +  // listContainer = everything
+                        this.update.offsetHeight;  // update = list items only
+
       // This will usually be called when the list needs to scroll.
       // First make the list wider to allow room for the scrollbar (which will
       // mostly likely appear) and to avoid squeezing and wrapping the list items.
-      var sharedDOMCache = Def.Autocompleter.sharedDOMCache;
-      var posElVPCoords = sharedDOMCache.get('listBoundingRect');
       this.listContainer.style.width = posElVPCoords.width + 20 + 'px';
-
-      // Subtract from the height the height of the "see more" and hit count
-      // divs.
-      var height = height - posElVPCoords.height +  // listContainer = everything
-                        this.update.offsetHeight;  // update = list items only
 
       // Multi-column lists typical scroll/overflow to the right, so we have put
       // $('completionOptions') in a container, $('completionOptionsScroller')
