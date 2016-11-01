@@ -1,7 +1,7 @@
 <input type="text" id="demo11">
 <script>
 new Def.Autocompleter.Search('demo11',
-  'https://lforms-service.nlm.nih.gov/genes?df=symbol,name_mod',
+  'https://lforms-service.nlm.nih.gov/api/genes/v1/search?df=symbol,name_mod',
   {nonMatchSuggestions: false, tableFormat: true, valueCols: [0],
    colHeaders: ['Symbol', 'Name']});
 </script>
