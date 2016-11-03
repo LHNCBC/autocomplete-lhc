@@ -3,6 +3,21 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [9.2.2] - 2016-10-28
+### Fixed
+- If the list is too wide for the page, the left edge of the list will be at the
+  left edge of the page, rather than a negative position.
+
+## [9.2.1] - 2016-10-27
+### Fixed
+- A problem was introduced in 9.2.0 that allowed the input field to be scrolled
+  under a top navigation bar.
+
+## [9.2.0] - 2016-10-26
+### Added
+- The ability for the left edge of the list to be positioned left of the field
+  if needed to avoid the list extending past the right edge of the window.
+
 ## [9.1.2] - 2016-10-14
 ### Fixed
 - A positioning problem which occured if the positioning process changed whether

@@ -2795,9 +2795,9 @@
       }
     },
     "grunt-protractor-runner": {
-      "version": "3.2.0",
-      "from": "jessechezenko-ai/grunt-protractor-runner#d2ca1aa9b9c9666efc7fd43f8e39d918c47b0fb4",
-      "resolved": "git://github.com/jessechezenko-ai/grunt-protractor-runner.git#d2ca1aa9b9c9666efc7fd43f8e39d918c47b0fb4",
+      "version": "4.0.0",
+      "from": "grunt-protractor-runner@>=4.0.0 <5.0.0",
+      "resolved": "https://registry.npmjs.org/grunt-protractor-runner/-/grunt-protractor-runner-4.0.0.tgz",
       "dependencies": {
         "protractor": {
           "version": "4.0.9",
@@ -3089,9 +3089,9 @@
               }
             },
             "source-map-support": {
-              "version": "0.4.3",
+              "version": "0.4.4",
               "from": "source-map-support@>=0.4.0 <0.5.0",
-              "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.4.3.tgz",
+              "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.4.4.tgz",
               "dependencies": {
                 "source-map": {
                   "version": "0.5.6",
@@ -3101,9 +3101,9 @@
               }
             },
             "webdriver-manager": {
-              "version": "10.2.3",
+              "version": "10.2.4",
               "from": "webdriver-manager@>=10.2.2 <11.0.0",
-              "resolved": "https://registry.npmjs.org/webdriver-manager/-/webdriver-manager-10.2.3.tgz",
+              "resolved": "https://registry.npmjs.org/webdriver-manager/-/webdriver-manager-10.2.4.tgz",
               "dependencies": {
                 "del": {
                   "version": "2.2.2",
@@ -3531,6 +3531,11 @@
                   "version": "2.5.4",
                   "from": "rimraf@>=2.5.2 <3.0.0",
                   "resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.5.4.tgz"
+                },
+                "semver": {
+                  "version": "5.3.0",
+                  "from": "semver@>=5.3.0 <6.0.0",
+                  "resolved": "https://registry.npmjs.org/semver/-/semver-5.3.0.tgz"
                 }
               }
             }
