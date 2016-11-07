@@ -111,7 +111,7 @@
      *     matching list items.</li>
      *    <li>maxList - if present, this signifies that this is a request
      *     for a large list of search results (e.g. by using the "see more" link
-     *     on the list).  If maxList is not preset, that means this is an autocompletion
+     *     on the list).  If maxList is not present, that means this is an autocompletion
      *     request and the server should return a short list (e.g. 7 items) as
      *     quickly as possible.</li>
      *    <li>authenticity_token - (optional) This is an anti-CSRF parameter.
