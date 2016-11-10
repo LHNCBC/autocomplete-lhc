@@ -165,12 +165,13 @@
               <ul>
                 <li>terms - the text from the field.  This should be used to find
                  matching list items.</li>
-                <li>autocomp - whether this is an autocompletion event, or a request
-                 for a large list of search results (e.g. by using the "see more" link
-                 on the list).  If autocomp==1, that means this is an autocompletion
-                 request and the server should return a short list (e.g. 7 items) as
-                 quickly as possible.  If this parameter is omitted, a large
-                 list (e.g. 500 items) should be returned.</li>
+                <li>maxList - (optional) If present, this signifies that this is
+                 a request for a large list of search results (e.g. by using the
+                 "see more" link on the list).  If maxList is not present, that
+                 means this is an autocompletion request and the server should
+                 return a short list (e.g. 7 items) as quickly as possible.
+                 In version 10, this replaced the autocomp parameter, which had
+                 the opposite meaning and default.</li>
                 <li>authenticity_token - (optional) This is an anti-CSRF parameter.
                  If the page has a value in window._token, it will get sent in this
                  parameter.</li>
@@ -230,8 +231,9 @@
                 <li>autocomp - a boolean that controls whether the field should
                  also autocomplete as the user types.  When this is false, the user
                  won't see an autocompletion list until they hit return.  (Default:  true)</li>
-                <li>nonMatchSuggestions - (default: true) Whether the user should be
-                 given a list of suggestions if they enter a non-matching value.
+                <li>nonMatchSuggestions - (default: false, as of version 10)
+                 Whether the user should be given a list of suggestions if they
+                 enter a non-matching value.
                  This only applies when matchListValue is false.</li>
                 <li>tableFormat - If true, then if the list's items contain
                  multiple fields, the list will be formatted in a table instead of just
