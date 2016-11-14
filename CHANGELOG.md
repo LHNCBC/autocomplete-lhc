@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [9.2.3] - 2016-11-14
+### Fixed
+- Added a needed polyfill for IE (Object.assign).  Versions 9.2.0-9.2.2 were
+  broken for IE.
+
 ## [9.2.2] - 2016-10-28
 ### Fixed
 - If the list is too wide for the page, the left edge of the list will be at the

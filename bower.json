@@ -1,8 +1,9 @@
 {
   "name": "autocomplete-lhc",
-  "version": "9.2.2",
+  "version": "9.2.3",
   "main": [
     "source/auto_completion.css",
+    "source/polyfill.js",
     "source/prototype_api.js",
     "source/effects.js",
     "source/effectScroll.js",
