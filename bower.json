@@ -3,6 +3,7 @@
   "version": "10.0.0",
   "main": [
     "source/auto_completion.css",
+    "source/polyfill.js",
     "source/prototype_api.js",
     "source/effects.js",
     "source/effectScroll.js",
