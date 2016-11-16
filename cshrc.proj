@@ -5,7 +5,7 @@
 #     You may set variables before sourcing this to change execution
 # of it.
 
-set NODE_DIR=node-v0.10.36_lforms.v1
+set NODE_DIR=node-v6.9.1-linux-x64
 # Sets PROJECT_DIR if it is not defined.
 if (! $?PROJECT_DIR) then
   # Previously, we attempted to set this depending on the path to the
@@ -15,24 +15,3 @@ if (! $?PROJECT_DIR) then
 endif
 
 set path = ($PROJECT_DIR/bin $PROJECT_DIR/node_modules/.bin /bin /usr/local/bin /usr/bin /usr/sbin /sbin /etc /depot/packages/${NODE_DIR}/bin)
-setenv EDITOR /usr/bin/vim
-setenv TESTOPTS "--v --seed 1"
-
-# We setup a couple things only if in an interactive shell
-if ($?prompt) then
-
-  # Maybe needed for CDE
-  #stty erase ^H
-  stty erase ^\?
-
-  # Environment settings
-  umask 022
-  set filec
-  set history=( 2000 "%h %Y-%W-%D %T %R\n" )
-  set host = `uname -n`
-  #set nobeep
-  #set prompt = "${user}@${host}[\!]-> "
-  set type
-  unset autologout
-endif
-

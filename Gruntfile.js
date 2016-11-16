@@ -1,4 +1,12 @@
 module.exports = function(grunt) {
+  var serverConf = require('./test/config');
+
+  // Load grunt tasks automatically, when needed
+  require('jit-grunt')(grunt, {
+    express: 'grunt-express-server',
+    protractor: 'grunt-protractor-runner'
+  });
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -25,6 +33,40 @@ module.exports = function(grunt) {
           dest: 'dist/demo.min.css',
           src: ['.tmp/concat/dist/demo.min.css']
         }]
+      }
+    },
+
+    express: {
+      options: {
+        port: process.env.PORT || serverConf.port
+      },
+      dev: {
+        options: {
+          script: 'test/app.js',
+          background: true,
+          delay: 5
+        }
+      },
+      test: {
+        options: {
+          script: 'test/app.js',
+          background: true,
+          delay: 5
+        }
+      }
+    },
+
+
+    protractor: {
+      options: {
+        configFile: 'test/protractor/protractor.conf.js'
+      },
+      chrome: {
+        options: {
+          args: {
+            browser: 'firefox'
+          }
+        }
       }
     },
 
@@ -56,6 +98,24 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-usemin');
   grunt.loadNpmTasks('grunt-wiredep');
 
-  grunt.registerTask('default', ['clean', 'wiredep', 'useminPrepare', 'copy',
+  grunt.registerTask('wait', function () {
+    grunt.log.ok('Waiting for server reload...');
+
+    var done = this.async();
+
+    setTimeout(function () {
+      grunt.log.writeln('Done waiting!');
+      done();
+    }, 1500);
+  });
+
+  grunt.registerTask('build', ['clean', 'wiredep', 'useminPrepare', 'copy',
     'concat', 'uglify', 'cssmin', 'usemin']);
+
+  grunt.registerTask('test:e2e', ['express:test', 'wait',
+    'protractor']);
+
+  grunt.registerTask('test', ['build', 'test:e2e']);
+
+  grunt.registerTask('default', ['build']);
 };
