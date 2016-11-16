@@ -28,7 +28,9 @@ fi
 
 # Now run the e2e tests
 grunt protractor
+code=$?
 
 # Shut down node.js (%n = background job n)
 kill %1
 
+exit $code

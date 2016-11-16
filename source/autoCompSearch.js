@@ -109,9 +109,9 @@
      *  <ul>
      *    <li>terms - the text from the field.  This should be used to find
      *     matching list items.</li>
-     *    <li>autocomp - whether this is an autocompletion event, or a request
+     *    <li>maxList - if present, this signifies that this is a request
      *     for a large list of search results (e.g. by using the "see more" link
-     *     on the list).  If autocomp==1, that means this is an autocompletion
+     *     on the list).  If maxList is not present, that means this is an autocompletion
      *     request and the server should return a short list (e.g. 7 items) as
      *     quickly as possible.</li>
      *    <li>authenticity_token - (optional) This is an anti-CSRF parameter.
@@ -186,7 +186,7 @@
      *     case the list element might be unusually short.
      *     Note:  At present the only tested cases of this parameter are the
      *     default value and null.</li>
-     *    <li>nonMatchSuggestions - (default: true) Whether the user should be
+     *    <li>nonMatchSuggestions - (default: false) Whether the user should be
      *     given a list of suggestions if they enter a non-matching value.
      *     This only applies when matchListValue is false.</li>
      *    <li>headerBar - If the page has a fixed-position element at the top of
@@ -359,6 +359,7 @@
         // Run the search
         var paramData = {
           authenticity_token: window._token || '',
+          maxList: null, // no value
           terms: searchStr
         }
         var options = {
@@ -681,7 +682,7 @@
       if (xhrObj.status === 200) { // 200 is the "OK" status
         var reqParams = xhrObj.requestParamData_;
         var searchStr = reqParams['terms'];
-        var autocomp = reqParams['autocomp'];
+        var autocomp = reqParams['maxList'] === undefined;
         var searchAC = Def.Autocompleter.Search;
 
         if (!fromCache && this.useResultCache_) {
@@ -917,7 +918,6 @@
         var paramData = {
           authenticity_token: window._token || '',
           terms: fieldVal,
-          autocomp: 1
         };
         var options = {
           data: paramData,

@@ -3,6 +3,15 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [10.0.0] - 2016-11-16
+### Changed
+- The "autocomp" parameter in URLs for search lists has been replaced with the
+  "maxList" parameter, so that without either parameter specified the default
+  return size is expected to be small.  When maxList is present, the URL is
+  expected to return are large number of items (e.g., 500) if possible.  In
+  other words, the expected effect of maxList is opposite that of autocomp.
+- The default for the nonMatchSuggestions option is now false.
+
 ## [9.2.3] - 2016-11-14
 ### Fixed
 - Added a needed polyfill for IE (Object.assign).  Versions 9.2.0-9.2.2 were

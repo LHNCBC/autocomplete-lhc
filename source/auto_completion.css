@@ -267,6 +267,9 @@ input.search_field, textarea.search_field {
   margin: 0;
   padding: 0;
 }
+#completionOptionsScroller tbody {
+  font-size: 90%;
+}
 #completionOptionsScroller td {
   border: 1px solid #DFDFDF;
   margin: 0;
