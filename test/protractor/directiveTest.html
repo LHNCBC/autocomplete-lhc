@@ -100,7 +100,13 @@
              autocomplete-lhc="list8Opts" id="list8">
       <p>
       <button id="btnList8" ng-click="updateList8Opts()">Update list8Opts</button>
-
+      <p>
+      Search CWE list initially without a URL:
+      <input name="list9" id="list9" type="text"
+        ng-required="false" placeholder="Select or type a value"
+        ng-model="listFieldVal9"
+        autocomplete-lhc="searchList9Opts">
+      <p>
       <input name="nonlist" type="text">
     </div>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
@@ -246,6 +252,13 @@
               {text: 'Red_NEW', code: 'R'}
             ]
           };
+        };
+
+        window.searchList9Opts = $scope.searchList9Opts = {
+          url: undefined, /* should still construct a search autocompleter */
+          matchListValue: false,
+          autocomp: true,
+          suggestionMode: 0
         };
 
      }]);
