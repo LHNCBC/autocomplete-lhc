@@ -226,8 +226,10 @@
 
                 // if there's an autocomp already
                 if (pElem.autocomp) {
-                  // If the URL is changing, clear the cache
-                  if (pElem.autocomp.url !== options.url)
+                  // If the URL is changing, clear the cache, if this was a
+                  // search autocompleter.
+                  if (pElem.autocomp.clearCachedResults &&
+                      pElem.autocomp.url !== options.url)
                     pElem.autocomp.clearCachedResults();
                   // Destroy the existing autocomp
                   pElem.autocomp.destroy();
@@ -241,8 +243,8 @@
                 var md = scope.modelData;
                 var hasPrepoluatedModel = (md !== undefined) && (md !== null);
 
-                var ac = autoOpts.url ? searchList(pElem, autoOpts) :
-                  prefetchList(pElem, autoOpts);
+                var ac = autoOpts.hasOwnProperty('url') ?
+                 searchList(pElem, autoOpts) : prefetchList(pElem, autoOpts);
 
                 // If there is a already a model value for this field, load it
                 // into the autocompleter.
