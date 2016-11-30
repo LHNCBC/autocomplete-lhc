@@ -47,6 +47,10 @@
 (function(Def) {
   "use strict";
 
+  // Keep track of created list event handlers.  This is a hash of field IDs to
+  // handler functions.
+  Def.Autocompleter.directiveListEventHandlers = {};
+
   if (typeof angular !== 'undefined') {
     angular.module('autocompleteLhcMod', [])
 
@@ -106,8 +110,7 @@
 
               var ac = new Def.Autocompleter.Prefetch(pElem, itemText, autoOpts);
               addNameAttr(pElem);
-              var fieldKey = Def.Observable.lookupKey(pElem);
-              Def.Autocompleter.Event.observeListSelections(fieldKey, function(eventData) {
+              updateListSelectionHandler(pElem, function (eventData) {
                 scope.$apply(function() {
                   var item;
                   if (!ac.multiSelect_) {
@@ -145,6 +148,25 @@
                 scope.modelData = modelDefault;
 
               return ac;
+            }
+
+
+            /**
+             *  Updates (replaces) the list selection event handler for a field.
+             * @param field the field with the autocompleter
+             * @param handler the list selection event handler to be assigned
+             */
+            function updateListSelectionHandler(field, handler) {
+              var fieldKey = Def.Observable.lookupKey(field);
+              var eh = Def.Autocompleter.directiveListEventHandlers;
+              var oldHandler = eh[field.id];
+              if (oldHandler) {
+                Def.Autocompleter.Event.removeCallback(fieldKey, 'LIST_SEL',
+                  oldHandler);
+              }
+              Def.Autocompleter.Event.observeListSelections(fieldKey,
+                handler);
+              eh[field.id] = handler;
             }
 
 
@@ -187,8 +209,7 @@
             function searchList(pElem, autoOpts) {
               var ac = new Def.Autocompleter.Search(pElem, autoOpts.url, autoOpts);
               addNameAttr(pElem);
-              var fieldKey = Def.Observable.lookupKey(pElem);
-              Def.Autocompleter.Event.observeListSelections(fieldKey, function(eventData) {
+              updateListSelectionHandler(pElem, function(eventData) {
                 scope.$apply(function() {
                   var itemText = eventData.final_val;
                   if (!ac.multiSelect_) {

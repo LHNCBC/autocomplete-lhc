@@ -65,6 +65,14 @@ module.exports = function(grunt) {
     },
 
 
+    mochaTest: {
+      options: {
+        reporter: 'spec'
+      },
+      src: ['test/mocha/*.js']
+    },
+
+
     nsp: {
       package: grunt.file.readJSON('./package.json'),
       shrinkwrap: grunt.file.readJSON('./npm-shrinkwrap.json')

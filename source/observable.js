@@ -1,5 +1,5 @@
 if (typeof Def === 'undefined')
-  window.Def = {};
+  Def = {};
 
 (function(Def) {
   "use strict";
@@ -33,7 +33,7 @@ if (typeof Def === 'undefined')
     notifyObservers: function(field, eventType, data) {
       if (this.callbacks_ !== null) {
         data['field_id'] = field ? field.id : null;
-        setTimeout(jQuery.proxy(function() {
+        setTimeout((function() {
           var eventCallbacks = this.callbacks_[eventType];
           if (eventCallbacks !== undefined) {
             if (field !== null) {
@@ -52,7 +52,7 @@ if (typeof Def === 'undefined')
               }
             }
           }
-        }, this),1);
+        }).bind(this),1);
       }
     },
 
@@ -74,14 +74,14 @@ if (typeof Def === 'undefined')
     /**
      *  Stores a callback function.  (This is meant for internal
      *  use by the classes that extend Observable; other code should not call it.)
-     * @param baseFieldID the central part of the field ID with the prefix
-     *  (ending with _) and the suffix (numbers like _1_2_1) removed.  If null
+     * @param fieldLookupKey the lookup key for the field which the callback is
+     *  registered.  This could be the output of the lookupKey function.  If null
      *  is passed, the callback will be called anytime the event occurs on any
      *  field.
      * @param eventType The type of event for which the callback is to be called
      * @param callback the callback function
      */
-    storeCallback: function(baseFieldID, eventType, callback) {
+    storeCallback: function(fieldLookupKey, eventType, callback) {
       if (this.callbacks_ === null)
         this.callbacks_ = {};
       var listExpCallbacks = this.callbacks_[eventType];
@@ -89,13 +89,41 @@ if (typeof Def === 'undefined')
         listExpCallbacks = {};
         this.callbacks_[eventType] = listExpCallbacks;
       }
-      var fieldListExpCallbacks = listExpCallbacks[baseFieldID];
+      var fieldListExpCallbacks = listExpCallbacks[fieldLookupKey];
       if (fieldListExpCallbacks === undefined) {
         fieldListExpCallbacks = [];
-        listExpCallbacks[baseFieldID] = fieldListExpCallbacks;
+        listExpCallbacks[fieldLookupKey] = fieldListExpCallbacks;
       }
       fieldListExpCallbacks.push(callback);
+    },
+
+
+    /**
+     *  Removes a callback function that was previously registered.
+     * @param fieldLookupKey the lookup key for the field which the callback is
+     *  registered.  This could be the output of the lookupKey function.
+     * @param eventType The type of event for which the callback is to be called
+     * @param callback the callback function to be removed
+     */
+    removeCallback: function(fieldLookupKey, eventType, callback) {
+      if (this.callbacks_ !== null) {
+        var typeCallbacks = this.callbacks_[eventType];
+        if (typeCallbacks !== undefined) {
+          var fieldCallbacks = typeCallbacks[fieldLookupKey];
+          if (fieldCallbacks !== undefined) {
+            var callbackIndex = fieldCallbacks.indexOf(callback);
+            if (callbackIndex > -1) {
+              fieldCallbacks.splice(callbackIndex, 1);
+            }
+          }
+        }
+      }
     }
 
   };
 })(Def);
+
+
+// For testing
+if (typeof module !== 'undefined')
+  module.exports = Def.Observable;

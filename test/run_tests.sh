@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Start node.js to serve a page that uses autocomp
 test_dir=`dirname $0`
@@ -26,11 +26,20 @@ then
           http://localhost:${port}/test/scriptaculous_unit/recordDataRequester_test.html
 fi
 
+shutdown_and_exit () {
+  # Shut down node.js (%n = background job n)
+  kill %1
+  exit $code
+}
+
+grunt mochaTest
+code=$?
+if [ $code != "0" ]
+then
+  shutdown_and_exit
+fi
+
 # Now run the e2e tests
 grunt protractor
-code=$?
-
-# Shut down node.js (%n = background job n)
-kill %1
-
-exit $code
+code = $?
+shutdown_and_exit
