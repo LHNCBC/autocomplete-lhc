@@ -106,7 +106,8 @@
 
               var ac = new Def.Autocompleter.Prefetch(pElem, itemText, autoOpts);
               addNameAttr(pElem);
-              Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
+              var fieldKey = Def.Observable.lookupKey(pElem);
+              Def.Autocompleter.Event.observeListSelections(fieldKey, function(eventData) {
                 scope.$apply(function() {
                   var item;
                   if (!ac.multiSelect_) {
@@ -186,7 +187,8 @@
             function searchList(pElem, autoOpts) {
               var ac = new Def.Autocompleter.Search(pElem, autoOpts.url, autoOpts);
               addNameAttr(pElem);
-              Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
+              var fieldKey = Def.Observable.lookupKey(pElem);
+              Def.Autocompleter.Event.observeListSelections(fieldKey, function(eventData) {
                 scope.$apply(function() {
                   var itemText = eventData.final_val;
                   if (!ac.multiSelect_) {
