@@ -23,6 +23,7 @@ describe('directive', function() {
   });
 
   it('should load the default item code and value', function() {
+    dp.openDirectiveTestPage();
     expect(dp.inputElem.getAttribute("value")).toEqual('Blue');
     expect(dp.codeField.getAttribute("value")).toEqual('B');
   });

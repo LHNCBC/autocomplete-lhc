@@ -142,10 +142,11 @@
 
         $scope.list1Opts = {
           listItems: [
-            {text: 'Green', // label is the display string
+            // Including spaces on display string to test trimming
+            {text: '  Green ', // label is the display string
              code: 'G' // item objects can contain any other data too
             },
-            {text: 'Blue', code: 'B'}
+            {text: ' Blue ', code: 'B'}
           ],
           defaultValue: 'Blue' // label the item you want selected as a default
         };
@@ -231,7 +232,7 @@
 
         $scope.list7Opts = {
           listItems: [
-            {text: 'Green', code: 'G'},
+            {text: ' Green', code: 'G'},
             {text: 'Blue', code: 'B'}
           ],
           defaultValue: {code: 'G'}
