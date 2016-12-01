@@ -21,6 +21,8 @@ var DirectivePage = function() {
   this.prefetchWithCodeDefault = $('#list7');
   this.optChangeTest = $('#list8');
   this.btnOptChangeTest = $('#btnList8');
+  this.noURLTestCSS = '#list9';
+  this.noURLTest = $(this.noURLTestCSS);
 
   // Multi-select CNE prefetch list
   var multiFieldID = 'multiPrefetchCNE';

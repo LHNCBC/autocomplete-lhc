@@ -100,5 +100,19 @@ describe('directive', function() {
       dp.inputElem.click();
       expect(dp.suggestionDialog.isDisplayed()).toBeTruthy();
     });
+
+    it('should all the URL to be undefined', function() {
+      dp.openDirectiveTestPage();
+      dp.noURLTest.click();
+      dp.noURLTest.sendKeys('ar');
+      expect(dp.searchResults.isDisplayed()).toBeFalsy();
+      // Set the URL to something and confirm the autocompleter starts working
+      browser.driver.executeScript(
+        "window.searchList9Opts.url = '/form/get_search_res_list?fd_id=2163';" +
+        "angular.element('"+dp.noURLTestCSS+"').scope().$digest();");
+      dp.clearField(dp.noURLTest);
+      dp.noURLTest.sendKeys('ar');
+      expect(dp.searchResults.isDisplayed()).toBeTruthy();
+    });
   });
 });
