@@ -47,6 +47,51 @@
 (function(Def) {
   "use strict";
 
+  /**
+   *  Updates (replaces) the list selection event handler for a field.
+   * @param field the field with the autocompleter
+   * @param handler the list selection event handler to be assigned
+   */
+  function updateListSelectionHandler(field, handler) {
+    var fieldKey = Def.Observable.lookupKey(field);
+    var eh = Def.Autocompleter.directiveListEventHandlers;
+    var oldHandler = eh[field.id];
+    if (oldHandler) {
+      Def.Autocompleter.Event.removeCallback(fieldKey, 'LIST_SEL',
+        oldHandler);
+    }
+    Def.Autocompleter.Event.observeListSelections(fieldKey,
+      handler);
+    eh[field.id] = handler;
+  }
+
+
+  /**
+   *  Returns model data for the field value "finalVal", with the "text" attribute
+   *  trimmed.
+   * @param finaVal the field value after list selection.  This is the
+   *  trimmed "text" value, which will be in the returned model object.
+   * @param itemTextToItem a hash of list values to model data objects
+   */
+  function getTrimmedModelData(finalVal, itemTextToItem) {
+    var item = itemTextToItem[finalVal];
+    if (item) {
+      item = Object.assign({}, item); // avoid modifying the original
+      // item.text might be a padded value.  Replace it with the trimmed
+      // version.  Otherwise, Angular tries to put the padded version into the
+      // field, which won't "match" the list.
+      item.text = finalVal;
+    }
+    else
+      item = {text: finalVal};
+    return item;
+  }
+
+
+  // Keep track of created list event handlers.  This is a hash of field IDs to
+  // handler functions.
+  Def.Autocompleter.directiveListEventHandlers = {};
+
   if (typeof angular !== 'undefined') {
     angular.module('autocompleteLhcMod', [])
 
@@ -99,21 +144,22 @@
                 var item = autoOpts.listItems[i];
                 itemLabel = item.text;
                 itemText[i] = itemLabel;
-                itemTextToItem[itemLabel] = item;
-                if (defaultKey && item[defaultKey] === defaultKeyVal)
-                  modelDefault = item;
+                var trimmedLabel = itemLabel.trim();
+                itemTextToItem[trimmedLabel] = item;
+                if (defaultKey && item[defaultKey].trim() === defaultKeyVal)
+                  modelDefault = getTrimmedModelData(trimmedLabel, itemTextToItem);
               }
 
               var ac = new Def.Autocompleter.Prefetch(pElem, itemText, autoOpts);
               addNameAttr(pElem);
-              Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
+              updateListSelectionHandler(pElem, function (eventData) {
                 scope.$apply(function() {
-                  var item;
+                  var finalVal = eventData.final_val;
+                  // finalVal is a trimmed version of the text.  Use that for
+                  // the model data.
                   if (!ac.multiSelect_) {
-                    var finalVal = eventData.final_val;
-                    item = itemTextToItem[finalVal] ||
-                        {text: finalVal};
-                    scope.modelData = item;
+                    scope.modelData =
+                      getTrimmedModelData(finalVal, itemTextToItem);
                   }
                   else {
                     if (!scope.modelData)
@@ -130,10 +176,8 @@
                       }
                     }
                     else {
-                      item = itemTextToItem[eventData.final_val];
-                      if (item === undefined)
-                        item = {text: eventData.final_val} // non-list item
-                      selectedItems.push(item);
+                      selectedItems.push(
+                        getTrimmedModelData(finalVal, itemTextToItem));
                     }
                   }
                 });
@@ -145,6 +189,7 @@
 
               return ac;
             }
+
 
 
             /**
@@ -186,7 +231,7 @@
             function searchList(pElem, autoOpts) {
               var ac = new Def.Autocompleter.Search(pElem, autoOpts.url, autoOpts);
               addNameAttr(pElem);
-              Def.Autocompleter.Event.observeListSelections(pElem.name, function(eventData) {
+              updateListSelectionHandler(pElem, function(eventData) {
                 scope.$apply(function() {
                   var itemText = eventData.final_val;
                   if (!ac.multiSelect_) {

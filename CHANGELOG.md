@@ -3,6 +3,13 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [10.0.2] - 2016-12-05
+### Fixed
+- The AngularJS directive for the case where prefetched lists have padded
+  values.
+- Lists created by the AngularJS directive were leaving list selection observers
+  behind when they were destroyed and recreated.
+
 ## [10.0.1] - 2016-12-01
 ### Changed
 - The directive now permits the search autocompleter to be constructed with an

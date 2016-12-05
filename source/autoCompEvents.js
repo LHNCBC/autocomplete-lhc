@@ -10,7 +10,7 @@
   Def.Autocompleter.Event = {
     /**
      *  Registers a callback for when the list is expanded.
-     * @param fieldKey the lookup key from Def.Observer.lookupKey(field) for which
+     * @param fieldKey the lookup key from Def.Observable.lookupKey(field) for which
      *  the given callback will be called.  Fields whose lookupKey value matches
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
@@ -31,7 +31,7 @@
     /**
      *  Registers a callback for when an item is selected from the list, or if
      *  the user enters a non-list value (for lists that support that).
-     * @param fieldKey the lookup key from Def.Observer.lookupKey(field) for which
+     * @param fieldKey the lookup key from Def.Observable.lookupKey(field) for which
      *  the given callback will be called.  Fields whose lookupKey value matches
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
@@ -65,7 +65,7 @@
 
     /**
      *  Registers a callback for when a list field receives focus.
-     * @param fieldKey the lookup key from Def.Observer.lookupKey(field) for which
+     * @param fieldKey the lookup key from Def.Observable.lookupKey(field) for which
      *  the given callback will be called.  Fields whose lookupKey value matches
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
@@ -82,7 +82,7 @@
     /**
      *  Registers a callback for when users cancel the list (by pressing
      *  the escape key).  This closes the list and restores the field's value.
-     * @param fieldKey the lookup key from Def.Observer.lookupKey(field) for which
+     * @param fieldKey the lookup key from Def.Observable.lookupKey(field) for which
      *  the given callback will be called.  Fields whose lookupKey value matches
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
@@ -99,7 +99,7 @@
     /**
      *  Registers a callback for when a suggestions dialog is shown to the
      *  user.
-     * @param fieldKey the lookup key from Def.Observer.lookupKey(field) for which
+     * @param fieldKey the lookup key from Def.Observable.lookupKey(field) for which
      *  the given callback will be called.  Fields whose lookupKey value matches
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
@@ -117,7 +117,7 @@
     /**
      *  Registers a callback for when a user accepts a suggestion from
      *  the suggestion dialog.
-     * @param fieldKey the lookup key from Def.Observer.lookupKey(field) for which
+     * @param fieldKey the lookup key from Def.Observable.lookupKey(field) for which
      *  the given callback will be called.  Fields whose lookupKey value matches
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
@@ -133,7 +133,7 @@
      *  For prefetched lists only, this registers a callback for when the
      *  list is changed via setListAndField but the field value does NOT change.
      *  (If the field value is changed, a change event is sent.)
-     * @param fieldKey the lookup key from Def.Observer.lookupKey(field) for which
+     * @param fieldKey the lookup key from Def.Observable.lookupKey(field) for which
      *  the given callback will be called.  Fields whose lookupKey value matches
      *  fieldKey will trigger the callback for this event.  The
      *  idea is that there might be multiple fields (perhaps of an unknown number)
