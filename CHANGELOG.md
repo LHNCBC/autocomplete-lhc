@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [10.0.1] - 2016-12-01
+### Changed
+- The directive now permits the search autocompleter to be constructed with an
+  empty URL.  This is useful for cases in which the URL is not yet known.
+
 ## [10.0.0] - 2016-11-16
 ### Changed
 - The "autocomp" parameter in URLs for search lists has been replaced with the
