@@ -69,7 +69,8 @@
   /**
    *  Returns model data for the field value "finalVal", with the "text" attribute
    *  trimmed.
-   * @param finaVal the field value after list selection
+   * @param finaVal the field value after list selection.  This is the
+   *  trimmed "text" value, which will be in the returned model object.
    * @param itemTextToItem a hash of list values to model data objects
    */
   function getTrimmedModelData(finalVal, itemTextToItem) {
