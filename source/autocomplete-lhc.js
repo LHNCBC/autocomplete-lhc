@@ -77,6 +77,8 @@
     var item = itemTextToItem[finalVal];
     if (item) {
       item = Object.assign({}, item); // avoid modifying the original
+      // item.text might be a padded value.  Replace it with the trimmed
+      // version.
       item.text = finalVal;
     }
     else
