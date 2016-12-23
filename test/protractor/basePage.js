@@ -142,6 +142,29 @@ function BasePage() {
     }, 5000);
   };
 
+  /**
+   *  Returns the number of times an AJAX call has been made.
+   */
+  this.getAjaxCallCount = function() {
+    return browser.driver.executeScript('return jQuery.ajax.ajaxCtr');
+  };
+
+
+  /**
+   *  Sets the field's value to the given text string, and picks the first
+   *  autocompletion result.
+   * @param field the autocompleting field
+   * @param text the text with which to autocomplete
+   */
+  this.autocompPickFirst = function(field, text) {
+    this.clearField(field);
+    expect(field.getAttribute('value')).toEqual('');
+    field.click();
+    field.sendKeys(text);
+    this.waitForSearchResults();
+    this.firstSearchRes.click();
+  };
+
 };
 
 module.exports = {BasePage: BasePage};

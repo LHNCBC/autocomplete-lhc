@@ -2,6 +2,41 @@ var helpers = require('../test_helpers.js');
 var po = require('../autocompPage.js');
 
 describe('search lists', function() {
+  it('should not run an AJAX call on a control+a (select all) event',
+      function() {
+    // The problem case is (was) noticeable if after you select an item from the
+    // list, you return to the field and hit control+a.
+    po.openTestPage();
+    expect(po.getAjaxCallCount()).toBe(0);
+    po.autocompPickFirst(po.searchCWE, 'ar');
+    expect(po.getAjaxCallCount()).toBe(1);
+    expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
+    po.searchCWE.click();
+    po.searchCWE.sendKeys(protractor.Key.CONTROL, 'a'); // select all
+    expect(po.getAjaxCallCount()).toBe(1);
+  });
+
+
+  it('should run an AJAX call on a control+v (paste) event', function() {
+    // The user should be able to paste a value into field and have it
+    // autocomplete.  (Although, I don't think it will work yet if the user uses
+    // the mouse to paste.)
+    po.openTestPage();
+    expect(po.getAjaxCallCount()).toBe(0);
+    // Enter some text in a non-ajax field and copy it.
+    var nonAutoField = po.prefetchCWE;
+    nonAutoField.sendKeys('ar');
+    nonAutoField.sendKeys(protractor.Key.CONTROL, 'a'); // select all
+    nonAutoField.sendKeys(protractor.Key.CONTROL, 'c'); // copy
+    expect(po.getAjaxCallCount()).toBe(0);
+    // Paste into an autocompleting field
+    po.searchCNE.click();
+    po.searchCNE.sendKeys(protractor.Key.CONTROL, 'v'); // paste
+    po.waitForSearchResults();
+    expect(po.getAjaxCallCount()).toBe(1);
+  });
+
+
   // This test passed in Firefox before I even made the fix.  Apparently Linux
   // Firefox (but not Windows Firefox or Windows Chrome) does not have the
   // problem, and it is Linux Firefox we are testing with.  I will leave the
@@ -33,6 +68,7 @@ describe('search lists', function() {
     };
 
     var ids = Object.keys(expected);
+
     for (var i=0, len=ids.length; i<len; ++i) {
       var recID = ids[i];
       var extraData = browser.driver.executeScript('return '+
@@ -121,6 +157,35 @@ describe('search lists', function() {
       po.firstSearchRes.click();
       expect(po.searchCNE.getAttribute('value')).toEqual('Arm pain');
       // Note:  Subsequent tests (if there are any) should reload the page to avoid odd results
+    });
+  });
+
+
+  describe('cache', function() {
+    it('should allow fields with the same URL and different IDs to use the '+
+       'same cached values', function() {
+      po.openTestPage();
+      expect(po.getAjaxCallCount()).toBe(0);
+      // Use two fields with different URLs
+      po.autocompPickFirst(po.searchCNE, 'ar');
+      expect(po.searchCNE.getAttribute('value')).toEqual('Arachnoiditis');
+      expect(po.getAjaxCallCount()).toBe(1);
+      po.autocompPickFirst(po.searchCWE, 'ar');
+      expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
+      expect(po.getAjaxCallCount()).toBe(2);
+      // Confirm that if we send the same request a second time, no further AJAX
+      // calls are made.
+      po.autocompPickFirst(po.searchCWE, 'ar');
+      expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
+      expect(po.getAjaxCallCount()).toBe(2);
+      // Now change searchCNE to have the same URL as search CWE
+      browser.driver.executeScript(
+        'jQuery("'+po.searchCNECSS+'")[0].autocomp.setURL("/form/get_search_res_list?fd_id=2163")');
+      // Confirm that with the new URL, no new AJAX call is made for the same
+      // search string.
+      po.autocompPickFirst(po.searchCNE, 'ar');
+      expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
+      expect(po.getAjaxCallCount()).toBe(2);
     });
   });
 });
