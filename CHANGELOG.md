@@ -8,7 +8,7 @@ This log documents significant changes for each release.  This project follows
 - The internal cache for search autocompleters is now entirely based on the URL
   instead of on the field ID.  This makes it easy to have two fields with the
   same URL share the on-page cache, and also avoids the need to clear the cache
-  if a field's autocompelter or URL are changed.
+  if a field's autocompleter or URL are changed.
 
 ## [10.0.2] - 2016-12-05
 ### Fixed
