@@ -113,6 +113,10 @@ mockData_ = {
 
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.
 jQuery.ajax = function(url, options) {
+  // Keep track of the number of calls to this method, so we can detect in
+  // tests whether an AJAX request was sent or whether the cache was used.
+  ++jQuery.ajax.ajaxCtr;
+
   var params = options.data;
   var resultType =
     params.suggest ? 'suggest' : params.maxList === undefined ? 'partial' : 'full';
@@ -136,4 +140,5 @@ jQuery.ajax = function(url, options) {
   setTimeout(function() {options.complete(response);}, 1);
   return response;
 };
+jQuery.ajax.ajaxCtr = 0; // number of calls
 // end of mock for Ajax.Request

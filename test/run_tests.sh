@@ -16,6 +16,12 @@ then
   cp soundmanager/bonk.mp3 bonk.mp3
 fi
 
+shutdown_and_exit () {
+  # Shut down node.js (%n = background job n)
+  kill %1
+  exit $code
+}
+
 if [ "$1" != "skip_unit_tests" ]
 then
   echo 'Running unit tests.  Check the result in the browser, and quit'
@@ -24,22 +30,16 @@ then
   port=`grep port test/config.js | grep -oP '(\d+)'`
   firefox http://localhost:${port}/test/scriptaculous_unit/autoComp_test.html \
           http://localhost:${port}/test/scriptaculous_unit/recordDataRequester_test.html
-fi
 
-shutdown_and_exit () {
-  # Shut down node.js (%n = background job n)
-  kill %1
-  exit $code
-}
-
-grunt mochaTest
-code=$?
-if [ $code != "0" ]
-then
-  shutdown_and_exit
+  grunt mochaTest
+  code=$?
+  if [ $code != "0" ]
+  then
+    shutdown_and_exit
+  fi
 fi
 
 # Now run the e2e tests
 grunt protractor
-code = $?
+code=$?
 shutdown_and_exit

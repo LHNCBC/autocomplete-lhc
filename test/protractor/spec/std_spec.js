@@ -96,6 +96,7 @@ describe('autocomp', function() {
     raceField.sendKeys(protractor.Key.CONTROL, protractor.Key.ARROW_DOWN);
     // second item should still be selected
     expect(raceField.getAttribute('value')).toBe('Asian');
+    raceField.sendKeys(protractor.Key.ESCAPE); // Close the list
 
     // Now try a search list
     searchCNE.click();

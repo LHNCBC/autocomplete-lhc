@@ -1248,7 +1248,11 @@ if (typeof Def === 'undefined')
           // charCode being 0 is a case Scriptaculous excluded for WebKit
           // browsers.  (I'm not sure when that happens.)
           // 16 & 17 = shift & control key codes
-          if (charCode !== 16 && charCode !== 17 && charCode!==0) {
+          // Also ignore control key combination events except for control+v.
+          // We also handle control+enter, which is taken care of above (see the
+          // call to fieldEventIsBigList).
+          if ((!event.ctrlKey || charCode === 86) && // 86 = V (control+v sends V)
+              charCode !== 16 && charCode !== 17 && charCode!==0) {
             this.preFieldFillVal_ = null;  // reset on key strokes in field
             this.changed = true;
             this.hasFocus = true;

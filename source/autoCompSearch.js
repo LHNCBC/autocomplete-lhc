@@ -18,11 +18,11 @@
   // a temporary object to help NetBeans see it.
   var ctmp = {
     /**
-     *  A cache for result objects.  The key is the target field field name,
-     *  and the value is a cache for that target field name.  (In a repeating
-     *  line table, the cache gets shared across rows.)
+     *  A cache for search result objects.  The key is the search
+     *  autocompleter's base URL, and the value is a cache for queries sent to
+     *  that URL.  (In a repeating line table, the cache gets shared across rows.)
      */
-    fieldToCache_: {},
+    urlToCache_: {},
 
     /**
      *  The index into the resultCache_ (an instance variable) for the part
@@ -375,6 +375,18 @@
 
 
     /**
+     *  Initializes this.resultCache_.
+     */
+    initResultCache: function() {
+      this.resultCache_ = Def.Autocompleter.Search.urlToCache_[this.url];
+      if (!this.resultCache_) {
+        this.resultCache_ = [{}, {}];
+        Def.Autocompleter.Search.urlToCache_[this.url] = this.resultCache_;
+      }
+    },
+
+
+    /**
      *  Returns the cached search results (in the form of an AJAX response object
      *  for a request initiated by runSearch or getUpdatedChoices)
      *  for the given search string, or null if there are no cached results.
@@ -385,14 +397,8 @@
      *  for a search request.
      */
     getCachedResults: function(str, autocomp) {
-      if (!this.resultCache_) {
-        var targetField = Def.Autocompleter.getFieldLookupKey(this.element);
-        this.resultCache_ = Def.Autocompleter.Search.fieldToCache_[targetField];
-        if (!this.resultCache_) {
-          this.resultCache_ = [{}, {}];
-          Def.Autocompleter.Search.fieldToCache_[targetField] = this.resultCache_;
-        }
-      }
+      if (!this.resultCache_)
+        this.initResultCache();
       return this.resultCache_[autocomp][str];
     },
 
@@ -409,14 +415,8 @@
      *  runSearch or getUpdatedChoices.
      */
     storeCachedResults: function(str, autocomp, results) {
-      if (!this.resultCache_) {
-        var targetField = Def.Autocompleter.getFieldLookupKey(this.element);
-        this.resultCache_ = Def.Autocompleter.Search.fieldToCache_[targetField];
-        if (!this.resultCache_) {
-          this.resultCache_ = [{}, {}];
-          Def.Autocompleter.Search.fieldToCache_[targetField] = this.resultCache_;
-        }
-      }
+      if (!this.resultCache_)
+        this.initResultCache();
       this.resultCache_[autocomp][str] = results;
     },
 
@@ -425,21 +425,19 @@
      *  Forgets previously cached results.
      */
     clearCachedResults: function() {
-      var targetField = Def.Autocompleter.getFieldLookupKey(this.element);
       this.resultCache_ = [{}, {}];
-      Def.Autocompleter.Search.fieldToCache_[targetField] = this.resultCache_;
+      Def.Autocompleter.Search.urlToCache_[this.url] = this.resultCache_;
     },
 
 
     /**
-     *  Changes the autocompleter's URL to the given URL, and clears any
-     *  previously cached results.
+     *  Changes the autocompleter's URL to the given URL, and updates the cache.
      * @param url The new url for getting the completion list.  See the "url"
      *  parameter in the constructor.
      */
     setURL: function(url) {
       this.url = url;
-      this.clearCachedResults();
+      this.initResultCache();
     },
 
 

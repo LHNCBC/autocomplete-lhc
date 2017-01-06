@@ -771,7 +771,6 @@
       if (this.element.value == '') {
         if (!this.defaultSelectionIndex_) {
           // Find the default index
-          var targetField = Def.Autocompleter.getFieldLookupKey(this.element);
           var defaultVal = this.constructorOpts_.defaultValue;
           if (defaultVal !== undefined) {
             if (this.itemCodes_) {

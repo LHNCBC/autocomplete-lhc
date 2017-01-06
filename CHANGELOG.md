@@ -3,6 +3,13 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [10.0.3] - 2016-12-23
+### Changed
+- The internal cache for search autocompleters is now entirely based on the URL
+  instead of on the field ID.  This makes it easy to have two fields with the
+  same URL share the on-page cache, and also avoids the need to clear the cache
+  if a field's autocompleter or URL are changed.
+
 ## [10.0.2] - 2016-12-05
 ### Fixed
 - The AngularJS directive for the case where prefetched lists have padded
