@@ -22,9 +22,6 @@ exports.config = {
 
   // If true, only chromedriver will be started, not a standalone selenium.
   // Tests for browsers other than chrome will not run.
-  // Enabling directConnect because we're just testing on Chrome now, and
-  // sometimes the standalone selenium does not start up quickly enough before
-  // protractor times out.
 //  directConnect: true,
 
   // list of files / patterns to load in the browser
