@@ -234,7 +234,6 @@
               updateListSelectionHandler(pElem, function(eventData) {
                 scope.$apply(function() {
                   var itemText = eventData.final_val;
-ac.finalVal = itemText; // %%% TBD debugging
                   if (!ac.multiSelect_) {
                     scope.modelData = getItemModelData(ac, itemText);
                   }
