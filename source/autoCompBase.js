@@ -102,7 +102,7 @@ if (typeof Def === 'undefined')
     },
 
 
-    /*
+    /**
      *  Returns value of the given form field element.  (This may be overridden for
      *  special handling of values.)
      * @param field the form field from which the value is needed.
@@ -122,9 +122,11 @@ if (typeof Def === 'undefined')
      *  model and the running of rules) should be run after the value is set.
      */
     setFieldVal: function(field, val, runChangeEventObservers) {
-      var fieldVal = this.getFieldVal(field);
+      var fieldVal;
+      if (runChangeEventObservers)
+        fieldVal = this.getFieldVal(field);
       field.value = val;
-      if (fieldVal !== val && runChangeEventObservers) {
+      if (runChangeEventObservers && fieldVal !== val) {
         Def.Event.simulate(field, 'change');
       }
     },
@@ -270,13 +272,18 @@ if (typeof Def === 'undefined')
             rtn = this.data[item] = this.refresh[item].apply(this);
           return rtn;
         },
+        set: function(item, value) {
+          this.data[item] = value;
+        },
+        // Drops the current value for "item"
         invalidate: function(item) {
           if (item)
             delete this.data[item];
           else
             this.data = {};
         },
-        refresh: {
+        // A hash of functions to get a new property value
+        refresh: { // populated with jitProps
         }
       };
 
@@ -712,6 +719,26 @@ if (typeof Def === 'undefined')
 
 
     /**
+     *  Sets the autocompleter's form element's value to the given value.
+     *  Differs from Def.Autocompleter.setFieldVal in that it uses and manages
+     *  the domCache values.
+     * @param val the new value, which should only be a string.
+     * @param runChangeEventObservers (default true) whether the change
+     *  event observers for the field (which includes the update for the data
+     *  model and the running of rules) should be run after the value is set.
+     */
+    setFieldVal: function(val, runChangeEventObservers) {
+      var fieldVal;
+      if (runChangeEventObservers)
+        fieldVal = this.domCache.get('elemVal');
+      this.domCache.set('elemVal', this.element.value = val);
+      if (runChangeEventObservers && fieldVal !== val) {
+        Def.Event.simulate(this.element, 'change');
+      }
+    },
+
+
+    /**
      *  Ensures there is an ID on the list's element, creating one if necessary.
      */
     ensureNeededAttrs: function () {
@@ -776,13 +803,13 @@ if (typeof Def === 'undefined')
      * @param itemText (optional) if provided, this will be the selected text rather
      *  than the current item in the field.  When this is provided, it is
      *  assumed that "code" is provided too.
-     * @param code (optional) if provided, this will be the selected text rather
-     *  that then code for the item currently in the field.  If this is
-     *  provided, itemText must be provided too.
+     * @param code (optional) if provided, this will be the code for the
+     *  selected text rather that then code for the item currently in the field.
+     *  If this is provided, itemText must be provided too.
      */
     storeSelectedItem: function(itemText, code) {
       if (itemText === undefined) {
-        itemText = this.element.value;
+        itemText = this.domCache.get('elemVal');
         code = this.getItemCode(itemText);
       }
       if (!this.multiSelect_) {
@@ -833,10 +860,8 @@ if (typeof Def === 'undefined')
      *  lists).  After this, the field will be blank.
      */
     moveEntryToSelectedArea: function() {
-      var escapedVal = this.addToSelectedArea(this.element.value);
-      this.element.value = '';
-      this.processedFieldVal_ = '';
-      this.lastValidVal_ = this.processedFieldVal_;
+      var escapedVal = this.addToSelectedArea(this.domCache.get('elemVal'));
+      this.setFieldVal(this.lastValidVal_ = this.processedFieldVal_ = '', false);
       Def.Autocompleter.screenReaderLog('Selected '+escapedVal);
       if (this.index >= 0) { // i.e. if it is a list item
         // Delete selected item
@@ -971,7 +996,7 @@ if (typeof Def === 'undefined')
      */
     markPrevious: function() {
       if (this.preFieldFillVal_ === null) // save the value in case of ESC
-        this.preFieldFillVal_ = this.element.value;
+        this.preFieldFillVal_ = this.domCache.get('elemVal');
 
       // Move the index back and keep doing so until we're not on a heading (unless we
       // get back to where we started).
@@ -992,7 +1017,7 @@ if (typeof Def === 'undefined')
 
       // Also put the value into the field, but don't run the change event yet,
       // because the user has not really selected it.
-      this.element.value = this.listItemValue(highlightedLITag);
+      this.setFieldVal(this.listItemValue(highlightedLITag), false);
       this.element.select();
     },
 
@@ -1004,7 +1029,7 @@ if (typeof Def === 'undefined')
      */
     markNext: function() {
       if (this.preFieldFillVal_ === null) // save the value in case of ESC
-        this.preFieldFillVal_ = this.element.value;
+        this.preFieldFillVal_ = this.domCache.get('elemVal');
 
       // Move the index forward and keep doing so until we're not on a heading (unless we
       // get back to where we started).
@@ -1025,7 +1050,7 @@ if (typeof Def === 'undefined')
 
       // Also put the value into the field, but don't run the change event yet,
       // because the user has not really selected it.
-      this.element.value = this.listItemValue(highlightedLITag);
+      this.setFieldVal(this.listItemValue(highlightedLITag), false);
       this.element.select();
     },
 
@@ -1146,6 +1171,7 @@ if (typeof Def === 'undefined')
      * @param event the event object from the keypress event
      */
     onKeyPress: function(event) {
+      this.domCache.invalidate('elemVal');
       // Do nothing if the autocompleter widget is not enabled_.
       if (this.enabled_) {
         // Note:  Normal (i.e. not search or navigation) key strokes are handled
@@ -1161,7 +1187,7 @@ if (typeof Def === 'undefined')
           // If the user had arrowed down into the list, reset the field
           // value to what the user actually typed before running the search.
           if (this.preFieldFillVal_)
-            this.element.value = this.preFieldFillVal_;
+            this.setFieldVal(this.preFieldFillVal_, false);
           this.handleSeeMoreItems(event); // implemented in sub-classes
           // Currently we don't have separate events for different reasons to
           // show the big list (e.g. search vs. list expansion), so just send
@@ -1186,13 +1212,13 @@ if (typeof Def === 'undefined')
               // selection (in a multi-select list), but if the field is empty we
               // will ignore that because the user might just be trying to leave
               // the field.
-              if (this.element.value !== '')
+              if (this.domCache.get('elemVal') !== '')
                 this.handleDataEntry(event);
               break;
             case keys.ESCAPE:
               if (this.preFieldFillVal_!==null) {
                 // Restore the field value
-                this.element.value = this.preFieldFillVal_;
+                this.setFieldVal(this.preFieldFillVal_, false);
                 Def.Autocompleter.Event.notifyObservers(this.element, 'CANCEL',
                     {restored_value: this.preFieldFillVal_});
               }
@@ -1385,7 +1411,7 @@ if (typeof Def === 'undefined')
         if (!this.focusInProgress_) {
           // The field is in a non-matching state if the value is not empty
           // and there are no items in the list.
-          this.setMatchStatusIndicator(this.entryCount > 0 || this.elemVal==='');
+          this.setMatchStatusIndicator(this.entryCount > 0 || this.trimmedElemVal==='');
         }
       }
     },
@@ -1395,7 +1421,7 @@ if (typeof Def === 'undefined')
      *  Returns true if the user seems to be picking a list item by number.
      */
     pickedByNumber: function() {
-      return this.add_seqnum && this.elemVal.match(/^\d+$/);
+      return this.add_seqnum && this.trimmedElemVal.match(/^\d+$/);
     },
 
 
@@ -1410,7 +1436,7 @@ if (typeof Def === 'undefined')
       // 1) the shortest choice with the field value at the beginning, or
       // 2) the shortest choice with the field value somewhere, or
       // 3) the shortest choice
-      var elemValue = this.elemVal.toLowerCase();
+      var elemValue = this.trimmedElemVal.toLowerCase();
       var numItems = listItems.length;
       var rtn = -1;
 
@@ -1655,10 +1681,18 @@ if (typeof Def === 'undefined')
      */
     initDOMCache: function() {
       var acInstance = this;
-      this.domCache = Def.Autocompleter.createDOMCache({
+      var ac = Def.Autocompleter;
+      this.domCache = ac.createDOMCache({
+        // element is the positioned element, which might be acInstance.element,
+        // or might be a span wrapping it.
         element: acInstance.listPositioningElem()}, {
+        // elemPos is the offset of "element" as defined above.
         elemPos: function() {
           return jQuery(this.element).offset();
+        },
+        // The field value
+        elemVal: function() {
+          return ac.getFieldVal(acInstance.element);
         }
       });
     },
@@ -1788,7 +1822,7 @@ if (typeof Def === 'undefined')
      *  return the element's full value.
      */
     getToken: function() {
-      return this.element.value;
+      return this.domCache.get('elemVal');
     },
 
 
@@ -1798,7 +1832,7 @@ if (typeof Def === 'undefined')
      *  return the bounds of the element's full value.
      */
     getTokenBounds: function() {
-      return [0, this.element.value.length];
+      return [0, this.domCache.get('elemVal').length];
     },
 
 
@@ -1836,7 +1870,7 @@ if (typeof Def === 'undefined')
       // fields.  (If it does, it can wait for the record data requester's
       // latestPendingAjaxRequest_ variable to be null.)
       if (this.recDataRequester_) {
-        if (this.matchStatus_ && this.element.value.trim() !== '')
+        if (this.matchStatus_ && this.domCache.get('elemVal').trim() !== '')
           this.recDataRequester_.requestData();
         else // no data, or no data from list
           this.recDataRequester_.clearDataOutputFields();
@@ -1850,7 +1884,7 @@ if (typeof Def === 'undefined')
      *  following a selection).
      */
     getValTyped: function() {
-      return this.preFieldFillVal_ === null ? this.element.value :
+      return this.preFieldFillVal_ === null ? this.domCache.get('elemVal') :
           this.preFieldFillVal_;
     },
 
@@ -1877,7 +1911,7 @@ if (typeof Def === 'undefined')
         valTyped = '';
       }
       if (finalVal === undefined)
-        finalVal = this.element.value;
+        finalVal = this.domCache.get('elemVal');
       var inputMethod = this.clickSelectionInProgress_ ? 'clicked' :
         this.preFieldFillVal_ === null ? 'typed' : 'arrows';
 
@@ -1903,7 +1937,7 @@ if (typeof Def === 'undefined')
 
       if (this.active) {
         if (this.index === -1) {
-          var elemVal = this.element.value.trim().toLowerCase();
+          var elemVal = this.domCache.get('elemVal').trim().toLowerCase();
           // Allow the selection if what the user typed
           // exactly matches an item in the list, except for case.
           for (var i=0; i<this.entryCount && !canSelect; ++i) {
@@ -2016,7 +2050,7 @@ if (typeof Def === 'undefined')
           // only if non-matching values are allowed.
           if (Def.Autocompleter.Event.callbacks_ !== null)
             this.listSelectionNotification(this.getValTyped(), false);
-          this.selectedItems_[this.element.value] = 1;
+          this.selectedItems_[this.domCache.get('elemVal')] = 1;
           if (this.multiSelect_)
             this.moveEntryToSelectedArea(); // resets processedFieldVal_ & lastValidVal_
           else
@@ -2047,6 +2081,7 @@ if (typeof Def === 'undefined')
      * @param event the DOM event object for the change event
      */
     onChange: function(event) {
+      this.domCache.invalidate('elemVal');
       if (!Def.Autocompleter.completionOptionsScrollerClicked_) {
         // We used to only process the change if this.enabled_ was true.  However,
         // if the list field is changed by a RecordDataRequester, it will not
@@ -2202,7 +2237,8 @@ if (typeof Def === 'undefined')
      * @param event the DOM event signaling the data entry
      */
     handleDataEntry: function(event) {
-      if (this.invalidStatus_ && this.processedFieldVal_ === this.element.value)
+      if (this.invalidStatus_ &&
+          this.processedFieldVal_ === this.domCache.get('elemVal'))
         this.clearInvalidFieldVal();
       else {
         // If there was a pending autocompletion event (key event) clear it so we
@@ -2329,7 +2365,7 @@ if (typeof Def === 'undefined')
           // Put the value into the field, but don't run the change event yet,
           // because the user has not really selected it.
           this.index = newIndex;
-          this.element.value = this.listItemValue(newItem);
+          this.setFieldVal(this.listItemValue(newItem), false);
           this.element.select();
           this.render();
           Def.Autocompleter.stopEvent(event);
@@ -2405,10 +2441,10 @@ if (typeof Def === 'undefined')
       // The Scriptaculous autocompleters allow you to autocomplete more than
       // once in a field and select more than one value from the list.  We're
       // not doing that, so we don't do the getTokenBounds() stuff.
-      this.element.value = this.listItemValue(selectedElement);
-      // Do not use setFieldVal for the above; after this gets called,
-      // propagateFieldChanges is called, and that takes care of running
-      // change event handlers.
+      this.setFieldVal(this.listItemValue(selectedElement), false);
+      // The "false" argument above means do not run change observers.  After
+      // this gets called, propagateFieldChanges is called, and that takes care
+      // of running change event handlers.
 
       if (this.options.afterUpdateElement)
         this.options.afterUpdateElement(this.element, selectedElement);
@@ -2501,7 +2537,7 @@ if (typeof Def === 'undefined')
         this.active = false;
         this.hide();
       }
-      this.oldElementValue = this.element.value;
+      this.oldElementValue = this.domCache.get('elemVal');
     }
 
   };  // end Def.Autocompleter.Base class

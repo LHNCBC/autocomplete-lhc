@@ -138,6 +138,7 @@ describe('multi-select lists', function() {
     po.multiHeadingCWE.click();
     expect(po.searchResults.isDisplayed()).toBeTruthy();
     // Pick the first three items.  (Note:  firstSearchRes is a heading.)
+    po.waitForSearchResults();
     po.secondSearchRes.click();
     po.secondSearchRes.click();
     po.secondSearchRes.click();

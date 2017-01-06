@@ -29,6 +29,9 @@ describe('directive', function() {
       expect(dp.searchList.isDisplayed()).toBeTruthy();
       expect(dp.expandLink.isDisplayed()).toBeTruthy();
       dp.expandLink.click();
+      dp.waitForSearchResults();
+      browser.sleep(250); // wait for scrolling to start
+      dp.waitForScrollToStop(dp.searchListID);
       dp.tenthSearchRes.click();
       expect(dp.searchList.getAttribute('value')).toBe('Arrhythmia');
       expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(

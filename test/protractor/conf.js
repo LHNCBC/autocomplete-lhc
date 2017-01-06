@@ -22,7 +22,10 @@ exports.config = {
 
   // If true, only chromedriver will be started, not a standalone selenium.
   // Tests for browsers other than chrome will not run.
-  //directConnect: true,
+  // Enabling directConnect because we're just testing on Chrome now, and
+  // sometimes the standalone selenium does not start up quickly enough before
+  // protractor times out.
+//  directConnect: true,
 
   // list of files / patterns to load in the browser
   specs: [
@@ -39,7 +42,7 @@ exports.config = {
   // and
   // https://code.google.com/p/selenium/source/browse/javascript/webdriver/capabilities.js
   capabilities: {
-    'browserName': 'firefox'
+    //'browserName': 'firefox'
   },
 
   // ----- The test framework -----

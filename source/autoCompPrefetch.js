@@ -181,7 +181,7 @@
      *  Populates the list based on the field content.
      */
     getUpdatedChoices: function() {
-      this.elemVal = this.element.value.trim();
+      this.trimmedElemVal = this.domCache.get('elemVal').trim();
       this.updateChoices(this.options.selector(this), this.pickedByNumber());
     },
 
@@ -301,8 +301,8 @@
       var entry     = instance.getToken();
       var totalCount     = 0;
       var suggestionIndex = null;
-      var useFullList =
-        !instance.matchListItemsToField_ || instance.element.value.trim() === '';
+      var useFullList = !instance.matchListItemsToField_ ||
+        instance.domCache.get('elemVal').trim() === '';
 
       // If the user selected "See More Items", find all the matches.
       // Otherwise, limit the find to the maximum number of items we
@@ -556,8 +556,7 @@
      *  list value.
      */
     setFieldToListValue: function(newVal) {
-      var field = this.element;
-      field.value = newVal;
+      this.setFieldVal(newVal, false);
       this.fieldValIsListVal_ = true;
       this.storeSelectedItem();
       // Set this value as the "processed value", so that when we send a change
@@ -616,7 +615,7 @@
 
       // Reset the contents of the field unless the fieldAlreadySet flag
       // is set to false
-      var oldValue = this.element.value;
+      var oldValue = this.domCache.get('elemVal');
       var lenList = listItems.length;
       var newVal;
       if (fieldAlreadySet === false) {
@@ -624,10 +623,9 @@
           newVal = this.assembleValue(listItems[0]);
         else
           newVal = '';
-        // We can set the value directly (rather than through Def.setFieldVal),
-        // because the element is always an input field, and we are handling
-        // the running of rules, etc., below.
-        this.element.value = newVal;
+        // Set the field value, but leave the running of change event observers
+        // until later.
+        this.setFieldVal(newVal, false);
         this.fieldValIsListVal_ = true;
       }
 
@@ -768,7 +766,7 @@
       // unless there is a field default and the field is blank, in which case
       // we use the index of the default.
       var index = -1; // default (no selection)
-      if (this.element.value == '') {
+      if (this.domCache.get('elemVal') == '') {
         if (!this.defaultSelectionIndex_) {
           // Find the default index
           var defaultVal = this.constructorOpts_.defaultValue;

@@ -5,6 +5,7 @@
   <title>JavaScript unit test file</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <link rel="stylesheet" href="test_unit/unittest.css" type="text/css" />
+  <link rel="stylesheet" href="../../source/auto_completion.css" type="text/css" />
 </head>
 <body>
 
@@ -196,7 +197,7 @@
       // Test a field that has a code.
       dataReq = new Def.RecordDataRequester($('fe_gender_1'),
         '/someurl', ['record_id', 'trigger_field'], ['code'], true);
-      $('fe_gender_1').value = 'Male';
+      $('fe_gender_1').autocomp.setFieldVal('Male', false);
       $('fe_gender_C_1').value = 'M';
       $('fe_gender_1').autocomp.storeSelectedItem()
       params = dataReq.buildParameters();
@@ -206,7 +207,7 @@
       assertEqual('', params['authenticity_token']);
 
       // Test a field that has a blank code field.
-      $('fe_gender_1').value = 'Not Male';
+      $('fe_gender_1').autocomp.setFieldVal('Not Male', false);
       $('fe_gender_C_1').value = '';
       $('fe_gender_1').autocomp.storeSelectedItem()
       params = dataReq.buildParameters();
