@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [10.0.4] - 2017-01-06
+### Fixed
+- There was a problem with leading or trailing whitespace in search autocompletion fields
+  preventing the display of the results list.
+
 ## [10.0.3] - 2016-12-23
 ### Changed
 - The internal cache for search autocompleters is now entirely based on the URL
