@@ -315,7 +315,8 @@
 
 
     /**
-     *  Returns the field value with any field separator strings replaced by
+     *  Returns the field value (or partial value, if the tokens option was
+     *  specified) with any field separator strings replaced by
      *  spaces, so it is ready to use as a search string.
      * @param fieldVal (optional) the field value if already obtained from this.element
      */
@@ -326,7 +327,7 @@
       if (!ac.LIST_ITEM_FIELD_SEP_REGEX)
         ac.LIST_ITEM_FIELD_SEP_REGEX = new RegExp(ac.LIST_ITEM_FIELD_SEP, 'g');
       if (!fieldVal)
-        fieldVal = this.domCache.get('elemVal');
+        fieldVal = this.getToken();
       return fieldVal.replace(ac.LIST_ITEM_FIELD_SEP_REGEX, ' ').trimLeft();
     },
 

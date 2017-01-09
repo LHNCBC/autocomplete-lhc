@@ -24,6 +24,10 @@ exports.config = {
   // Tests for browsers other than chrome will not run.
 //  directConnect: true,
 
+  // Increase the timeout for waiting for the selenium webdriver to start
+  // (default is 30000ms).
+  seleniumServerStartTimeout: 120000,
+
   // list of files / patterns to load in the browser
   specs: [
     'spec/*.js'

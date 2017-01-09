@@ -91,6 +91,7 @@ describe('multi-select lists', function() {
     po.openTestPage();
     po.multiHeadingCWE.click();
     // The first item is a heading; we should not be able to click on it
+    po.waitForScrollToStop(po.multiHeadingCWEID);
     po.firstSearchRes.click();
     // Even though we clicked on the heading, the list should stay open
     expect(po.searchResults.isDisplayed()).toBeTruthy();

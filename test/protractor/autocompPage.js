@@ -15,6 +15,7 @@ var AutocompPage = function() {
   this.longOddCNENoScroll = $(this.longOddCNENoScrollCSS);
   this.prefetchCWEID = 'prefetch_cwe';  // single-select
   this.prefetchCWE = $('#'+this.prefetchCWEID);  // single-select
+  this.prefetchCWETokens = $('#prefetch_cwe_tokens');
   this.prefetchWithDefault = $('#prefetch_default_cne');
   this.searchCNECSS = '#fe_search_cne';
   this.searchCNE = $(this.searchCNECSS);

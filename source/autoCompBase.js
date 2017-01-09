@@ -591,6 +591,10 @@ if (typeof Def === 'undefined')
      *     item in the list.</li>
      *    <li>maxSelect - (default 1) The maximum number of items that can be
      *     selected.  Use '*' for unlimited.</li>
+     *    <li>tokens - (default none) For autocompleting based on part of the
+     *     field's value, this should be an array of the characters that are
+     *     considered "word" boundaries (e.g. a space, but could be something
+     *     else).  When this option is used, maxSelect is ignored.
      *    <li>scrolledContainer - the element that should be scrolled to bring
      *     the list into view if it would otherwise extend below the edge of the
      *     window. The default is document.documentElement (i.e. the whole
@@ -622,9 +626,9 @@ if (typeof Def === 'undefined')
       if (this.twoColumnFlow_ === undefined)
         this.twoColumnFlow_ = true;
 
-      if (options.maxSelect === undefined)
+      if (options.tokens || options.maxSelect === undefined)
         options.maxSelect = 1;
-      if (options.maxSelect === '*')
+      else if (options.maxSelect === '*')
         options.maxSelect = Infinity;
       this.multiSelect_ = options.maxSelect !== 1;
       if (options.scrolledContainer !== undefined) // allow null
@@ -715,6 +719,7 @@ if (typeof Def === 'undefined')
       this.index = -1;
 
       this.initDOMCache();
+      this.oldElementValue = this.domCache.get('elemVal');
     },
 
 
@@ -731,7 +736,7 @@ if (typeof Def === 'undefined')
       var fieldVal;
       if (runChangeEventObservers)
         fieldVal = this.domCache.get('elemVal');
-      this.domCache.set('elemVal', this.element.value = val);
+      this.domCache.set('elemVal', this.element.value = this.oldElementValue = val);
       if (runChangeEventObservers && fieldVal !== val) {
         Def.Event.simulate(this.element, 'change');
       }
@@ -1014,11 +1019,7 @@ if (typeof Def === 'undefined')
 
 
       this.scrollToShow(highlightedLITag, this.update.parentNode);
-
-      // Also put the value into the field, but don't run the change event yet,
-      // because the user has not really selected it.
-      this.setFieldVal(this.listItemValue(highlightedLITag), false);
-      this.element.select();
+      this.updateElementAfterMarking(highlightedLITag);
     },
 
 
@@ -1047,11 +1048,30 @@ if (typeof Def === 'undefined')
 
 
       this.scrollToShow(highlightedLITag, this.update.parentNode);
+      this.updateElementAfterMarking(highlightedLITag);
+    },
 
+
+    /**
+     *  Updates the field after an element has been highlighted in the list
+     *  (e.g. via arrow keys).
+     * @param listElement the DOM element that has been highlighted
+     */
+    updateElementAfterMarking: function(listElement) {
       // Also put the value into the field, but don't run the change event yet,
       // because the user has not really selected it.
-      this.setFieldVal(this.listItemValue(highlightedLITag), false);
-      this.element.select();
+      //var oldElementValue = this.oldElementValue;
+      this.updateElement(listElement);
+      //this.oldElementValue = oldElementValue; // selection not made yet
+      if (this.options.tokens && this.tokenBounds) {
+        // Recompute token bounds, because we've inserted a list value
+        this.tokenBounds = null;
+        this.getTokenBounds();
+        this.element.setSelectionRange(this.tokenBounds[0], this.tokenBounds[1]);
+      }
+      else
+        this.element.select();
+      this.tokenBounds = null;
     },
 
 
@@ -1817,23 +1837,50 @@ if (typeof Def === 'undefined')
 
 
     /**
-     *  Since we aren't using the tokenizing stuff (which allows more than
-     *  one selection from the list) we are overriding getToken to just
-     *  return the element's full value.
+     *  Returns the part of the field value (maybe the full field value) that
+     *  should be used as the basis for autocompletion.
      */
     getToken: function() {
-      return this.domCache.get('elemVal');
+      var rtn = this.domCache.get('elemVal');
+      if (this.options.tokens) {
+        var bounds = this.getTokenBounds();
+        rtn = rtn.substring(bounds[0], bounds[1]).trim();
+      }
+      return rtn;
     },
 
 
     /**
-     *  Since we aren't using the tokenizing stuff (which allows more than
-     *  one selection from the list) we are overriding getTokenBounds to just
-     *  return the bounds of the element's full value.
+     *  Returns the indices of the most recently changed part of the element's
+     *  value whose boundaries are the closest token characters.  Use when
+     *  autocompleting based on just part of the field's value.
      */
-    getTokenBounds: function() {
-      return [0, this.domCache.get('elemVal').length];
-    },
+    getTokenBounds: (function() {
+      // Mostly copied from Scriptaculous.
+      function getFirstDifferencePos(newS, oldS) {
+        var boundary = Math.min(newS.length, oldS.length);
+        for (var index = 0; index < boundary; ++index)
+          if (newS[index] != oldS[index])
+            return index;
+        return boundary;
+      };
+
+      return function() {
+        var value = this.domCache.get('elemVal');
+        if (value.trim() === '') return [-1, 0];
+        var diff = getFirstDifferencePos(value, this.oldElementValue);
+        var offset = (diff == this.oldElementValue.length ? 1 : 0);
+        var prevTokenPos = -1, nextTokenPos = value.length;
+        var tp;
+        for (var index = 0, l = this.options.tokens.length; index < l; ++index) {
+          tp = value.lastIndexOf(this.options.tokens[index], diff + offset - 1);
+          if (tp > prevTokenPos) prevTokenPos = tp;
+          tp = value.indexOf(this.options.tokens[index], diff + offset);
+          if (-1 != tp && tp < nextTokenPos) nextTokenPos = tp;
+        }
+        return (this.tokenBounds = [prevTokenPos + 1, nextTokenPos]);
+      }
+    })(),
 
 
     /**
@@ -2435,13 +2482,23 @@ if (typeof Def === 'undefined')
 
     /**
      *  Updates the field with the selected list item value.
-     * @param selectedElement the DOM LI element the user selected.
+     * @param selectedElement the DOM list element (LI or TR) the user selected.
      */
     updateElement: function(selectedElement) {
-      // The Scriptaculous autocompleters allow you to autocomplete more than
-      // once in a field and select more than one value from the list.  We're
-      // not doing that, so we don't do the getTokenBounds() stuff.
-      this.setFieldVal(this.listItemValue(selectedElement), false);
+      var selectedVal = this.listItemValue(selectedElement);
+      var newFieldVal = selectedVal;
+      if (this.options.tokens) { // We're autocompleting on paritial field values
+        var bounds = this.getTokenBounds();
+        if (bounds[0] != -1) {
+          var currentVal = this.domCache.get('elemVal');
+          var newValue = currentVal.substr(0, bounds[0]);
+          var whitespace = currentVal.substr(bounds[0]).match(/^\s+/);
+          if (whitespace)
+            newValue += whitespace[0];
+          newFieldVal = newValue + selectedVal + currentVal.substr(bounds[1]);
+        }
+      }
+      this.setFieldVal(newFieldVal, false);
       // The "false" argument above means do not run change observers.  After
       // this gets called, propagateFieldChanges is called, and that takes care
       // of running change event handlers.
@@ -2449,7 +2506,6 @@ if (typeof Def === 'undefined')
       if (this.options.afterUpdateElement)
         this.options.afterUpdateElement(this.element, selectedElement);
     },
-
 
 
     /**

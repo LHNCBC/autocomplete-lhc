@@ -301,15 +301,15 @@
                       ac.addToSelectedArea(text);
                     }
                     // Clear the field value for multi-select lists
-                    ac.element.value = '';
+                    ac.setFieldVal('', false);
                   }
                   else {
                     if (md.text !== undefined) {
                       ac.storeSelectedItem(md.text, md.code);
-                      ac.element.value = md.text;
+                      ac.setFieldVal(md.text, false);
                     }
                     else // handle the case of an empty object as a model
-                      ac.element.value = '';
+                      ac.setFieldVal('', false);
                   }
                 }
 
