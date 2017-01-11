@@ -22,7 +22,7 @@ exports.config = {
 
   // If true, only chromedriver will be started, not a standalone selenium.
   // Tests for browsers other than chrome will not run.
-  //directConnect: true,
+//  directConnect: true,
 
   // list of files / patterns to load in the browser
   specs: [
@@ -39,7 +39,7 @@ exports.config = {
   // and
   // https://code.google.com/p/selenium/source/browse/javascript/webdriver/capabilities.js
   capabilities: {
-    'browserName': 'firefox'
+    //'browserName': 'firefox'
   },
 
   // ----- The test framework -----

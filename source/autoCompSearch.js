@@ -326,8 +326,8 @@
       if (!ac.LIST_ITEM_FIELD_SEP_REGEX)
         ac.LIST_ITEM_FIELD_SEP_REGEX = new RegExp(ac.LIST_ITEM_FIELD_SEP, 'g');
       if (!fieldVal)
-        fieldVal = this.element.value;
-      return fieldVal.replace(ac.LIST_ITEM_FIELD_SEP_REGEX, ' ');
+        fieldVal = this.domCache.get('elemVal');
+      return fieldVal.replace(ac.LIST_ITEM_FIELD_SEP_REGEX, ' ').trimLeft();
     },
 
 
@@ -449,8 +449,8 @@
     fieldEventIsBigList: function(event) {
        return event.keyCode===jQuery.ui.keyCode.ENTER && (event.ctrlKey ||
            (!this.autocomp &&
-           this.element.value !== this.processedFieldVal_ &&
-           this.element.value.trim() !== ''));
+            this.domCache.get('elemVal') !== this.processedFieldVal_ &&
+            this.domCache.get('elemVal').trim() !== ''));
     },
 
 
@@ -673,7 +673,8 @@
      * @param fromCache whether "response" is from the cache (optional).
      */
     onComplete: function(xhrObj, textStatus, fromCache) {
-      this.elemVal = this.element.value.trim(); // used in autoCompBase
+      var untrimmedFieldVal = this.domCache.get('elemVal');
+      this.trimmedElemVal = untrimmedFieldVal.trim(); // used in autoCompBase
       if (this.lastAjaxRequest_ === xhrObj) {
         this.lastAjaxRequest_ = null;
       }
@@ -693,7 +694,7 @@
         // The search string is a truncated version of the field value for
         // autocompletion requests.  Compute what the search string would be
         // if it were sent for the current field value.
-        var searchStrForFieldVal = this.getSearchStr(this.elemVal);
+        var searchStrForFieldVal = this.getSearchStr(untrimmedFieldVal);
         if (autocomp) {
           searchStrForFieldVal =
             searchStrForFieldVal.substr(0, searchAC.MAX_VALUE_SIZE_FOR_AUTOCOMP);
@@ -834,8 +835,11 @@
       // have preFieldFillVal_ is when the user has clicked on a list item,
       // after which (kind of by accident) the "see more items" link is hidden,
       // so we don't need to worry about that case for now.
-      if (this.multiSelect_ && this.element.value === '' && this.preFieldFillVal_)
-        this.element.value = this.preFieldFillVal_;
+            this.domCache.get('elemVal')
+      if (this.multiSelect_ && this.domCache.get('elemVal')==='' &&
+          this.preFieldFillVal_) {
+        this.setFieldVal(this.preFieldFillVal_, false);
+      }
       this.buttonClick(event);
     },
 
@@ -974,7 +978,8 @@
           // that item as the selection).
           var listItems = responseData[1];
           this.suggestionList_ = responseData;
-          var lowerCaseFieldVal = this.element.value.toLowerCase();
+          var lowerCaseFieldVal =
+            this.domCache.get('elemVal').trim().toLowerCase();
           var fieldSep = Def.Autocompleter.LIST_ITEM_FIELD_SEP;
           for (var i=0, max=listItems.length; !foundMatch && i<max; ++i) {
             // The suggestion comes as an array (for the different fields that
@@ -1018,10 +1023,11 @@
       // for "code".
       var codes = this.suggestionList_[0];
       var listItems = this.suggestionList_[1];
-      var valTyped = this.element.value;
+      var usedSuggestion = listItems[index];
+      var valTyped = this.domCache.get('elemVal');
       var newVal = listItems[index];
-      this.element.value = this.lastValidVal_ = this.processedFieldVal_ =
-         listItems[index];
+      this.setFieldVal(this.lastValidVal_ = this.processedFieldVal_ =
+         usedSuggestion, false);
       // Mark the field as having a valid value, and reset processedFieldVal_.
       this.setMatchStatusIndicator(true);
       this.fieldValIsListVal_ = true;
@@ -1029,7 +1035,7 @@
       this.propagateFieldChanges();
 
       Def.Autocompleter.Event.notifyObservers(this.element, 'SUGGESTION_USED',
-                                          {suggestion_used: this.element.value});
+                                          {suggestion_used: usedSuggestion});
       // Also send a list selection notification (so that that event can be
       // used as a change event for the field).  Also, the suggestion was from
       // the list.

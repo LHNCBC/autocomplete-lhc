@@ -142,6 +142,21 @@ function BasePage() {
     }, 5000);
   };
 
+
+  /**
+   *  Waits for the page to stop scrolling the search results into view.
+   * @param fieldID the field whose autocompleter is doing the scrolling.
+   */
+  this.waitForScrollToStop = function(fieldID) {
+    function waitForEffectToFinish(fieldID) {
+      var ac = $('#'+fieldID);
+      return !ac.lastScrollEffect_ || ac.lastScrollEffect_.state === 'finished';
+    }
+    browser.wait(function() {
+      return browser.driver.executeScript(waitForEffectToFinish, fieldID);
+    });
+  };
+
   /**
    *  Returns the number of times an AJAX call has been made.
    */

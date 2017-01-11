@@ -3,7 +3,7 @@ describe('autocomp scroll function', function() {
   var windowSize;
 
   beforeAll(function() {
-    // Store the current size of the window before we run the test below which
+    // Store the current size of the window before we run the tests below which
     // resize the window.
     browser.manage().window().getSize().then(function(size) {
       windowSize=size;
@@ -31,7 +31,7 @@ describe('autocomp scroll function', function() {
       '").offset().top').then(function(top) {
       // The returned offset top value is not completely right, it seems,
       // so I am adding adding extra height pixels in the setSize call below.
-      browser.manage().window().setSize(1100, top+100);
+      browser.manage().window().setSize(1100, top+110);
       po.longOddCNENoScroll.click();
       expect(po.windowScrollTop()).toBe(0);
     });
@@ -45,7 +45,7 @@ describe('autocomp scroll function', function() {
     browser.driver.executeScript('return jQuery("'+po.longOddCNECSS+
       '").offset().top').then(function(fieldTop) {
       // Make sure our test field in in the viewport
-      browser.manage().window().setSize(1100, fieldTop+100);
+      browser.manage().window().setSize(1100, fieldTop+110);
 
       // Add a top header bar.
       // Extend the height down to the top of the field, so that it doesn't

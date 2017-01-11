@@ -19,9 +19,8 @@ var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe',
 var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true
-var fe_search_cne_autoComp =
-  new Def.Autocompleter.Search('fe_search_cne',
-    '/form/get_search_res_list?fd_id=1284', opts);
+new Def.Autocompleter.Search('fe_search_cne',
+  '/form/get_search_res_list?fd_id=1284', opts);
 
 var opts = {'matchListValue': false, nonMatchSuggestions: true,
  'suggestionMode': Def.Autocompleter.SUGGEST_SHORTEST, 'autocomp': true};
@@ -181,7 +180,6 @@ new Def.Autocompleter.Prefetch(jQuery('#prefetch_for_el')[0], ["Spanish","French
 
 var opts = {};
 opts.matchListValue = true;
-var fe_search_cne_autoComp =
-  new Def.Autocompleter.Search(jQuery('#search_for_el')[0],
-    '/form/get_search_res_list?fd_id=1284', opts);
+new Def.Autocompleter.Search(jQuery('#search_for_el')[0],
+  '/form/get_search_res_list?fd_id=1284', opts);
 

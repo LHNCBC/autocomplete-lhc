@@ -37,6 +37,30 @@ describe('search lists', function() {
   });
 
 
+  it('should find results for field values with leading whitespace',
+      function() {
+    po.openTestPage();
+    // Note:  Trailing whitespace is significant (signifying that a wildcard
+    // should not be applied) so we don't trim that.
+    po.autocompPickFirst(po.searchCWE, '  ar');
+    expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
+  });
+
+
+  it('can find different results when trailing whitespace is present',
+      function() {
+    // Trailling whitespace means that a wildcard should not be appended, which
+    // is why different results are possible.
+    po.openTestPage();
+    po.autocompPickFirst(po.searchCNE, 'max');
+    expect(po.searchCNE.getAttribute('value')).toEqual(
+      'MAXIFED REFORMULATED JUL 2008 (Oral Pill)');
+    po.autocompPickFirst(po.searchCNE, 'max ');
+    expect(po.searchCNE.getAttribute('value')).toEqual(
+      'MAX-FREEZE (Topical)');
+  });
+
+
   // This test passed in Firefox before I even made the fix.  Apparently Linux
   // Firefox (but not Windows Firefox or Windows Chrome) does not have the
   // problem, and it is Linux Firefox we are testing with.  I will leave the
@@ -88,7 +112,7 @@ describe('search lists', function() {
   });
 
   it('should remove LIST_ITEM_FIELD_SEP from search strings', function() {
-    po.nonField.click(); // hide the list (from previous test)
+    po.openTestPage();
     po.searchCNE.click();
     po.searchCNE.sendKeys('ab - c');
     // Check that the result is the same as 'ab c'
