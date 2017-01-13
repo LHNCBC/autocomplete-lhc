@@ -1871,7 +1871,7 @@ if (typeof Def === 'undefined')
      */
     getTokenBounds: (function() {
       /*
-         This function is was used in Scriptaculous, but we are not basing the
+         This function was used in Scriptaculous, but we are not basing the
          concept of current tokens on what has changed, but on where the
          cursor is in the field.  Retaining for referrence in case we need it.
       function getFirstDifferencePos(newS, oldS) {
