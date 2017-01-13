@@ -1198,7 +1198,6 @@ if (typeof Def === 'undefined')
      * @param event the event object from the keypress event
      */
     onKeyPress: function(event) {
-      this.domCache.invalidate('elemVal');
       // Do nothing if the autocompleter widget is not enabled_.
       if (this.enabled_) {
         // Note:  Normal (i.e. not search or navigation) key strokes are handled
@@ -2608,8 +2607,8 @@ if (typeof Def === 'undefined')
     },
 
 
-    // Copied as-is from controls.js  (remove this comment if you modify it).
     onObserverEvent: function() {
+      this.domCache.invalidate('elemVal'); // presumably the field value changed
       this.changed = false;
       this.tokenBounds = null;
       if(this.getToken().length>=this.options.minChars) {
