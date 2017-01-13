@@ -668,8 +668,17 @@ if (typeof Def === 'undefined')
       this.element.setAttribute('autocomplete','off');
       // --- end of section copied from controls.js baseInitialize ---
       jQuery(this.update).hide();
-      jQuery(this.element).blur(jQuery.proxy(this.onBlur, this));
-      jQuery(this.element).keydown(jQuery.proxy(this.onKeyPress, this));
+      var jqElem = jQuery(this.element);
+      jqElem.blur(jQuery.proxy(this.onBlur, this));
+      jqElem.keydown(jQuery.proxy(this.onKeyPress, this));
+
+      // On clicks, reset the token bounds relative to the point of the click
+      if (this.options.tokens) {
+        jqElem.click(function () {
+          this.tokenBounds = null;
+          this.getTokenBounds(this.element.selectionStart);
+        }.bind(this));
+      }
 
       // If this is a multiselect list, put the field into a span.
       if (options.maxSelect > 1) {
@@ -737,6 +746,7 @@ if (typeof Def === 'undefined')
       if (runChangeEventObservers)
         fieldVal = this.domCache.get('elemVal');
       this.domCache.set('elemVal', this.element.value = this.oldElementValue = val);
+      this.tokenBounds = null;
       if (runChangeEventObservers && fieldVal !== val) {
         Def.Event.simulate(this.element, 'change');
       }
@@ -1060,18 +1070,18 @@ if (typeof Def === 'undefined')
     updateElementAfterMarking: function(listElement) {
       // Also put the value into the field, but don't run the change event yet,
       // because the user has not really selected it.
-      //var oldElementValue = this.oldElementValue;
-      this.updateElement(listElement);
-      //this.oldElementValue = oldElementValue; // selection not made yet
-      if (this.options.tokens && this.tokenBounds) {
+      var oldTokenBounds = this.tokenBounds;
+      this.updateElement(listElement);  // clears this.tokenBounds
+      if (this.options.tokens) {
         // Recompute token bounds, because we've inserted a list value
-        this.tokenBounds = null;
-        this.getTokenBounds();
+//        this.oldElementValue = this.preFieldFillVal_; //
+console.log('%%% oldTokenBounds = '+JSON.stringify(oldTokenBounds));
+        this.getTokenBounds(oldTokenBounds && oldTokenBounds[0]);
+console.log('%%% new Token bounds = ' + JSON.stringify(this.tokenBounds));
         this.element.setSelectionRange(this.tokenBounds[0], this.tokenBounds[1]);
       }
       else
         this.element.select();
-      this.tokenBounds = null;
     },
 
 
@@ -1268,6 +1278,10 @@ if (typeof Def === 'undefined')
                           break;
                         case keys.LEFT:
                         case keys.RIGHT:
+                          if (this.options.tokens) {
+                            this.tokenBounds = null; // selection point may have moved
+                            this.getTokenBounds(); // selection point may have moved
+                          }
                           if (!event.ctrlKey && this.index>=0 &&
                               jQuery(this.update).hasClass('multi_col')) {
                             this.moveToOtherColumn(event);
@@ -1853,7 +1867,11 @@ if (typeof Def === 'undefined')
     /**
      *  Returns the indices of the most recently changed part of the element's
      *  value whose boundaries are the closest token characters.  Use when
-     *  autocompleting based on just part of the field's value.
+     *  autocompleting based on just part of the field's value.  Note that the
+     *  value is cached.  If you want an updated value, clear this.tokenBounds.
+     * @param pos (optional) a position in the string around which to extract
+       * the token.  Used when the changed part of the string is not known, or
+       * when there is no changed part but the user has clicked on a token.
      */
     getTokenBounds: (function() {
       // Mostly copied from Scriptaculous.
@@ -1865,10 +1883,26 @@ if (typeof Def === 'undefined')
         return boundary;
       };
 
-      return function() {
+      return function(pos) {
+        if (null != this.tokenBounds) return this.tokenBounds;
         var value = this.domCache.get('elemVal');
         if (value.trim() === '') return [-1, 0];
-        var diff = getFirstDifferencePos(value, this.oldElementValue);
+console.log("%%% getTokenBounds: pos,oldElementValue="+pos+","+this.oldElementValue);
+        // diff = position around which a token will be found.
+        var diff =  pos !== undefined ? pos : this.element.selectionStart;
+          /*
+        var diff = pos !== undefined ? pos :
+          getFirstDifferencePos(value, this.oldElementValue);
+console.log("%%% diff1 = "+ diff);
+        if (diff === value.length && value.length <= this.oldElementValue.length) {
+          // Check the caret position in the field
+          diff = this.element.selectionStart;
+        }
+        */
+console.log("%%% value.length = " + value.length);
+console.log("%%% oldElemLength = " + this.oldElementValue.length);
+console.log("%%% selectionStart = "+  this.element.selectionStart);
+console.log("%%% diff = "+ diff);
         var offset = (diff == this.oldElementValue.length ? 1 : 0);
         var prevTokenPos = -1, nextTokenPos = value.length;
         var tp;
@@ -2228,6 +2262,7 @@ if (typeof Def === 'undefined')
      * @param event the DOM event object for the focus event
      */
     onFocus: function(event) {
+console.log("%%% onFocus selectionStart = "+this.element.selectionStart);
       Def.Autocompleter.currentAutoCompField_ = this.element.id;
       // Don't update processedFieldVal_ if we are refocusing due to an invalid
       // value.  processedFieldVal_ should retain the last non-invalid value in
@@ -2276,6 +2311,8 @@ if (typeof Def === 'undefined')
         if (this.multiSelect_)
           this.showList();
       }
+
+      this.tokenBounds = null; // selection point may have moved
     },
 
 
@@ -2488,7 +2525,9 @@ if (typeof Def === 'undefined')
       var selectedVal = this.listItemValue(selectedElement);
       var newFieldVal = selectedVal;
       if (this.options.tokens) { // We're autocompleting on paritial field values
+console.log("%%% Updating element");
         var bounds = this.getTokenBounds();
+console.log("%%% bounds = "+JSON.stringify(bounds));
         if (bounds[0] != -1) {
           var currentVal = this.domCache.get('elemVal');
           var newValue = currentVal.substr(0, bounds[0]);
