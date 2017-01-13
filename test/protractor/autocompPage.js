@@ -21,7 +21,6 @@ var AutocompPage = function() {
   this.searchCNE = $(this.searchCNECSS);
   this.searchCNETokens = $("#search_cne_tokens");
   this.searchCWE = $('#fe_search_cwe');
-  this.searchCWE = $('#fe_search_cwe');
   this.itemNumMatchField = $('#item_num_match_test');
   this.alleleSearch = $('#allele_search');
 
