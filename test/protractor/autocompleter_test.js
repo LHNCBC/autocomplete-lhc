@@ -25,6 +25,11 @@ opts['autocomp']=true
 new Def.Autocompleter.Search('fe_search_cne',
   '/form/get_search_res_list?fd_id=1284', opts);
 
+opts = Object.assign({}, opts);
+opts.tokens = [','];
+new Def.Autocompleter.Search('search_cne_tokens',
+  '/form/get_search_res_list?fd_id=1284', opts);
+
 var opts = {'matchListValue': false, nonMatchSuggestions: true,
  'suggestionMode': Def.Autocompleter.SUGGEST_SHORTEST, 'autocomp': true};
 new Def.Autocompleter.Search('fe_search_cwe',

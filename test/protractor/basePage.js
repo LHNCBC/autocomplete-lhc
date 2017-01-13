@@ -142,6 +142,17 @@ function BasePage() {
     }, 5000);
   };
 
+  /**
+   * Wait for the autocomplete results to not be shown
+   */
+  this.waitForNoSearchResults = function() {
+    browser.wait(function() {
+      return searchResults.isDisplayed().then(function(val) {
+        return !val;
+      });
+    }, 5000);
+  };
+
 
   /**
    *  Waits for the page to stop scrolling the search results into view.

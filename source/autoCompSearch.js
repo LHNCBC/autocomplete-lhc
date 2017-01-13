@@ -674,7 +674,7 @@
      * @param fromCache whether "response" is from the cache (optional).
      */
     onComplete: function(xhrObj, textStatus, fromCache) {
-      var untrimmedFieldVal = this.domCache.get('elemVal');
+      var untrimmedFieldVal = this.getToken();
       this.trimmedElemVal = untrimmedFieldVal.trim(); // used in autoCompBase
       if (this.lastAjaxRequest_ === xhrObj) {
         this.lastAjaxRequest_ = null;

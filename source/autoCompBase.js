@@ -1074,10 +1074,7 @@ if (typeof Def === 'undefined')
       this.updateElement(listElement);  // clears this.tokenBounds
       if (this.options.tokens) {
         // Recompute token bounds, because we've inserted a list value
-//        this.oldElementValue = this.preFieldFillVal_; //
-console.log('%%% oldTokenBounds = '+JSON.stringify(oldTokenBounds));
         this.getTokenBounds(oldTokenBounds && oldTokenBounds[0]);
-console.log('%%% new Token bounds = ' + JSON.stringify(this.tokenBounds));
         this.element.setSelectionRange(this.tokenBounds[0], this.tokenBounds[1]);
       }
       else
@@ -1858,7 +1855,7 @@ console.log('%%% new Token bounds = ' + JSON.stringify(this.tokenBounds));
       var rtn = this.domCache.get('elemVal');
       if (this.options.tokens) {
         var bounds = this.getTokenBounds();
-        rtn = rtn.substring(bounds[0], bounds[1]).trim();
+        rtn = rtn.substring(bounds[0], bounds[1]);
       }
       return rtn;
     },
@@ -1874,7 +1871,10 @@ console.log('%%% new Token bounds = ' + JSON.stringify(this.tokenBounds));
        * when there is no changed part but the user has clicked on a token.
      */
     getTokenBounds: (function() {
-      // Mostly copied from Scriptaculous.
+      /*
+         This function is was used in Scriptaculous, but we are not basing the
+         concept of current tokens on what has changed, but on where the
+         cursor is in the field.  Retaining for referrence in case we need it.
       function getFirstDifferencePos(newS, oldS) {
         var boundary = Math.min(newS.length, oldS.length);
         for (var index = 0; index < boundary; ++index)
@@ -1882,27 +1882,16 @@ console.log('%%% new Token bounds = ' + JSON.stringify(this.tokenBounds));
             return index;
         return boundary;
       };
+      */
 
       return function(pos) {
         if (null != this.tokenBounds) return this.tokenBounds;
         var value = this.domCache.get('elemVal');
         if (value.trim() === '') return [-1, 0];
-console.log("%%% getTokenBounds: pos,oldElementValue="+pos+","+this.oldElementValue);
         // diff = position around which a token will be found.
         var diff =  pos !== undefined ? pos : this.element.selectionStart;
-          /*
-        var diff = pos !== undefined ? pos :
-          getFirstDifferencePos(value, this.oldElementValue);
-console.log("%%% diff1 = "+ diff);
-        if (diff === value.length && value.length <= this.oldElementValue.length) {
-          // Check the caret position in the field
-          diff = this.element.selectionStart;
-        }
-        */
-console.log("%%% value.length = " + value.length);
-console.log("%%% oldElemLength = " + this.oldElementValue.length);
-console.log("%%% selectionStart = "+  this.element.selectionStart);
-console.log("%%% diff = "+ diff);
+        // var diff = pos !== undefined ? pos :
+        //  getFirstDifferencePos(value, this.oldElementValue);
         var offset = (diff == this.oldElementValue.length ? 1 : 0);
         var prevTokenPos = -1, nextTokenPos = value.length;
         var tp;
@@ -2262,7 +2251,6 @@ console.log("%%% diff = "+ diff);
      * @param event the DOM event object for the focus event
      */
     onFocus: function(event) {
-console.log("%%% onFocus selectionStart = "+this.element.selectionStart);
       Def.Autocompleter.currentAutoCompField_ = this.element.id;
       // Don't update processedFieldVal_ if we are refocusing due to an invalid
       // value.  processedFieldVal_ should retain the last non-invalid value in
@@ -2525,9 +2513,7 @@ console.log("%%% onFocus selectionStart = "+this.element.selectionStart);
       var selectedVal = this.listItemValue(selectedElement);
       var newFieldVal = selectedVal;
       if (this.options.tokens) { // We're autocompleting on paritial field values
-console.log("%%% Updating element");
         var bounds = this.getTokenBounds();
-console.log("%%% bounds = "+JSON.stringify(bounds));
         if (bounds[0] != -1) {
           var currentVal = this.domCache.get('elemVal');
           var newValue = currentVal.substr(0, bounds[0]);

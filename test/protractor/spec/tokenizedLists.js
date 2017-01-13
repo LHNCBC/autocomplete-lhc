@@ -3,7 +3,7 @@ var helpers = require('../test_helpers.js');
 var po = require('../autocompPage.js');
 
 describe('Prefetch list with tokens', function() {
-  var field = po.prefetchCWETokens;
+  let field = po.prefetchCWETokens;
   describe('mouse selection', function() {
     it('should be able to autocomplete after a token character', function() {
       po.openTestPage();
@@ -175,4 +175,47 @@ describe('Prefetch list with tokens', function() {
       expect(field.getAttribute('value')).toBe('Asian,Asian');
     });
   })
+});
+
+
+describe('Search list with tokens', function() {
+  afterEach(function() {
+     // based on http://stackoverflow.com/a/24417431/360782
+     browser.manage().logs().get('browser').then(function(browserLogs) {
+       // browserLogs is an array of objects with level and message fields
+       browserLogs.forEach(function(log){
+          console.log(log.message);
+       });
+    });
+  });
+
+  let field = po.searchCNETokens;
+  it('should close the list if there are no matches for the second term',
+      function() {
+    po.openTestPage();
+    field.click();
+    field.sendKeys('ar');
+    po.waitForSearchResults();
+    field.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(field.getAttribute('value')).toBe('Arachnoiditis');
+    field.sendKeys(protractor.Key.ARROW_RIGHT);
+    field.sendKeys(',qq'); // no matches
+    po.waitForNoSearchResults();
+    expect(po.shownItemCount()).toBe(0);
+  });
+
+
+  it('should show results for a second term after a token', function() {
+    po.openTestPage();
+    field.click();
+    field.sendKeys('ar');
+    po.waitForSearchResults();
+    field.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(field.getAttribute('value')).toBe('Arachnoiditis');
+    field.sendKeys(protractor.Key.ARROW_RIGHT);
+    field.sendKeys(',ar');
+    po.waitForSearchResults();
+    field.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(field.getAttribute('value')).toBe('Arachnoiditis,Arachnoiditis');
+  });
 });
