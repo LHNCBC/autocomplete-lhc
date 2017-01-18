@@ -142,20 +142,34 @@ function BasePage() {
     }, 5000);
   };
 
+  /**
+   * Wait for the autocomplete results to not be shown
+   */
+  this.waitForNoSearchResults = function() {
+    browser.wait(function() {
+      return searchResults.isDisplayed().then(function(val) {
+        return !val;
+      });
+    }, 5000);
+  };
+
 
   /**
    *  Waits for the page to stop scrolling the search results into view.
    * @param fieldID the field whose autocompleter is doing the scrolling.
    */
   this.waitForScrollToStop = function(fieldID) {
+    if (!fieldID)
+      throw 'Missing fieldID parameter in waitForScrollToStop';
     function waitForEffectToFinish(fieldID) {
-      var ac = $('#'+fieldID);
+      var ac = $('#'+fieldID)[0].autocomp;
       return !ac.lastScrollEffect_ || ac.lastScrollEffect_.state === 'finished';
     }
     browser.wait(function() {
       return browser.driver.executeScript(waitForEffectToFinish, fieldID);
     });
   };
+
 
   /**
    *  Returns the number of times an AJAX call has been made.

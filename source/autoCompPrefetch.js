@@ -143,8 +143,7 @@
         fullSearch: false,
         selector: this.selector,
         onShow: this.onShow,
-        onHide: this.onHide,
-        frequency: 0.01
+        onHide: this.onHide
       }, options || { });
 
       var addSeqNum = options['addSeqNum'];

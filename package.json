@@ -30,7 +30,7 @@
     "wiredep": "^4.0.0"
   },
   "scripts": {
-    "postinstall": "node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update",
+    "postinstall": "node_modules/protractor/bin/webdriver-manager update",
     "test": "test/run_tests.sh"
   },
   "repository": {

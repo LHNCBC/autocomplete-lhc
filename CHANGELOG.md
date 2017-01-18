@@ -3,6 +3,12 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [10.1.0] - 2017-01-13
+### Added
+- Support for autocompletion based on partial field values, separated by token
+  characters.  To enable, set the "tokens" option (in the constructor's options
+  hash) to an array of the desired token characters.
+
 ## [10.0.4] - 2017-01-06
 ### Fixed
 - There was a problem with leading or trailing whitespace in search autocompletion fields

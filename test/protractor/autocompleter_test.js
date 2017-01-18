@@ -1,15 +1,18 @@
-// Use our own $ function
-jQuery.noConflict();
-
 var opts = {};
 opts['matchListValue']=true
 opts['codes']=["LA6155-1","LA6156-9","LA6162-7","LA6214-6","LA6266-6","LA4457-3","LA4489-6"]
 opts['autoFill']=true
-var fe_race_or_ethnicity_autoComp = new
-  Def.Autocompleter.Prefetch('race_or_ethnicity', [
-  "American Indian or Alaska Native","Asian","Black or African-American",
+var raceList = ["American Indian or Alaska Native","Asian","Black or African-American",
   "Hispanic or Latino","Native Hawaiian or Pacific Islander","White",
-  "Unknown"], opts);
+  "Unknown"];
+var fe_race_or_ethnicity_autoComp = new
+  Def.Autocompleter.Prefetch('race_or_ethnicity', raceList, opts);
+
+opts = Object.assign({}, opts);
+opts.matchListValue = false;
+opts.tokens = [','];
+new Def.Autocompleter.Prefetch('prefetch_cwe_tokens', raceList, opts);
+
 var opts = {};
 opts['codes']=["LA44-3","LA45-0","LA46-8", "ZZZ"]
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
@@ -20,6 +23,11 @@ var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true
 new Def.Autocompleter.Search('fe_search_cne',
+  '/form/get_search_res_list?fd_id=1284', opts);
+
+opts = Object.assign({}, opts);
+opts.tokens = [','];
+new Def.Autocompleter.Search('search_cne_tokens',
   '/form/get_search_res_list?fd_id=1284', opts);
 
 var opts = {'matchListValue': false, nonMatchSuggestions: true,
