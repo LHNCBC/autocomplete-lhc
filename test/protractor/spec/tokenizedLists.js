@@ -19,7 +19,7 @@ describe('Prefetch list with tokens', function() {
         'American Indian or Alaska Native,White');
     });
 
-    it('should be able to autocomplete after a token character', function() {
+    it('should be able to autocomplete before a token character', function() {
       po.openTestPage();
       field.click();
       field.sendKeys('As');
@@ -122,7 +122,7 @@ describe('Prefetch list with tokens', function() {
         'American Indian or Alaska Native,White');
     });
 
-    it('should notice which field value the use clicks on', function() {
+    it('should notice which field value the user clicks on', function() {
       // This is difficult to test, because protractor does not let you specify
       // a caret position.  However, a click on the element should put the caret
       // in the middle of the visible field.  So, to test this, we'll put a long
@@ -180,12 +180,13 @@ describe('Prefetch list with tokens', function() {
 
 describe('Search list with tokens', function() {
   afterEach(function() {
-     // based on http://stackoverflow.com/a/24417431/360782
-     browser.manage().logs().get('browser').then(function(browserLogs) {
-       // browserLogs is an array of objects with level and message fields
-       browserLogs.forEach(function(log){
-          console.log(log.message);
-       });
+    // Print out the browser's console messages (for debugging tests).
+    // based on http://stackoverflow.com/a/24417431/360782
+    browser.manage().logs().get('browser').then(function(browserLogs) {
+      // browserLogs is an array of objects with level and message fields
+      browserLogs.forEach(function(log){
+         console.log(log.message);
+      });
     });
   });
 
