@@ -45,8 +45,8 @@ exports.config = {
   capabilities: {
     loggingPrefs: {
       browser: "ALL"
-    }
-    //'browserName': 'firefox'
+    },
+    browserName: 'chrome'
   },
 
   // ----- The test framework -----
