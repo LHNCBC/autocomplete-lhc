@@ -122,12 +122,18 @@ if (typeof Def === 'undefined')
      *  model and the running of rules) should be run after the value is set.
      */
     setFieldVal: function(field, val, runChangeEventObservers) {
-      var fieldVal;
-      if (runChangeEventObservers)
-        fieldVal = this.getFieldVal(field);
-      field.value = val;
-      if (runChangeEventObservers && fieldVal !== val) {
-        Def.Event.simulate(field, 'change');
+      if (field.autocomp)
+        field.autocomp.setFieldVal(val, runChangeEventObservers);
+      else {
+        if (typeof runChangeEventObservers === 'undefined')
+          runChangeEventObservers = true; // default
+        var fieldVal;
+        if (runChangeEventObservers)
+          fieldVal = this.getFieldVal(field);
+        field.value = val;
+        if (runChangeEventObservers && fieldVal !== val) {
+          Def.Event.simulate(field, 'change');
+        }
       }
     },
 
@@ -742,6 +748,8 @@ if (typeof Def === 'undefined')
      *  model and the running of rules) should be run after the value is set.
      */
     setFieldVal: function(val, runChangeEventObservers) {
+      if (typeof runChangeEventObservers === 'undefined')
+        runChangeEventObservers = true; // default
       var fieldVal;
       if (runChangeEventObservers)
         fieldVal = this.domCache.get('elemVal');
@@ -2232,7 +2240,7 @@ if (typeof Def === 'undefined')
      *  invalid indicator.
      */
     clearInvalidFieldVal: function() {
-      Def.Autocompleter.setFieldVal(this.element, '');
+      this.setFieldVal('', false);
       this.setInvalidValIndicator(false);
       // Also clear the match status flag, because a blank value is okay
       // (except for required fields when the form submits).

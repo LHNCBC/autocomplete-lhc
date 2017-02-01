@@ -67,22 +67,14 @@
 
 
   /**
-   *  Returns model data for the field value "finalVal", with the "text" attribute
-   *  trimmed.
+   *  Returns model data for the field value "finalVal".
    * @param finaVal the field value after list selection.  This is the
    *  trimmed "text" value, which will be in the returned model object.
    * @param itemTextToItem a hash of list values to model data objects
    */
-  function getTrimmedModelData(finalVal, itemTextToItem) {
+  function getModelData(finalVal, itemTextToItem) {
     var item = itemTextToItem[finalVal];
-    if (item) {
-      item = Object.assign({}, item); // avoid modifying the original
-      // item.text might be a padded value.  Replace it with the trimmed
-      // version.  Otherwise, Angular tries to put the padded version into the
-      // field, which won't "match" the list.
-      item.text = finalVal;
-    }
-    else
+    if (!item)
       item = {text: finalVal};
     return item;
   }
@@ -147,7 +139,7 @@
                 var trimmedLabel = itemLabel.trim();
                 itemTextToItem[trimmedLabel] = item;
                 if (defaultKey && item[defaultKey].trim() === defaultKeyVal)
-                  modelDefault = getTrimmedModelData(trimmedLabel, itemTextToItem);
+                  modelDefault = getModelData(trimmedLabel, itemTextToItem);
               }
 
               var ac = new Def.Autocompleter.Prefetch(pElem, itemText, autoOpts);
@@ -159,7 +151,7 @@
                   // the model data.
                   if (!ac.multiSelect_) {
                     scope.modelData =
-                      getTrimmedModelData(finalVal, itemTextToItem);
+                      getModelData(finalVal, itemTextToItem);
                   }
                   else {
                     if (!scope.modelData)
@@ -177,7 +169,7 @@
                     }
                     else {
                       selectedItems.push(
-                        getTrimmedModelData(finalVal, itemTextToItem));
+                        getModelData(finalVal, itemTextToItem));
                     }
                   }
                 });
@@ -338,9 +330,15 @@
                              typeof value.text === "string") {
                       rtn = value.text;
                     }
+                    rtn = rtn.trim();
                   }
                   else
                     rtn = '';
+
+                  // If angular is setting the field value, we have to let the
+                  // autocompleter know.
+                  ac.setFieldVal(rtn, false);
+
                   return rtn;
                 });
               } // if controller

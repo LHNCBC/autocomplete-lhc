@@ -28,6 +28,15 @@ describe('directive', function() {
     expect(dp.codeField.getAttribute("value")).toEqual('B');
   });
 
+  it('should not highlight the default value when the list is opened',
+      function() {
+    dp.inputElem.click();
+    // There should not be a highlight on 'Blue', so one down arrow should
+    // select the first item in the list.
+    dp.inputElem.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(dp.inputElem.getAttribute("value")).toEqual('Green');
+  });
+
   it('should not load the default item code and value when the model is already populated', function() {
     expect(dp.prePopElem.getAttribute("value")).toEqual('a pre-populated model value');
   });
