@@ -334,6 +334,11 @@
                   }
                   else
                     rtn = '';
+
+                  // If angular is setting the field value, we have to let the
+                  // autocompleter know.
+                  ac.setFieldVal(rtn, false);
+
                   return rtn;
                 });
               } // if controller
