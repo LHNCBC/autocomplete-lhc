@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [10.2.0] - 2017-03-14
+### Changed
+- Replaced the search field "list" icon with a magnifying glass icon. 
+
 ## [10.1.1] - 2017-02-01
 ### Fixed
 - A minor issue in which lists created using the Angular directive would highlight an
