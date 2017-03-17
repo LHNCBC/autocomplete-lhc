@@ -272,6 +272,10 @@
                   pElem.autocomp.destroy();
                   // clean up the modal data
                   scope.modelData = null;
+                  // Remove the formatter and parser we defined for the previous
+                  // autocompleter.
+                  controller.$formatters.pop();
+                  controller.$parsers.pop();
                 }
 
                 // See if there is an existing model value for the field (and do
