@@ -141,6 +141,7 @@ describe('search lists', function() {
       po.nonField.click(); // hide the list (from previous test)
       po.searchCNE.click();
       po.searchCNE.sendKeys('ar');
+      po.waitForSearchResults();
       po.firstSearchRes.click();
       expect(po.searchCNE.getAttribute('value')).toEqual('Arachnoiditis');
       // Now change the URL and reset the cache
@@ -167,6 +168,7 @@ describe('search lists', function() {
       po.openTestPage();
       po.searchCNE.click();
       po.searchCNE.sendKeys('ar');
+      po.waitForSearchResults();
       po.firstSearchRes.click();
       expect(po.searchCNE.getAttribute('value')).toEqual('Arachnoiditis');
       // Now change the URL and reset the cache

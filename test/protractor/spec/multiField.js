@@ -69,6 +69,7 @@ describe('multi-field lists', function() {
   it('should show the column headers when those are specified', function() {
     po.multiFieldSearchHeaders.click();
     po.multiFieldSearchHeaders.sendKeys('ar');
+    po.waitForSearchResults();
     expect(po.tableSearchResult(1).getInnerHtml()).toBe('<th>C1</th><th>C2</th>');
     // Make sure we can't click on the header and select it
     po.tableSearchResult(1).click();
