@@ -254,6 +254,21 @@
             }
 
 
+            /**
+             *  Takes an array of functions, and removes the first found that is
+             *  flagged as being from an autocompleter.
+             * @param functionList the array of functions
+             */
+            function removeAutocompFunction(functionList) {
+              for (var i=0, len=functionList.length; i<len; ++i) {
+                if (functionList[i].fromAutocomp) {
+                  functionList.splice(i, 1);
+                  break;
+                }
+              }
+            };
+
+
             var initWidget = function (options) {
 
               var autoOpts = options;
@@ -272,6 +287,10 @@
                   pElem.autocomp.destroy();
                   // clean up the modal data
                   scope.modelData = null;
+                  // Remove the formatter and parser we defined for the previous
+                  // autocompleter.
+                  removeAutocompFunction(controller.$formatters);
+                  removeAutocompFunction(controller.$parsers);
                 }
 
                 // See if there is an existing model value for the field (and do
@@ -307,7 +326,7 @@
 
                 // Add a parser to convert from the field value to the object
                 // containing value and (e.g.) code.
-                controller.$parsers.push(function(value) {
+                var parser = function(value) {
                   // Just rely on the autocompleter list selection event to manage
                   // model updates.  Here we will just return the model object, to
                   // prevent any change to the model from the parsers.
@@ -317,11 +336,13 @@
                   if (rtn === undefined)
                     rtn = null;
                   return rtn;
-                });
+                };
+                parser.fromAutocomp = true;
+                controller.$parsers.push(parser);
 
                 // Also add a formatter to get the display string if the model is
                 // changed.
-                controller.$formatters.push(function(value) {
+                var formatter = function(value) {
                   var rtn = '';
                   if (!ac.multiSelect_) {
                     if (typeof value === 'string')
@@ -340,7 +361,9 @@
                   ac.setFieldVal(rtn, false);
 
                   return rtn;
-                });
+                };
+                formatter.fromAutocomp = true;
+                controller.$formatters.push(formatter);
               } // if controller
             };
 

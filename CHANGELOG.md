@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [10.2.1] - 2017-03-20
+### Fixed
+- The AngularJS directive now cleans up old formatters and parsers when the
+  autocompleter is reinitialized.
+
 ## [10.2.0] - 2017-03-14
 ### Changed
 - Replaced the search field "list" icon with a magnifying glass icon. 
