@@ -31,7 +31,7 @@
             </div>
             <section id="downloads">
               <a class="zip_download_link"
-               href="https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/"
+               href="https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/"
               >Download pre-built JavaScript and CSS as a .zip file</a>
               <!--<a class="zip_download_link" href="https://github.com/lhncbc/autocomplete-lhc/zipball/master">Download this project as a .zip file</a>
               <a class="tar_download_link" href="https://github.com/lhncbc/autocomplete-lhc/tarball/master">Download this project as a tar.gz file</a>
@@ -199,12 +199,12 @@ A search autocompleter searching medical conditions:
 <div class="demo"><input type="text" id="demo8">
 <script>
 new Def.Autocompleter.Search('demo8',
-  'https://lforms-service.nlm.nih.gov/api/conditions/v3/search');
+  'https://clin-table-search.lhc.nlm.nih.gov/api/conditions/v3/search');
 </script>
 </div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo8&quot;&gt;
 &lt;script&gt;
 new Def.Autocompleter.Search(&#39;demo8&#39;,
-  &#39;https://lforms-service.nlm.nih.gov/api/conditions/v3/search&#39;);
+  &#39;https://clin-table-search.lhc.nlm.nih.gov/api/conditions/v3/search&#39;);
 &lt;/script&gt;
     </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
 
@@ -271,13 +271,13 @@ column being selected for the input field):
 <div class="demo"><input type="text" id="demo11">
 <script>
 new Def.Autocompleter.Search('demo11',
-  'https://lforms-service.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod',
+  'https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod',
   {tableFormat: true, valueCols: [0], colHeaders: ['Symbol', 'Name']});
 </script>
 </div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo11&quot;&gt;
 &lt;script&gt;
 new Def.Autocompleter.Search(&#39;demo11&#39;,
-  &#39;https://lforms-service.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod&#39;,
+  &#39;https://clin-table-search.lhc.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod&#39;,
   {tableFormat: true, valueCols: [0], colHeaders: [&#39;Symbol&#39;, &#39;Name&#39;]});
 &lt;/script&gt;
     </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
@@ -339,9 +339,9 @@ Some complete HTML page examples hosted on Plunker:
 <p>The autocomplete-lhc files can be installed as a <a href="http://bower.io">bower</a>
 package ("bower install autocomplete-lhc") or if you are not using bower, you can either download
 the <a
-href="https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/">latest
-pre-built version</a> from the lforms-service website, or you can use the files
-directly from the lforms-service website.  There are three flavors of the
+href="https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/">latest
+pre-built version</a> from the Clinical Table Search Service website, or you can use the files
+directly from the Clinical Table Search Service website.  There are three flavors of the
 minified JavaScript, depending on what dependencies you already have.
 <table>
   <thead>
@@ -349,21 +349,21 @@ minified JavaScript, depending on what dependencies you already have.
   </thead>
   <tbody>
     <tr><td>jQuery & jQueryUI</td><td
-     >https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/10.0.0/autocomplete-lhc.min.js</td>
+     >https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc.min.js</td>
     <tr><td>jQuery </td><td
-     >https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/10.0.0/autocomplete-lhc_jQueryUI.min.js</td>
+     >https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc_jQueryUI.min.js</td>
     <tr><td>(neither)</td><td
-     >https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/10.0.0/autocomplete-lhc_jQuery.min.js</td>
+     >https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc_jQuery.min.js</td>
   </tbody>
 </table>
 
-(Note that you can substitute for 10.0.0 any of the other prebuilt versions
-available at https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions).
+(Note that you can substitute for 10.2.1 any of the other prebuilt versions
+available at https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions).
 
 <p>For the CSS, a minified file is available with or without a jQueryUI theme as:
  <ul>
-   <li>https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/10.0.0/autocomplete-lhc.min.css</li>
-   <li>https://lforms-service.nlm.nih.gov/autocomplete-lhc-versions/10.0.0/autocomplete-lhc_jQueryUI.min.css</li>
+   <li>https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc.min.css</li>
+   <li>https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc_jQueryUI.min.css</li>
  </ul>
 You will only need the jQueryUI style part of the CSS if you are using the
 suggestion dialog feature with the "search" (AJAX) list (by setting the
