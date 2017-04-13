@@ -14,7 +14,7 @@
     "tests"
   ],
   "dependencies": {
-    "autocomplete-lhc": "^10.0.0"
+    "autocomplete-lhc": "^10.2.1"
   },
   "overrides": {
     "jquery-ui": {
