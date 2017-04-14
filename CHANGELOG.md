@@ -3,6 +3,12 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [11.0.0] - 2017-04-14
+### Changed
+- The search (AJAX) autocompleter now begins autocompleting with just one
+  character in the field instead of two.  This behavior is configurable with the
+  minChars option at construction.
+
 ## [10.2.1] - 2017-03-20
 ### Fixed
 - The AngularJS directive now cleans up old formatters and parsers when the

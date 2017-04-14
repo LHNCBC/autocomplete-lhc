@@ -178,6 +178,8 @@
      *     the same target_field name.</li>
      *    <li>maxSelect - (default 1) The maximum number of items that can be
      *     selected.  Use '*' for unlimited.</li>
+     *    <li>minChars - (default 1) The minimum number of characters that must
+     *     be in the field before autocompletion will start.</li>
      *    <li>scrolledContainer - the element that should be scrolled to bring
      *     the list into view if it would otherwise extend below the edge of the
      *     window. The default is document.documentElement (i.e. the whole
