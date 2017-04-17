@@ -101,6 +101,13 @@
       <p>
       <button id="btnList8" ng-click="updateList8Opts()">Update list8Opts</button>
       <p>
+      Prefetch multiselect CNE list with a default:
+      <input id="list10" type="text"
+        ng-required="false"
+        ng-model="listFieldVal10"
+        autocomplete-lhc="list10Opts">
+       <p>
+
       Search CWE list initially without a URL:
       <input name="list9" id="list9" type="text"
         ng-required="false" placeholder="Select or type a value"
@@ -254,6 +261,15 @@
               {text: 'Red_NEW', code: 'R'}
             ]
           };
+        };
+
+        $scope.list10Opts = {
+          maxSelect: '*',
+          listItems: [
+            {text: 'Green', code: 'G'},
+            {text: 'Blue', code: 'B'}
+          ],
+          defaultValue: {code: 'G'}
         };
 
         window.searchList9Opts = $scope.searchList9Opts = {

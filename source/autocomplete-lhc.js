@@ -176,8 +176,8 @@
               });
 
               // If we have a default value, assign it to the model.
-              if (modelDefault !== null)
-                scope.modelData = modelDefault;
+              if (modelDefault !== null && !scope.modelData)
+                scope.modelData = ac.multiSelect_ ? [modelDefault] : modelDefault;
 
               return ac;
             }
@@ -285,7 +285,7 @@
                     pElem.autocomp.clearCachedResults();
                   // Destroy the existing autocomp
                   pElem.autocomp.destroy();
-                  // clean up the modal data
+                  // clean up the model data
                   scope.modelData = null;
                   // Remove the formatter and parser we defined for the previous
                   // autocompleter.
@@ -293,14 +293,14 @@
                   removeAutocompFunction(controller.$parsers);
                 }
 
-                // See if there is an existing model value for the field (and do
-                // it before prefetchList runs below, which might store a default
-                // value in the model).
-                var md = scope.modelData;
-                var hasPrepoluatedModel = (md !== undefined) && (md !== null);
-
                 var ac = autoOpts.hasOwnProperty('url') ?
                  searchList(pElem, autoOpts) : prefetchList(pElem, autoOpts);
+
+                // See if there is an existing model value for the field (which
+                // might have been set by the prefetchList call above, if there
+                // was a default value for the field).
+                var md = scope.modelData;
+                var hasPrepoluatedModel = (md !== undefined) && (md !== null);
 
                 // If there is a already a model value for this field, load it
                 // into the autocompleter.
