@@ -659,7 +659,7 @@ if (typeof Def === 'undefined')
       this.update      = $('completionOptions');
       this.options = options;
       this.options.frequency    = this.options.frequency || 0.01;
-      this.options.minChars     = this.options.minChars || 2;
+      this.options.minChars     = this.options.minChars || 1;
 
       this.element     = typeof field === 'string' ? $(field) : field;
       this.ensureNeededAttrs();
