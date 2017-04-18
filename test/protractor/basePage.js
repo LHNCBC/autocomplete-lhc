@@ -103,6 +103,7 @@ function BasePage() {
     );
   };
 
+
   /**
    *  Returns the number of items shown in the list.
    */
@@ -110,6 +111,15 @@ function BasePage() {
     return browser.driver.executeScript(
       'return Def.Autocompleter.listItemElements().length;'
     );
+  };
+
+
+  /**
+   *  Returns the message with the count and total count that appears below the
+   *  list.
+   */
+  this.listCountMessage = function() {
+    return $('#searchCount').getText();
   };
 
 
@@ -193,6 +203,18 @@ function BasePage() {
     this.waitForSearchResults();
     this.firstSearchRes.click();
   };
+
+
+  /**
+   *  Returns the nth last log entry in the screen reader log.
+   * @param n the number of the log entry, starting with 1 for the last item.
+   */
+  this.nthLastLogEntry = function(n) {
+    var screenReaderLog = $('#reader_log');
+    var lastParagraph = screenReaderLog.element(by.css('p:nth-last-child('+n+')'));
+    return lastParagraph.getAttribute('textContent');
+  };
+
 
 };
 

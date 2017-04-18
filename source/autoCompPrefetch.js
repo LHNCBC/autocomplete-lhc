@@ -320,6 +320,7 @@
       var lastHeading = null;
       var foundItemForLastHeading = false;
       var headerCount = 0;
+      var headingsShown = 0;
       var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
       if (instance.options.ignoreCase)
         entry = entry.toLowerCase();
@@ -409,6 +410,7 @@
             if (lastHeading && !foundItemForLastHeading) {
               foundItemForLastHeading = true;
               itemsInList.push(lastHeading);
+              ++headingsShown;
               itemToHTMLData[lastHeading] = [escapeHTML(lastHeading), 'heading'];
               countForLastHeading = 0;
             }
@@ -429,8 +431,11 @@
         } // else this is not a heading
       } // for each item
 
-      if (totalCount > maxReturn) {
-        $('searchCount').innerHTML = maxReturn + ' of ' + totalCount +
+      var itemsShownCount = itemsInList.length - headingsShown;
+console.log("%%% totalCount = "+totalCount);
+console.log("%%% itemsShownCount = "+itemsShownCount);
+      if (totalCount > itemsShownCount) {
+        $('searchCount').innerHTML = itemsShownCount + ' of ' + totalCount +
           ' items total';
         $('moreResults').style.display = 'block';
         $('searchCount').style.display = 'block';

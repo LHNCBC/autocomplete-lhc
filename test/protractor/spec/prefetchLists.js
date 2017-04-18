@@ -2,7 +2,7 @@ var helpers = require('../test_helpers.js');
 var hasClass = helpers.hasClass;
 var po = require('../autocompPage.js');
 
-describe('Prefetch lists', function() {
+fdescribe('Prefetch lists', function() {
   it('should show the list when clicked even if focused', function() {
     po.openTestPage();
     po.prefetchCWE.click();
@@ -106,6 +106,27 @@ describe('Prefetch lists', function() {
     expect(po.listIsVisible()).toBeTruthy();
     po.firstSearchRes.click();
     expect(p.getAttribute('value')).toBe('Spanish');
+  });
+
+  it('should not count headings in the shown count', function() {
+    //po.openTestPage();
+    po.headings1ColCWE.click();
+    po.waitForScrollToStop(po.headings1ColCWEID);
+    expect(po.listCountMessage()).toEqual('12 of 135 items total');
+    // close list
+    po.headings1ColCWE.sendKeys(protractor.Key.ESCAPE);
+  });
+
+  it('should report the count for matches', function() {
+    po.itemNumMatchField.click();
+    po.waitForScrollToStop(po.itemNumMatchFieldID);
+    expect(po.listCountMessage()).toEqual('14 of 25 items total');
+    po.itemNumMatchField.sendKeys('20');
+    po.waitForScrollToStop(po.itemNumMatchFieldID);
+    // The number should in this case is 15, because after finding the first 14,
+    // we make an except and add the item whose number matches the input.
+    expect(po.shownItemCount()).toEqual(15);
+    expect(po.listCountMessage()).toEqual('15 of 25 items total');
   });
 });
 

@@ -21,7 +21,8 @@ var AutocompPage = function() {
   this.searchCNE = $(this.searchCNECSS);
   this.searchCNETokens = $("#search_cne_tokens");
   this.searchCWE = $('#fe_search_cwe');
-  this.itemNumMatchField = $('#item_num_match_test');
+  this.itemNumMatchFieldID = 'item_num_match_test';
+  this.itemNumMatchField = $('#'+this.itemNumMatchFieldID);
   this.alleleSearch = $('#allele_search');
 
   // Multi-select CNE prefetch list
@@ -53,7 +54,8 @@ var AutocompPage = function() {
     element.all(by.css(multiHeadingCWESectionCSS + ' button'));
 
   // CWE prefetch list with headings without two-column flow
-  this.headings1ColCWE = $('#headings_1col_cwe');
+  this.headings1ColCWEID = 'headings_1col_cwe';
+  this.headings1ColCWE = $('#'+this.headings1ColCWEID);
 
   // Multi-field lists
   this.multiFieldPrefetch = $('#multi_field_cwe');
