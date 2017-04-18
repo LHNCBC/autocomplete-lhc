@@ -2,7 +2,7 @@ var helpers = require('../test_helpers.js');
 var hasClass = helpers.hasClass;
 var po = require('../autocompPage.js');
 
-fdescribe('Prefetch lists', function() {
+describe('Prefetch lists', function() {
   it('should show the list when clicked even if focused', function() {
     po.openTestPage();
     po.prefetchCWE.click();
@@ -109,7 +109,6 @@ fdescribe('Prefetch lists', function() {
   });
 
   it('should not count headings in the shown count', function() {
-    //po.openTestPage();
     po.headings1ColCWE.click();
     po.waitForScrollToStop(po.headings1ColCWEID);
     expect(po.listCountMessage()).toEqual('12 of 135 items total');
@@ -127,6 +126,18 @@ fdescribe('Prefetch lists', function() {
     // we make an except and add the item whose number matches the input.
     expect(po.shownItemCount()).toEqual(15);
     expect(po.listCountMessage()).toEqual('15 of 25 items total');
+  });
+
+  it('should not look for matches in the item if the number matched', function() {
+    // This is to avoid double-counting items whose text and number partially
+    // match.
+    po.clearField(po.itemNumMatchField);
+    po.itemNumMatchField.click();
+    po.waitForScrollToStop(po.itemNumMatchFieldID);
+    po.itemNumMatchField.sendKeys('2');
+    po.waitForScrollToStop(po.itemNumMatchFieldID);
+    expect(po.shownItemCount()).toEqual(14);
+    expect(po.listCountMessage()).toEqual('14 of 25 items total');
   });
 });
 

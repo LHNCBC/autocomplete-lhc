@@ -347,14 +347,16 @@
           // list numbers.
           // See if the entry matches a number.
           var itemNumStr = null;
-          var matchesItemNum = false;
+          var matchesItemNum = false; // exact match
+          var matchInItemNum = false; // partial match
           if (instance.add_seqnum) {
             itemNumStr = (i+1-headerCount)+'';
             var isSelectedByNumber = (itemNumStr === entry);
             if (!useFullList &&
                 (isSelectedByNumber || itemNumStr.indexOf(entry) === 0)) {
               ++totalCount;
-              if (isSelectedByNumber || totalCount < maxReturn) {
+              matchInItemNum = true;
+              if (isSelectedByNumber || totalCount <= maxReturn) {
                 itemNumStr = '<strong>' + itemNumStr.substr(0, entry.length) +
                   '</strong>' + itemNumStr.substr(entry.length);
                 matchesItemNum = true;
@@ -364,7 +366,7 @@
             }
           } // if we're adding sequence numbers to this list
 
-          if (!matchesItemNum && !useFullList) {
+          if (!matchInItemNum && !useFullList) {
             // See if it matches the item at the beginning
             var foundMatch = false;
             var elemComp = rawItemText;
@@ -372,28 +374,30 @@
               elemComp = rawItemText.toLowerCase();
             var foundPos = elemComp.indexOf(entry);
             while (!foundMatch && foundPos !== -1) {
-              if (totalCount < maxReturn) {
-                if (foundPos === 0) {
-                  ++totalCount;
+              if (foundPos === 0) {
+                ++totalCount;
+                foundMatch = true;
+                if (totalCount <= maxReturn) {
                   itemText = '<strong>' +
                     escapeHTML(rawItemText.substr(0, entry.length))+'</strong>'+
                     escapeHTML(rawItemText.substr(entry.length));
-                  foundMatch = true;
                 }
-                else { // foundPos > 0
-                  // See if the match is at a word boundary
-                  if (instance.options.fullSearch ||
+              }
+              else { // foundPos > 0
+                // See if the match is at a word boundary
+                if (instance.options.fullSearch ||
                     /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) {
-                    ++totalCount;
+                  ++totalCount;
+                  foundMatch = true;
+                  if (totalCount <= maxReturn) {
                     var prefix = escapeHTML(rawItemText.substr(0, foundPos));
                     itemText = prefix + '<strong>' +
                       escapeHTML(rawItemText.substr(foundPos, entry.length)) +
                      '</strong>' +
                       escapeHTML(rawItemText.substr(foundPos + entry.length));
-                    foundMatch = true;
                   }
                 }
-              } // if we haven't exceeded maxReturn
+              }
               if (!foundMatch)
                 foundPos =  elemComp.indexOf(entry, foundPos+1);
             } // while we haven't found a match at a word boundary
@@ -432,8 +436,6 @@
       } // for each item
 
       var itemsShownCount = itemsInList.length - headingsShown;
-console.log("%%% totalCount = "+totalCount);
-console.log("%%% itemsShownCount = "+itemsShownCount);
       if (totalCount > itemsShownCount) {
         $('searchCount').innerHTML = itemsShownCount + ' of ' + totalCount +
           ' items total';
