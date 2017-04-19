@@ -223,5 +223,17 @@ describe('multi-select lists', function() {
     po.expandLink.click();
     expect(po.allSearchRes.count()).toBeGreaterThan(14);
   });
+
+  it('should not show "see more" just because an item is already selected',
+      function() {
+    po.openTestPage();
+    po.multiPrefetchCNE.click();
+    po.firstSearchRes.click();
+    po.nonField.click();
+    po.multiPrefetchCNE.click();
+    // There are only three results total, so it is should not be showing "see
+    // more".
+    expect(po.expandLink.isDisplayed()).toBe(false);
+  });
 });
 

@@ -27,7 +27,8 @@ var AutocompPage = function() {
   this.alleleSearch = $('#allele_search');
 
   // Multi-select CNE prefetch list
-  this.multiPrefetchCNEID = 'multi_sel_cne';
+  this.multiPrefetchCNEID = 'fe_multi_sel_cne';
+  this.multiPrefetchCNE = $('#'+this.multiPrefetchCNEID);
 
   // Multi-select CWE prefetch list
   var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection';

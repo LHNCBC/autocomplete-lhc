@@ -321,6 +321,7 @@
       var foundItemForLastHeading = false;
       var headerCount = 0;
       var headingsShown = 0;
+      var skippedSelected = 0; // items already selected that are left out of the list
       var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
       if (instance.options.ignoreCase)
         entry = entry.toLowerCase();
@@ -403,13 +404,19 @@
             } // while we haven't found a match at a word boundary
           } // if it didn't match the item number
 
+          var alreadySelected = false;
+          if (instance.multiSelect_) {
+            alreadySelected = instance.isSelected(rawItemText)
+            if (alreadySelected)
+              ++skippedSelected;
+          }
           // Make sure that if the item's number is an exact match for what was
           // typed, it gets into the list (unless already selected).
 
           // For multi-select lists, filter out currently selected items.
           // Then, only add it if we haven't exceeded the limit.
-          if ((!instance.multiSelect_ || !instance.isSelected(rawItemText)) &&
-              itemText && (isSelectedByNumber || totalCount <= maxReturn ||
+          if (!alreadySelected && itemText &&
+              (isSelectedByNumber || totalCount <= maxReturn ||
                             (instance.numHeadings_>0 && useFullList))) {
             if (lastHeading && !foundItemForLastHeading) {
               foundItemForLastHeading = true;
@@ -436,7 +443,7 @@
       } // for each item
 
       var itemsShownCount = itemsInList.length - headingsShown;
-      if (totalCount > itemsShownCount) {
+      if (totalCount > itemsShownCount + skippedSelected) {
         $('searchCount').innerHTML = itemsShownCount + ' of ' + totalCount +
           ' items total';
         $('moreResults').style.display = 'block';
