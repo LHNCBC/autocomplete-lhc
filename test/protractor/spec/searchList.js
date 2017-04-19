@@ -190,6 +190,7 @@ describe('search lists', function() {
   describe('cache', function() {
     it('should allow fields with the same URL and different IDs to use the '+
        'same cached values', function() {
+      po.openTestPage();
       expect(po.getAjaxCallCount()).toBe(0);
       // Use two fields with different URLs
       po.autocompPickFirst(po.searchCNE, 'ar');
@@ -217,7 +218,6 @@ describe('search lists', function() {
 
   describe('suggestion dialog', function() {
     it('should provide a link to return to the field', function() {
-      po.openTestPage();
       // This tests that the return link focuses the field
       po.clearField(po.searchCWE);
       po.searchCWE.sendKeys('z');

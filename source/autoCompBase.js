@@ -1,4 +1,3 @@
-// This file contains auto-completer code for the Data Entry Framework project.
 
 // These autocompleters are based on the Autocompleter.Base class defined
 // in the Script.aculo.us controls.js file.   Most of the controls.js code has
@@ -1033,11 +1032,18 @@ if (typeof Def === 'undefined')
         else
           this.index = this.entryCount-1;
         highlightedLITag = this.getCurrentEntry(); // depends on this.index
-      } while (this.liIsHeading(highlightedLITag) && this.index !== stopIndex);
+        var itemText = (this.listItemValue(highlightedLITag));
 
+        if (this.itemTextIsHeading(itemText)) {
+          Def.Autocompleter.screenReaderLog('Above list heading: '+itemText);
+          highlightedLITag = null;
+        }
+      } while (!highlightedLITag && this.index !== stopIndex);
 
-      this.scrollToShow(highlightedLITag, this.update.parentNode);
-      this.updateElementAfterMarking(highlightedLITag);
+      if (highlightedLITag) {
+        this.scrollToShow(highlightedLITag, this.update.parentNode);
+        this.updateElementAfterMarking(highlightedLITag);
+      }
     },
 
 
@@ -1062,11 +1068,19 @@ if (typeof Def === 'undefined')
         else
           this.index = 0;
         highlightedLITag = this.getCurrentEntry(); // depends on this.index
-      } while (this.liIsHeading(highlightedLITag) && this.index !== stopIndex);
+        var itemText = (this.listItemValue(highlightedLITag));
+
+        if (this.itemTextIsHeading(itemText)) {
+          Def.Autocompleter.screenReaderLog('Under list heading: '+itemText);
+          highlightedLITag = null;
+        }
+      } while (!highlightedLITag && this.index !== stopIndex);
 
 
-      this.scrollToShow(highlightedLITag, this.update.parentNode);
-      this.updateElementAfterMarking(highlightedLITag);
+      if (highlightedLITag) {
+        this.scrollToShow(highlightedLITag, this.update.parentNode);
+        this.updateElementAfterMarking(highlightedLITag);
+      }
     },
 
 
@@ -1087,6 +1101,16 @@ if (typeof Def === 'undefined')
       }
       else
         this.element.select();
+      // At least under some circumstances, JAWS reads the field value (perhaps
+      // because of the "select" above).  However, if this is a table-format
+      // autocompleter, we need to read the row.
+      if (this.options.tableFormat) {
+        var logEntry = [];
+        var cells = jQuery(listElement).children('td');
+        for (var i=0, len=cells.length; i<len; ++i)
+          logEntry.push(cells[i].innerText);
+        Def.Autocompleter.screenReaderLog(logEntry.join('; '));
+      }
     },
 
 
@@ -1120,6 +1144,10 @@ if (typeof Def === 'undefined')
       if (previouslyHidden && !this.temporaryHide_ && this.entryCount > 0) {
         Def.Autocompleter.screenReaderLog('A list has appeared below the '+
           this.getFieldName()+'.');
+        if (this.options.tableFormat && this.options.colHeaders) {
+          Def.Autocompleter.screenReaderLog('The column headers on the '+
+           'multi-column list are ' + this.options.colHeaders.join('; '));
+        }
       }
     },
 
@@ -1487,7 +1515,7 @@ if (typeof Def === 'undefined')
         var innerMatchMinLength = minLength;
 
         for (var i=0; i<numItems; ++i) {
-          // Make sure the entry is not a header before considering it
+          // Make sure the entry is not a heading before considering it
           var itemText = listItems[i];
           if (!this.itemTextIsHeading(itemText)) {
             var itemTextLC = itemText.toLowerCase();
