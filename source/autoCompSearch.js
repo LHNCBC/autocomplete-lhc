@@ -545,12 +545,12 @@
 
     /**
      *  Builds and returns the HTML for the selection area.
-     * @param listItems the array of item strings to be shown in the list.
+     * @param listFieldVals the array of field values for the items to be shown in the list.
      * @param bestMatchFound whether a best match was found as a recommenation
      * @param fieldValToItemFields a hash from field value version of the list
      *  items to the list item arrays received from the AJAX call
      */
-    buildUpdateHTML: function(listItems, bestMatchFound, fieldValToItemFields) {
+    buildUpdateHTML: function(listFieldVals, bestMatchFound, fieldValToItemFields) {
       var rtn, htmlStart, htmlEnd, rowStartOpen, rowStartClose, fieldSep, rowEnd;
       var tableFormat = this.options.tableFormat;
       if (tableFormat) {
@@ -571,8 +571,8 @@
       }
 
       rtn = htmlStart;
-      for (var i=0, len=listItems.length; i<len; ++i) {
-        var itemText = listItems[i];
+      for (var i=0, len=listFieldVals.length; i<len; ++i) {
+        var itemText = listFieldVals[i];
         var itemFields = fieldValToItemFields[itemText];
         var escapedFields = [];
         for (var c=0, flen=itemFields.length; c<flen; ++c)
