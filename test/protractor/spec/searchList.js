@@ -190,7 +190,6 @@ describe('search lists', function() {
   describe('cache', function() {
     it('should allow fields with the same URL and different IDs to use the '+
        'same cached values', function() {
-      po.openTestPage();
       expect(po.getAjaxCallCount()).toBe(0);
       // Use two fields with different URLs
       po.autocompPickFirst(po.searchCNE, 'ar');
@@ -212,6 +211,22 @@ describe('search lists', function() {
       po.autocompPickFirst(po.searchCNE, 'ar');
       expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
       expect(po.getAjaxCallCount()).toBe(2);
+    });
+  });
+
+
+  describe('suggestion dialog', function() {
+    it('should provide a link to return to the field', function() {
+      po.openTestPage();
+      // This tests that the return link focuses the field
+      po.clearField(po.searchCWE);
+      po.searchCWE.sendKeys('z');
+      po.searchCWE.sendKeys(protractor.Key.TAB);
+      browser.wait(function() {
+        return po.suggestionDialog.isPresent();
+      }, 5000);
+      $('#returnLink').click();
+      expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(po.searchCWEID);
     });
   });
 });
