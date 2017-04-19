@@ -15,6 +15,23 @@ describe('Screen reader log', function() {
       '}');
   });
 
+  describe('match status', function() {
+    it('should not report a non-match status more than once', function() {
+      // Case: type into a clear field a non-matching value, then leave the
+      // field, and there were three messages about the non-matching value.
+      // First click on a prefetch field, so we have some entries in
+      // the log.
+      po.clearField(po.alleleSearch);
+      po.prefetchCNE.click();
+      po.alleleSearch.click();
+      po.alleleSearch.sendKeys('z');
+      po.nonField.click();
+      expect(po.nthLastLogEntry(1)).toEqual(
+        'The field\'s value does not match any items in the list.');
+      expect(po.nthLastLogEntry(2)).toEqual('Showing 7 of 7 items.');
+    });
+  });
+
   describe('lists with headings', function() {
     it('should not count headings with the item count', function() {
       po.headings1ColCWE.click();
@@ -46,6 +63,15 @@ describe('Screen reader log', function() {
       po.multiFieldSearchHeaders.sendKeys('ar');
       po.multiFieldSearchHeaders.sendKeys(protractor.Key.ARROW_DOWN);
       expect(po.nthLastLogEntry(1)).toEqual('Arm pain; pain in arm');
+    });
+
+    it('should not read the row if there is just one column', function() {
+      // This is because the single value in the column will be put into the
+      // field as the user arrows down, and will be read by JAWS from that.
+      po.multiFieldSearch1Col.click();
+      po.multiFieldSearch1Col.sendKeys('ar');
+      po.multiFieldSearch1Col.sendKeys(protractor.Key.ARROW_DOWN);
+      expect(po.nthLastLogEntry(1)).toEqual('A list has appeared below the field.');
     });
 
     it('should read the column headers', function() {

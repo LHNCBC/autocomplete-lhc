@@ -9,8 +9,7 @@
   var Class = Def.PrototypeAPI.Class;
 
   /**
-   *  An Ajax completer that provides list options when the user clicks
-   *  on a search button.
+   *  An autocompleter that retrieves list options via AJAX calls.
    */
   Def.Autocompleter.Search = Class.create();
 
@@ -163,7 +162,8 @@
      *     the list (default: false).  When this field is false, for a
      *     non-matching value a dialog will be shown with a list of suggestions
      *     that are on the list.</li>
-     *    <li>buttonID - the ID of the button (if there is one)</li>
+     *    <li>buttonID - the ID of the button (if there is one) which activates
+     *     a search.  If you use this option, do not set matchListValue.</li>
      *    <li>autocomp - a boolean that controls whether the field should
      *     also autocomplete as the user types.  When this is false, the user
      *     won't see an autocompletion list until they hit return.  (Default:  true)</li>

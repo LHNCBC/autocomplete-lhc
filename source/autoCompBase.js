@@ -1107,9 +1107,13 @@ if (typeof Def === 'undefined')
       if (this.options.tableFormat) {
         var logEntry = [];
         var cells = jQuery(listElement).children('td');
-        for (var i=0, len=cells.length; i<len; ++i)
-          logEntry.push(cells[i].innerText);
-        Def.Autocompleter.screenReaderLog(logEntry.join('; '));
+        // Only read the row if there is more than one cell, because the screen
+        // reader will read what gets put in the field.
+        if (cells.length > 1) {
+          for (var i=0, len=cells.length; i<len; ++i)
+            logEntry.push(cells[i].innerText);
+          Def.Autocompleter.screenReaderLog(logEntry.join('; '));
+        }
       }
     },
 
@@ -1367,19 +1371,21 @@ if (typeof Def === 'undefined')
      *  value either matches a list item or is blank, and false otherwise.
      */
     setMatchStatusIndicator: function(matchStatus) {
-      if (matchStatus) {
-        if (jQuery(this.element).hasClass('no_match')) {
-          jQuery(this.element).removeClass('no_match');
-          Def.Autocompleter.screenReaderLog(
-            'The field no longer contains a non-matching value.');
+      if (matchStatus !== this.matchStatus_) {
+        if (matchStatus) {
+          if (jQuery(this.element).hasClass('no_match')) {
+            jQuery(this.element).removeClass('no_match');
+            Def.Autocompleter.screenReaderLog(
+              'The field no longer contains a non-matching value.');
+          }
         }
+        else {
+          jQuery(this.element).addClass('no_match');
+          Def.Autocompleter.screenReaderLog(
+            'The field\'s value does not match any items in the list.');
+        }
+        this.matchStatus_ = matchStatus;
       }
-      else {
-        jQuery(this.element).addClass('no_match');
-        Def.Autocompleter.screenReaderLog(
-          'The field\'s value does not match any items in the list.');
-      }
-      this.matchStatus_ = matchStatus;
     },
 
 
@@ -1966,8 +1972,13 @@ if (typeof Def === 'undefined')
     /**
      *  Runs the stuff that needs to be run when the field changes.  (This assumes
      *  that the field has changed.)
+     * @param matchStatus (optional) Set this to false if this should assume the
+     *  field value does not match the list.  If not provided, this.matchStatus_
+     *  will be used.
      */
-    propagateFieldChanges: function() {
+    propagateFieldChanges: function(matchStatus) {
+      if (matchStatus === undefined)
+        matchStatus = this.matchStatus_;
       // If this autocompleter has a record data requester, run it or clear
       // the output fields.  This will make sure the output fields are clear
       // before the change event observers run for this field, in case one of
@@ -1975,7 +1986,7 @@ if (typeof Def === 'undefined')
       // fields.  (If it does, it can wait for the record data requester's
       // latestPendingAjaxRequest_ variable to be null.)
       if (this.recDataRequester_) {
-        if (this.matchStatus_ && this.domCache.get('elemVal').trim() !== '')
+        if (matchStatus && this.domCache.get('elemVal').trim() !== '')
           this.recDataRequester_.requestData();
         else // no data, or no data from list
           this.recDataRequester_.clearDataOutputFields();
@@ -2102,10 +2113,7 @@ if (typeof Def === 'undefined')
      *  that is not a list item.
      */
     handleNonListEntry: function() {
-      // Set the match status to false, so the propagateFieldChanges will do
-      // the right thing.
-      this.matchStatus_ = false;
-      this.propagateFieldChanges();
+      this.propagateFieldChanges(false);
 
       // For a single selection list, clear the stored selection
       if (!this.multiSelect_) {
