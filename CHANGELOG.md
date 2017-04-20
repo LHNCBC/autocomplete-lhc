@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [11.0.1] - 2017-04-17
+### Fixed
+- For the angular directive, corrected the handling of a default value for
+  prefetch lists.
+
 ## [11.0.0] - 2017-04-14
 ### Changed
 - The search (AJAX) autocompleter now begins autocompleting with just one

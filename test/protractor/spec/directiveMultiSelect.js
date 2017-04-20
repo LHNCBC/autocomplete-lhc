@@ -180,10 +180,26 @@ describe('directive', function() {
       // inbetween.)
       expect(dp.multiPrefetchCNE.getAttribute('value')).toEqual('');
     });
-  });
 
-  it('should handle pre-populated model values', function () {
-    expect(dp.checkSelected(dp.multiSearchCWEPrePopID, {'item1': 'a', 'item2': 'b'}));
+    it('should handle pre-populated model values', function () {
+      expect(dp.checkSelected(dp.multiSearchCWEPrePopID, {'item1': 'a', 'item2': 'b'}));
+    });
+
+    it('should load the default value for multi-select lists', function() {
+      var listID = 'list10';
+      var listField = $('#'+listID);
+      expect(listField.getAttribute("value")).toEqual(''); // multiselect clears field
+      expect(dp.checkSelected(listID, {'Green': 'G'}));
+      // The model should be set
+      expect(listField.evaluate('listFieldVal10')).toEqual([{text: 'Green', code: 'G'}]);
+      // Green should not be in the list, because it is selected already
+      listField.click();
+      expect(dp.searchResults.isDisplayed()).toBeTruthy();
+      listField.sendKeys('Gr');
+      // There should be no matches
+      expect(dp.firstSearchRes.isPresent()).toBeFalsy();
+    });
+
   });
 });
 
