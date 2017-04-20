@@ -219,18 +219,14 @@
               <ul>
                 <li>any of the <a href="#construction_common">common options</a>
                  described above</li>
+                <li>minChars - (default 1, as of version 11) The minimum number
+                 of characters that must be in the field before autocompletion
+                 will start.</li>
                 <li>matchListValue - Whether the field value is required to be one from
                  the list (default: false).  When this field is false, for a
                  non-matching value a dialog will be shown with a list of suggestions
                  that are on the list-- unless that is disabled by setting
                  nonMatchSuggestions to false.</li>
-                <li>buttonID - (optional) the ID of a button to initiate a search based on
-                 the field's value.  This is useful if you do not want the field
-                 to autocomplete (i.e. autocomp==false) but you still want to show a list of search
-                 results in response to a button.</li>
-                <li>autocomp - a boolean that controls whether the field should
-                 also autocomplete as the user types.  When this is false, the user
-                 won't see an autocompletion list until they hit return.  (Default:  true)</li>
                 <li>nonMatchSuggestions - (default: false, as of version 10)
                  Whether the user should be given a list of suggestions if they
                  enter a non-matching value.
@@ -254,6 +250,13 @@
                  shared only for fields with the same name, or more
                  specifically, with the same return value for
                  Def.Autocompleter.getFieldLookupKey.)</li>
+                <li>autocomp - a boolean that controls whether the field should
+                 also autocomplete as the user types.  When this is false, the user
+                 won't see an autocompletion list until they hit return.  (Default:  true)</li>
+                <li>buttonID - (optional) the ID of a button to initiate a search based on
+                 the field's value.  This is useful if you do not want the field
+                 to autocomplete (i.e. autocomp==false) but you still want to show a list of search
+                 results in response to a button.</li>
               </ul>
             </li>
           </ol>
