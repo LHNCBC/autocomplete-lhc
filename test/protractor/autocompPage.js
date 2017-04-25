@@ -20,12 +20,15 @@ var AutocompPage = function() {
   this.searchCNECSS = '#fe_search_cne';
   this.searchCNE = $(this.searchCNECSS);
   this.searchCNETokens = $("#search_cne_tokens");
-  this.searchCWE = $('#fe_search_cwe');
-  this.itemNumMatchField = $('#item_num_match_test');
+  this.searchCWEID = 'fe_search_cwe';
+  this.searchCWE = $('#'+this.searchCWEID);
+  this.itemNumMatchFieldID = 'item_num_match_test';
+  this.itemNumMatchField = $('#'+this.itemNumMatchFieldID);
   this.alleleSearch = $('#allele_search');
 
   // Multi-select CNE prefetch list
-  this.multiPrefetchCNEID = 'multi_sel_cne';
+  this.multiPrefetchCNEID = 'fe_multi_sel_cne';
+  this.multiPrefetchCNE = $('#'+this.multiPrefetchCNEID);
 
   // Multi-select CWE prefetch list
   var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection';
@@ -53,12 +56,14 @@ var AutocompPage = function() {
     element.all(by.css(multiHeadingCWESectionCSS + ' button'));
 
   // CWE prefetch list with headings without two-column flow
-  this.headings1ColCWE = $('#headings_1col_cwe');
+  this.headings1ColCWEID = 'headings_1col_cwe';
+  this.headings1ColCWE = $('#'+this.headings1ColCWEID);
 
   // Multi-field lists
   this.multiFieldPrefetch = $('#multi_field_cwe');
   this.multiFieldPrefetchCol2 = $('#multi_field_cwe2'); // 2nd column
   this.multiFieldSearch = $('#multi_field_search_cwe');
+  this.multiFieldSearch1Col = $('#multi_field_search_cwe2');
   this.multiSelectTableSearchID = 'table_format_multi_sel_search_cwe';
   this.multiSelectTableSearch = $('#'+this.multiSelectTableSearchID);
   this.multiFieldSearchHeaders = $('#multi_field_search_headers');

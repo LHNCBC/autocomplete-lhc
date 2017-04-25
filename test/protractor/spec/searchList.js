@@ -214,4 +214,19 @@ describe('search lists', function() {
       expect(po.getAjaxCallCount()).toBe(2);
     });
   });
+
+
+  describe('suggestion dialog', function() {
+    it('should provide a link to return to the field', function() {
+      // This tests that the return link focuses the field
+      po.clearField(po.searchCWE);
+      po.searchCWE.sendKeys('z');
+      po.searchCWE.sendKeys(protractor.Key.TAB);
+      browser.wait(function() {
+        return po.suggestionDialog.isPresent();
+      }, 5000);
+      $('#returnLink').click();
+      expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(po.searchCWEID);
+    });
+  });
 });

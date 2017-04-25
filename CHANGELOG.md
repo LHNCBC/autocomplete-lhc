@@ -3,6 +3,12 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [11.0.2] - 2017-04-20
+### Fixed
+- Several accessibility issues for screen reader users.
+- Issues with the result counts for prefetch (non-AJAX) lists.
+- The "return to field" link in the suggestion dialog.
+
 ## [11.0.1] - 2017-04-17
 ### Fixed
 - For the angular directive, corrected the handling of a default value for

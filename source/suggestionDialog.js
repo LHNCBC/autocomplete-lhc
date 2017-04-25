@@ -53,7 +53,7 @@
     resetDialog:  function() {
       this.setTitle('Please Wait');
       this.setContent('Please wait a second or two while we try to find '+
-        '"<span id="suggestionFieldVal"></span>"....');
+        '"<span id="suggestionFieldVal" aria-live="assertive"></span>"....');
     },
 
 
@@ -114,9 +114,9 @@
      *  being provided.
      */
     returnToFieldLink: function(field) {
-      return "<a href='javascript:void(0)' "+
+      return "<a id=returnLink href='javascript:void(0)' "+
         "onclick='Def.Autocompleter.SuggestionDialog.getSuggestionDialog().hide(); "+
-        "var e = $(\""+field.id+"\"); e.focus(); "+
+        "var e = $(\"#"+field.id+"\")[0]; e.focus(); "+
         "e.selectionStart = e.selectionEnd; return false'>return to the field</a>";
     }
   };

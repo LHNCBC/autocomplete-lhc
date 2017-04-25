@@ -9,8 +9,7 @@
   var Class = Def.PrototypeAPI.Class;
 
   /**
-   *  An Ajax completer that provides list options when the user clicks
-   *  on a search button.
+   *  An autocompleter that retrieves list options via AJAX calls.
    */
   Def.Autocompleter.Search = Class.create();
 
@@ -163,7 +162,8 @@
      *     the list (default: false).  When this field is false, for a
      *     non-matching value a dialog will be shown with a list of suggestions
      *     that are on the list.</li>
-     *    <li>buttonID - the ID of the button (if there is one)</li>
+     *    <li>buttonID - the ID of the button (if there is one) which activates
+     *     a search.  If you use this option, do not set matchListValue.</li>
      *    <li>autocomp - a boolean that controls whether the field should
      *     also autocomplete as the user types.  When this is false, the user
      *     won't see an autocompletion list until they hit return.  (Default:  true)</li>
@@ -545,12 +545,12 @@
 
     /**
      *  Builds and returns the HTML for the selection area.
-     * @param listItems the array of item strings to be shown in the list.
+     * @param listFieldVals the array of field values for the items to be shown in the list.
      * @param bestMatchFound whether a best match was found as a recommenation
      * @param fieldValToItemFields a hash from field value version of the list
      *  items to the list item arrays received from the AJAX call
      */
-    buildUpdateHTML: function(listItems, bestMatchFound, fieldValToItemFields) {
+    buildUpdateHTML: function(listFieldVals, bestMatchFound, fieldValToItemFields) {
       var rtn, htmlStart, htmlEnd, rowStartOpen, rowStartClose, fieldSep, rowEnd;
       var tableFormat = this.options.tableFormat;
       if (tableFormat) {
@@ -571,8 +571,8 @@
       }
 
       rtn = htmlStart;
-      for (var i=0, len=listItems.length; i<len; ++i) {
-        var itemText = listItems[i];
+      for (var i=0, len=listFieldVals.length; i<len; ++i) {
+        var itemText = listFieldVals[i];
         var itemFields = fieldValToItemFields[itemText];
         var escapedFields = [];
         for (var c=0, flen=itemFields.length; c<flen; ++c)

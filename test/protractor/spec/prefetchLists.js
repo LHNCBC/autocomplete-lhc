@@ -107,5 +107,37 @@ describe('Prefetch lists', function() {
     po.firstSearchRes.click();
     expect(p.getAttribute('value')).toBe('Spanish');
   });
+
+  it('should not count headings in the shown count', function() {
+    po.headings1ColCWE.click();
+    po.waitForScrollToStop(po.headings1ColCWEID);
+    expect(po.listCountMessage()).toEqual('12 of 135 items total');
+    // close list
+    po.headings1ColCWE.sendKeys(protractor.Key.ESCAPE);
+  });
+
+  it('should report the count for matches', function() {
+    po.itemNumMatchField.click();
+    po.waitForScrollToStop(po.itemNumMatchFieldID);
+    expect(po.listCountMessage()).toEqual('14 of 25 items total');
+    po.itemNumMatchField.sendKeys('20');
+    po.waitForScrollToStop(po.itemNumMatchFieldID);
+    // The number should in this case is 15, because after finding the first 14,
+    // we make an except and add the item whose number matches the input.
+    expect(po.shownItemCount()).toEqual(15);
+    expect(po.listCountMessage()).toEqual('15 of 25 items total');
+  });
+
+  it('should not look for matches in the item if the number matched', function() {
+    // This is to avoid double-counting items whose text and number partially
+    // match.
+    po.clearField(po.itemNumMatchField);
+    po.itemNumMatchField.click();
+    po.waitForScrollToStop(po.itemNumMatchFieldID);
+    po.itemNumMatchField.sendKeys('2');
+    po.waitForScrollToStop(po.itemNumMatchFieldID);
+    expect(po.shownItemCount()).toEqual(14);
+    expect(po.listCountMessage()).toEqual('14 of 25 items total');
+  });
 });
 

@@ -78,6 +78,7 @@ describe('directive', function() {
     });
 
     it('should allow non-matching values for prefetch CWE lists', function () {
+      dp.openDirectiveTestPage();
       // Add a non-list value
       expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(null);
       dp.multiPrefetchCWE.click();
