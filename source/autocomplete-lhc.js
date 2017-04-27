@@ -315,7 +315,7 @@
                     ac.setFieldVal('', false);
                   }
                   else {
-                    if (md.text !== undefined) {
+                    if (typeof md.text === 'string') {
                       ac.storeSelectedItem(md.text, md.code);
                       ac.setFieldVal(md.text, false);
                     }
