@@ -97,13 +97,11 @@ describe('directive', function() {
     // which is why it is set in directiveTest.html rather than here.
 
     var testFieldCSS = '#list4b';
-    var list4bModelAttrName = 'listFieldVal4b';
+    var modelAttrName = 'listFieldVal4b';
     var testField = $(testFieldCSS);
 
     // Returns the model data object for the test field
-    function getModel(modelAttrName) {
-      if (!modelAttrName)
-        modelAttrName = list4bModelAttrName;
+    function getModel() {
       return browser.executeScript('var testField = $("'+testFieldCSS+'");'+
         'return testField.scope().'+modelAttrName+';');
     }
@@ -113,7 +111,7 @@ describe('directive', function() {
       var modelString = model === undefined ? 'undefined' :
         JSON.stringify(model);
       var script = 'var testField = $("'+testFieldCSS+'");'+
-        'testField.scope().'+list4bModelAttrName+' = '+modelString+';'+
+        'testField.scope().'+modelAttrName+' = '+modelString+';'+
         'testField.scope().$digest();'
       return browser.executeScript(script);
     }
@@ -136,25 +134,7 @@ describe('directive', function() {
     // result in a thrown exception, because that seems to run asynchronously,
     // so we'll just check that the value gets set to the empty string.
     setModel(null)
-    expect(testField.getAttribute('value')).toBe('');
-
-    // Try a model with a null text attribute.
-    setModel({text: null, code: null});
-    expect(testField.getAttribute('value')).toBe('');
-    browser.executeScript(
-     'return $("'+testFieldCSS+'")[0].autocomp.domCache.get("elemVal")').then(
-     function(val) {
-      expect(val).toEqual('');
-    });
-    // Try this for a field whose model was initially this invalid assignment
-    // Previously this caused an issue with the DOM cache for elemVal.
-    expect(getModel('listfieldval11')).toEqual({text: null, code: null});
-    expect($('#list11').getAttribute('value')).toBe('');
-    browser.executeScript(
-     'return $("#list11")[0].autocomp.domCache.get("elemVal")').then(
-     function(val) {
-      expect(val).toEqual('');
-    });
+    expect(testField.getAttribute('value')).toEqual('');
 
   });
 
@@ -171,7 +151,6 @@ describe('directive', function() {
     expect(dp.optChangeTest.getAttribute('value')).toEqual('Blue_NEW');
   });
 
-
   describe(': CNE lists', function() {
     it('should warn user about invalid values', function() {
       dp.openDirectiveTestPage();
@@ -187,5 +166,6 @@ describe('directive', function() {
       expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(dp.cneListID);
     });
   });
+
 });
 

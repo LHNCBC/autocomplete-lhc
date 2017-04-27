@@ -114,12 +114,6 @@
         ng-model="listFieldVal9"
         autocomplete-lhc="searchList9Opts">
       <p>
-      Prefetch multiselect CNE list with invalid model value:
-      <input id="list11" type="text"
-        ng-required="false"
-        ng-model="listfieldval11"
-        autocomplete-lhc="list11Opts">
-      <p>
       <input name="nonlist" type="text">
     </div>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
@@ -269,13 +263,6 @@
           };
         };
 
-        window.searchList9Opts = $scope.searchList9Opts = {
-          url: undefined, /* should still construct a search autocompleter */
-          matchListValue: false,
-          autocomp: true,
-          suggestionMode: 0
-        };
-
         $scope.list10Opts = {
           maxSelect: '*',
           listItems: [
@@ -285,14 +272,12 @@
           defaultValue: {code: 'G'}
         };
 
-        $scope.list11Opts = {
-          listItems: [
-            {text: 'Green', code: 'G'},
-            {text: 'Blue', code: 'B'}
-          ]
+        window.searchList9Opts = $scope.searchList9Opts = {
+          url: undefined, /* should still construct a search autocompleter */
+          matchListValue: false,
+          autocomp: true,
+          suggestionMode: 0
         };
-        $scope.listfieldval11 =
-          {text: null, code: null};
 
      }]);
     </script>
