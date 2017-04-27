@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [11.0.3] - 2017-04-27
+### Fixed
+- Fixed a problem with AngularJS directive's handling of incorrect model
+  assignments that have a null "text" attribute.
+
 ## [11.0.2] - 2017-04-20
 ### Fixed
 - Several accessibility issues for screen reader users.
