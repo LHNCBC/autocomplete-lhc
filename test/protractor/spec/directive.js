@@ -171,8 +171,17 @@ describe('directive', function() {
     expect(dp.optChangeTest.getAttribute('value')).toEqual('Blue_NEW');
   });
 
+  describe('Prefetch lists', function() {
+    it('should allow the displayed property to be configured', function() {
+      dp.openDirectiveTestPage();
+      var testField = $('#list12');
+      testField.click();
+      dp.firstSearchRes.click();
+      expect(testField.getAttribute('value')).toEqual('Green');
+    });
+  });
 
-  describe(': CNE lists', function() {
+  describe('CNE lists', function() {
     it('should warn user about invalid values', function() {
       dp.openDirectiveTestPage();
       expect(hasClass(dp.cneList, 'no_match')).toBe(false);

@@ -13,7 +13,8 @@
 //
 // For "prefetched lists", opts can contain:
 // 1) listItems - (required) This is the list item data.  It should be an array,
-//    and each element in the array should have a "text" property which is the
+//    and each element in the array should have a "text" property (or, if the
+//    "display" option is set below, property of display's value) which is the
 //    display string the user sees.  The object containing that text property
 //    is what will get stored on the model you have associated via ng-model
 //    (selectedVal, in the example above).
@@ -31,6 +32,8 @@
 //       of the list item object.
 //    b) the default list item is loaded into the field when the autocompletion
 //       is set up.
+// 4) display - (default "text") the proprty of the objects in listItems which
+//    should be displayed in the list.
 // 4) Any other parameters used by the Def.Autocomp.Prefetch constructor defined in
 //    autoCompPrefetch.js.  (Look at the options parameter in the initialize method).
 //
@@ -41,6 +44,10 @@
 // 2) Any other parameters used by the Def.Autocomp.Search constructor defiend
 //    in autoCompSearch.js.  (Look at the options parameter in the initialize
 //    method.)
+//
+// For both types of lists, if the list is configured to allow entry of off-list
+// values, the model data objects for such items will have an additional
+// property, _notOnList, set to true.
 
 
 // Wrap the definitions in a function to protect our version of global variables
@@ -66,20 +73,6 @@
   }
 
 
-  /**
-   *  Returns model data for the field value "finalVal".
-   * @param finaVal the field value after list selection.  This is the
-   *  trimmed "text" value, which will be in the returned model object.
-   * @param itemTextToItem a hash of list values to model data objects
-   */
-  function getModelData(finalVal, itemTextToItem) {
-    var item = itemTextToItem[finalVal];
-    if (!item)
-      item = {text: finalVal};
-    return item;
-  }
-
-
   // Keep track of created list event handlers.  This is a hash of field IDs to
   // handler functions.
   Def.Autocompleter.directiveListEventHandlers = {};
@@ -102,6 +95,24 @@
               controller.$options = {};
             controller.$options.updateOn = 'none';
             controller.$options.updateOnDefault = false;
+            var displayedProp = scope.acOpts.display || 'text';
+
+            /**
+             *  Returns model data for the field value "finalVal".  (Used for Prefetch
+             *  lists.)
+             * @param finaVal the field value after list selection.  This is the
+             *  trimmed "text" value, which will be in the returned model object.
+             * @param itemTextToItem a hash of list values to model data objects
+             */
+            function getModelData(finalVal, itemTextToItem) {
+              var item = itemTextToItem[finalVal];
+              if (!item) {
+                item = {_notOnList: true};
+                item[displayedProp] = finalVal;
+              }
+              return item;
+            }
+
 
             /**
              *  Sets up a prefetched list on the field.
@@ -111,7 +122,6 @@
             function prefetchList(pElem, autoOpts) {
               var itemText = [];
               var itemTextToItem = {};
-              var itemLabel;
 
               // See if we have a default value, unless the model is already
               // populated.
@@ -121,7 +131,7 @@
               if (defaultValueSpec !== undefined &&
                   (scope.modelData === undefined || scope.modelData === null)) {
                 if (typeof defaultValueSpec === 'string') {
-                  defaultKey = 'text';
+                  defaultKey = displayedProp;
                   defaultKeyVal = defaultValueSpec;
                 }
                 else { // an object like {code: 'AL-23'}
@@ -132,14 +142,15 @@
 
               // "listItems" = list item data.
               var modelDefault = null;
+              var oneItemText;
               for (var i=0, numItems=autoOpts.listItems.length; i<numItems; ++i) {
                 var item = autoOpts.listItems[i];
-                itemLabel = item.text;
-                itemText[i] = itemLabel;
-                var trimmedLabel = itemLabel.trim();
-                itemTextToItem[trimmedLabel] = item;
+                oneItemText = item[displayedProp];
+                itemText[i] = oneItemText;
+                var trimmedText = oneItemText.trim();
+                itemTextToItem[trimmedText] = item;
                 if (defaultKey && item[defaultKey].trim() === defaultKeyVal)
-                  modelDefault = getModelData(trimmedLabel, itemTextToItem);
+                  modelDefault = getModelData(trimmedText, itemTextToItem);
               }
 
               var ac = new Def.Autocompleter.Prefetch(pElem, itemText, autoOpts);
@@ -161,7 +172,7 @@
                       // The item was removed
                       var removedVal = eventData.final_val;
                       for (var i = 0, len = selectedItems.length; i < len; ++i) {
-                        if (removedVal === selectedItems[i].text) {
+                        if (removedVal === selectedItems[i][displayedProp]) {
                           selectedItems.splice(i, 1);
                           break;
                         }
@@ -189,12 +200,15 @@
              *  list.
              * @param ac the autocompleter
              * @param itemText the display string of the selected item
+             * @param onList true if the selected item was from the list
              */
-            function getItemModelData(ac, itemText) {
+            function getItemModelData(ac, itemText, onList) {
               var rtn = {text: itemText};
               var code = ac.getItemCode(itemText);
               if (code !== null)
                 rtn.code = code;
+              if (!onList)
+                rtn._notOnList = true;
               return angular.extend(rtn, ac.getItemExtraData(itemText))
             }
 
@@ -226,8 +240,9 @@
               updateListSelectionHandler(pElem, function(eventData) {
                 scope.$apply(function() {
                   var itemText = eventData.final_val;
+                  var onList = eventData.on_list;
                   if (!ac.multiSelect_) {
-                    scope.modelData = getItemModelData(ac, itemText);
+                    scope.modelData = getItemModelData(ac, itemText, onList);
                   }
                   else {
                     if (!scope.modelData)
@@ -244,7 +259,7 @@
                       }
                     }
                     else {
-                      selectedItems.push(getItemModelData(ac, itemText));
+                      selectedItems.push(getItemModelData(ac, itemText, onList));
                     }
                   }
                 });
@@ -307,17 +322,18 @@
                 if (hasPrepoluatedModel) {
                   if (ac.multiSelect_) {  // in this case md is an array
                     for (var i=0, len=md.length; i<len; ++i) {
-                      var text = md[i].text;
-                      ac.storeSelectedItem(text, md[i].code);
-                      ac.addToSelectedArea(text);
+                      var dispVal = md[i][displayedProp];
+                      ac.storeSelectedItem(dispVal, md[i].code);
+                      ac.addToSelectedArea(dispVal);
                     }
                     // Clear the field value for multi-select lists
                     ac.setFieldVal('', false);
                   }
                   else {
-                    if (typeof md.text === 'string') {
-                      ac.storeSelectedItem(md.text, md.code);
-                      ac.setFieldVal(md.text, false);
+                    var dispVal = md[displayedProp];
+                    if (typeof dispVal === 'string') {
+                      ac.storeSelectedItem(dispVal, md.code);
+                      ac.setFieldVal(dispVal, false);
                     }
                     else // handle the case of an empty object as a model
                       ac.setFieldVal('', false);
@@ -348,8 +364,8 @@
                     if (typeof value === 'string')
                       rtn = value;
                     else if (value !== null && typeof value === 'object' &&
-                             typeof value.text === "string") {
-                      rtn = value.text;
+                             typeof value[displayedProp] === "string") {
+                      rtn = value[displayedProp];
                     }
                     rtn = rtn.trim();
                   }

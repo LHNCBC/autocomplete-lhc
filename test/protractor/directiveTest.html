@@ -120,6 +120,12 @@
         ng-model="listfieldval11"
         autocomplete-lhc="list11Opts">
       <p>
+      Prefetch CNE list with a non-standard display text property:
+      <input id="list12" type="text"
+        ng-required="false"
+        ng-model="listFieldVal12"
+        autocomplete-lhc="list12Opts">
+      <p>
       <input name="nonlist" type="text">
     </div>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
@@ -293,6 +299,14 @@
         };
         $scope.listfieldval11 =
           {text: null, code: null};
+
+        $scope.list12Opts = {
+          display: 'desc',
+          listItems: [
+            {desc: 'Green', code: 'G'},
+            {desc: 'Blue', code: 'B'}
+          ]
+        };
 
      }]);
     </script>

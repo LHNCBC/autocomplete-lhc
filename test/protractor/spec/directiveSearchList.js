@@ -67,7 +67,7 @@ describe('directive', function() {
       // The only entry in the model should be the text, because it is not on
       // the list.
       expect(dp.searchWithoutSug.evaluate(dp.searchWithoutSugModel)).toEqual(
-        {text: 'ar'});
+        {text: 'ar', _notOnList: true});
     });
 
     it('should clear its cache if the URL changes', function() {
