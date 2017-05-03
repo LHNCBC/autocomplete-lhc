@@ -54,23 +54,349 @@
 (function(Def) {
   "use strict";
 
-  /**
-   *  Updates (replaces) the list selection event handler for a field.
-   * @param field the field with the autocompleter
-   * @param handler the list selection event handler to be assigned
-   */
-  function updateListSelectionHandler(field, handler) {
-    var fieldKey = Def.Observable.lookupKey(field);
-    var eh = Def.Autocompleter.directiveListEventHandlers;
-    var oldHandler = eh[field.id];
-    if (oldHandler) {
-      Def.Autocompleter.Event.removeCallback(fieldKey, 'LIST_SEL',
-        oldHandler);
+  var AutocompInitializer = Def.PrototypeAPI.Class.create({
+    /**
+     *  Constructor.
+     * @param acOptions the options hash passed to the directive
+     *  for configuring the autocompleter.
+     * @param scope the AngularJS scope
+     * @param element the jQuery-wrapped element for which an autocompleter is
+     *  being created.
+     * @param controller the AngularJS controller
+     */
+    initialize: function(acOptions, scope, element, controller) {
+      this.displayedProp = acOptions.display || 'text';
+      this.scope = scope;
+      this.acOptions = acOptions;
+
+      if (controller) { // ngModelController, from the "require"
+        this.pElem = element[0];
+
+        // if there's an autocomp already
+        var oldAC = this.pElem.autocomp;
+        if (oldAC) {
+          // If the URL is changing, clear the cache, if this was a
+          // search autocompleter.
+          if (oldAC.clearCachedResults && oldAC.url !== acOptions.url)
+            oldAC.clearCachedResults();
+          // Destroy the existing autocomp
+          oldAC.destroy();
+          // clean up the model data
+          scope.modelData = null;
+          // Remove the formatter and parser we defined for the previous
+          // autocompleter.
+          this.removeAutocompFunction(controller.$formatters);
+          this.removeAutocompFunction(controller.$parsers);
+        }
+
+        this.ac = acOptions.hasOwnProperty('url') ?
+         this.searchList() : this.prefetchList();
+
+        // See if there is an existing model value for the field (which
+        // might have been set by the prefetchList call above, if there
+        // was a default value for the field).
+        var md = scope.modelData;
+        var hasPrepoluatedModel = (md !== undefined) && (md !== null);
+
+        // If there is a already a model value for this field, load it
+        // into the autocompleter.
+        if (hasPrepoluatedModel) {
+          if (this.ac.multiSelect_) {  // in this case md is an array
+            for (var i=0, len=md.length; i<len; ++i) {
+              var dispVal = md[i][this.displayedProp];
+              this.ac.storeSelectedItem(dispVal, md[i].code);
+              this.ac.addToSelectedArea(dispVal);
+            }
+            // Clear the field value for multi-select lists
+            this.ac.setFieldVal('', false);
+          }
+          else {
+            var dispVal = md[this.displayedProp];
+            if (typeof dispVal === 'string') {
+              this.ac.storeSelectedItem(dispVal, md.code);
+              this.ac.setFieldVal(dispVal, false);
+            }
+            else // handle the case of an empty object as a model
+              this.ac.setFieldVal('', false);
+          }
+        }
+
+        this.parser = this.parser.bind(this);
+        this.parser.fromAutocomp = true;
+        controller.$parsers.push(this.parser);
+
+        this.formatter = this.formatter.bind(this);
+        this.formatter.fromAutocomp = true;
+        controller.$formatters.push(this.formatter);
+      } // if controller
+    },
+
+
+    /**
+     *  A parser to convert from the field value to the object
+     *  containing the value and (e.g.) code.
+     * @param value the field value
+     * @return the model object.
+     */
+    parser: function (value) {
+      // Just rely on the autocompleter list selection event to manage
+      // model updates.  Here we will just return the model object, to
+      // prevent any change to the model from the parsers.
+      var rtn = this.scope.modelData;
+      // Returning "undefined" means the value is invalid and will cause
+      // the ng-invalid-parse class to get added.  Switch to null.
+      if (rtn === undefined)
+        rtn = null;
+      return rtn;
+    },
+
+
+    /**
+     *  A formatter to get the display string if the model is changed.
+     * @param value the model object
+     * @return the display string for the field value
+     */
+    formatter: function (value) {
+      var rtn = '';
+      if (!this.ac.multiSelect_) {
+        if (typeof value === 'string')
+          rtn = value;
+        else if (value !== null && typeof value === 'object' &&
+                 typeof value[this.displayedProp] === "string") {
+          rtn = value[this.displayedProp];
+        }
+        rtn = rtn.trim();
+      }
+      else
+        rtn = '';
+
+      // If angular is setting the field value, we have to let the
+      // autocompleter know.
+      this.ac.setFieldVal(rtn, false);
+
+      return rtn;
+    },
+
+
+    /**
+     *  Returns model data for the field value "finalVal".  (Used for Prefetch
+     *  lists.)
+     * @param finaVal the field value after list selection.  This is the
+     *  trimmed "text" value, which will be in the returned model object.
+     * @param itemTextToItem a hash of list values to model data objects
+     */
+    getPrefetchItemModelData: function (finalVal, itemTextToItem) {
+      var item = itemTextToItem[finalVal];
+      if (!item) {
+        item = {_notOnList: true};
+        item[this.displayedProp] = finalVal;
+      }
+      return item;
+    },
+
+
+    /**
+     *  Handles a prefetch list selection event.
+     * @param eventData the data about the selection event.
+     * @param itemTextToItem a hash from display strings to items
+     */
+    prefetchListSelHandler: function (eventData, itemTextToItem) {
+      var finalVal = eventData.final_val;
+      // finalVal is a trimmed version of the text.  Use that for
+      // the model data.
+      if (!this.ac.multiSelect_) {
+        this.scope.modelData =
+          this.getPrefetchItemModelData(finalVal, itemTextToItem);
+      }
+      else {
+        if (!this.scope.modelData)
+          this.scope.modelData = [];
+        var selectedItems = this.scope.modelData;
+        if (eventData.removed) {
+          // The item was removed
+          var removedVal = eventData.final_val;
+          for (var i = 0, len = selectedItems.length; i < len; ++i) {
+            if (removedVal === selectedItems[i][this.displayedProp]) {
+              selectedItems.splice(i, 1);
+              break;
+            }
+          }
+        }
+        else {
+          selectedItems.push(
+            this.getPrefetchItemModelData(finalVal, itemTextToItem));
+        }
+      }
+    },
+
+
+    /**
+     *  Sets up a prefetched list on the field.
+     */
+    prefetchList: function () {
+      var itemText = [];
+      var itemTextToItem = {};
+
+      // See if we have a default value, unless the model is already
+      // populated.
+      var acOptions = this.acOptions;
+      var defaultKey = null; // null means not using a default
+      var defaultValueSpec = acOptions.defaultValue;
+      var defaultKeyVal = null; // the value in defaultValueSpec corresponding to defaultKey
+      var displayedProp = this.displayedProp;
+      if (defaultValueSpec !== undefined &&
+          (this.scope.modelData === undefined || this.scope.modelData === null)) {
+        if (typeof defaultValueSpec === 'string') {
+          defaultKey = displayedProp;
+          defaultKeyVal = defaultValueSpec;
+        }
+        else { // an object like {code: 'AL-23'}
+          defaultKey = Object.keys(defaultValueSpec)[0];
+          defaultKeyVal = defaultValueSpec[defaultKey];
+        }
+      }
+
+      // "listItems" = list item data.
+      var modelDefault = null;
+      var oneItemText;
+      for (var i=0, numItems=acOptions.listItems.length; i<numItems; ++i) {
+        var item = acOptions.listItems[i];
+        oneItemText = item[displayedProp];
+        itemText[i] = oneItemText;
+        var trimmedText = oneItemText.trim();
+        itemTextToItem[trimmedText] = item;
+        if (defaultKey && item[defaultKey].trim() === defaultKeyVal)
+          modelDefault = this.getPrefetchItemModelData(trimmedText, itemTextToItem);
+      }
+
+      var ac = new Def.Autocompleter.Prefetch(this.pElem, itemText, acOptions);
+      this.addNameAttr();
+      var self = this;
+      this.updateListSelectionHandler(function(eventData) {
+        self.scope.$apply(function() {
+          self.prefetchListSelHandler(eventData, itemTextToItem);
+        });
+      });
+
+      // If we have a default value, assign it to the model.
+      if (modelDefault !== null && !this.scope.modelData)
+        this.scope.modelData = ac.multiSelect_ ? [modelDefault] : modelDefault;
+
+      return ac;
+    },
+
+
+    /**
+     *  Returns the model data structure for a selected item in a search
+     *  list.
+     * @param itemText the display string of the selected item
+     * @param onList true if the selected item was from the list
+     */
+    getSearchItemModelData: function (itemText, onList) {
+      var rtn = {text: itemText};
+      var code = this.ac.getItemCode(itemText);
+      if (code !== null)
+        rtn.code = code;
+      if (!onList)
+        rtn._notOnList = true;
+      return angular.extend(rtn, this.ac.getItemExtraData(itemText))
+    },
+
+
+    /**
+     *  Assigns a name to the field if it is missing one.
+     *  Names are used to register listeners.  We don't do this in the
+     *  autocompleter base class to avoid polluting submitted form data
+     *  with unintended fields.
+     */
+    addNameAttr: function () {
+      // If the element does not have a name, use the ID.  The name
+      // to register listeners.
+      if (this.pElem.name === '')
+        this.pElem.name = this.pElem.id;
+    },
+
+
+    /**
+     *  Handles a search list selection event.
+     * @param eventData the data about the selection event.
+     */
+    searchListSelHandler: function (eventData) {
+      var itemText = eventData.final_val;
+      var onList = eventData.on_list;
+      if (!this.ac.multiSelect_) {
+        this.scope.modelData = this.getSearchItemModelData(itemText, onList);
+      }
+      else {
+        if (!this.scope.modelData)
+          this.scope.modelData = [];
+        var selectedItems = this.scope.modelData;
+        if (eventData.removed) {
+          // The item was removed
+          var removedVal = eventData.final_val;
+          for (var i = 0, len = selectedItems.length; i < len; ++i) {
+            if (removedVal === selectedItems[i].text) {
+              selectedItems.splice(i, 1);
+              break;
+            }
+          }
+        }
+        else {
+          selectedItems.push(this.getSearchItemModelData(itemText, onList));
+        }
+      }
+    },
+
+    /**
+     *  Sets up a search list on the field.
+     */
+    searchList: function () {
+      var ac = new Def.Autocompleter.Search(this.pElem, this.acOptions.url, this.acOptions);
+      this.addNameAttr();
+      var self = this;
+      this.updateListSelectionHandler(function(eventData) {
+        self.scope.$apply(function() {
+          self.searchListSelHandler(eventData);
+        });
+      });
+      return ac;
+    },
+
+
+    /**
+     *  Takes an array of functions, and removes the first found that is
+     *  flagged as being from an autocompleter.
+     * @param functionList the array of functions
+     */
+    removeAutocompFunction: function (functionList) {
+      for (var i=0, len=functionList.length; i<len; ++i) {
+        if (functionList[i].fromAutocomp) {
+          functionList.splice(i, 1);
+          break;
+        }
+      }
+    },
+
+
+    /**
+     *  Updates (replaces) the list selection event handler.
+     * @param handler the list selection event handler to be assigned
+     */
+    updateListSelectionHandler: function (handler) {
+      var field = this.pElem;
+      var fieldKey = Def.Observable.lookupKey(field);
+      var eh = Def.Autocompleter.directiveListEventHandlers;
+      var oldHandler = eh[field.id];
+      if (oldHandler) {
+        Def.Autocompleter.Event.removeCallback(fieldKey, 'LIST_SEL',
+          oldHandler);
+      }
+      Def.Autocompleter.Event.observeListSelections(fieldKey,
+        handler);
+      eh[field.id] = handler;
     }
-    Def.Autocompleter.Event.observeListSelections(fieldKey,
-      handler);
-    eh[field.id] = handler;
-  }
+  }); // class AutocompInitializer
+
 
 
   // Keep track of created list event handlers.  This is a hash of field IDs to
@@ -95,294 +421,10 @@
               controller.$options = {};
             controller.$options.updateOn = 'none';
             controller.$options.updateOnDefault = false;
-            var displayedProp = scope.acOpts.display || 'text';
 
-            /**
-             *  Returns model data for the field value "finalVal".  (Used for Prefetch
-             *  lists.)
-             * @param finaVal the field value after list selection.  This is the
-             *  trimmed "text" value, which will be in the returned model object.
-             * @param itemTextToItem a hash of list values to model data objects
-             */
-            function getModelData(finalVal, itemTextToItem) {
-              var item = itemTextToItem[finalVal];
-              if (!item) {
-                item = {_notOnList: true};
-                item[displayedProp] = finalVal;
-              }
-              return item;
+            function initWidget(options) {
+              new AutocompInitializer(options, scope, element, controller);
             }
-
-
-            /**
-             *  Sets up a prefetched list on the field.
-             * @param pElem the element on which the autocompleter is to run
-             * @param autoOpts the options from the directive attribute
-             */
-            function prefetchList(pElem, autoOpts) {
-              var itemText = [];
-              var itemTextToItem = {};
-
-              // See if we have a default value, unless the model is already
-              // populated.
-              var defaultKey = null; // null means not using a default
-              var defaultValueSpec = autoOpts.defaultValue;
-              var defaultKeyVal = null; // the value in defaultValueSpec corresponding to defaultKey
-              if (defaultValueSpec !== undefined &&
-                  (scope.modelData === undefined || scope.modelData === null)) {
-                if (typeof defaultValueSpec === 'string') {
-                  defaultKey = displayedProp;
-                  defaultKeyVal = defaultValueSpec;
-                }
-                else { // an object like {code: 'AL-23'}
-                  defaultKey = Object.keys(defaultValueSpec)[0];
-                  defaultKeyVal = defaultValueSpec[defaultKey];
-                }
-              }
-
-              // "listItems" = list item data.
-              var modelDefault = null;
-              var oneItemText;
-              for (var i=0, numItems=autoOpts.listItems.length; i<numItems; ++i) {
-                var item = autoOpts.listItems[i];
-                oneItemText = item[displayedProp];
-                itemText[i] = oneItemText;
-                var trimmedText = oneItemText.trim();
-                itemTextToItem[trimmedText] = item;
-                if (defaultKey && item[defaultKey].trim() === defaultKeyVal)
-                  modelDefault = getModelData(trimmedText, itemTextToItem);
-              }
-
-              var ac = new Def.Autocompleter.Prefetch(pElem, itemText, autoOpts);
-              addNameAttr(pElem);
-              updateListSelectionHandler(pElem, function (eventData) {
-                scope.$apply(function() {
-                  var finalVal = eventData.final_val;
-                  // finalVal is a trimmed version of the text.  Use that for
-                  // the model data.
-                  if (!ac.multiSelect_) {
-                    scope.modelData =
-                      getModelData(finalVal, itemTextToItem);
-                  }
-                  else {
-                    if (!scope.modelData)
-                      scope.modelData = [];
-                    var selectedItems = scope.modelData;
-                    if (eventData.removed) {
-                      // The item was removed
-                      var removedVal = eventData.final_val;
-                      for (var i = 0, len = selectedItems.length; i < len; ++i) {
-                        if (removedVal === selectedItems[i][displayedProp]) {
-                          selectedItems.splice(i, 1);
-                          break;
-                        }
-                      }
-                    }
-                    else {
-                      selectedItems.push(
-                        getModelData(finalVal, itemTextToItem));
-                    }
-                  }
-                });
-              });
-
-              // If we have a default value, assign it to the model.
-              if (modelDefault !== null && !scope.modelData)
-                scope.modelData = ac.multiSelect_ ? [modelDefault] : modelDefault;
-
-              return ac;
-            }
-
-
-
-            /**
-             *  Returns the model data structure for a selected item in a search
-             *  list.
-             * @param ac the autocompleter
-             * @param itemText the display string of the selected item
-             * @param onList true if the selected item was from the list
-             */
-            function getItemModelData(ac, itemText, onList) {
-              var rtn = {text: itemText};
-              var code = ac.getItemCode(itemText);
-              if (code !== null)
-                rtn.code = code;
-              if (!onList)
-                rtn._notOnList = true;
-              return angular.extend(rtn, ac.getItemExtraData(itemText))
-            }
-
-
-            /**
-             *  Assigns a name to the field if it is missing one.
-             *  Names are used to register listeners.  We don't do this in the
-             *  autocompleter base class to avoid polluting submitted form data
-             *  with unintended fields.
-             * @param pElem the field for which the name attribute will be
-             *  needed.
-             */
-            function addNameAttr(pElem) {
-              // If the element does not have a name, use the ID.  The name
-              // to register listeners.
-              if (pElem.name === '')
-                pElem.name = pElem.id;
-            }
-
-
-            /**
-             *  Sets up a search list on the field.
-             * @param pElem the element on which the autocompleter is to run
-             * @param autoOpts the options from the directive attribute
-             */
-            function searchList(pElem, autoOpts) {
-              var ac = new Def.Autocompleter.Search(pElem, autoOpts.url, autoOpts);
-              addNameAttr(pElem);
-              updateListSelectionHandler(pElem, function(eventData) {
-                scope.$apply(function() {
-                  var itemText = eventData.final_val;
-                  var onList = eventData.on_list;
-                  if (!ac.multiSelect_) {
-                    scope.modelData = getItemModelData(ac, itemText, onList);
-                  }
-                  else {
-                    if (!scope.modelData)
-                      scope.modelData = [];
-                    var selectedItems = scope.modelData;
-                    if (eventData.removed) {
-                      // The item was removed
-                      var removedVal = eventData.final_val;
-                      for (var i = 0, len = selectedItems.length; i < len; ++i) {
-                        if (removedVal === selectedItems[i].text) {
-                          selectedItems.splice(i, 1);
-                          break;
-                        }
-                      }
-                    }
-                    else {
-                      selectedItems.push(getItemModelData(ac, itemText, onList));
-                    }
-                  }
-                });
-              });
-
-              return ac;
-            }
-
-
-            /**
-             *  Takes an array of functions, and removes the first found that is
-             *  flagged as being from an autocompleter.
-             * @param functionList the array of functions
-             */
-            function removeAutocompFunction(functionList) {
-              for (var i=0, len=functionList.length; i<len; ++i) {
-                if (functionList[i].fromAutocomp) {
-                  functionList.splice(i, 1);
-                  break;
-                }
-              }
-            };
-
-
-            var initWidget = function (options) {
-
-              var autoOpts = options;
-
-              if (controller) { // ngModelController, from the "require"
-                var pElem = element[0];
-
-                // if there's an autocomp already
-                if (pElem.autocomp) {
-                  // If the URL is changing, clear the cache, if this was a
-                  // search autocompleter.
-                  if (pElem.autocomp.clearCachedResults &&
-                      pElem.autocomp.url !== options.url)
-                    pElem.autocomp.clearCachedResults();
-                  // Destroy the existing autocomp
-                  pElem.autocomp.destroy();
-                  // clean up the model data
-                  scope.modelData = null;
-                  // Remove the formatter and parser we defined for the previous
-                  // autocompleter.
-                  removeAutocompFunction(controller.$formatters);
-                  removeAutocompFunction(controller.$parsers);
-                }
-
-                var ac = autoOpts.hasOwnProperty('url') ?
-                 searchList(pElem, autoOpts) : prefetchList(pElem, autoOpts);
-
-                // See if there is an existing model value for the field (which
-                // might have been set by the prefetchList call above, if there
-                // was a default value for the field).
-                var md = scope.modelData;
-                var hasPrepoluatedModel = (md !== undefined) && (md !== null);
-
-                // If there is a already a model value for this field, load it
-                // into the autocompleter.
-                if (hasPrepoluatedModel) {
-                  if (ac.multiSelect_) {  // in this case md is an array
-                    for (var i=0, len=md.length; i<len; ++i) {
-                      var dispVal = md[i][displayedProp];
-                      ac.storeSelectedItem(dispVal, md[i].code);
-                      ac.addToSelectedArea(dispVal);
-                    }
-                    // Clear the field value for multi-select lists
-                    ac.setFieldVal('', false);
-                  }
-                  else {
-                    var dispVal = md[displayedProp];
-                    if (typeof dispVal === 'string') {
-                      ac.storeSelectedItem(dispVal, md.code);
-                      ac.setFieldVal(dispVal, false);
-                    }
-                    else // handle the case of an empty object as a model
-                      ac.setFieldVal('', false);
-                  }
-                }
-
-                // Add a parser to convert from the field value to the object
-                // containing value and (e.g.) code.
-                var parser = function(value) {
-                  // Just rely on the autocompleter list selection event to manage
-                  // model updates.  Here we will just return the model object, to
-                  // prevent any change to the model from the parsers.
-                  var rtn = scope.modelData;
-                  // Returning "undefined" means the value is invalid and will cause
-                  // the ng-invalid-parse class to get added.  Switch to null.
-                  if (rtn === undefined)
-                    rtn = null;
-                  return rtn;
-                };
-                parser.fromAutocomp = true;
-                controller.$parsers.push(parser);
-
-                // Also add a formatter to get the display string if the model is
-                // changed.
-                var formatter = function(value) {
-                  var rtn = '';
-                  if (!ac.multiSelect_) {
-                    if (typeof value === 'string')
-                      rtn = value;
-                    else if (value !== null && typeof value === 'object' &&
-                             typeof value[displayedProp] === "string") {
-                      rtn = value[displayedProp];
-                    }
-                    rtn = rtn.trim();
-                  }
-                  else
-                    rtn = '';
-
-                  // If angular is setting the field value, we have to let the
-                  // autocompleter know.
-                  ac.setFieldVal(rtn, false);
-
-                  return rtn;
-                };
-                formatter.fromAutocomp = true;
-                controller.$formatters.push(formatter);
-              } // if controller
-            };
-
             // Re-initialize the autocomplete widget whenever the options change
             scope.$watch("acOpts", initWidget, true);
           }
