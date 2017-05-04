@@ -34,7 +34,7 @@
 //       is set up.
 // 4) display - (default "text") the proprty of the objects in listItems which
 //    should be displayed in the list.
-// 4) Any other parameters used by the Def.Autocomp.Prefetch constructor defined in
+// 5) Any other parameters used by the Def.Autocomp.Prefetch constructor defined in
 //    autoCompPrefetch.js.  (Look at the options parameter in the initialize method).
 //
 // For "search" lists, opts can contain:
