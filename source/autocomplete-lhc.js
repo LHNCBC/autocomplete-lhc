@@ -75,10 +75,6 @@
         // if there's an autocomp already
         var oldAC = this.pElem.autocomp;
         if (oldAC) {
-          // If the URL is changing, clear the cache, if this was a
-          // search autocompleter.
-          if (oldAC.clearCachedResults && oldAC.url !== acOptions.url)
-            oldAC.clearCachedResults();
           // Destroy the existing autocomp
           oldAC.destroy();
           // clean up the model data
