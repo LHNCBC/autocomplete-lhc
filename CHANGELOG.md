@@ -5,8 +5,8 @@ This log documents significant changes for each release.  This project follows
 
 ## [12.0.0] - 2017-05-03
 ### Changed
-- The AngularJS directive how includes an attribute "_notOnList" when
-  constructing model obects from user entered values which did not match a list
+- The AngularJS directive now includes an attribute "_notOnList" when
+  constructing model objects from user entered values which did not match a list
   item.  This change won't affect you if you are not using the AngularJS
   directive.
 
