@@ -402,7 +402,7 @@
   if (typeof angular !== 'undefined') {
     angular.module('autocompleteLhcMod', [])
 
-      .directive('autocompleteLhc', ['$timeout', function (autocompleteConfig, $timeout) {
+      .directive('autocompleteLhc', [function () {
         return {
           restrict: 'A',
           require:'?ngModel',
