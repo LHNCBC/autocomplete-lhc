@@ -85,22 +85,22 @@ describe('directive', function() {
       dp.multiPrefetchCWE.sendKeys('non-list val 1');
       dp.codeField.click(); // shift focus from field
       expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
-        [{text: 'non-list val 1'}]);
+        [{text: 'non-list val 1', _notOnList: true}]);
       expect(dp.multiPrefetchCWESelected.count()).toEqual(1);
       expect(dp.multiPrefetchCWE.getAttribute('value')).toEqual('');
       // Add a list value
       dp.multiPrefetchCWE.click();
       dp.firstSearchRes.click();
       expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
-        [{text: 'non-list val 1'}, {text: 'Green', code: 'G'}]);
+        [{text: 'non-list val 1', _notOnList: true}, {text: 'Green', code: 'G'}]);
       expect(dp.multiPrefetchCWESelected.count()).toEqual(2);
       // Add another non-list value
       dp.multiPrefetchCWE.click();
       dp.multiPrefetchCWE.sendKeys('non-list val 2');
       dp.codeField.click(); // shift focus from field
       expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
-        [{text: 'non-list val 1'}, {text: 'Green', code: 'G'},
-         {text: 'non-list val 2'}]);
+        [{text: 'non-list val 1', _notOnList: true}, {text: 'Green', code: 'G'},
+         {text: 'non-list val 2', _notOnList: true}]);
       expect(dp.multiPrefetchCWESelected.count()).toEqual(3);
       expect(dp.multiPrefetchCWE.getAttribute('value')).toEqual('');
       // Remove the first non-list value
@@ -108,7 +108,7 @@ describe('directive', function() {
       expect(dp.allSearchRes.count()).toBe(2);
       dp.multiPrefetchCWEFirstSelected.click();
       expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
-        [{text: 'Green', code: 'G'}, {text: 'non-list val 2'}]);
+        [{text: 'Green', code: 'G'}, {text: 'non-list val 2', _notOnList: true}]);
       expect(dp.multiPrefetchCWESelected.count()).toEqual(2);
       // A non-list item should not be added into the list when removed
       dp.multiPrefetchCWE.click();
@@ -116,7 +116,7 @@ describe('directive', function() {
       // Remove a list value
       dp.multiPrefetchCWEFirstSelected.click();
       expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
-        [{text: 'non-list val 2'}]);
+        [{text: 'non-list val 2', _notOnList: true}]);
       expect(dp.multiPrefetchCWESelected.count()).toEqual(1);
       dp.multiPrefetchCWE.click();
       expect(dp.allSearchRes.count()).toBe(3);
@@ -130,7 +130,7 @@ describe('directive', function() {
       dp.multiSearchCWE.sendKeys('non-list val 1');
       dp.codeField.click(); // shift focus from field
       expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
-        [{text: 'non-list val 1'}]);
+        [{text: 'non-list val 1', _notOnList: true}]);
       expect(dp.multiSearchCWESelected.count()).toEqual(1);
       expect(dp.multiSearchCWE.getAttribute('value')).toEqual('');
 
@@ -141,7 +141,7 @@ describe('directive', function() {
       dp.firstSearchRes.click();
       expect(dp.searchList.getAttribute('value')).toEqual('');
       expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
-        [{text: 'non-list val 1'},
+        [{text: 'non-list val 1', _notOnList: true},
          {text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
           term_icd9_code: '518.82'}]);
       expect(dp.multiSearchCWESelected.count()).toEqual(2);
@@ -161,7 +161,7 @@ describe('directive', function() {
       dp.codeField.click(); // shift focus from field
       expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
         [{text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
-          term_icd9_code: '518.82'}, {text: 'non-list val 1'}]);
+          term_icd9_code: '518.82'}, {text: 'non-list val 1', _notOnList: true}]);
       expect(dp.multiSearchCWESelected.count()).toEqual(2);
     });
 

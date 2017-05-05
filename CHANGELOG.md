@@ -3,6 +3,13 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [12.0.0] - 2017-05-03
+### Changed
+- The AngularJS directive now includes an attribute "_notOnList" when
+  constructing model objects from user entered values which did not match a list
+  item.  This change won't affect you if you are not using the AngularJS
+  directive.
+
 ## [11.0.3] - 2017-04-27
 ### Fixed
 - Fixed a problem with AngularJS directive's handling of incorrect model
