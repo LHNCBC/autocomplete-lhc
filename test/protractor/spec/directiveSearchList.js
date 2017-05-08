@@ -104,7 +104,7 @@ describe('directive', function() {
       expect(dp.suggestionDialog.isDisplayed()).toBeTruthy();
     });
 
-    it('should all the URL to be undefined', function() {
+    it('should allow the URL to be undefined', function() {
       dp.openDirectiveTestPage();
       dp.noURLTest.click();
       dp.noURLTest.sendKeys('ar');
@@ -116,6 +116,26 @@ describe('directive', function() {
       dp.clearField(dp.noURLTest);
       dp.noURLTest.sendKeys('ar');
       expect(dp.searchResults.isDisplayed()).toBeTruthy();
+    });
+
+    describe('CWE lists', function() {
+      it('should set _notOnList for off-list items, but not empty values',
+          function() {
+        dp.openDirectiveTestPage();
+        var testField = dp.searchWithoutSug;
+        testField.click();
+        testField.sendKeys('zzz');
+        testField.sendKeys(protractor.Key.TAB);
+        expect(dp.getModel(testField)).toEqual({text: 'zzz', _notOnList: true});
+        // Now set it to an empty value.  I am not sure why we did not have empty
+        // field values cause the model value to be null or an empty object, but
+        // we didn't.  We could consider changing that, but if we do it will be a breaking
+        // change.
+        testField.click();
+        dp.clearField(testField);
+        testField.sendKeys(protractor.Key.TAB);
+        expect(dp.getModel(testField)).toEqual({text: ''});
+      });
     });
   });
 });

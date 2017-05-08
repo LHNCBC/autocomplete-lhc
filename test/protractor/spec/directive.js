@@ -179,6 +179,23 @@ describe('directive', function() {
       dp.firstSearchRes.click();
       expect(testField.getAttribute('value')).toEqual('Green');
     });
+
+    it('should set _notOnList for off-list items, but not empty values',
+        function() {
+      var testField = dp.inputElem;
+      testField.click();
+      testField.sendKeys('zzz');
+      testField.sendKeys(protractor.Key.TAB);
+      expect(dp.getModel(testField)).toEqual({text: 'Bluezzz', _notOnList: true});
+      // Now set it to an empty value.  I am not sure why we did not have empty
+      // field values cause the model value to be null or an empty object, but
+      // we didn't.  We could consider changing that, but if we do it will be a breaking
+      // change.
+      testField.click();
+      dp.clearField(testField);
+      testField.sendKeys(protractor.Key.TAB);
+      expect(dp.getModel(testField)).toEqual({text: ''});
+    });
   });
 
   describe('CNE lists', function() {
