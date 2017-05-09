@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [12.0.1] - 2017-05-08
+### Fixed
+- For AngularJS directive lists, the new "_notOnList" model
+  attribute no longer gets set when the list field is cleared.
+
 ## [12.0.0] - 2017-05-03
 ### Changed
 - The AngularJS directive now includes an attribute "_notOnList" when

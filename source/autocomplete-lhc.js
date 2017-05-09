@@ -184,8 +184,10 @@
     getPrefetchItemModelData: function (finalVal, itemTextToItem) {
       var item = itemTextToItem[finalVal];
       if (!item) {
-        item = {_notOnList: true};
+        item = {};
         item[this.displayedProp] = finalVal;
+        if (finalVal != '')
+          item._notOnList = true;
       }
       return item;
     },
@@ -293,7 +295,7 @@
       var code = this.ac.getItemCode(itemText);
       if (code !== null)
         rtn.code = code;
-      if (!onList)
+      if (!onList && itemText != '')
         rtn._notOnList = true;
       return angular.extend(rtn, this.ac.getItemExtraData(itemText))
     },

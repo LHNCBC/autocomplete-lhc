@@ -216,6 +216,17 @@ function BasePage() {
   };
 
 
+  /**
+   *  Returns the model data object for the given element.
+   * @param elem the field element
+   */
+  this.getModel = function(elem) {
+    return elem.getAttribute('id').then(function(id) {
+      return browser.driver.executeScript(
+        'return $("#'+id+'").isolateScope().modelData');
+    });
+  }
+
 };
 
 module.exports = {BasePage: BasePage};
