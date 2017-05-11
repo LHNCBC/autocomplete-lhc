@@ -184,10 +184,12 @@
     getPrefetchItemModelData: function (finalVal, itemTextToItem) {
       var item = itemTextToItem[finalVal];
       if (!item) {
-        item = {};
-        item[this.displayedProp] = finalVal;
-        if (finalVal != '')
-          item._notOnList = true;
+        if (finalVal != '') {
+          item = {_notOnList: true};
+          item[this.displayedProp] = finalVal;
+        }
+        else // no value in the field
+          item = null;
       }
       return item;
     },
@@ -291,13 +293,19 @@
      * @param onList true if the selected item was from the list
      */
     getSearchItemModelData: function (itemText, onList) {
-      var rtn = {text: itemText};
-      var code = this.ac.getItemCode(itemText);
-      if (code !== null)
-        rtn.code = code;
-      if (!onList && itemText != '')
-        rtn._notOnList = true;
-      return angular.extend(rtn, this.ac.getItemExtraData(itemText))
+      var rtn;
+      if (itemText === '')
+        rtn = null;
+      else {
+        rtn = {text: itemText};
+        var code = this.ac.getItemCode(itemText);
+        if (code !== null)
+          rtn.code = code;
+        if (!onList)
+          rtn._notOnList = true;
+        rtn = angular.extend(rtn, this.ac.getItemExtraData(itemText))
+      }
+      return rtn;
     },
 
 
