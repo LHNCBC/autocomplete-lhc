@@ -3,6 +3,14 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [13.0.0] - 2017-05-10
+### Fixed
+- For AngularJS directive single-select lists, clearing a single-select list now
+  results in the model being set to null (instead of {"text": ""}.)  This is
+  essentially a bug-fix, but it is potentially a breaking change of long-standing
+  behavior, so we've increased the major version number.  If you are not using
+  the AngularJS directive, this change won't affect you.
+
 ## [12.0.1] - 2017-05-08
 ### Fixed
 - For AngularJS directive lists, the new "_notOnList" model

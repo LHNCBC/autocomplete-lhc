@@ -127,14 +127,11 @@ describe('directive', function() {
         testField.sendKeys('zzz');
         testField.sendKeys(protractor.Key.TAB);
         expect(dp.getModel(testField)).toEqual({text: 'zzz', _notOnList: true});
-        // Now set it to an empty value.  I am not sure why we did not have empty
-        // field values cause the model value to be null or an empty object, but
-        // we didn't.  We could consider changing that, but if we do it will be a breaking
-        // change.
+        // Now set it to an empty value.  The model value should be null.
         testField.click();
         dp.clearField(testField);
         testField.sendKeys(protractor.Key.TAB);
-        expect(dp.getModel(testField)).toEqual({text: ''});
+        expect(dp.getModel(testField)).toEqual(null);
       });
     });
   });
