@@ -19,16 +19,13 @@ describe('Screen reader log', function() {
     it('should not report a non-match status more than once', function() {
       // Case: type into a clear field a non-matching value, then leave the
       // field, and there were three messages about the non-matching value.
-      // First click on a prefetch field, so we have some entries in
-      // the log.
       po.clearField(po.alleleSearch);
-      po.prefetchCNE.click();
       po.alleleSearch.click();
       po.alleleSearch.sendKeys('z');
       po.nonField.click();
       expect(po.nthLastLogEntry(1)).toEqual(
         'The field\'s value does not match any items in the list.');
-      expect(po.nthLastLogEntry(2)).toEqual('Showing 7 of 7 items.');
+      expect(po.nthLastLogEntry(2)).toEqual('Type to show matching list values.');
     });
   });
 

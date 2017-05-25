@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [13.0.1] - 2017-05-24
+### Fixed
+- Fixed an accessibility issue with search lists by adding code to suggest on
+  field focus that users start typing to see a list of matching results.
+ 
 ## [13.0.0] - 2017-05-10
 ### Fixed
 - For AngularJS directive single-select lists, clearing a single-select list now

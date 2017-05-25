@@ -857,6 +857,7 @@
       }
       else {
         if (!this.refocusInProgress_) {
+          Def.Autocompleter.screenReaderLog('Type to show matching list values');
           // Hide the list, which might be showing from another autocompleter.
           // (On blur events, autocompleters set a timeout for hiding the list
           // so click events will work, but if the autocompleter isn't the current
