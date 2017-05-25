@@ -20,7 +20,7 @@ describe('directive', function() {
        'Adult respiratory distress syndrome (ARDS)');
       expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(
         {text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
-         term_icd9_code: '518.82'});
+         data: {term_icd9_code: '518.82'}});
 
       // Try the expanded results list
       // Clear the field first
@@ -35,7 +35,7 @@ describe('directive', function() {
       dp.tenthSearchRes.click();
       expect(dp.searchList.getAttribute('value')).toBe('Arrhythmia');
       expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(
-        {text: 'Arrhythmia', code: '3140', term_icd9_code: '427.9'});
+        {text: 'Arrhythmia', code: '3140', data: {term_icd9_code: '427.9'}});
 
       // Try a case with more than one field in the extra item data hash.
       dp.clearField(dp.searchList);
@@ -44,7 +44,7 @@ describe('directive', function() {
       dp.secondSearchRes.click();
       expect(dp.searchList.evaluate(dp.searchListModel)).toEqual(
         {text: 'zArm pain', code: '2958',
-         term_icd9_code: '729.5', other_field: 'green'});
+         data: {term_icd9_code: '729.5', other_field: 'green'}});
 
       // Try the suggestion list
       dp.searchWithSug.sendKeys('ar');
@@ -55,7 +55,8 @@ describe('directive', function() {
       dp.firstSugLink.click();
       expect(dp.searchWithSug.getAttribute('value')).toBe('Aortic insufficiency');
       expect(dp.searchWithSug.evaluate(dp.searchWithSugModel)).toEqual(
-        {text: 'Aortic insufficiency', code: '2886', term_icd9_code: '424.1'});
+        {text: 'Aortic insufficiency', code: '2886',
+         data: {term_icd9_code: '424.1'}});
 
 
       // Try the search list that has suggestions turned off.

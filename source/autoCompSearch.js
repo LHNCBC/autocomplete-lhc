@@ -758,7 +758,7 @@
      *  Returns a hash of extra data (returned with AJAX autocompletion request)
      *  for a selected list item.
      *  Currently, this assumes that itemText was present in the last list shown
-     *  for this field; it subsequent autocompletion requests take place in
+     *  for this field; if subsequent autocompletion requests take place in
      *  which itemText is not present, the return value will be empty.
      * @param itemText the display string of the selected item.
      */
