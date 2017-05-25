@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [13.0.2] - 2017-05-25
+### Fixed
+- Missed checking in a file in 13.0.1 (causing a test to fail).
+
 ## [13.0.1] - 2017-05-24
 ### Fixed
 - Fixed an accessibility issue with search lists by adding code to suggest on
