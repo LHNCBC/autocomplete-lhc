@@ -51,7 +51,7 @@
 // The object for each selected item will have a "text" property corresponding
 // to the display text for the selected item, and a "code" property as returned
 // by the URL's JSON response.   (For details of the return format, see
-// the construtor comments in autoCompSearch.js).
+// the constructor comments in autoCompSearch.js).
 //
 // Search lists' URLs can respond with a hash of additional field data in the
 // third element of the returned JSON array.  These extra data elements
