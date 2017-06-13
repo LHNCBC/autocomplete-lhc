@@ -32,7 +32,7 @@
 //       of the list item object.
 //    b) the default list item is loaded into the field when the autocompletion
 //       is set up.
-// 4) display - (default "text") the proprty of the objects in listItems which
+// 4) display - (default "text") the property of the objects in listItems which
 //    should be displayed in the list.
 // 5) Any other parameters used by the Def.Autocomp.Prefetch constructor defined in
 //    autoCompPrefetch.js.  (Look at the options parameter in the initialize method).
@@ -44,6 +44,20 @@
 // 2) Any other parameters used by the Def.Autocomp.Search constructor defiend
 //    in autoCompSearch.js.  (Look at the options parameter in the initialize
 //    method.)
+//
+// For search lists, the model data object (selectedVal in the example above)
+// will become an array of objects if maxSelect is set to '*' to allow multiple
+// selections. (That much is also true for prefetched lists, as noted above.)
+// The object for each selected item will have a "text" property corresponding
+// to the display text for the selected item, and a "code" property as returned
+// by the URL's JSON response.   (For details of the return format, see
+// the constructor comments in autoCompSearch.js).
+//
+// Search lists' URLs can respond with a hash of additional field data in the
+// third element of the returned JSON array.  These extra data elements
+// will be placed in a sub-object of the model object under the property "data".
+// For example, {text: // display text, code: // code for display text,
+//   data: { //extra field data here}}
 //
 // For both types of lists, if the list is configured to allow entry of off-list
 // values, the model data objects for such items will have an additional
@@ -303,7 +317,8 @@
           rtn.code = code;
         if (!onList)
           rtn._notOnList = true;
-        rtn = angular.extend(rtn, this.ac.getItemExtraData(itemText))
+        if (onList && this.ac.listExtraData_)
+          rtn.data = this.ac.getItemExtraData(itemText);
       }
       return rtn;
     },

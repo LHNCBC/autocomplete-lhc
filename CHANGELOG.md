@@ -3,6 +3,15 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [14.0.0] - 2017-05-25
+### Changed
+- The AngularJS directive for search lists now places the "extra data" fields
+  for a selected list item in a sub-object of the data model object, under
+  property name "data".  This breaking change is to avoid potential collisions
+  between the field names of the extra data fields and the keys "text" and
+  "code" which are set by the autocompleter.  If you are not using the AngularJS
+  directive, this change will not affect you.
+
 ## [13.0.2] - 2017-05-25
 ### Fixed
 - Missed checking in a file in 13.0.1 (causing a test to fail).
