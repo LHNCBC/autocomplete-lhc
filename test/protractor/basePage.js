@@ -227,6 +227,38 @@ function BasePage() {
     });
   }
 
+
+  /**
+   *  Outputs the browser's console messages.
+   */
+  this.printBrowserConsole = function() {
+    browser.manage().logs().get('browser').then(function(browserLogs) {
+      if (browerLogs.length > 0) {
+        console.log("Messages from browser's console");
+        browserLogs.forEach(function(log){
+          console.log(log.message);
+        });
+        console.log("End of messages from browser's console");
+      }
+    });
+  }
+
+
+  /**
+   *  Sends key events to a field.
+   * @param field the field to which the characters should be send
+   * @param text the text whose characters should be sent
+   */
+  this.sendKeys = function(field, text) {
+    // For some reason, on RHEL 7 in Chrome, if you focus a field and then send
+    // key events withouht sleeping a bit between the two, the autocompleter's
+    // getUpdates function does not get called before the field value is updated
+    // with the last character.  The problem can also be solved by increasing
+    // the autocompleter options.frequency setting, but it only happens when
+    // testing, so I don't want to make that slower.
+    browser.sleep(100);
+    field.sendKeys(text);
+  }
 };
 
 module.exports = {BasePage: BasePage};

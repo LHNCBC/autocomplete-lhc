@@ -139,6 +139,7 @@ ATR = {
      * @param chars the characters to be typed
      */
     typeKeys: function(fieldID, chars) {
+      browser.sleep(100); // see basePage.js sendKeys for explanation
       var elem = element(by.id(fieldID)).getWebElement();
       if (chars === '\\13')
         chars = protractor.Key.ENTER;

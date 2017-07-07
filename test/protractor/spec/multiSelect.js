@@ -205,7 +205,7 @@ describe('multi-select lists', function() {
     // being in place.
     po.openTestPage();
     po.multiSearchCWE.click();
-    po.multiSearchCWE.sendKeys('ar');
+    po.sendKeys(po.multiSearchCWE, 'ar');
     po.waitForSearchResults();
     po.firstSearchRes.click();
     expect(po.expandLink.isDisplayed()).toBe(false); // i.e. not visible
