@@ -196,12 +196,26 @@ function BasePage() {
    * @param text the text with which to autocomplete
    */
   this.autocompPickFirst = function(field, text) {
+    this.autocompPickNth(field, text, 1);
+  };
+
+
+  /**
+   *  Sets the field's value to the given text string, and picks the nth
+   *  autocompletion result.
+   * @param field the autocompleting field
+   * @param text the text with which to autocomplete.  This can be null or the
+   *  empty string for prefetch lists.
+   * @param n the number of the list item to pick (starting at 1).
+   */
+  this.autocompPickNth = function(field, text, n) {
     this.clearField(field);
     expect(field.getAttribute('value')).toEqual('');
     field.click();
-    field.sendKeys(text);
+    if (text)
+      field.sendKeys(text);
     this.waitForSearchResults();
-    this.firstSearchRes.click();
+    this.searchResult(n).click();
   };
 
 
@@ -233,7 +247,7 @@ function BasePage() {
    */
   this.printBrowserConsole = function() {
     browser.manage().logs().get('browser').then(function(browserLogs) {
-      if (browerLogs.length > 0) {
+      if (browserLogs.length > 0) {
         console.log("Messages from browser's console");
         browserLogs.forEach(function(log){
           console.log(log.message);

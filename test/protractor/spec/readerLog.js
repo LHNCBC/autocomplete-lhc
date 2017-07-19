@@ -57,7 +57,7 @@ describe('Screen reader log', function() {
   describe('table-format lists', function() {
     it('should read the whole row highlighted by arrow keys', function() {
       po.multiFieldSearchHeaders.click();
-      po.multiFieldSearchHeaders.sendKeys('ar');
+      po.sendKeys(po.multiFieldSearchHeaders, 'ar');
       po.multiFieldSearchHeaders.sendKeys(protractor.Key.ARROW_DOWN);
       expect(po.nthLastLogEntry(1)).toEqual('Arm pain; pain in arm');
     });
@@ -66,15 +66,15 @@ describe('Screen reader log', function() {
       // This is because the single value in the column will be put into the
       // field as the user arrows down, and will be read by JAWS from that.
       po.multiFieldSearch1Col.click();
-      po.multiFieldSearch1Col.sendKeys('ar');
+      po.sendKeys(po.multiFieldSearch1Col, 'ar');
       po.multiFieldSearch1Col.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(po.nthLastLogEntry(1)).toEqual('A list has appeared below the field.');
+      expect(po.nthLastLogEntry(2)).toEqual('A list has appeared below the field.');
     });
 
     it('should read the column headers', function() {
       po.multiFieldSearchHeaders.click();
       po.clearField(po.multiFieldSearchHeaders);
-      po.multiFieldSearchHeaders.sendKeys('ar');
+      po.sendKeys(po.multiFieldSearchHeaders, 'ar');
       expect(po.nthLastLogEntry(1)).toEqual('The column headers on the multi-column list are C1; C2');
     });
   });

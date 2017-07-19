@@ -167,7 +167,7 @@ describe('search lists', function() {
       // both functions directly, because both will documented.
       po.openTestPage();
       po.searchCNE.click();
-      po.searchCNE.sendKeys('ar');
+      po.sendKeys(po.searchCNE, 'ar');
       po.waitForSearchResults();
       po.firstSearchRes.click();
       expect(po.searchCNE.getAttribute('value')).toEqual('Arachnoiditis');
@@ -178,7 +178,7 @@ describe('search lists', function() {
       // Try the search again-- it should be different
       po.clearField(po.searchCNE);
       po.searchCNE.click();
-      po.searchCNE.sendKeys('ar');
+      po.sendKeys(po.searchCNE, 'ar');
       po.waitForSearchResults();
       po.firstSearchRes.click();
       expect(po.searchCNE.getAttribute('value')).toEqual('Arm pain');
@@ -246,7 +246,7 @@ describe('search lists', function() {
       });
       it('should not include the code system when not available', function() {
         po.searchCNE.click();
-        po.searchCNE.sendKeys('ar');
+        po.sendKeys(po.searchCNE, 'ar');
         po.waitForSearchResults();
         po.firstSearchRes.click();
         let itemData = browser.driver.executeScript(
@@ -256,7 +256,7 @@ describe('search lists', function() {
       });
       it('should not include "data" when not available', function() {
         po.clearField(po.searchCNE);
-        po.searchCNE.sendKeys('max');
+        po.sendKeys(po.searchCNE, 'max');
         po.waitForSearchResults();
         po.firstSearchRes.click();
         let itemData = browser.driver.executeScript(
@@ -270,9 +270,7 @@ describe('search lists', function() {
         po.openTestPage();
         po.waitForNoSearchResults();
         po.searchCWE.click();
-        //po.searchCWE.sendKeys('a');
-        //po.searchCWE.sendKeys('r');
-        po.searchCWE.sendKeys('ar');
+        po.sendKeys(po.searchCWE, 'ar');
         po.waitForSearchResults();
         po.nonField.click();
         browser.wait(function() {

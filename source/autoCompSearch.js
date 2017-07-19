@@ -787,7 +787,11 @@
 
     /**
      *  Returns a hash of all data about the item whose value is currently in the
-     *  field.  This should only be used just after a selection has been made.
+     *  field, unless itemText is provided, in which case it will return data
+     *  for that item.  This should only be used just after a selection has been made.
+     * @param itemText (optional) the display text of an list item.  If the text
+     *  is not in the list, then the returned hash will only contain the "text"
+     *  property.
      *
      * @return a hash with "code" and "text" properties for the selected item,
      *  and if there is any extra data for the item, that will be under a
@@ -796,12 +800,13 @@
      *  "code".  Properties for which there are no values will not be present,
      *  except for the "text" property.
      */
-    getItemData: function() {
-      var itemText = this.domCache.get('elemVal');
+    getItemData: function(itemText) {
+      if (!itemText)
+        itemText = this.domCache.get('elemVal');
       var rtn = {text: itemText};
       if (itemText != '' && this.itemToDataIndex_) {
         var code = this.getItemCode(itemText);
-        if (code !== undefined) {
+        if (code !== undefined && code !== null) {
           rtn.code = code;
           if (this.itemCodeSystems_) {
             var itemIndex = this.itemToDataIndex_[itemText];

@@ -56,7 +56,7 @@ describe('directive', function() {
       expect(dp.searchWithSug.getAttribute('value')).toBe('Aortic insufficiency');
       expect(dp.searchWithSug.evaluate(dp.searchWithSugModel)).toEqual(
         {text: 'Aortic insufficiency', code: '2886',
-         data: {term_icd9_code: '424.1'}});
+         data: {term_icd9_code: '424.1'}, code_system: 'gopher'});
 
 
       // Try the search list that has suggestions turned off.

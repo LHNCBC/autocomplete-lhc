@@ -3,6 +3,18 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [15.0.0] - 2017-07-07
+### Changed
+- The expected data format for search autocompleters has changed slightly.  In
+  particular, the optional fourth element of the the JSON data returned by the
+  AJAX call is now an array of code system names declaring the code system for
+  each of the codes in the codes array in position 1 of the JSON data.
+  Previously, the optional fourth parameter was a boolean indicating that the
+  display string data (position 3) might have span tags for formatting.
+  However, it has been some time since the code used this parameter.  Span tags
+  are still permitted in display strings, but it is no longer important that the
+  autocompleter be aware of that.
+
 ## [14.0.0] - 2017-05-25
 ### Changed
 - The AngularJS directive for search lists now places the "extra data" fields

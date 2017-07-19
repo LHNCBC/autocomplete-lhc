@@ -34,7 +34,7 @@ describe('multi-field lists', function() {
 
   it('should show both fields in the list for search fields', function() {
     po.multiFieldSearch.click();
-    po.multiFieldSearch.sendKeys('ar');
+    po.sendKeys(po.multiFieldSearch, 'ar');
     po.waitForSearchResults();
     expect(po.tableSearchResult(1).isPresent(0)).toBe(true);
     expect(po.tableSearchResult(1).getInnerHtml()).toBe(
@@ -50,7 +50,7 @@ describe('multi-field lists', function() {
 
   it('should function properly with the multi-select feature', function() {
     po.multiSelectTableSearch.click();
-    po.multiSelectTableSearch.sendKeys('ar');
+    po.sendKeys(po.multiSelectTableSearch, 'ar');
     po.waitForSearchResults();
     expect(po.tableSearchResult(1).getInnerHtml()).toBe('<td>NM_001113511</td>');
     po.tableSearchResult(1).click();
@@ -60,7 +60,7 @@ describe('multi-field lists', function() {
     expect(po.tableSearchResult(1).getInnerHtml()).not.toBe('<td>NM_001113511</td>');
     po.nonField.click();
     po.multiSelectTableSearch.click();
-    po.multiSelectTableSearch.sendKeys('ar');
+    po.sendKeys(po.multiSelectTableSearch, 'ar');
     expect(po.shownItemCount()).toBe(6);
     expect(po.tableSearchResult(1).getInnerHtml()).not.toBe('<td>NM_001113511</td>');
   });
@@ -68,7 +68,7 @@ describe('multi-field lists', function() {
 
   it('should show the column headers when those are specified', function() {
     po.multiFieldSearchHeaders.click();
-    po.multiFieldSearchHeaders.sendKeys('ar');
+    po.sendKeys(po.multiFieldSearchHeaders, 'ar');
     po.waitForSearchResults();
     expect(po.tableSearchResult(1).getInnerHtml()).toBe('<th>C1</th><th>C2</th>');
     // Make sure we can't click on the header and select it

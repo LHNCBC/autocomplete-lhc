@@ -30,7 +30,7 @@ describe('CNE lists', function() {
 
     expect(browser.driver.executeScript('return window.callCount')).toBe(0);
     po.prefetchCNE.click();
-    po.prefetchCNE.sendKeys('zzz');
+    po.sendKeys(po.prefetchCNE, 'zzz');
     expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
     po.prefetchCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
     expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
@@ -70,7 +70,7 @@ describe('CNE lists', function() {
     function() {
     po.openTestPage();
     po.prefetchCNE.click();
-    po.prefetchCNE.sendKeys('zzz');
+    po.sendKeys(po.prefetchCNE, 'zzz');
     po.prefetchCNE.sendKeys(protractor.Key.ENTER);
     // If the form wasn't submitted, the page URL will have changed.
     expect(browser.driver.executeScript('return ""+window.location.href')
@@ -82,7 +82,7 @@ describe('CNE lists', function() {
     browser.driver.executeScript('jQuery("#'+po.prefetchCNEFieldName+'").'+
       'keydown(function(event) {event.preventDefault()})');
     expect(po.prefetchCNE.getAttribute('value')).not.toBe('');
-    po.prefetchCNE.sendKeys(protractor.Key.ENTER);
+    po.sendKeys(po.prefetchCNE, protractor.Key.ENTER);
     expect(browser.driver.executeScript('return window.location.href')
           ).toBe(po.testPageURL);
     expect(po.prefetchCNE.getAttribute('value')).toBe('');
@@ -92,7 +92,7 @@ describe('CNE lists', function() {
     // chanegd).
     po.openTestPage();
     po.prefetchCNE.click();
-    po.prefetchCNE.sendKeys('zzz');
+    po.sendKeys(po.prefetchCNE, 'zzz');
     po.prefetchCNE.sendKeys(protractor.Key.ENTER);
     po.prefetchCNE.sendKeys(protractor.Key.ENTER);
     expect(browser.driver.executeScript('return window.location.href')
