@@ -4,6 +4,9 @@ This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
 ## [15.0.0] - 2017-07-07
+### Added
+- A new function, getSelectedItemData(), is now available for retrieving all
+  information about the the selected list items.
 ### Changed
 - The expected data format for search autocompleters has changed slightly.  In
   particular, the optional fourth element of the the JSON data returned by the
@@ -32,7 +35,7 @@ This log documents significant changes for each release.  This project follows
 ### Fixed
 - Fixed an accessibility issue with search lists by adding code to suggest on
   field focus that users start typing to see a list of matching results.
- 
+
 ## [13.0.0] - 2017-05-10
 ### Fixed
 - For AngularJS directive single-select lists, clearing a single-select list now
@@ -82,7 +85,7 @@ This log documents significant changes for each release.  This project follows
 
 ## [10.2.0] - 2017-03-14
 ### Changed
-- Replaced the search field "list" icon with a magnifying glass icon. 
+- Replaced the search field "list" icon with a magnifying glass icon.
 
 ## [10.1.1] - 2017-02-01
 ### Fixed
@@ -173,7 +176,7 @@ This log documents significant changes for each release.  This project follows
   querying.  This solves a problem in which a selected list item could look
   invalid if a query was sent for the combined field value of a multi-field list.
 - The AngularJS directive now clears a search field's result cache if its URL
-  changes. 
+  changes.
 
 ## [9.0.0] - 2016-06-07
 ### Fixed
@@ -190,7 +193,7 @@ This log documents significant changes for each release.  This project follows
   https://github.com/angular/protractor/issues/3200).
 
 ## [8.1.0] - 2016-04-07
-### Added 
+### Added
 - Search autocompleters now have a "setURL" method for updating the URL which
   also takes care of clearing the cached autocompletion results (from the
   previous URL), as well as a clearCachedResults method for clearing the cache
