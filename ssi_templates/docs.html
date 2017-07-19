@@ -290,20 +290,30 @@
             array if there are none.
             If some of the selected items do not have a code, there will be null in
             that place in the returned array.</dd>
+          <dt>getSelectedItemData()</dt>
+          <dd>Returns all information about the currently selected list items,
+            as an array of hashes, each with at least a "text" property for the
+            item's display text.  The hashes may also contain (if the data was
+            provided) properties "code", "code_system", and "data" (which for search
+            lists contains the "extra data" fields for that item).  The return value
+            will be null if there are no selected items.</dd>
           <dt>getItemCode(itemText)</dt>
           <dd>Returns the code for the given item text, or null if there isn't
-            one.</dd>
+           one.  For search lists, itemText must be present in the list
+           retrieved for the last character typed.</dd>
           <dt id="getItemExtraData">getItemExtraData(itemText)</dt>
-          <dd><b>(For search lists only.)</b>This returns the "extra data" for
-            the item returned by the server along with the autocompletion list,
-            as mentioned in <a href="#extraData">position 2</a> of the expected
+          <dd><b>(For search lists only.)</b>This returns the "extra data"
+            returned by the server for the given item along with the
+            autocompletion list, as mentioned in <a href="#extraData">position
+            2</a> of the expected
             return data for the <a href="#url">url parameter</a> for the
-            <a href="#searchList">search autocompleter</a> constructor.  The
-            getItemExtraData returns a hash of of the extra data for the given
-            list item (itemText).  Currently, this assumes that itemText was present
-            in the last list shown for this field; if subsequent autocompletion
+            <a href="#searchList">search autocompleter</a> constructor.
+            Currently, this assumes that itemText was present in the last list
+            shown for this field; if subsequent autocompletion
             requests take place in which itemText is not present, the return
-            value will be empty.</dd>
+            value will be empty.  Note that this data is also collected and
+            returned by the getSelectedItemData() call above, which might be
+            easier to use.</dd>
         </dl>
 
         <h2 id="directive">AngularJS Directive</h2>
