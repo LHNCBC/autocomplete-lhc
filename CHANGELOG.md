@@ -3,6 +3,12 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [15.1.0] - 2017-07-24
+### Changed
+- Revised the bower specification to make a file of helper functions available
+  (basePage.js) that are useful for other applications when writing Protractor
+  tests that interact with the autocompleter.
+
 ## [15.0.0] - 2017-07-07
 ### Added
 - A new function, getSelectedItemData(), is now available for retrieving all

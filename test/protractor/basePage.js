@@ -19,7 +19,8 @@ function BasePage() {
    * @param pos the item position number (starting at 1).
    */
   this.searchResult = function(pos) {
-    return $(searchResCSS + ' li:nth-child('+pos+')');
+    return $(searchResCSS + ' li:nth-child('+pos+'), '+
+      searchResCSS + ' tr:nth-child('+pos+')');
   };
 
   /**
@@ -213,7 +214,7 @@ function BasePage() {
     expect(field.getAttribute('value')).toEqual('');
     field.click();
     if (text)
-      field.sendKeys(text);
+      this.sendKeys(field, text);
     this.waitForSearchResults();
     this.searchResult(n).click();
   };
