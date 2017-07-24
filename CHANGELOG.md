@@ -6,7 +6,7 @@ This log documents significant changes for each release.  This project follows
 ## [15.0.0] - 2017-07-07
 ### Added
 - A new function, getSelectedItemData(), is now available for retrieving all
-  information about the the selected list items.
+  information about the selected list items.
 ### Changed
 - The expected data format for search autocompleters has changed slightly.  In
   particular, the optional fourth element of the the JSON data returned by the
