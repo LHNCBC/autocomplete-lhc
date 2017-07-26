@@ -601,7 +601,7 @@ if (typeof Def === 'undefined')
      *     item in the list.</li>
      *    <li>maxSelect - (default 1) The maximum number of items that can be
      *     selected.  Use '*' for unlimited.</li>
-     *    <li>tokens - (default none) For autocompleting based on part of the
+     *    <li>wordBoundaryChars - (default none) For autocompleting based on part of the
      *     field's value, this should be an array of the characters that are
      *     considered "word" boundaries (e.g. a space, but could be something
      *     else).  When this option is used, maxSelect is ignored.
@@ -629,6 +629,14 @@ if (typeof Def === 'undefined')
     defAutocompleterBaseInit: function(field, options) {
       if (!options)
         options = {};
+
+      // Rename the wordBoundaryChars option back to "tokens", the original
+      // name from Scriptaculous, which seemed to confuse tokens with token
+      // delimiters.  Also allow the older "tokens" option name to be used
+      // for backward compatibility.
+      if (options.wordBoundaryChars)
+        options.tokens = options.wordBoundaryChars;
+
       if (options['suggestionMode'] !== undefined)
         this.suggestionMode_ = options['suggestionMode'];
 

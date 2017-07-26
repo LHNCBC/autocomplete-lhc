@@ -195,7 +195,7 @@ describe('Search list with tokens', function() {
       function() {
     po.openTestPage();
     field.click();
-    field.sendKeys('ar');
+    po.sendKeys(field, 'ar');
     po.waitForSearchResults();
     field.sendKeys(protractor.Key.ARROW_DOWN);
     expect(field.getAttribute('value')).toBe('Arachnoiditis');
