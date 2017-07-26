@@ -127,7 +127,7 @@ describe('directive', function() {
       // Add a non-list value
       expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(null);
       dp.multiSearchCWE.click();
-      dp.multiSearchCWE.sendKeys('non-list val 1');
+      dp.sendKeys(dp.multiSearchCWE, 'non-list val 1');
       dp.codeField.click(); // shift focus from field
       expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
         [{text: 'non-list val 1', _notOnList: true}]);
@@ -136,7 +136,7 @@ describe('directive', function() {
 
       // Add a list value
       dp.multiSearchCWE.click();
-      dp.multiSearchCWE.sendKeys('ar');
+      dp.sendKeys(dp.multiSearchCWE, 'ar');
       dp.waitForSearchResults();
       dp.firstSearchRes.click();
       expect(dp.searchList.getAttribute('value')).toEqual('');
@@ -149,7 +149,7 @@ describe('directive', function() {
       // Reload the page and add a list value first
       dp.openDirectiveTestPage();
       dp.multiSearchCWE.click();
-      dp.multiSearchCWE.sendKeys('ar');
+      dp.sendKeys(dp.multiSearchCWE, 'ar');
       dp.waitForSearchResults();
       dp.firstSearchRes.click();
       expect(dp.multiSearchCWESelected.count()).toEqual(1);
@@ -157,7 +157,7 @@ describe('directive', function() {
         [{text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
           data: {term_icd9_code: '518.82'}}]);
       // Now add a non-list value
-      dp.multiSearchCWE.sendKeys('non-list val 1');
+      dp.sendKeys(dp.multiSearchCWE, 'non-list val 1');
       dp.codeField.click(); // shift focus from field
       expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
         [{text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',

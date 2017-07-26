@@ -71,7 +71,7 @@ describe('search lists', function() {
     // the extra data fields.
     po.openTestPage();
     po.alleleSearch.click();
-    po.alleleSearch.sendKeys('rs');
+    po.sendKeys(po.alleleSearch, 'rs');
     // Move to the fourth item and select it
     po.alleleSearch.sendKeys(protractor.Key.ARROW_DOWN);
     po.alleleSearch.sendKeys(protractor.Key.ARROW_DOWN);
@@ -106,7 +106,7 @@ describe('search lists', function() {
     var s = $('#search_for_el');
     expect(po.listIsVisible()).toBeFalsy();
     s.click();
-    s.sendKeys('ar');
+    po.sendKeys(s, 'ar');
     po.waitForSearchResults();
     expect(po.listIsVisible()).toBeTruthy();
   });
@@ -140,7 +140,7 @@ describe('search lists', function() {
       po.openTestPage(); // clear field values
       po.nonField.click(); // hide the list (from previous test)
       po.searchCNE.click();
-      po.searchCNE.sendKeys('ar');
+      po.sendKeys(po.searchCNE, 'ar');
       po.waitForSearchResults();
       po.firstSearchRes.click();
       expect(po.searchCNE.getAttribute('value')).toEqual('Arachnoiditis');
@@ -153,7 +153,7 @@ describe('search lists', function() {
       // Try the search again-- it should be different
       po.clearField(po.searchCNE);
       po.searchCNE.click();
-      po.searchCNE.sendKeys('ar');
+      po.sendKeys(po.searchCNE, 'ar');
       po.waitForSearchResults();
       po.firstSearchRes.click();
       expect(po.searchCNE.getAttribute('value')).toEqual('Arm pain');
@@ -167,7 +167,7 @@ describe('search lists', function() {
       // both functions directly, because both will documented.
       po.openTestPage();
       po.searchCNE.click();
-      po.searchCNE.sendKeys('ar');
+      po.sendKeys(po.searchCNE, 'ar');
       po.waitForSearchResults();
       po.firstSearchRes.click();
       expect(po.searchCNE.getAttribute('value')).toEqual('Arachnoiditis');
@@ -178,7 +178,7 @@ describe('search lists', function() {
       // Try the search again-- it should be different
       po.clearField(po.searchCNE);
       po.searchCNE.click();
-      po.searchCNE.sendKeys('ar');
+      po.sendKeys(po.searchCNE, 'ar');
       po.waitForSearchResults();
       po.firstSearchRes.click();
       expect(po.searchCNE.getAttribute('value')).toEqual('Arm pain');
@@ -227,6 +227,64 @@ describe('search lists', function() {
       }, 5000);
       $('#returnLink').click();
       expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(po.searchCWEID);
+    });
+  });
+
+
+  describe('getItemData', function() {
+    describe('for items picked from the autocompletion list', function() {
+      it('should return the code system when available', function() {
+        po.openTestPage();
+        po.searchCWE.click();
+        po.sendKeys(po.searchCWE, 'ar');
+        po.waitForSearchResults();
+        po.firstSearchRes.click();
+        let itemData = browser.driver.executeScript(
+          'return jQuery("#'+po.searchCWEID+'")[0].autocomp.getItemData();');
+        expect(itemData).toEqual({code: "2958", text: "Arm pain",
+          data: {term_icd9_code: "729.5"},  code_system: "gopher"});
+      });
+      it('should not include the code system when not available', function() {
+        po.searchCNE.click();
+        po.sendKeys(po.searchCNE, 'ar');
+        po.waitForSearchResults();
+        po.firstSearchRes.click();
+        let itemData = browser.driver.executeScript(
+          'return jQuery("'+po.searchCNECSS+'")[0].autocomp.getItemData();');
+        expect(itemData).toEqual({code: "5529", text: "Arachnoiditis",
+          data: {term_icd9_code: "322.9"}});
+      });
+      it('should not include "data" when not available', function() {
+        po.clearField(po.searchCNE);
+        po.sendKeys(po.searchCNE, 'max');
+        po.waitForSearchResults();
+        po.firstSearchRes.click();
+        let itemData = browser.driver.executeScript(
+          'return jQuery("'+po.searchCNECSS+'")[0].autocomp.getItemData();');
+        expect(itemData.data).toBe(undefined);
+      });
+    });
+
+    describe('for items picked from the suggestion list', function() {
+      it('should return the code system when available', function() {
+        po.openTestPage();
+        po.waitForNoSearchResults();
+        po.searchCWE.click();
+        po.sendKeys(po.searchCWE, 'ar');
+        po.waitForSearchResults();
+        po.nonField.click();
+        browser.wait(function() {
+          return po.suggestionDialog.isPresent();
+        }, 5000);
+        expect(po.suggestionDialog.isDisplayed()).toBeTruthy();
+        expect(po.firstSugLink.isDisplayed()).toBeTruthy();
+        po.firstSugLink.click();
+        let itemData = browser.driver.executeScript(
+          'return jQuery("#'+po.searchCWEID+'")[0].autocomp.getItemData();');
+        expect(itemData).toEqual({code: "2886",
+          text: "Aortic insufficiency", code_system: "gopher",
+          data: {term_icd9_code: "424.1"}});
+      });
     });
   });
 });

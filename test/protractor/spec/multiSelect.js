@@ -65,7 +65,7 @@ describe('multi-select lists', function() {
       function() {
     po.openTestPage();
     po.multiSearchCWE.click();
-    po.multiSearchCWE.sendKeys('ar');
+    po.sendKeys(po.multiSearchCWE, 'ar');
     po.waitForSearchResults();
     po.firstSearchRes.click();
     // That element should be removed, and the new first element should now have
@@ -205,7 +205,7 @@ describe('multi-select lists', function() {
     // being in place.
     po.openTestPage();
     po.multiSearchCWE.click();
-    po.multiSearchCWE.sendKeys('ar');
+    po.sendKeys(po.multiSearchCWE, 'ar');
     po.waitForSearchResults();
     po.firstSearchRes.click();
     expect(po.expandLink.isDisplayed()).toBe(false); // i.e. not visible
@@ -217,7 +217,7 @@ describe('multi-select lists', function() {
     // more" link after selecting an item is to select it with the keyboard.
     po.openTestPage();
     po.multiSearchCWE.click();
-    po.multiSearchCWE.sendKeys('ar');
+    po.sendKeys(po.multiSearchCWE, 'ar');
     po.multiSearchCWE.sendKeys(protractor.Key.ARROW_DOWN);
     po.multiSearchCWE.sendKeys(protractor.Key.ENTER);
     po.expandLink.click();

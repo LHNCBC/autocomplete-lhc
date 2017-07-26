@@ -100,7 +100,7 @@ describe('autocomp', function() {
 
     // Now try a search list
     searchCNE.click();
-    searchCNE.sendKeys('ar');
+    po.sendKeys(searchCNE, 'ar');
     expect(searchResults.isDisplayed()).toBeTruthy();
     searchCNE.sendKeys(protractor.Key.ARROW_DOWN); // first item
     expect(searchCNE.getAttribute('value')).toBe('Arachnoiditis');
@@ -229,7 +229,7 @@ describe('autocomp', function() {
     expect(po.multiSearchCWE.getAttribute('name')).toBe('');
     expect(po.searchCNE.getAttribute('name')).toBe('');
     po.multiSearchCWE.click();
-    po.multiSearchCWE.sendKeys('ar');
+    po.sendKeys(po.multiSearchCWE, 'ar');
     po.waitForSearchResults();
     // A list should appear
     // This list is using statitics, so it pulls CAD to the top.  The second
@@ -237,7 +237,7 @@ describe('autocomp', function() {
     expect(po.secondSearchRes.getInnerHtml()).toBe("Arm pain");
     // Now go to another field, which like multiSearchCWE has no name field.
     po.searchCNE.click();
-    po.searchCNE.sendKeys('ar');
+    po.sendKeys(po.searchCNE, 'ar');
     po.waitForSearchResults();
     // The search result list should be different (even though the name
     // attribute is the same/missing for both).
@@ -253,7 +253,7 @@ describe('autocomp', function() {
     // non-tableFormat list.
     browser.manage().window().setSize(1100, 473);
     po.multiFieldSearch.click();
-    po.multiFieldSearch.sendKeys("ar");
+    po.sendKeys(po.multiFieldSearch, "ar");
     // Arrow down to first item
     po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
     expect(po.multiFieldSearch.getAttribute('value')).toBe(

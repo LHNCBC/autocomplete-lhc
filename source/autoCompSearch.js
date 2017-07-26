@@ -76,7 +76,6 @@
      *  the hash for the non-autocomp request (e.g. control+return to see
      *  an expanded results list) and the hash at index 1 is the hash for
      *  autocompletion results.  Each hash is a hash from the search string
-     *  to the results of the AJAX call.  (Example: resultCache_[1]['pro'] =
      *  the autocompletion results for the string 'pro'.)
      */
     resultCache_: null,
@@ -141,12 +140,15 @@
      *     getItemExtraData(itemText).</li>
      *    <li>position 3 - the list item data; each item is an array of display
      *     string fields which will be joined together.  (At a mimimum, each item
-     *     should be an array of one string.)</li>
-     *    <li>position 4 - if present, this indicates that display strings
-     *     (position 3) contain span tags for highlighting matched sub-strings.
-     *     (This affects the routine used to sort the strings.)</li>
+     *     should be an array of one string.)  These display strings can contain
+     *     span tags for styling sub-strings (e.g. matches to the user's input)
+     *     but other HTML tags will be escaped.</li>
+     *    <li>position 4 - if present, this is an array of code system names
+     *     identifying the code system for each of the codes in the code array in
+     *     position 1.  This is useful for lists that contain entries from
+     *     different code systems.</li>
      *  </ul>
-     *  For a suggest request, the response should have the following elements:
+     *  For a "suggest" request, the response should have the following elements:
      *  <ul>
      *    <li>position 0 - the list of codes for the suggested items (if the
      *     items have codes)</li>
@@ -154,6 +156,10 @@
      *     of arrays) for the suggested items.</li>
      *    <li>position 2 - A hash of extra data about the list items (the same
      *     as position 2 for the non-suggestion request above.)
+     *    <li>position 3 - if present, this is an array of code system names
+     *     identifying the code system for each of the codes in the code array in
+     *     position 0.  This is useful for lists that contain entries from
+     *     different code systems.</li>
      *  </ul>
      * @param options A hash of optional parameters.  The allowed keys and their
      *  values are:
@@ -717,6 +723,7 @@
           var totalCount = responseData[0];
           this.itemCodes_ = responseData[1];
           this.listExtraData_ = responseData[2];
+          this.itemCodeSystems_ = responseData[4];
           this.rawList_ = responseData[3]; // rawList_ is used in list selection events
           var fieldValToItemFields = this.createFieldVals(this.rawList_);
           var data = this.processChoices(fieldValToItemFields);
@@ -775,6 +782,44 @@
         }
       }
       return itemData;
+    },
+
+
+    /**
+     *  Returns a hash of all data about the item whose value is currently in the
+     *  field, unless itemText is provided, in which case it will return data
+     *  for that item.  This should only be used just after a selection has been made.
+     * @param itemText (optional) the display text of an list item.  If the text
+     *  is not in the list, then the returned hash will only contain the "text"
+     *  property.
+     *
+     * @return a hash with "code" and "text" properties for the selected item,
+     *  and if there is any extra data for the item, that will be under a
+     *  "data" sub-hash.  If the items came with code system data, there will
+     *  also be a "code_system" property with the code system corresponding to
+     *  "code".  Properties for which there are no values will not be present,
+     *  except for the "text" property.
+     */
+    getItemData: function(itemText) {
+      if (!itemText)
+        itemText = this.domCache.get('elemVal');
+      var rtn = {text: itemText};
+      if (itemText != '' && this.itemToDataIndex_) {
+        var code = this.getItemCode(itemText);
+        if (code !== undefined && code !== null) {
+          rtn.code = code;
+          if (this.itemCodeSystems_) {
+            var itemIndex = this.itemToDataIndex_[itemText];
+            var codeSys = this.itemCodeSystems_[itemIndex];
+            if (codeSys)
+              rtn.code_system = codeSys;
+          }
+        }
+        var data = this.getItemExtraData(itemText);
+        if (Object.keys(data).length > 0)
+          rtn.data = data;
+      }
+      return rtn;
     },
 
 
@@ -838,7 +883,6 @@
       // have preFieldFillVal_ is when the user has clicked on a list item,
       // after which (kind of by accident) the "see more items" link is hidden,
       // so we don't need to worry about that case for now.
-            this.domCache.get('elemVal')
       if (this.multiSelect_ && this.domCache.get('elemVal')==='' &&
           this.preFieldFillVal_) {
         this.setFieldVal(this.preFieldFillVal_, false);
@@ -1047,6 +1091,7 @@
       this.itemToDataIndex_ = {};
       this.itemToDataIndex_[listItems[index]] = index;
       this.listExtraData_ = this.suggestionList_[2];
+      this.itemCodeSystems_ = this.suggestionList_[3];
       this.listSelectionNotification(valTyped, true); // not typed, on list
 
       // No field is focused at the moment (because of the dialog).

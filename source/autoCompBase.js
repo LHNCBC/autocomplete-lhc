@@ -1,4 +1,3 @@
-
 // These autocompleters are based on the Autocompleter.Base class defined
 // in the Script.aculo.us controls.js file.   Most of the controls.js code has
 // been overridden, and the part that hasn't has been included in this file.
@@ -466,6 +465,12 @@ if (typeof Def === 'undefined')
     selectedItems_: null,
 
     /**
+     *  The currently selected items' completed data, as an array of hashes for
+     *  each item.
+     */
+    selectedItemData_: null,
+
+    /**
      *  Whether the field value is required to be one from the list.
      */
     matchListValue_: null,
@@ -596,7 +601,7 @@ if (typeof Def === 'undefined')
      *     item in the list.</li>
      *    <li>maxSelect - (default 1) The maximum number of items that can be
      *     selected.  Use '*' for unlimited.</li>
-     *    <li>tokens - (default none) For autocompleting based on part of the
+     *    <li>wordBoundaryChars - (default none) For autocompleting based on part of the
      *     field's value, this should be an array of the characters that are
      *     considered "word" boundaries (e.g. a space, but could be something
      *     else).  When this option is used, maxSelect is ignored.
@@ -624,6 +629,14 @@ if (typeof Def === 'undefined')
     defAutocompleterBaseInit: function(field, options) {
       if (!options)
         options = {};
+
+      // Rename the wordBoundaryChars option back to "tokens", the original
+      // name from Scriptaculous, which seemed to confuse tokens with token
+      // delimiters.  Also allow the older "tokens" option name to be used
+      // for backward compatibility.
+      if (options.wordBoundaryChars)
+        options.tokens = options.wordBoundaryChars;
+
       if (options['suggestionMode'] !== undefined)
         this.suggestionMode_ = options['suggestionMode'];
 
@@ -646,6 +659,7 @@ if (typeof Def === 'undefined')
 
       this.selectedCodes_ = {};
       this.selectedItems_ = {};
+      this.selectedItemData_ = [];
 
       var dataRequester = options.dataRequester;
 
@@ -817,6 +831,19 @@ if (typeof Def === 'undefined')
 
 
     /**
+     *  Returns all information about the currently selected list items.
+     * @return an array of hashes, each with at least a "text" property for the
+     *  item's display text.  The hashes may also contain (if the data was
+     *  provided) properties "code", "code_system", and "data" (which for search
+     *  lists contains the "extra data" fields for that item).  The return value
+     *  will be null if there are no selected items.
+     */
+    getSelectedItemData: function() {
+      return this.selectedItemData_.length > 0  ? this.selectedItemData_ : null;
+    },
+
+
+    /**
      *  Adds the code for the current item in the field to the list of selected
      *  codes, and does the same for the item text.  If this is not a multi-select
      *  list, the newly selected code will replace the others.  The text and
@@ -837,10 +864,23 @@ if (typeof Def === 'undefined')
       if (!this.multiSelect_) {
         this.selectedCodes_ = {};
         this.selectedItems_ = {};
+        this.selectedItemData_ = [];
       }
-      if (code !== null && code !== undefined)
-        this.selectedCodes_[itemText] = code;
-      this.selectedItems_[itemText] = 1;
+      if (itemText) {
+        var hasCode = code !== null && code !== undefined;
+        if (hasCode)
+          this.selectedCodes_[itemText] = code;
+        this.selectedItems_[itemText] = 1;
+        var itemData;
+        if (this.getItemData)
+          itemData = this.getItemData(itemText);
+        else {
+          itemData = {text: itemText};
+          if (hasCode)
+            itemData.code = code;
+        }
+        this.selectedItemData_.push(itemData);
+      }
     },
 
 
@@ -931,6 +971,12 @@ if (typeof Def === 'undefined')
       var itemText = li.childNodes[1].textContent;
       delete this.selectedCodes_[itemText];
       delete this.selectedItems_[itemText];
+      for (var i=0, len=this.selectedItemData_.length; i<len; ++i) {
+        if (this.selectedItemData_[i].text === itemText) {
+          this.selectedItemData_.splice(i, 1);
+          break;
+        }
+      }
       this.listSelectionNotification(itemText, true, true);
       Def.Autocompleter.screenReaderLog('Unselected '+itemText);
     },
@@ -2128,6 +2174,7 @@ if (typeof Def === 'undefined')
       if (Def.Autocompleter.getFieldVal(this.element) === '') {
         this.setMatchStatusIndicator(true);
         this.setInvalidValIndicator(false);
+        this.storeSelectedItem('');
         // Send a list selection event for this case.
         if (Def.Autocompleter.Event.callbacks_ !== null)
           this.listSelectionNotification('', false);
@@ -2163,7 +2210,7 @@ if (typeof Def === 'undefined')
           // only if non-matching values are allowed.
           if (Def.Autocompleter.Event.callbacks_ !== null)
             this.listSelectionNotification(this.getValTyped(), false);
-          this.selectedItems_[this.domCache.get('elemVal')] = 1;
+          this.storeSelectedItem();
           if (this.multiSelect_)
             this.moveEntryToSelectedArea(); // resets processedFieldVal_ & lastValidVal_
           else

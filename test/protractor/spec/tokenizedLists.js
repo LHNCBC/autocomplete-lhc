@@ -70,7 +70,7 @@ describe('Prefetch list with tokens', function() {
     it('should allow down arrow to affect part of the field', function() {
       po.openTestPage();
       field.click();
-      field.sendKeys('as');
+      po.sendKeys(field, 'as');
       po.waitForSearchResults();
       field.sendKeys(protractor.Key.ARROW_DOWN);
       expect(field.getAttribute('value')).toBe('Asian');
@@ -86,7 +86,7 @@ describe('Prefetch list with tokens', function() {
     it('should work for the second item', function() {
       po.openTestPage();
       field.click();
-      field.sendKeys('am');
+      po.sendKeys(field, 'am');
       field.sendKeys(protractor.Key.ARROW_DOWN);
       expect(field.getAttribute('value')).toBe('American Indian or Alaska Native');
       field.sendKeys(protractor.Key.ARROW_DOWN);
@@ -98,7 +98,7 @@ describe('Prefetch list with tokens', function() {
       // selection should work on that value.
       po.openTestPage();
       field.click();
-      field.sendKeys('as');
+      po.sendKeys(field, 'as');
       po.waitForSearchResults();
       field.sendKeys(protractor.Key.ARROW_DOWN);
       expect(field.getAttribute('value')).toBe('Asian');
@@ -130,7 +130,7 @@ describe('Prefetch list with tokens', function() {
       // list affects that value.
       po.openTestPage();
       field.click();
-      field.sendKeys('na');
+      po.sendKeys(field, 'na');
       po.waitForSearchResults();
       field.sendKeys(protractor.Key.ARROW_DOWN);
       expect(field.getAttribute('value')).toBe(
@@ -195,7 +195,7 @@ describe('Search list with tokens', function() {
       function() {
     po.openTestPage();
     field.click();
-    field.sendKeys('ar');
+    po.sendKeys(field, 'ar');
     po.waitForSearchResults();
     field.sendKeys(protractor.Key.ARROW_DOWN);
     expect(field.getAttribute('value')).toBe('Arachnoiditis');
@@ -209,7 +209,7 @@ describe('Search list with tokens', function() {
   it('should show results for a second term after a token', function() {
     po.openTestPage();
     field.click();
-    field.sendKeys('ar');
+    po.sendKeys(field, 'ar');
     po.waitForSearchResults();
     field.sendKeys(protractor.Key.ARROW_DOWN);
     expect(field.getAttribute('value')).toBe('Arachnoiditis');

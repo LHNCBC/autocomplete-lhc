@@ -311,14 +311,9 @@
       if (itemText === '')
         rtn = null;
       else {
-        rtn = {text: itemText};
-        var code = this.ac.getItemCode(itemText);
-        if (code !== null)
-          rtn.code = code;
+        rtn = this.ac.getItemData(itemText);
         if (!onList)
           rtn._notOnList = true;
-        if (onList && this.ac.listExtraData_)
-          rtn.data = this.ac.getItemExtraData(itemText);
       }
       return rtn;
     },
@@ -367,6 +362,7 @@
         }
       }
     },
+
 
     /**
      *  Sets up a search list on the field.
