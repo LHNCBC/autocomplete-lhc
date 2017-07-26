@@ -10,7 +10,7 @@ var fe_race_or_ethnicity_autoComp = new
 
 opts = Object.assign({}, opts);
 opts.matchListValue = false;
-opts.tokens = [','];
+opts.wordBoundaryChars = [','];
 new Def.Autocompleter.Prefetch('prefetch_cwe_tokens', raceList, opts);
 
 var opts = {};
@@ -26,7 +26,7 @@ new Def.Autocompleter.Search('fe_search_cne',
   '/form/get_search_res_list?fd_id=1284', opts);
 
 opts = Object.assign({}, opts);
-opts.tokens = [','];
+opts.tokens = [',']; // i.e., wordBoundaryChars, but testing backward-compatibility
 new Def.Autocompleter.Search('search_cne_tokens',
   '/form/get_search_res_list?fd_id=1284', opts);
 

@@ -17,6 +17,8 @@ This log documents significant changes for each release.  This project follows
   However, it has been some time since the code used this parameter.  Span tags
   are still permitted in display strings, but it is no longer important that the
   autocompleter be aware of that.
+- The parameter "tokens" has been renamed to "wordBoundaryChars", though for now
+  the older parameter name will still work as well.
 
 ## [14.0.0] - 2017-05-25
 ### Changed
