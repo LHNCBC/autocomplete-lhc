@@ -53,6 +53,10 @@
            USE_STATISTICS means that the suggestion is based on statistics, and
            that we will rely on the server to return the best item as the first
            item in the list.</li>
+          <li>wordBoundaryChars (default none) For autocompleting based on part of the
+           field's value, this should be an array of the characters that are
+           considered "word" boundaries (e.g. a space, but could be something
+           else).  When this option is used, maxSelect is ignored.
           <li>headerBar - If the page has a fixed-position element at the top of
            the page (e.g. a top navigation bar), the autocompleter needs to know
            that so that when scrolling to show the list it doesn't scroll the
@@ -159,13 +163,17 @@
                  of scope for this class; the search autocompleter just sends the
                  parameters above to the given URL.  The extra data for the selected item (when the
                  user makes a selection) can get be retrieved with
-                 <a href="#getItemExtraData">getItemExtraData(itemText)</a>.</li>
+                 <a href="#getItemData">getItemData(itemText)</a>.</li>
                 <li>position 3 - the list item data; each item is an array of display
                  string fields which will be joined together.  (At a mimimum, each item
                  should be an array of one string.)</li>
-                <li>position 4 - if present, this indicates that display strings
-                 (position 3) contain span tags for highlighting matched sub-strings.
-                 (This affects the routine used to sort the strings.)</li>
+                <li>position 4 - (optional) This is an array of code system names
+                 identifying the code system for each of the codes in the code
+                 array in position 1.  This is useful for lists that contain
+                 entries from different code systems.  (Prior to version 15, this
+                 field was a flag indicating the presence of span tags in the
+                 display strings for highlighting matched regions.  Those are
+                 still supported, but the flag is no longer needed.)</li>
               </ul>
               For a suggest request, the response should have the following elements:
               <ul>
@@ -290,20 +298,29 @@
             array if there are none.
             If some of the selected items do not have a code, there will be null in
             that place in the returned array.</dd>
+          <dt>getSelectedItemData()</dt>
+          <dd>Returns all information about the currently selected list items,
+            as an array of hashes, each with at least a "text" property for the
+            item's display text.  The hashes may also contain (if the data was
+            provided) properties "code", "code_system", and "data" (which for search
+            lists contains the "extra data" fields for that item).  The return value
+            will be null if there are no selected items.</dd>
           <dt>getItemCode(itemText)</dt>
           <dd>Returns the code for the given item text, or null if there isn't
-            one.</dd>
-          <dt id="getItemExtraData">getItemExtraData(itemText)</dt>
-          <dd><b>(For search lists only.)</b>This returns the "extra data" for
-            the item returned by the server along with the autocompletion list,
-            as mentioned in <a href="#extraData">position 2</a> of the expected
-            return data for the <a href="#url">url parameter</a> for the
-            <a href="#searchList">search autocompleter</a> constructor.  The
-            getItemExtraData returns a hash of of the extra data for the given
-            list item (itemText).  Currently, this assumes that itemText was present
-            in the last list shown for this field; if subsequent autocompletion
-            requests take place in which itemText is not present, the return
-            value will be empty.</dd>
+           one.  For search lists, itemText must be present in the list
+           retrieved for the last character typed.</dd>
+          <dt id="getItemData">getItemData(itemText)</dt>
+          <dd><b>(For search lists only.)</b>Returns a hash of all data about
+           the given item, which must be among the items of the last list
+           retrieved.  The returned hash will have "code" and "text" properties
+           for the selected item, and if there is any <a href="#extraData">extra
+           data</a> for the item, that will be under a "data" sub-hash.  If the
+           items came with code system data, there will also be a "code_system"
+           property with the code system corresponding to "code".  Properties
+           for which there are no values will not be present, except for the
+           "text" property.  Note that this data is also collected and
+            returned by the getSelectedItemData() call above, which might be
+            easier to use.</dd>
         </dl>
 
         <h2 id="directive">AngularJS Directive</h2>
