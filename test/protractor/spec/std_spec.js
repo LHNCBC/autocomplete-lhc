@@ -27,7 +27,7 @@ describe('autocomp', function() {
     suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
 
     suggestionMode1CWE.click();
-    suggestionMode1CWE.sendKeys('arm');
+    po.sendKeys(suggestionMode1CWE, 'arm');
     po.waitForSearchResults();
     // In suggesion mode 1, the first element should be the shortest item
     // starting with the input text.
