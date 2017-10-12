@@ -102,6 +102,15 @@ ATR = {
       }, ATR.TIMEOUT);
     },
 
+    /**
+     *  Handles a "scrollIntoView" command.
+     * @param elemID the ID of the element to be scrolled into view.
+     */
+    scrollIntoView: (elemID) => {
+      // With thanks to the form builder tests for inspiration
+      browser.executeScript('arguments[0].scrollIntoView();',
+        $('#'+elemID).getWebElement());
+    },
 
     /**
      *  Handles a "click" command.

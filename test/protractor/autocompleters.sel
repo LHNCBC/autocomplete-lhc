@@ -347,6 +347,7 @@
 # Tests for disabled autocompleters.  Tests beyond this point mess with
 # the autocompleters' lists.
 | type | prefetch_cwe |
+| scrollIntoView | prefetch_cwe |
 | click | prefetch_cwe |
 | typeKeys | prefetch_cwe | 1 |
 | keyDown | prefetch_cwe | \40 |

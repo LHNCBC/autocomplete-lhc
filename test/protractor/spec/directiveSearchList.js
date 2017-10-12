@@ -49,7 +49,7 @@ describe('directive', function() {
       // Try the suggestion list
       dp.searchWithSug.sendKeys('ar');
       // Click someplace else to leave 'ar' in the field
-      dp.inputElem.click();
+      dp.searchList.click();
       expect(dp.suggestionDialog.isDisplayed()).toBeTruthy();
       expect(dp.firstSugLink.isDisplayed()).toBeTruthy();
       dp.firstSugLink.click();

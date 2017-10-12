@@ -167,5 +167,30 @@ describe('CNE lists', function() {
       browser.driver.switchTo().activeElement().getAttribute('id'));
     expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknown');
   });
+
+
+  it('should close the list when refocused from another list field', function() {
+    // This test is for the problem in LF-870, where if you type some characters
+    // into one CNE field to get it into the non-match state, and then click in
+    // a different autocompleter field, the list for the second field shows up
+    // and remains while focus is returned to the first CNE field.
+    // This test failed to detect the problem, though I tried several approaches
+    // (clicking, mouseDown/mouseUp, adding pauses, and focusing).  For some
+    // reason, the problem does not occur when I do the same actions here with
+    // selenium that I do using a browser.  Nonetheless, it seems worthwhile to
+    // have this test.
+    po.openTestPage();
+    po.searchCNE.click();
+    po.sendKeys(po.searchCNE, 'zzz'); // non-match
+    browser.sleep(100);
+    po.prefetchCNE.click();
+    // Focus should be returned to the non-matching field
+    // Note:  Could not catch movement to prefetchCNE, so we just wait a bit to
+    // make sure that happened.
+    browser.sleep(500);
+    expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(po.searchCNEID);
+    // The search result list should close
+    po.waitForNoSearchResults();
+  });
 });
 

@@ -274,6 +274,22 @@ function BasePage() {
     browser.sleep(100);
     field.sendKeys(text);
   }
+
+
+  /**
+   *  Sets the window height so that it is just large enough to show the given
+   *  element.
+   * @param elemID the ID of the element
+   * @return a promise for when the size has been set
+   */
+  this.setWindowHeightForElement = (elemID) => {
+    return browser.driver.executeScript('return jQuery("#'+elemID+'").offset().top'
+      ).then(function(top) {
+        // The returned offset top value is not completely right, it seems,
+        // so I am adding adding extra height pixels in the setSize call below.
+        return browser.manage().window().setSize(1100, top+110);
+      });
+  };
 };
 
 module.exports = {BasePage: BasePage};
