@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "15.1.0",
+  "version": "15.1.1",
   "main": [
     "source/auto_completion.css",
     "source/polyfill.js",
@@ -38,6 +38,6 @@
       ]
     }
   },
-  "ignore": ["cshrc.autocomp", "bin", "node_modules", "package.json",
+  "ignore": ["bashrc.autocomp", "bin", "node_modules", "package.json",
              "npm-shrinkwrap.json", "test/**", "!test/protractor/basePage.js"]
 }

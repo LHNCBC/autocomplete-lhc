@@ -27,7 +27,7 @@ describe('autocomp', function() {
     suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
 
     suggestionMode1CWE.click();
-    suggestionMode1CWE.sendKeys('arm');
+    po.sendKeys(suggestionMode1CWE, 'arm');
     po.waitForSearchResults();
     // In suggesion mode 1, the first element should be the shortest item
     // starting with the input text.
@@ -251,24 +251,28 @@ describe('autocomp', function() {
     po.openTestPage();
     // Resize the window so the two-column layout would be in effect for a
     // non-tableFormat list.
-    browser.manage().window().setSize(1100, 473);
-    po.multiFieldSearch.click();
-    po.sendKeys(po.multiFieldSearch, "ar");
-    // Arrow down to first item
-    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
-    expect(po.multiFieldSearch.getAttribute('value')).toBe(
-      'pain in arm');
-    // In a two column list, the right arrow key would move to a different item.
-    // Confirm that it does not.
-    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_RIGHT);
-    expect(po.multiFieldSearch.getAttribute('value')).toBe(
-      'pain in arm');
+    browser.manage().window().getSize().then(oldWindowSize => {
+      po.setWindowHeightForElement(po.multiFieldSearchID);
+      po.multiFieldSearch.click();
+      po.sendKeys(po.multiFieldSearch, "ar");
+      // Arrow down to first item
+      po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
+      expect(po.multiFieldSearch.getAttribute('value')).toBe(
+        'pain in arm');
+      // In a two column list, the right arrow key would move to a different item.
+      // Confirm that it does not.
+      po.multiFieldSearch.sendKeys(protractor.Key.ARROW_RIGHT);
+      expect(po.multiFieldSearch.getAttribute('value')).toBe(
+        'pain in arm');
+      browser.manage().window().setSize(oldWindowSize.width, oldWindowSize.height);
+    });
   });
 
 
   it('should respond to page up and down keys', function() {
     po.openTestPage();
     po.headings1ColCWE.click();
+    po.waitForScrollToStop(po.headings1ColCWEID);
     po.expandLink.click();
     // Current scroll position of the list should be zero
     expect(po.listScrollPos()).toBe(0);

@@ -102,6 +102,15 @@ ATR = {
       }, ATR.TIMEOUT);
     },
 
+    /**
+     *  Handles a "scrollIntoView" command.
+     * @param elemID the ID of the element to be scrolled into view.
+     */
+    scrollIntoView: (elemID) => {
+      // With thanks to the form builder tests for inspiration
+      browser.executeScript('arguments[0].scrollIntoView();',
+        $('#'+elemID).getWebElement());
+    },
 
     /**
      *  Handles a "click" command.
@@ -139,7 +148,7 @@ ATR = {
      * @param chars the characters to be typed
      */
     typeKeys: function(fieldID, chars) {
-      browser.sleep(100); // see basePage.js sendKeys for explanation
+      browser.sleep(150); // see basePage.js sendKeys for explanation
       var elem = element(by.id(fieldID)).getWebElement();
       if (chars === '\\13')
         chars = protractor.Key.ENTER;

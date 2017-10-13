@@ -899,17 +899,16 @@
      *  Handles clicks on the field.
      */
     onFieldClick: function() {
-      if (this.enabled_) { // i.e. has list items
-        // Don't show if we are already showing the full list.
-        if (!this.listShowing || this.matchListItemsToField_) {
-          this.matchListItemsToField_ = false;
-          // Temporarily disable list suggestions so we just show the whole list
-          // in order.
-          var oldSug = this.suggestionMode_;
-          this.suggestionMode_ =  Def.Autocompleter.NO_COMPLETION_SUGGESTIONS;
-          this.maybeShowList();
-          this.suggestionMode_ = oldSug;
-        }
+      if (this.enabled_ && // i.e. has list items
+          this.element.id === Def.Autocompleter.currentAutoCompField_ &&
+          (!this.listShowing || this.matchListItemsToField_)) {//not already showing the full list
+        this.matchListItemsToField_ = false;
+        // Temporarily disable list suggestions so we just show the whole list
+        // in order.
+        var oldSug = this.suggestionMode_;
+        this.suggestionMode_ =  Def.Autocompleter.NO_COMPLETION_SUGGESTIONS;
+        this.maybeShowList();
+        this.suggestionMode_ = oldSug;
       }
     },
 

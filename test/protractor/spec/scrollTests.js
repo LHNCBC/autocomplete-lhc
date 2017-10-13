@@ -17,9 +17,10 @@ describe('autocomp scroll function', function() {
 
   it('should scroll the list into view', function() {
     po.openTestPage();
-    browser.manage().window().setSize(1100, 473); // height just includes #long_odd_cne
+    po.setWindowHeightForElement(po.longOddCNEID)
     expect(po.windowScrollTop()).toBe(0);
     po.longOddCNE.click();
+    browser.sleep(100); // wait for scroll to happen
     expect(po.windowScrollTop()).toBeGreaterThan(0);
   });
 
@@ -27,14 +28,10 @@ describe('autocomp scroll function', function() {
   it('should not scroll the list into view when that is disabled', function() {
     po.openTestPage();
     // Set the window height so it just includes #long_odd_cne
-    browser.driver.executeScript('return jQuery("'+po.longOddCNENoScrollCSS+
-      '").offset().top').then(function(top) {
-      // The returned offset top value is not completely right, it seems,
-      // so I am adding adding extra height pixels in the setSize call below.
-      browser.manage().window().setSize(1100, top+110);
-      po.longOddCNENoScroll.click();
-      expect(po.windowScrollTop()).toBe(0);
-    });
+    po.setWindowHeightForElement(po.longOddCNENoScrollID);
+    po.longOddCNENoScroll.click();
+    browser.sleep(100); // wait for scroll to happen (if it does)
+    expect(po.windowScrollTop()).toBe(0);
   });
 
 
@@ -74,7 +71,7 @@ describe('autocomp scroll function', function() {
 
   it('should scroll as much as possible when the list is large', function() {
     po.openTestPage();
-    browser.manage().window().setSize(1100, 460);
+    po.setWindowHeightForElement(po.multiHeadingCWEID);
     // Test that when the long list is expanded, the field gets scrolled up to
     // the top of the window.
     po.multiHeadingCWE.click();
@@ -109,7 +106,7 @@ describe('autocomp scroll function', function() {
     // in which the field was scrolled to the top, but shift-tab to the previous
     // field before the scrolling is done.
     po.openTestPage();
-    browser.manage().window().setSize(1100, 460);
+    po.setWindowHeightForElement(po.multiHeadingCWEID);
     po.multiHeadingCWE.click();
     po.multiHeadingCWE.sendKeys(protractor.Key.CONTROL, protractor.Key.ENTER);
     // Now shift-tab to previous field

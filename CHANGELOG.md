@@ -3,6 +3,13 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [15.1.1] - 2017-10-12
+### Fixed
+- Corrected an issue in which if a list that requires a matching value is left
+  with a non-matching value by clicking in a second autocompleting field, the second
+  field's list was left visible and active when the focus was returned the first
+  first field.
+
 ## [15.1.0] - 2017-07-24
 ### Changed
 - Revised the bower specification to make a file of helper functions available
