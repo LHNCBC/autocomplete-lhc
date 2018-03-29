@@ -4,7 +4,7 @@ This is a package of JavaScript-based input field autocompleters.
 These were developed to meet the
 requirements of the
 [NLM PHR](https://phr-demo.nlm.nih.gov) and
-[LHC-Forms](https://lhc-forms.lhc.nlm.nih.gov/) projects.  The package
+[LHC-Forms](https://lhncbc.nlm.nih.gov/project/lhc-forms) projects.  The package
 includes an AngularJS directive, but can be used without Angular.
 
 For features and demos, please visit the [project
