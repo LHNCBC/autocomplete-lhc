@@ -77,7 +77,7 @@ describe('directive', function() {
       dp.clearField(dp.multiSearchCWE);
       dp.multiSearchCWE.sendKeys('ar');
       dp.waitForSearchResults();
-      expect(dp.firstSearchRes.getInnerHtml()).toEqual('Adult respiratory distress syndrome (ARDS)');
+      expect(dp.firstSearchRes.getText()).toEqual('Adult respiratory distress syndrome (ARDS)');
       // Change the URL and confirm we get different results for the new list
       browser.driver.executeScript(
         "window.multiSearchCWEOpts.originalUrl = window.multiSearchCWEOpts.url;"+
@@ -86,7 +86,7 @@ describe('directive', function() {
       dp.clearField(dp.multiSearchCWE);
       dp.multiSearchCWE.sendKeys('ar');
       dp.waitForSearchResults();
-      expect(dp.firstSearchRes.getInnerHtml()).toEqual('Arm pain');
+      expect(dp.firstSearchRes.getText()).toEqual('Arm pain');
       // Restore the url
       browser.driver.executeScript(
         "window.multiSearchCWEOpts.url = window.multiSearchCWEOpts.originalUrl;"+

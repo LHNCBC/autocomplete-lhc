@@ -118,8 +118,8 @@ describe('search lists', function() {
     // Check that the result is the same as 'ab c'
     po.waitForSearchResults();
     expect(po.listIsVisible()).toBeTruthy();
-    expect(po.firstSearchRes.getInnerHtml()).toEqual('CAD3');
-    expect(po.secondSearchRes.getInnerHtml()).toEqual('zArm pain3');
+    expect(po.firstSearchRes.getText()).toEqual('CAD3');
+    expect(po.secondSearchRes.getText()).toEqual('zArm pain3');
 
     // Now try the non-match suggestion list.
     po.searchCWE.click();
@@ -130,7 +130,7 @@ describe('search lists', function() {
     }, 5000);
     expect(po.suggestionDialog.isDisplayed()).toBeTruthy();
     expect(po.firstSugLink.isDisplayed()).toBeTruthy();
-    expect(po.firstSugLink.getInnerHtml()).toEqual('Blue');
+    expect(po.firstSugLink.getText()).toEqual('Blue');
     // Close the dialog before continuing to the next test
     po.suggestionDialogClose.click();
   });

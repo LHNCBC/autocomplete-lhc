@@ -19,7 +19,7 @@ describe('autocomp', function() {
     expect(searchResults.isDisplayed()).toBeTruthy();
     // In suggestion mode 0, the first element should be what is alphabetically
     // first.
-    expect(po.firstSearchRes.getInnerHtml()).toEqual('Arm painzzzzz');
+    expect(po.firstSearchRes.getText()).toEqual('Arm painzzzzz');
     // Backspace to erase the field, or the non-match suggestions dialog will
     // appear (for the other kind of suggestion).
     suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -31,7 +31,7 @@ describe('autocomp', function() {
     po.waitForSearchResults();
     // In suggesion mode 1, the first element should be the shortest item
     // starting with the input text.
-    expect(po.firstSearchRes.getInnerHtml()).toEqual('Arm z');
+    expect(po.firstSearchRes.getText()).toEqual('Arm z');
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -42,7 +42,7 @@ describe('autocomp', function() {
 
     // In suggestion mode 2, the first element should be the first returned in
     // the AJAX call.
-    expect(po.firstSearchRes.getInnerHtml()).toEqual('Coronary artery disease (CAD)');
+    expect(po.firstSearchRes.getText()).toEqual('Coronary artery disease (CAD)');
     suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -234,15 +234,15 @@ describe('autocomp', function() {
     // A list should appear
     // This list is using statitics, so it pulls CAD to the top.  The second
     // result is what we can compare with the first result in the other list.
-    expect(po.secondSearchRes.getInnerHtml()).toBe("Arm pain");
+    expect(po.secondSearchRes.getText()).toBe("Arm pain");
     // Now go to another field, which like multiSearchCWE has no name field.
     po.searchCNE.click();
     po.sendKeys(po.searchCNE, 'ar');
     po.waitForSearchResults();
     // The search result list should be different (even though the name
     // attribute is the same/missing for both).
-    expect(po.firstSearchRes.getInnerHtml()).not.toBe("Arm pain");
-    expect(po.firstSearchRes.getInnerHtml()).toBe("Arachnoiditis");
+    expect(po.firstSearchRes.getText()).not.toBe("Arm pain");
+    expect(po.firstSearchRes.getText()).toBe("Arachnoiditis");
   });
 
 
