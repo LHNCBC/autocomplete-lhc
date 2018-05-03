@@ -354,7 +354,7 @@ if (typeof Def === 'undefined')
             Def.Autocompleter.completionOptionsScrollerClicked_ = true;
             if ($(Def.Autocompleter.currentAutoCompField_) != -1) {
               var field = $(Def.Autocompleter.currentAutoCompField_);
-              setTimeout(function(){field.focus()}, 1);
+              setTimeout(function(){field.focus()});
             }
           }
         }, this));
@@ -2203,7 +2203,7 @@ if (typeof Def === 'undefined')
             // is called above.  That happens when you hit return to select an
             // invalid value.
             this.refocusInProgress_ = false;
-          }, this), 1);
+          }, this));
         }
         else {
           // Send a list selection notification for non-matching values too, but
@@ -2229,7 +2229,7 @@ if (typeof Def === 'undefined')
             // the status field, and then when focus() was called the dialog
             // somehow called blur() on the field (perhaps using event capturing)
             // before the autocompleter's focus event handler ran.)
-            setTimeout(jQuery.proxy(function() {this.findSuggestions();}, this), 1);
+            setTimeout(jQuery.proxy(function() {this.findSuggestions();}, this));
           }
         }
       }

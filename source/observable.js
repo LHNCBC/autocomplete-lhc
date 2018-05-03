@@ -52,7 +52,7 @@ if (typeof Def === 'undefined')
               }
             }
           }
-        }).bind(this),1);
+        }).bind(this));
       }
     },
 
