@@ -120,10 +120,10 @@ describe('Prefetch lists', function() {
     po.itemNumMatchField.click();
     po.waitForScrollToStop(po.itemNumMatchFieldID);
     expect(po.listCountMessage()).toEqual('14 of 25 items total');
-    po.itemNumMatchField.sendKeys('20');
+    po.sendKeys(po.itemNumMatchField, '20');
     po.waitForScrollToStop(po.itemNumMatchFieldID);
     // The number should in this case is 15, because after finding the first 14,
-    // we make an except and add the item whose number matches the input.
+    // we make an exception and add the item whose number matches the input.
     expect(po.shownItemCount()).toEqual(15);
     expect(po.listCountMessage()).toEqual('15 of 25 items total');
   });
