@@ -9,11 +9,11 @@ describe('search lists', function() {
     po.openTestPage();
     expect(po.getAjaxCallCount()).toBe(0);
     po.autocompPickFirst(po.searchCWE, 'ar');
-    expect(po.getAjaxCallCount()).toBe(1);
+    expect(po.getAjaxCallCount()).toBe(2); // two characters = two AJAX calls
     expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
     po.searchCWE.click();
     po.searchCWE.sendKeys(protractor.Key.CONTROL, 'a'); // select all
-    expect(po.getAjaxCallCount()).toBe(1);
+    expect(po.getAjaxCallCount()).toBe(2);
   });
 
 
@@ -195,15 +195,15 @@ describe('search lists', function() {
       // Use two fields with different URLs
       po.autocompPickFirst(po.searchCNE, 'ar');
       expect(po.searchCNE.getAttribute('value')).toEqual('Arachnoiditis');
-      expect(po.getAjaxCallCount()).toBe(1);
+      expect(po.getAjaxCallCount()).toBe(2); // two characters
       po.autocompPickFirst(po.searchCWE, 'ar');
       expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
-      expect(po.getAjaxCallCount()).toBe(2);
+      expect(po.getAjaxCallCount()).toBe(4); // two more characters
       // Confirm that if we send the same request a second time, no further AJAX
       // calls are made.
       po.autocompPickFirst(po.searchCWE, 'ar');
       expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
-      expect(po.getAjaxCallCount()).toBe(2);
+      expect(po.getAjaxCallCount()).toBe(4);
       // Now change searchCNE to have the same URL as search CWE
       browser.driver.executeScript(
         'jQuery("'+po.searchCNECSS+'")[0].autocomp.setURL("/form/get_search_res_list?fd_id=2163")');
@@ -211,7 +211,7 @@ describe('search lists', function() {
       // search string.
       po.autocompPickFirst(po.searchCNE, 'ar');
       expect(po.searchCWE.getAttribute('value')).toEqual('Arm pain');
-      expect(po.getAjaxCallCount()).toBe(2);
+      expect(po.getAjaxCallCount()).toBe(4);
     });
   });
 

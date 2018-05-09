@@ -68,6 +68,7 @@ describe('Screen reader log', function() {
       po.multiFieldSearch1Col.click();
       po.sendKeys(po.multiFieldSearch1Col, 'ar');
       po.multiFieldSearch1Col.sendKeys(protractor.Key.ARROW_DOWN);
+      //browser.wait(function() {return expect(po.nthLastLogEntry(2)).toEqual('A list has appeared below the field.')});
       expect(po.nthLastLogEntry(2)).toEqual('A list has appeared below the field.');
     });
 
@@ -75,7 +76,7 @@ describe('Screen reader log', function() {
       po.multiFieldSearchHeaders.click();
       po.clearField(po.multiFieldSearchHeaders);
       po.sendKeys(po.multiFieldSearchHeaders, 'ar');
-      expect(po.nthLastLogEntry(1)).toEqual('The column headers on the multi-column list are C1; C2');
+      expect(po.nthLastLogEntry(2)).toEqual('The column headers on the multi-column list are C1; C2');
     });
   });
 

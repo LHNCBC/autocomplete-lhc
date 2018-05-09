@@ -272,7 +272,9 @@ function BasePage() {
     // the autocompleter options.frequency setting, but it only happens when
     // testing, so I don't want to make that slower.
     browser.sleep(100);
-    field.sendKeys(text);
+    // Some key events are lost?  Send them one at a time.
+    for (var i=0, len=text.length; i<len; ++i)
+      field.sendKeys(text[i]);
   }
 
 
