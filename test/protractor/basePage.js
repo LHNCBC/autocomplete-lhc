@@ -273,8 +273,10 @@ function BasePage() {
     // testing, so I don't want to make that slower.
     browser.sleep(100);
     // Some key events are lost?  Send them one at a time.
-    for (var i=0, len=text.length; i<len; ++i)
+    for (var i=0, len=text.length; i<len; ++i) {
       field.sendKeys(text[i]);
+      browser.sleep(10);
+    }
   }
 
 

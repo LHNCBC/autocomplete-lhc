@@ -2149,9 +2149,8 @@ if (typeof Def === 'undefined')
     /**
      *  Takes appropriate action when the user enters something in the field
      *  that is not a list item.
-     * @param event the event that triggered the attempted selection
      */
-    handleNonListEntry: function(event) {
+    handleNonListEntry: function() {
       this.propagateFieldChanges(false);
 
       // For a single selection list, clear the stored selection
@@ -2420,7 +2419,7 @@ if (typeof Def === 'undefined')
         if (this.processedFieldVal_ !== elemVal && !selectionSucceeded) {
           if (elemVal === "")
             this.fieldValIsListVal_ = false;
-          this.handleNonListEntry(event);
+          this.handleNonListEntry();
         }
 
         if (!this.multiSelect_) {
