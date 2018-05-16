@@ -3,6 +3,24 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [16.0.0] - 2018-05-10
+### Changed
+- Various timeouts were adjusted from 1 ms to 0 ms, to introduce more
+  predictability.
+- [List selection events](http://lhncbc.github.io/autocomplete-lhc/docs.html#listSelection)
+  are now sent for cases where matchListValue was set to true (requiring a list
+  value) and an invalid value was entered.  In such cases, the autocompleter
+  refocuses the field to the let user correct the error, and because the user
+  was still working with the field, previously no event was sent.  However, it
+  turned out that our AngularJS directive needed that event even for an invalid
+  entry so it could update the data model.  On receiving such an event, you can
+  check the value of "on_list" in the event's data object to determine whether the
+  entry was valid or not.
+- The above change means that we also now need to send a list selection event in
+  the case where the field is cleared by the autocompleter after a second
+  attempt to enter the same invalid value, even when the field started out
+  blank.
+
 ## [15.1.1] - 2017-10-12
 ### Fixed
 - Corrected an issue in which if a list that requires a matching value is left

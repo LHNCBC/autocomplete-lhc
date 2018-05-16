@@ -570,13 +570,6 @@ if (typeof Def === 'undefined')
      */
     processedFieldVal_: null,
 
-    /**
-     *  The most recent field value which was not invalid.  For CWE fields, this
-     *  will just be last value entered, and will equal procesesdFieldVal.  For
-     *  CNE fields, it will be the last good value before processedFieldVal_.
-     */
-    lastValidValue_: '',
-
 
     /**
      *  An initialization method for the base Def.Autocompleter class.
@@ -923,7 +916,7 @@ if (typeof Def === 'undefined')
      */
     moveEntryToSelectedArea: function() {
       var escapedVal = this.addToSelectedArea(this.domCache.get('elemVal'));
-      this.setFieldVal(this.lastValidVal_ = this.processedFieldVal_ = '', false);
+      this.setFieldVal(this.processedFieldVal_ = '', false);
       Def.Autocompleter.screenReaderLog('Selected '+escapedVal);
       if (this.index >= 0) { // i.e. if it is a list item
         // Delete selected item
@@ -2126,7 +2119,6 @@ if (typeof Def === 'undefined')
 
           // Now continue with the processing of the selection.
           this.processedFieldVal_ = Def.Autocompleter.getFieldVal(this.element);
-          this.lastValidVal_ = this.processedFieldVal_;
           this.setMatchStatusIndicator(true);
           this.setInvalidValIndicator(false);
           this.propagateFieldChanges();
@@ -2157,8 +2149,9 @@ if (typeof Def === 'undefined')
     /**
      *  Takes appropriate action when the user enters something in the field
      *  that is not a list item.
+     * @param event the event that triggered the attempted selection
      */
-    handleNonListEntry: function() {
+    handleNonListEntry: function(event) {
       this.propagateFieldChanges(false);
 
       // For a single selection list, clear the stored selection
@@ -2178,16 +2171,21 @@ if (typeof Def === 'undefined')
         // Send a list selection event for this case.
         if (Def.Autocompleter.Event.callbacks_ !== null)
           this.listSelectionNotification('', false);
-        this.lastValidVal_ = this.processedFieldVal_ = fieldVal;
+        this.processedFieldVal_ = fieldVal;
       }
       else {
         if (this.enabled_) // i.e. if there is a list that should be matched
           this.setMatchStatusIndicator(false);
-        // If the element is not blank, and if a match is required, we set the
-        // invalid value indicator.
+        // Send a list selection notification for non-matching values too, even
+        // if non-matching values aren't allowed (in which case the AngularJS
+        // directive listener needs to clean up the model value).
+        if (Def.Autocompleter.Event.callbacks_ !== null)
+          this.listSelectionNotification(this.getValTyped(), false);
         if (this.matchListValue_) {
           Def.Autocompleter.screenReaderLog(
             'For this field your entry must match an item from the suggestion list.');
+          // If the element is not blank, and if a match is required, we set the
+          // invalid value indicator.
           this.setInvalidValIndicator(true);
           // Refocus the field.  We have to wait until after the pending
           // focus event (for whatever element might be getting the focus) is
@@ -2206,15 +2204,11 @@ if (typeof Def === 'undefined')
           }, this));
         }
         else {
-          // Send a list selection notification for non-matching values too, but
-          // only if non-matching values are allowed.
-          if (Def.Autocompleter.Event.callbacks_ !== null)
-            this.listSelectionNotification(this.getValTyped(), false);
           this.storeSelectedItem();
           if (this.multiSelect_)
-            this.moveEntryToSelectedArea(); // resets processedFieldVal_ & lastValidVal_
+            this.moveEntryToSelectedArea(); // resets processedFieldVal_
           else
-            this.lastValidVal_ = this.processedFieldVal_ = fieldVal;
+            this.processedFieldVal_ = fieldVal;
 
           // See if we can find some suggestions for what the user typed.
           // For now, we do not support suggestions for multiselect lists.
@@ -2328,11 +2322,8 @@ if (typeof Def === 'undefined')
       // Also clear the match status flag, because a blank value is okay
       // (except for required fields when the form submits).
       this.setMatchStatusIndicator(true);
-      // If the field was not originally blank, send a list selection
-      // event.
-      if (this.lastValidVal_ !== '')
-        this.listSelectionNotification('', false);
-      this.lastValidVal_ = this.processedFieldVal_ = '';
+      this.listSelectionNotification('', false);
+      this.processedFieldVal_ = '';
     },
 
 
@@ -2346,7 +2337,7 @@ if (typeof Def === 'undefined')
       // value.  processedFieldVal_ should retain the last non-invalid value in
       // the field.
       if (!this.refocusInProgress_)
-        this.lastValidVal_ = this.processedFieldVal_ = Def.Autocompleter.getFieldVal(this.element);
+        this.processedFieldVal_ = Def.Autocompleter.getFieldVal(this.element);
 
       this.refocusInProgress_ = false;
       this.preFieldFillVal_ = null;
@@ -2429,7 +2420,7 @@ if (typeof Def === 'undefined')
         if (this.processedFieldVal_ !== elemVal && !selectionSucceeded) {
           if (elemVal === "")
             this.fieldValIsListVal_ = false;
-          this.handleNonListEntry();
+          this.handleNonListEntry(event);
         }
 
         if (!this.multiSelect_) {

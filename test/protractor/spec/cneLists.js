@@ -19,7 +19,7 @@ describe('CNE lists', function() {
     expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual('fe_multi_sel_cne');
   });
 
-  it('should not send a list selection event for non-matching values', function() {
+  it('should send a list selection event even for non-matching values', function() {
     po.openTestPage();
     browser.driver.executeScript(function() {
       window.callCount = 0;
@@ -34,21 +34,20 @@ describe('CNE lists', function() {
     expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
     po.prefetchCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
     expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
-    expect(browser.driver.executeScript('return window.callCount')).toBe(0);
+    expect(browser.driver.executeScript('return window.callCount')).toBe(1);
     po.prefetchCNE.sendKeys(protractor.Key.TAB); // shift focus from field, field should clear
     expect(po.prefetchCNE.getAttribute('value')).toBe('');
-    expect(browser.driver.executeScript('return window.callCount')).toBe(0);
+    // Another event should be sent when the field is cleared, because we sent
+    // one with the invalid value above.
+    expect(browser.driver.executeScript('return window.callCount')).toBe(2);
 
-    // However, we do want it to send an event if the final, cleared value is
-    // a change from what was originally in the field.
-    // Select a valid list item, then enter something invalid and tab until
-    // the field clears.  There should be a list selection event for that
-    // case, to signal the field was cleared.
+    // Also confirm that there is one event sent for the field being cleared
+    // when the initial value was not blank.
     po.prefetchCNE.click();
     var item = $('#searchResults li:first-child');
     item.click();
     // For that selection, there should have been one event sent.
-    expect(browser.driver.executeScript('return window.callCount')).toBe(1);
+    expect(browser.driver.executeScript('return window.callCount')).toBe(3);
     // Tab away and refocus
     po.prefetchCNE.sendKeys(protractor.Key.TAB);
     browser.driver.switchTo().activeElement().sendKeys(
@@ -58,11 +57,13 @@ describe('CNE lists', function() {
     expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
     po.prefetchCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
     expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
+    // An event should have been sent for the invalid value
+    expect(browser.driver.executeScript('return window.callCount')).toBe(4);
     po.prefetchCNE.sendKeys(protractor.Key.TAB); // shift focus from field, field should clear
     expect(po.prefetchCNE.getAttribute('value')).toBe('');
     // Now we should have had another call, because the end result is that the
     // field was cleared.
-    expect(browser.driver.executeScript('return window.callCount')).toBe(2);
+    expect(browser.driver.executeScript('return window.callCount')).toBe(5);
   });
 
 
