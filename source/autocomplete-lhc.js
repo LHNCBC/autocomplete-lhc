@@ -202,7 +202,7 @@
           item = {_notOnList: true};
           item[this.displayedProp] = finalVal;
         }
-        else // no value in the field or invalid
+        else // no value in the field
           item = null;
       }
       return item;
@@ -348,7 +348,6 @@
         // Even if the field value is not valid, we need to update the model;
         // clearing the model would clear the field.
         this.scope.modelData = this.getSearchItemModelData(itemText, onList);
-        console.log("%%% Set model data to "+JSON.stringify(this.scope.modelData));
       }
       else {
         if (!this.scope.modelData)
