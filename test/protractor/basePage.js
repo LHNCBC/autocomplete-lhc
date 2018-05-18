@@ -272,7 +272,11 @@ function BasePage() {
     // the autocompleter options.frequency setting, but it only happens when
     // testing, so I don't want to make that slower.
     browser.sleep(100);
-    field.sendKeys(text);
+    // Some key events are lost?  Send them one at a time.
+    for (var i=0, len=text.length; i<len; ++i) {
+      field.sendKeys(text[i]);
+      browser.sleep(10);
+    }
   }
 
 
@@ -283,12 +287,42 @@ function BasePage() {
    * @return a promise for when the size has been set
    */
   this.setWindowHeightForElement = (elemID) => {
+    // As of 2018/5/8 (or earlier) the setSize function no longer shrinks the
+    // window height in Chrome, though it does still affect the width.
+    // An issue was filed at:  https://github.com/angular/protractor/issues/4798
+    // Rather than wait for a fix, we are switching to using a new function,
+    // "putFieldAtBottomOfWindow".
     return browser.driver.executeScript('return jQuery("#'+elemID+'").offset().top'
       ).then(function(top) {
         // The returned offset top value is not completely right, it seems,
         // so I am adding adding extra height pixels in the setSize call below.
         return browser.manage().window().setSize(1100, top+110);
       });
+  };
+
+
+  /**
+   *  Puts the given element's bottom edge at the bottom of the window.
+   *  Assumption:  The window is taller than the element (typically a field).
+   * @param elemID the ID of the element (field) to be moved to the bottom
+   */
+  this.putElementAtBottomOfWindow = (elemID) => {
+    // Add a div to the top of the page whose height is just bit enough to
+    // push the element below the bottom, and then scroll it into view.
+    return browser.driver.executeScript(
+     `var elem = jQuery("#"+arguments[0]);
+      var elemTop = elem.offset().top;
+      var winHeight = window.innerHeight;
+      if (winHeight > elemTop) {
+        var div = document.getElementById('scrollTestDiv');
+        if (!div) {
+          div = $('<div style="background-color: green" id=scrollTestDiv></div>')[0];
+          document.body.insertBefore(div, document.body.firstChild);
+        }
+        div.style.height = (winHeight-elemTop)+'px';
+        div.style.width = '100px'; // to make it visible
+      }
+      elem[0].scrollIntoView(false);`, elemID);
   };
 };
 

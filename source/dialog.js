@@ -78,7 +78,7 @@ if (typeof Def === 'undefined')
         setTimeout(jQuery.proxy(function(){
           var closeButtonContainer = jQuery(this.dialog_[0].parentNode);
           closeButtonContainer.find('.ui-dialog-titlebar-close')[0].focus()
-        }, this), 1);
+        }, this));
 
         this.opening_ = false;
       }

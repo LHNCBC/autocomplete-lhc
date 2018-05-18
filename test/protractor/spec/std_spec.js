@@ -19,7 +19,7 @@ describe('autocomp', function() {
     expect(searchResults.isDisplayed()).toBeTruthy();
     // In suggestion mode 0, the first element should be what is alphabetically
     // first.
-    expect(po.firstSearchRes.getInnerHtml()).toEqual('Arm painzzzzz');
+    expect(po.firstSearchRes.getText()).toEqual('Arm painzzzzz');
     // Backspace to erase the field, or the non-match suggestions dialog will
     // appear (for the other kind of suggestion).
     suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -31,7 +31,7 @@ describe('autocomp', function() {
     po.waitForSearchResults();
     // In suggesion mode 1, the first element should be the shortest item
     // starting with the input text.
-    expect(po.firstSearchRes.getInnerHtml()).toEqual('Arm z');
+    expect(po.firstSearchRes.getText()).toEqual('Arm z');
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -42,7 +42,7 @@ describe('autocomp', function() {
 
     // In suggestion mode 2, the first element should be the first returned in
     // the AJAX call.
-    expect(po.firstSearchRes.getInnerHtml()).toEqual('Coronary artery disease (CAD)');
+    expect(po.firstSearchRes.getText()).toEqual('Coronary artery disease (CAD)');
     suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
     suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
@@ -177,6 +177,9 @@ describe('autocomp', function() {
 
   it('should handle left/right arrows for two-column lists', function() {
     po.openTestPage();
+    // Position the field at the bottom of the window so the two-column layout
+    // should be in effect.
+    po.putElementAtBottomOfWindow(po.multiHeadingCWEID);
     po.multiHeadingCWE.click();
     // Move to first item past heading (second item)
     po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_DOWN);
@@ -234,38 +237,35 @@ describe('autocomp', function() {
     // A list should appear
     // This list is using statitics, so it pulls CAD to the top.  The second
     // result is what we can compare with the first result in the other list.
-    expect(po.secondSearchRes.getInnerHtml()).toBe("Arm pain");
+    expect(po.secondSearchRes.getText()).toBe("Arm pain");
     // Now go to another field, which like multiSearchCWE has no name field.
     po.searchCNE.click();
     po.sendKeys(po.searchCNE, 'ar');
     po.waitForSearchResults();
     // The search result list should be different (even though the name
     // attribute is the same/missing for both).
-    expect(po.firstSearchRes.getInnerHtml()).not.toBe("Arm pain");
-    expect(po.firstSearchRes.getInnerHtml()).toBe("Arachnoiditis");
+    expect(po.firstSearchRes.getText()).not.toBe("Arm pain");
+    expect(po.firstSearchRes.getText()).toBe("Arachnoiditis");
   });
 
 
   it('should not use twoColumnFlow for a tableFormat list', function() {
     // Re-open the page so the multiFieldSearch field is not scrolled up.
     po.openTestPage();
-    // Resize the window so the two-column layout would be in effect for a
-    // non-tableFormat list.
-    browser.manage().window().getSize().then(oldWindowSize => {
-      po.setWindowHeightForElement(po.multiFieldSearchID);
-      po.multiFieldSearch.click();
-      po.sendKeys(po.multiFieldSearch, "ar");
-      // Arrow down to first item
-      po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(po.multiFieldSearch.getAttribute('value')).toBe(
-        'pain in arm');
-      // In a two column list, the right arrow key would move to a different item.
-      // Confirm that it does not.
-      po.multiFieldSearch.sendKeys(protractor.Key.ARROW_RIGHT);
-      expect(po.multiFieldSearch.getAttribute('value')).toBe(
-        'pain in arm');
-      browser.manage().window().setSize(oldWindowSize.width, oldWindowSize.height);
-    });
+    // Move the field to the bottom of the window so the two-column layout would
+    // be in effect for a non-tableFormat list.
+    po.putElementAtBottomOfWindow(po.multiFieldSearchID);
+    po.multiFieldSearch.click();
+    po.sendKeys(po.multiFieldSearch, "ar");
+    // Arrow down to first item
+    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
+    expect(po.multiFieldSearch.getAttribute('value')).toBe(
+      'pain in arm');
+    // In a two column list, the right arrow key would move to a different item.
+    // Confirm that it does not.
+    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_RIGHT);
+    expect(po.multiFieldSearch.getAttribute('value')).toBe(
+      'pain in arm');
   });
 
 

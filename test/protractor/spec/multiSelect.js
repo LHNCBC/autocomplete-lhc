@@ -152,6 +152,7 @@ describe('multi-select lists', function() {
 
   it('should not allow left/right arrows to pick headings', function() {
     po.openTestPage();
+    po.putElementAtBottomOfWindow(po.multiHeadingCWEID);
     // Pick the first non-item item in the multi-select heading CWE field
     po.multiHeadingCWE.click();
     po.secondSearchRes.click();

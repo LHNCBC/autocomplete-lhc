@@ -37,7 +37,7 @@ describe('multi-field lists', function() {
     po.sendKeys(po.multiFieldSearch, 'ar');
     po.waitForSearchResults();
     expect(po.tableSearchResult(1).isPresent(0)).toBe(true);
-    expect(po.tableSearchResult(1).getInnerHtml()).toBe(
+    expect(po.tableSearchResult(1).getAttribute("innerHTML")).toBe(
       '<td>Arm pain</td><td>pain in arm</td>');
   });
 
@@ -52,17 +52,17 @@ describe('multi-field lists', function() {
     po.multiSelectTableSearch.click();
     po.sendKeys(po.multiSelectTableSearch, 'ar');
     po.waitForSearchResults();
-    expect(po.tableSearchResult(1).getInnerHtml()).toBe('<td>NM_001113511</td>');
+    expect(po.tableSearchResult(1).getAttribute("innerHTML")).toBe('<td>NM_001113511</td>');
     po.tableSearchResult(1).click();
     expect(po.getSelectedItems(po.multiSelectTableSearchID)).toEqual(
       ['NM_001113511']);
     expect(po.shownItemCount()).toBe(6);
-    expect(po.tableSearchResult(1).getInnerHtml()).not.toBe('<td>NM_001113511</td>');
+    expect(po.tableSearchResult(1).getAttribute("innerHTML")).not.toBe('<td>NM_001113511</td>');
     po.nonField.click();
     po.multiSelectTableSearch.click();
     po.sendKeys(po.multiSelectTableSearch, 'ar');
     expect(po.shownItemCount()).toBe(6);
-    expect(po.tableSearchResult(1).getInnerHtml()).not.toBe('<td>NM_001113511</td>');
+    expect(po.tableSearchResult(1).getAttribute("innerHTML")).not.toBe('<td>NM_001113511</td>');
   });
 
 
@@ -70,7 +70,7 @@ describe('multi-field lists', function() {
     po.multiFieldSearchHeaders.click();
     po.sendKeys(po.multiFieldSearchHeaders, 'ar');
     po.waitForSearchResults();
-    expect(po.tableSearchResult(1).getInnerHtml()).toBe('<th>C1</th><th>C2</th>');
+    expect(po.tableSearchResult(1).getAttribute("innerHTML")).toBe('<th>C1</th><th>C2</th>');
     // Make sure we can't click on the header and select it
     po.tableSearchResult(1).click();
     expect(po.multiFieldSearchHeaders.getAttribute('value')).toBe('ar');

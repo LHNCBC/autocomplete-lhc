@@ -82,7 +82,7 @@ var AutocompPage = function() {
     // whether it is a bug with protractor, or webdriver-manager, I don't know.)
     // Get a blank page first, and then get the test page.
     browser.get('about:blank');
-    browser.get(this.testPageURL);
+    return browser.get(this.testPageURL);
   }
 
   // Returns the scroll position of the window

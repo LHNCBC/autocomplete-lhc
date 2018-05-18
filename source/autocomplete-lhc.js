@@ -190,7 +190,7 @@
 
     /**
      *  Returns model data for the field value "finalVal".  (Used for Prefetch
-     *  lists.)
+     *  lists.)  If the field is empty, null will be returned.
      * @param finaVal the field value after list selection.  This is the
      *  trimmed "text" value, which will be in the returned model object.
      * @param itemTextToItem a hash of list values to model data objects
@@ -219,6 +219,8 @@
       // finalVal is a trimmed version of the text.  Use that for
       // the model data.
       if (!this.ac.multiSelect_) {
+        // Even if the field value is not valid, we need to update the model;
+        // clearing the model would clear the field.
         this.scope.modelData =
           this.getPrefetchItemModelData(finalVal, itemTextToItem);
       }
@@ -236,9 +238,11 @@
             }
           }
         }
-        else {
-          selectedItems.push(
-            this.getPrefetchItemModelData(finalVal, itemTextToItem));
+        else if (eventData.on_list || !this.acOptions.matchListValue) {
+          // (Add the new model item, but not if it is invalid)
+          var newModel = this.getPrefetchItemModelData(finalVal, itemTextToItem);
+          if (newModel) // could be null if the field value was empty
+            selectedItems.push(newModel);
         }
       }
     },
@@ -302,7 +306,7 @@
 
     /**
      *  Returns the model data structure for a selected item in a search
-     *  list.
+     *  list.  If the field is empty, null will be returned.
      * @param itemText the display string of the selected item
      * @param onList true if the selected item was from the list
      */
@@ -341,6 +345,8 @@
       var itemText = eventData.final_val;
       var onList = eventData.on_list;
       if (!this.ac.multiSelect_) {
+        // Even if the field value is not valid, we need to update the model;
+        // clearing the model would clear the field.
         this.scope.modelData = this.getSearchItemModelData(itemText, onList);
       }
       else {
@@ -357,8 +363,11 @@
             }
           }
         }
-        else {
-          selectedItems.push(this.getSearchItemModelData(itemText, onList));
+        else if (eventData.on_list || !this.acOptions.matchListValue) {
+          // (Add the new model item, but not if it is invalid)
+          var newModel = this.getSearchItemModelData(itemText, onList);
+          if (newModel) // could be null if the field value was empty
+            selectedItems.push(newModel);
         }
       }
     },

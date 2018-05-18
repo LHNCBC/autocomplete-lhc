@@ -17,61 +17,55 @@ describe('autocomp scroll function', function() {
 
   it('should scroll the list into view', function() {
     po.openTestPage();
-    po.setWindowHeightForElement(po.longOddCNEID)
-    expect(po.windowScrollTop()).toBe(0);
+    po.putElementAtBottomOfWindow(po.longOddCNEID);
     po.longOddCNE.click();
+    var winScrollPos = po.windowScrollTop();
     browser.sleep(100); // wait for scroll to happen
-    expect(po.windowScrollTop()).toBeGreaterThan(0);
+    expect(po.windowScrollTop()).toBeGreaterThan(winScrollPos);
   });
 
 
   it('should not scroll the list into view when that is disabled', function() {
     po.openTestPage();
-    // Set the window height so it just includes #long_odd_cne
-    po.setWindowHeightForElement(po.longOddCNENoScrollID);
+    po.putElementAtBottomOfWindow(po.longOddCNENoScrollID);
+    var winScrollPos = po.windowScrollTop();
     po.longOddCNENoScroll.click();
     browser.sleep(100); // wait for scroll to happen (if it does)
-    expect(po.windowScrollTop()).toBe(0);
+    expect(po.windowScrollTop()).toBe(winScrollPos); // no change
   });
 
 
   it('should not scroll the list into the header bar', function() {
     po.openTestPage();
+    po.putElementAtBottomOfWindow(po.longOddCNENoScrollID);
     // Get the position of the test field
-
     browser.driver.executeScript('return jQuery("'+po.longOddCNECSS+
-      '").offset().top').then(function(fieldTop) {
-      // Make sure our test field in in the viewport
-      browser.manage().window().setSize(1100, fieldTop+110);
-
+      '")[0].getBoundingClientRect().top').then(function(fieldTop) {
       // Add a top header bar.
       // Extend the height down to the top of the field, so that it doesn't
       // scroll.
       var headerBar = '<div id=\'testHeaderBar\' style=\'background-color: blue; height: '+
-        fieldTop+'px; position: fixed; top: 0; width: 100px\'></div>'
+        fieldTop+'px; position: fixed; top: 0; width: 75px\'></div>'
       browser.driver.executeScript('document.body.appendChild(jQuery("'+
-           headerBar+'")[0])').then(function() {
-        expect(po.windowScrollTop()).toBe(0); // precondition
-        // Now click in the field.  The field shouldn't move upward.
-        po.longOddCNE.click();
-        browser.sleep(100); // allow for scrolling to happen
-        expect(po.windowScrollTop()).toBe(0);
-        // Now shorten the header and confirm that the field scrolls
-        browser.executeScript('jQuery("#testHeaderBar")[0].style.height="10px"').
-            then(function() {
-          po.nonField.click();
-          po.longOddCNE.click();
-          browser.sleep(100); // allow for scrolling to happen
-          expect(po.windowScrollTop()).not.toBe(0);
-        });
-      })
+           headerBar+'")[0])');
+      var initialWinScroll = po.windowScrollTop();
+      // Now click in the field.  The field shouldn't move upward.
+      po.longOddCNE.click();
+      browser.sleep(100); // allow for scrolling to (not) happen
+      expect(po.windowScrollTop()).toBe(initialWinScroll);
+      // Now shorten the header and confirm that the field scrolls
+      browser.executeScript('jQuery("#testHeaderBar")[0].style.height="10px"')
+      po.nonField.click();
+      po.longOddCNE.click();
+      browser.sleep(100); // allow for scrolling to happen
+      expect(po.windowScrollTop()).toBeGreaterThan(initialWinScroll);
     });
   });
 
 
   it('should scroll as much as possible when the list is large', function() {
     po.openTestPage();
-    po.setWindowHeightForElement(po.multiHeadingCWEID);
+    po.putElementAtBottomOfWindow(po.multiHeadingCWEID);
     // Test that when the long list is expanded, the field gets scrolled up to
     // the top of the window.
     po.multiHeadingCWE.click();
@@ -106,7 +100,7 @@ describe('autocomp scroll function', function() {
     // in which the field was scrolled to the top, but shift-tab to the previous
     // field before the scrolling is done.
     po.openTestPage();
-    po.setWindowHeightForElement(po.multiHeadingCWEID);
+    po.putElementAtBottomOfWindow(po.multiHeadingCWEID);
     po.multiHeadingCWE.click();
     po.multiHeadingCWE.sendKeys(protractor.Key.CONTROL, protractor.Key.ENTER);
     // Now shift-tab to previous field

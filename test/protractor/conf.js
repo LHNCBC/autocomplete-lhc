@@ -46,7 +46,13 @@ exports.config = {
     loggingPrefs: {
       browser: "ALL"
     },
-    browserName: 'chrome'
+    browserName: 'chrome',
+    chromeOptions: {
+      // Prevent Chrome from putting up a message that says it is being
+      // controlled by test software.  See:
+      // https://sqa.stackexchange.com/a/26120/32547
+      args: ['disable-infobars']
+    }
   },
 
   // ----- The test framework -----

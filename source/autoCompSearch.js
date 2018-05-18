@@ -1074,8 +1074,7 @@
       var usedSuggestion = listItems[index];
       var valTyped = this.domCache.get('elemVal');
       var newVal = listItems[index];
-      this.setFieldVal(this.lastValidVal_ = this.processedFieldVal_ =
-         usedSuggestion, false);
+      this.setFieldVal(this.processedFieldVal_ = usedSuggestion, false);
       // Mark the field as having a valid value, and reset processedFieldVal_.
       this.setMatchStatusIndicator(true);
       this.fieldValIsListVal_ = true;
