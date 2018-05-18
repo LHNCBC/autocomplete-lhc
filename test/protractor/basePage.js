@@ -303,11 +303,11 @@ function BasePage() {
 
   /**
    *  Puts the given element's bottom edge at the bottom of the window.
-   *  Assumption:  The window is taller the element (typically a field).
+   *  Assumption:  The window is taller than the element (typically a field).
    * @param elemID the ID of the element (field) to be moved to the bottom
    */
   this.putElementAtBottomOfWindow = (elemID) => {
-    // Add a div to the top of the page who height is just bit enough to
+    // Add a div to the top of the page whose height is just bit enough to
     // push the element below the bottom, and then scroll it into view.
     return browser.driver.executeScript(
      `var elem = jQuery("#"+arguments[0]);
@@ -319,7 +319,7 @@ function BasePage() {
           div = $('<div style="background-color: green" id=scrollTestDiv></div>')[0];
           document.body.insertBefore(div, document.body.firstChild);
         }
-        div.style.height = ''+(winHeight-elemTop)+'px';
+        div.style.height = (winHeight-elemTop)+'px';
         div.style.width = '100px'; // to make it visible
       }
       elem[0].scrollIntoView(false);`, elemID);
