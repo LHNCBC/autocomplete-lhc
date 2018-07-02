@@ -3,6 +3,12 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [16.0.1] - 2018-07-02
+### Fixed
+ - Fixed an issue with selection of a list item that differs by another only by
+   case, when the user completely types the value and leaves the field without
+   picking it.
+
 ## [16.0.0] - 2018-05-10
 ### Changed
 - Various timeouts were adjusted from 1 ms to 0 ms, to introduce more
