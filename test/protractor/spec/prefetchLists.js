@@ -4,7 +4,7 @@ var po = require('../autocompPage.js');
 
 describe('Prefetch lists', function() {
   it('should prefer a case-sensitive match when attempting a selection', function() {
-    // In the UCUM list, both "pA" and "Pa" appear as units, and then one the
+    // In the UCUM list, both "pA" and "Pa" appear as units, and the one the
     // user types should be selected when they leave the field.
     po.openTestPage();
     po.sendKeys(po.csMatchPrefetch, 'pA');
