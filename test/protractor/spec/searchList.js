@@ -2,6 +2,21 @@ var helpers = require('../test_helpers.js');
 var po = require('../autocompPage.js');
 
 describe('search lists', function() {
+  it('should prefer a case-sensitive match when attempting a selection', function() {
+    // In the UCUM list, both "pA" and "Pa" appear as units, and the one the
+    // user types should be selected when they leave the field.
+    po.openTestPage();
+    po.sendKeys(po.csMatchSearch, 'pA');
+    po.waitForSearchResults();
+    po.csMatchSearch.sendKeys(protractor.Key.TAB);
+    expect(po.csMatchSearch.getAttribute('value')).toEqual('pA');
+    po.clearField(po.csMatchSearch);
+    po.sendKeys(po.csMatchSearch, 'Pa');
+    po.waitForSearchResults();
+    po.csMatchSearch.sendKeys(protractor.Key.TAB);
+    expect(po.csMatchSearch.getAttribute('value')).toEqual('Pa');
+  });
+
   it('should not run an AJAX call on a control+a (select all) event',
       function() {
     // The problem case is (was) noticeable if after you select an item from the

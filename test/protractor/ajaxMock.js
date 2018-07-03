@@ -121,8 +121,16 @@ mockData_ = {
          '"AGXT","c.731T>C","p.Ile244Thr"],["20694","NM_005807.4","-",'+
          '"c.4190_4191delCCinsAG","p.Ser1397Ter"]]]'
     }
-  }
+  },
 
+  'cs_match_search': (function() {
+    var returnCodes = ["aa", "pA", "Pa", "pB"];
+    var returnFields = [];
+    for (var i=0, len=returnCodes.length; i<len; ++i)
+      returnFields.push([returnCodes[i]]); // wrap in array
+    var paRtn = JSON.stringify([returnCodes.length, returnCodes, null, returnFields]);
+    return {partial: {'pA': paRtn, 'Pa': paRtn}}; // CTSS is case-insenstive
+  })()
 };
 
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.

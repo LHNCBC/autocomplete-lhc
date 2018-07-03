@@ -179,6 +179,18 @@ var opts = {valueCols: [0], tableFormat: true};
 new Def.Autocompleter.Search('allele_search',
     '/form/get_search_res_list?fd_id=alleles', opts);
 
+// A search list to test for case-sensitive matching
+new Def.Autocompleter.Search('cs_match_search',
+    '/form/get_search_res_list?fd_id=cs_match_search',
+    {suggestionMode: Def.Autocompleter.NO_COMPLETION_SUGGESTIONS});
+
+// A prefetch list to test for case-sensitive matching
+new Def.Autocompleter.Prefetch('cs_match_prefetch',
+    ["aa", "pA", "Pa", "pB"],
+    {suggestionMode: Def.Autocompleter.NO_COMPLETION_SUGGESTIONS});
+
+
+
 // Lists to test passing an element instead of an ID.
 opts = {};
 opts['matchListValue']=true;

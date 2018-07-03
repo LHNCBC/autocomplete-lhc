@@ -3,6 +3,19 @@ var hasClass = helpers.hasClass;
 var po = require('../autocompPage.js');
 
 describe('Prefetch lists', function() {
+  it('should prefer a case-sensitive match when attempting a selection', function() {
+    // In the UCUM list, both "pA" and "Pa" appear as units, and the one the
+    // user types should be selected when they leave the field.
+    po.openTestPage();
+    po.sendKeys(po.csMatchPrefetch, 'pA');
+    po.csMatchPrefetch.sendKeys(protractor.Key.TAB);
+    expect(po.csMatchPrefetch.getAttribute('value')).toEqual('pA');
+    po.clearField(po.csMatchPrefetch);
+    po.sendKeys(po.csMatchPrefetch, 'Pa');
+    po.csMatchPrefetch.sendKeys(protractor.Key.TAB);
+    expect(po.csMatchPrefetch.getAttribute('value')).toEqual('Pa');
+  });
+
   it('should show the list when clicked even if focused', function() {
     po.openTestPage();
     po.prefetchCWE.click();

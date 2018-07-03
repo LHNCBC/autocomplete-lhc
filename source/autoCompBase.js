@@ -2092,15 +2092,29 @@ if (typeof Def === 'undefined')
 
       if (this.active) {
         if (this.index === -1) {
-          var elemVal = this.domCache.get('elemVal').trim().toLowerCase();
-          // Allow the selection if what the user typed
-          // exactly matches an item in the list, except for case.
-          for (var i=0; i<this.entryCount && !canSelect; ++i) {
+          var elemVal = this.domCache.get('elemVal').trim();
+          var lcElemVal = elemVal.toLowerCase();
+          var caseSensitiveMatchIndex = -1;
+          var matchIndex = -1;
+          // Allow the selection if what the user typed exactly matches an item
+          // in the list, except for case, but prefer a case-sensitive match.
+          for (var i=0; i<this.entryCount && caseSensitiveMatchIndex<0; ++i) {
             var li = this.getEntry(i);
-            if (elemVal===this.listItemValue(li).toLowerCase() && !this.liIsHeading(li)) {
-              canSelect = true;
-              this.index = i;
+            var liVal = this.listItemValue(li);
+            if (!this.liIsHeading(li)) {
+              if (elemVal === liVal)
+                caseSensitiveMatchIndex = i;
+              else if (matchIndex < 0 && lcElemVal === liVal.toLowerCase())
+                matchIndex = i;
             }
+          }
+          if (caseSensitiveMatchIndex >= 0) {
+            this.index = caseSensitiveMatchIndex;
+            canSelect = true;
+          }
+          else if (matchIndex >= 0) {
+            this.index = matchIndex
+            canSelect = true;
           }
         }
         else

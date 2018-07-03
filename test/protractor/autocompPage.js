@@ -28,6 +28,8 @@ var AutocompPage = function() {
   this.itemNumMatchFieldID = 'item_num_match_test';
   this.itemNumMatchField = $('#'+this.itemNumMatchFieldID);
   this.alleleSearch = $('#allele_search');
+  this.csMatchSearch = $('#cs_match_search');
+  this.csMatchPrefetch = $('#cs_match_prefetch');
 
   // Multi-select CNE prefetch list
   this.multiPrefetchCNEID = 'fe_multi_sel_cne';
