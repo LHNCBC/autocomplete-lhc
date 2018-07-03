@@ -5,8 +5,8 @@ This log documents significant changes for each release.  This project follows
 
 ## [16.0.1] - 2018-07-02
 ### Fixed
- - Fixed an issue with selection of a list item that differs by another only by
-   case, when the user completely types the value and leaves the field without
+ - Fixed an issue with selection of a list item that differs from another only by
+   case, when the user types the item exactly and leaves the field without
    picking it.
 
 ## [16.0.0] - 2018-05-10
