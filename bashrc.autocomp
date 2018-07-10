@@ -8,7 +8,7 @@
 
 
 # Use the globally installed node and its modules
-NODE_DIR=node-v8.11.1-linux-x64
+NODE_DIR=node-v8.11.3-npm-5.7.1
 # Set path
 PATH=/depot/packages/${NODE_DIR}/bin:/bin:/usr/local/bin:/usr/bin:/usr/sbin:/sbin:/etc
 
