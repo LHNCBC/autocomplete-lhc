@@ -302,4 +302,52 @@ describe('search lists', function() {
       });
     });
   });
+
+  describe('sort option', function() {
+    describe('suggestion mode 0 (no suggestions)', function () {
+      it('should return the results in their original order', function() {
+        po.openTestPage();
+        let field = $('#search0NoSort_cwe');
+        field.click();
+        po.sendKeys(field, 'ar');
+        po.waitForSearchResults();
+        expect(po.firstSearchRes.getText()).toEqual("Coronary artery disease (CAD)");
+        // Next two are unsorted
+        expect(po.fifthSearchRes.getText()).toEqual("Shoulder or upper arm injury");
+        expect(po.searchResult(6).getText()).toEqual("Kidney failure (short-term renal failure)");
+      });
+    });
+
+    describe('suggestion mode 1 (shortest)', function () {
+      it('should return the results in their original order but with a suggestion at the top', function() {
+        po.openTestPage();
+        let field = $('#search1NoSort_cwe');
+        field.click();
+        po.sendKeys(field, 'ar');
+        po.waitForSearchResults();
+        expect(po.firstSearchRes.getText()).toEqual("Arm pain");
+        // Next two are unsorted
+        expect(po.fifthSearchRes.getText()).toEqual("Shoulder or upper arm injury");
+        expect(po.searchResult(6).getText()).toEqual("Kidney failure (short-term renal failure)");
+      });
+    });
+
+    describe('suggestion mode 2 (statistics)', function () {
+      it('should return the results in their original order', function() {
+        // In this case the "suggestion" is the top-most item from the original
+        // order.  If the "sort" option were enabled, the rest of the items
+        // would be sorted, but it is not, so this case is actually the same as
+        // suggestion mode 0.
+        po.openTestPage();
+        let field = $('#search2NoSort_cwe');
+        field.click();
+        po.sendKeys(field, 'ar');
+        po.waitForSearchResults();
+        expect(po.firstSearchRes.getText()).toEqual("Coronary artery disease (CAD)");
+        // Next two are unsorted
+        expect(po.fifthSearchRes.getText()).toEqual("Shoulder or upper arm injury");
+        expect(po.searchResult(6).getText()).toEqual("Kidney failure (short-term renal failure)");
+      });
+    });
+  });
 });

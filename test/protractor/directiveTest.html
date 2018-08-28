@@ -70,6 +70,12 @@
         ng-model="listFieldVal4b"
         autocomplete-lhc="searchList4bOpts">
       <p>
+      Search CWE list without suggestions or sorting:
+      <input name="list4c" id="list4c" type="text"
+        ng-required="false" placeholder="Select or type a value"
+        ng-model="listFieldVal4c"
+        autocomplete-lhc="searchList4cOpts">
+      <p>
        Prefetch CWE list w/ pre-populated model value:
       <input name="list1b" type="text"
         ng-required="false"
@@ -231,6 +237,14 @@
         };
 
         $scope.listFieldVal4b = {}; // used for test
+
+        $scope.searchList4cOpts = {
+          url: '/form/get_search_res_list?fd_id=2163',
+          matchListValue: false,
+          autocomp: true,
+          suggestionMode: 0,
+          sort: false
+        };
 
         $scope.list5Opts = {
           listItems: [

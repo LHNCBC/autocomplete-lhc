@@ -45,6 +45,21 @@ var opts = {'matchListValue': false,
 new Def.Autocompleter.Search('fe_search2_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
 
+var opts = {'matchListValue': false, sort: false,
+ 'suggestionMode': Def.Autocompleter.SUGGEST_SHORTEST};
+new Def.Autocompleter.Search('search1NoSort_cwe',
+    '/form/get_search_res_list?fd_id=2163', opts);
+
+var opts = {'matchListValue': false, sort: false,
+ 'suggestionMode': Def.Autocompleter.NO_COMPLETION_SUGGESTIONS};
+new Def.Autocompleter.Search('search0NoSort_cwe',
+    '/form/get_search_res_list?fd_id=2163', opts);
+
+var opts = {'matchListValue': false, sort: false,
+ 'suggestionMode': Def.Autocompleter.USE_STATISTICS};
+new Def.Autocompleter.Search('search2NoSort_cwe',
+    '/form/get_search_res_list?fd_id=2163', opts);
+
 var opts = {};
 opts['matchListValue']=true
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;

@@ -168,20 +168,17 @@
      *     the list (default: false).  When this field is false, for a
      *     non-matching value a dialog will be shown with a list of suggestions
      *     that are on the list.</li>
-     *    <li>buttonID - the ID of the button (if there is one) which activates
-     *     a search.  If you use this option, do not set matchListValue.</li>
-     *    <li>autocomp - a boolean that controls whether the field should
-     *     also autocomplete as the user types.  When this is false, the user
-     *     won't see an autocompletion list until they hit return.  (Default:  true)</li>
-     *    <li>dataRequester - A RecordDataRequester for getting additional data
-     *     after the user makes a selection from the completion list.  This may be
-     *     null, in which case no request for additional data is made.</li>
+     *    <li>sort - Whether or not values should be sorted after being
+     *     retrieved from the server.  (Default: true).  Note that if you do not
+     *     want sorting, you might also want set the suggestionMode parameter to
+     *     Def.Autocompleter.NO_COMPLETION_SUGGESTIONS so that a suggestion is
+     *     not moved to the top of the list.</li>
      *    <li>suggestionMode - an integer specifying what type of suggestion
      *     should be offered based on what the user has typed.  For values, see
      *     defAutocompleterBaseInit in autoCompBase.js.
      *    <li>useResultCache - (default: true) Whether or not the results
      *     should be cached.  The same cache is used for all fields that share
-     *     the same target_field name.</li>
+     *     the same url parameter value.</li>
      *    <li>maxSelect - (default 1) The maximum number of items that can be
      *     selected.  Use '*' for unlimited.</li>
      *    <li>minChars - (default 1) The minimum number of characters that must
@@ -214,6 +211,16 @@
      *    <li>colHeaders - Used when tableFormat is true, this is an array of
      *     column headers for the columns in the table.  If this is not supplied, no header
      *     row will be created.</li>
+     *    <ul>Somewhat obsolete, but not yet deprecated, parameters:
+     *      <li>buttonID - the ID of the button (if there is one) which activates
+     *       a search.  If you use this option, do not set matchListValue.</li>
+     *      <li>autocomp - a boolean that controls whether the field should
+     *       also autocomplete as the user types.  When this is false, the user
+     *       won't see an autocompletion list until they hit return.  (Default:  true)</li>
+     *      <li>dataRequester - A RecordDataRequester for getting additional data
+     *       after the user makes a selection from the completion list.  This may be
+     *       null, in which case no request for additional data is made.</li>
+     *    </ul>
      *  </ul>
      */
     initialize: function(fieldID, url, options) {
@@ -253,6 +260,9 @@
         // was treating such a large timeout value as zero.
         this.options.frequency = 365 * 86400; // seconds
       }
+
+      if (options.sort === undefined)
+        options.sort = true; // default
 
       if (options['useResultCache']!==null && options['useResultCache']===false)
         this.useResultCache_ = false; // default is true-- see declaration
@@ -482,13 +492,11 @@
      *  items to the list item arrays received from the AJAX call
      * @return an array of three elements, an array of field value strings from
      *  fieldValToItemFields ordered in the way the items should appear in the
-     *  list, a boolean indicating whether the
-     *  topmost item is placed as a suggested item, and a boolean indicating
-     *  whether the user picked by number.
+     *  list, and a boolean indicating whether the
+     *  topmost item is placed as a suggested item.
      */
     processChoices: function(fieldValToItemFields) {
       // Filter out already selected items for multi-select lists
-      var pickedByNum = false;
       var filteredItems = [];
       var fieldVals = Object.keys(fieldValToItemFields);
       for (var i=0, len=fieldVals.length; i<len; ++i) {
@@ -511,28 +519,31 @@
           // item at the top of the list when sorting.
           var topItemIndex = 0;
         }
-        else {
-          pickedByNum = this.pickedByNumber();
-          if (!pickedByNum &&
-              this.suggestionMode_ === Def.Autocompleter.SUGGEST_SHORTEST) {
-            var topItemIndex = this.pickBestMatch(filteredItems);
-            if (topItemIndex > -1)
-              suggestionFound = true;
-          }
+        else if (this.suggestionMode_ === Def.Autocompleter.SUGGEST_SHORTEST) {
+          var topItemIndex = this.pickBestMatch(filteredItems);
+          if (topItemIndex > -1)
+            suggestionFound = true;
         }
 
-        if (topItemIndex > -1) {
-          topItem = filteredItems[topItemIndex];
-          // Set the top item to '', so it will sort to the top of the list.
-          // That way, after the sort, we don't have to push it into the top
-          // of the list.  (It should be faster this way.)
-          filteredItems[topItemIndex] = '';
+        if (this.options.sort) {
+          if (topItemIndex > -1) {
+            topItem = filteredItems[topItemIndex];
+            // Set the top item to '', so it will sort to the top of the list.
+            // That way, after the sort, we don't have to push it into the top
+            // of the list.  (It should be faster this way.)
+            filteredItems[topItemIndex] = '';
+          }
+          filteredItems = filteredItems.sort(Def.Autocompleter.Base.noCaseSort);
+          if (topItemIndex > -1)
+            filteredItems[0] = topItem;
         }
-        filteredItems = filteredItems.sort(Def.Autocompleter.Base.noCaseSort);
-        if (topItemIndex > -1)
-          filteredItems[0] = topItem;
+        else if (topItemIndex > -1) { // no sorting, but still want suggestion at top
+          var temp = filteredItems[0];
+          filteredItems[0] = filteredItems[topItemIndex];
+          filteredItems[topItemIndex] = temp;
+        }
       }
-      return [filteredItems, suggestionFound, pickedByNum];
+      return [filteredItems, suggestionFound];
     },
 
 
@@ -727,11 +738,10 @@
           this.rawList_ = responseData[3]; // rawList_ is used in list selection events
           var fieldValToItemFields = this.createFieldVals(this.rawList_);
           var data = this.processChoices(fieldValToItemFields);
-          var listFieldVals=data[0], bestMatchFound=data[1],
-            pickedByNum=data[3];
+          var listFieldVals=data[0], bestMatchFound=data[1];
           var listHTML = this.buildUpdateHTML(listFieldVals, bestMatchFound,
             fieldValToItemFields);
-          this.updateChoices(listHTML, pickedByNum);
+          this.updateChoices(listHTML, false);
 
           var shownCount = listFieldVals.length;
           this.setSearchCountDiv(totalCount, shownCount,

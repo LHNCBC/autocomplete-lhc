@@ -56,7 +56,7 @@
 | storeExpression | javascript{a={}} | callbackData |
 | assertExpression | javascript{storedVars['callbackData']['input_method']} | null |
 # Set up a callback on a search field
-| assertExpression | javascript{Def.Autocompleter.Event.observeListSelections('search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
+| assertExpression | javascript{Def.Autocompleter.Event.observeListSelections('fe_search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
 | fireEvent | fe_search_cwe | focus |
 | typeText | fe_search_cwe | knee |
 # Select the first value using the down arrow (40 = down arrow)
@@ -106,7 +106,7 @@
 # Because this test brings up the suggestion box, I will take the opportunity
 # test the callback for that event.
 | storeExpression | javascript{a={}} | suggestionData |
-| assertExpression | javascript{Def.Autocompleter.Event.observeSuggestionsShown('search_cwe', function(data){storedVars['suggestionData']=data}); 1} | 1|
+| assertExpression | javascript{Def.Autocompleter.Event.observeSuggestionsShown('fe_search_cwe', function(data){storedVars['suggestionData']=data}); 1} | 1|
 | typeKeys | fe_search_cwe | zzz |
 | keyDown | fe_search_cwe | \9 |
 | waitForExpression | javascript{storedVars['callbackData']['input_method']} | typed |
@@ -123,7 +123,7 @@
 
 # Test the focus callback
 | storeExpression | javascript{a={}} | callbackData |
-| assertExpression | javascript{Def.Autocompleter.Event.observeFocusEvents('search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
+| assertExpression | javascript{Def.Autocompleter.Event.observeFocusEvents('fe_search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
 | type | fe_search_cwe | abc |
 | fireEvent | fe_search_cwe | focus |
 | waitForExpression | javascript{storedVars['callbackData']['start_val']} | abc |
@@ -134,7 +134,7 @@
 
 # Test the cancel callback
 | storeExpression | javascript{a={}} | callbackData |
-| assertExpression | javascript{Def.Autocompleter.Event.observeCancelList('search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
+| assertExpression | javascript{Def.Autocompleter.Event.observeCancelList('fe_search_cwe', function(data){storedVars['callbackData']=data}); 1} | 1|
 | type | fe_search_cwe | |
 | fireEvent | fe_search_cwe | focus |
 | typeKeys | fe_search_cwe | ab |
@@ -170,7 +170,7 @@
 | waitForVisible | suggestionList | |
 | waitForExpression | javascript{storedVars['suggestionData']['suggestion_list'].length>0} | true |
 # Try using the suggestion box, and setting up a event listener
-| assertExpression | javascript{Def.Autocompleter.Event.observeSuggestionUsed('search_cwe', function(data){storedVars['suggestionUsed']=data}); 1} | 1|
+| assertExpression | javascript{Def.Autocompleter.Event.observeSuggestionUsed('fe_search_cwe', function(data){storedVars['suggestionUsed']=data}); 1} | 1|
 | storeExpression | javascript{a={}} | suggestionUsed |
 # | click | css=#suggestionList a:first | # Selenium didn't like the :first
 # selector for some reason.

@@ -3,6 +3,14 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [16.1.0] - 2018-08-28
+### Added
+ - The search autocompleter now has an option "sort" which controls whether the
+   list is sorted after being returned by the server.   Note that if you want
+   the list to be exacatly as returned by the server, you should set the
+   suggestionMode parameter to Def.Autocompleter.NO_COMPLETION_SUGGESTIONS so
+   that a suggestion is not moved to the top of the list.
+
 ## [16.0.1] - 2018-07-02
 ### Fixed
  - Fixed an issue with selection of a list item that differs from another only by
