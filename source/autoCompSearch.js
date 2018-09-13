@@ -490,7 +490,7 @@
      *  items, sorts the items, and picks the default item.
      * @param fieldValToItemFields a hash from field value version of the list
      *  items to the list item arrays received from the AJAX call
-     * @return an array of three elements, an array of field value strings from
+     * @return an array of two elements, an array of field value strings from
      *  fieldValToItemFields ordered in the way the items should appear in the
      *  list, and a boolean indicating whether the
      *  topmost item is placed as a suggested item.
@@ -505,7 +505,6 @@
           filteredItems.push(item);
       }
 
-      var suggestionFound = false;
       if (filteredItems.length > 0 && !this.numHeadings_) {
         // Sort items, but first see if there is a best match we want to move to
         // the top.
@@ -517,12 +516,10 @@
           // ordering of results returned by the server, which provides the
           // statistically best option at the top, so we work to keep this
           // item at the top of the list when sorting.
-          var topItemIndex = 0;
+          topItemIndex = 0;
         }
         else if (this.suggestionMode_ === Def.Autocompleter.SUGGEST_SHORTEST) {
-          var topItemIndex = this.pickBestMatch(filteredItems);
-          if (topItemIndex > -1)
-            suggestionFound = true;
+          topItemIndex = this.pickBestMatch(filteredItems);
         }
 
         if (this.options.sort) {
@@ -537,13 +534,13 @@
           if (topItemIndex > -1)
             filteredItems[0] = topItem;
         }
-        else if (topItemIndex > -1) { // no sorting, but still want suggestion at top
+        else if (topItemIndex > 0) { // no sorting, but still want suggestion at top
           var temp = filteredItems[0];
           filteredItems[0] = filteredItems[topItemIndex];
           filteredItems[topItemIndex] = temp;
         }
       }
-      return [filteredItems, suggestionFound];
+      return [filteredItems, topItemIndex > -1];
     },
 
 
