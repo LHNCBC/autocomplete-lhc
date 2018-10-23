@@ -9,6 +9,9 @@
   "commentsOnDeps": {},
   "dependencies": {},
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-loader": "^8.0.4",
     "bower": "^1.7.9",
     "connect": "^3.4.1",
     "grunt": "^1.0.0",
@@ -27,6 +30,8 @@
     "mocha": "^3.2.0",
     "serve-index": "^1.7.3",
     "serve-static": "^1.10.2",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
     "wiredep": "^4.0.0"
   },
   "scripts": {
