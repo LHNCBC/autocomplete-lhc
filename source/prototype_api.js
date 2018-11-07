@@ -598,3 +598,7 @@ Def.PrototypeAPI = function() {
     $A: $A
   }
 }();
+
+if (typeof module !== 'undefined')
+  module.exports = Def.PrototypeAPI;
+

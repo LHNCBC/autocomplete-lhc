@@ -7,7 +7,10 @@
     "test": "test"
   },
   "commentsOnDeps": {},
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "jquery-ui": "^1.12.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
