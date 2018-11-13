@@ -27,7 +27,7 @@ function commonConfig() {
           }
         }
       ]
-    },
+    }/*,
     plugins: [
       // Make jQuery avaiable
       new webpack.ProvidePlugin({
@@ -36,7 +36,7 @@ function commonConfig() {
         "window.jQuery": "jquery",
         "window.$": "jquery"
       })
-    ]
+    ]*/
   }
 }
 
