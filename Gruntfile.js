@@ -37,12 +37,6 @@ module.exports = function(grunt) {
           flatten: true,
           src: ['source/*png', 'LICENSE.md', 'README-dist.md'],
           dest: '<%= uncompressedDist %>'
-        },
-        {
-          expand: true,
-          cwd: 'bower_components/jquery-ui/themes/ui-lightness',
-          src: ['images/*'],
-          dest: '<%= uncompressedDist %>'
         }]
       }
     },
@@ -54,11 +48,6 @@ module.exports = function(grunt) {
           {
             src: ['source/auto_completion.css'],
             dest: '<%= uncompressedDist %>/autocomplete-lhc.min.css',
-          },
-          {
-            src: ['source/auto_completion.css',
-                  'bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css'],
-            dest: '<%= uncompressedDist %>/autocomplete-lhc_jQueryUI.min.css',
           }
         ]
       }
@@ -118,10 +107,6 @@ module.exports = function(grunt) {
           // Minified version of just the autocomplete-lhc files
           '<%= uncompressedDist %>/autocomplete-lhc.min.js':
             wiredep({includeSelf: true, exclude: [/jquery/]}).js,
-          // Minified version of the autocomplete-lhc files with the needed
-          // jQuery-UI components.
-          '<%= uncompressedDist %>/autocomplete-lhc_jQueryUI.min.js':
-            wiredep({includeSelf: true, exclude: [/jquery(-ui)?\.js/]}).js,
           // Minified version of autocomplete-lhc and all its dependencies
           '<%= uncompressedDist %>/autocomplete-lhc_jQuery.min.js':
             wiredep({includeSelf: true, exclude: [/jquery-ui\.js/]}).js

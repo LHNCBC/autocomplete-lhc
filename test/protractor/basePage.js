@@ -6,9 +6,6 @@ function BasePage() {
   this.searchResCSS = searchResCSS;
   this.allSearchRes = element.all(by.css(searchResCSS + ' li'));
   this.expandLink = $('#moreResults');
-  this.firstSugLink = element.all(by.css('.ui-dialog a')).first(); // first suggestion
-  this.suggestionDialog = element(by.css('.ui-dialog'));
-  this.suggestionDialogClose = element(by.css('.ui-dialog button'));
   this.completionOptionsCSS = '#completionOptions';
   this.completionOptionsScrollerCSS = '#completionOptionsScroller';
   this.completionOptionsScroller = $(this.completionOptionsScrollerCSS);

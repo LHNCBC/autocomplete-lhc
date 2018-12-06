@@ -3,7 +3,7 @@ var dp = require('../directivePage.js'); // dp = DirectivePage instance
 helpers = require('../test_helpers.js');
 var hasClass = helpers.hasClass;
 
-describe('directive', function() {
+fdescribe('directive', function() {
   describe(': search lists', function() {
     it('should show a result list when the user types', function() {
       dp.openDirectiveTestPage();
@@ -46,24 +46,10 @@ describe('directive', function() {
         {text: 'zArm pain', code: '2958',
          data: {term_icd9_code: '729.5', other_field: 'green'}});
 
-      // Try the suggestion list
-      dp.searchWithSug.sendKeys('ar');
-      // Click someplace else to leave 'ar' in the field
-      dp.searchList.click();
-      expect(dp.suggestionDialog.isDisplayed()).toBeTruthy();
-      expect(dp.firstSugLink.isDisplayed()).toBeTruthy();
-      dp.firstSugLink.click();
-      expect(dp.searchWithSug.getAttribute('value')).toBe('Aortic insufficiency');
-      expect(dp.searchWithSug.evaluate(dp.searchWithSugModel)).toEqual(
-        {text: 'Aortic insufficiency', code: '2886',
-         data: {term_icd9_code: '424.1'}, code_system: 'gopher'});
-
-
       // Try the search list that has suggestions turned off.
       dp.searchWithoutSug.sendKeys('ar');
       // Click someplace else to leave 'ar' in the field
       dp.inputElem.click();
-      expect(dp.suggestionDialog.isDisplayed()).toBeFalsy();
       expect(dp.searchWithoutSug.getAttribute('value')).toBe('ar');
       // The only entry in the model should be the text, because it is not on
       // the list.
@@ -93,18 +79,6 @@ describe('directive', function() {
         "angular.element('"+dp.multiSearchCWECSS+"').scope().$digest();");
     });
 
-    it('should provide suggestions when no list has been brought up', function() {
-      // This was added for issue LF-95.  The suggestions box failed to appear
-      // if the field had not previously shown a list when the field was left
-      // with a changed value.
-      dp.openDirectiveTestPage();
-      dp.searchWithSug.click();
-      dp.searchWithSug.sendKeys('a');
-      // Click someplace else to leave 'a' in the field
-      dp.inputElem.click();
-      expect(dp.suggestionDialog.isDisplayed()).toBeTruthy();
-    });
-
     it('should allow the URL to be undefined', function() {
       dp.openDirectiveTestPage();
       dp.noURLTest.click();
@@ -119,7 +93,7 @@ describe('directive', function() {
       expect(dp.searchResults.isDisplayed()).toBeTruthy();
     });
 
-    describe('CWE lists', function() {
+    fdescribe('CWE lists', function() {
       it('should set _notOnList for off-list items, but not empty values',
           function() {
         dp.openDirectiveTestPage();
@@ -127,6 +101,7 @@ describe('directive', function() {
         testField.click();
         testField.sendKeys('zzz');
         testField.sendKeys(protractor.Key.TAB);
+browser.sleep(10000);
         expect(dp.getModel(testField)).toEqual({text: 'zzz', _notOnList: true});
         // Now set it to an empty value.  The model value should be null.
         testField.click();

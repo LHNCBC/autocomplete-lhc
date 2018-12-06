@@ -98,8 +98,9 @@
 
 
       /**
-       *  Registers a callback for when a suggestions dialog is shown to the
-       *  user.
+       *  Registers a callback for when suggestions should be shown to the
+       *  user.  If the user selects a suggestion, the function acceptSuggestion
+       *  should be called with the index of the selected suggestion.
        * @param fieldKey the lookup key from Def.Observable.lookupKey(field) for which
        *  the given callback will be called.  Fields whose lookupKey value matches
        *  fieldKey will trigger the callback for this event.  The
@@ -107,17 +108,16 @@
        *  that are related for which the callback should receive notifications.
        * @param callback the function to be called when the event occurs.
        *  The function will be called with an the following argument:
-       *  - suggestion_list (an array of the values in the list shown to the user,
+       *  - suggestion_list (an array of the values in the list to be shown to the user.
        *    or an empty array if no suggestions were found)
        */
-      observeSuggestionsShown: function(fieldKey, callback) {
+      observeSuggestions: function(fieldKey, callback) {
         this.storeCallback(fieldKey, 'SUGGESTIONS', callback);
       },
 
 
       /**
-       *  Registers a callback for when a user accepts a suggestion from
-       *  the suggestion dialog.
+       *  Registers a callback for when a user accepts a suggestion.
        * @param fieldKey the lookup key from Def.Observable.lookupKey(field) for which
        *  the given callback will be called.  Fields whose lookupKey value matches
        *  fieldKey will trigger the callback for this event.  The

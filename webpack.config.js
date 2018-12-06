@@ -1,9 +1,11 @@
 const webpack = require('webpack');
 function commonConfig() {
   return {
+  /*
     node: {
       fs: "empty"
     },
+    */
     entry: './source/index.js',
     output: {
       path: __dirname,
@@ -43,12 +45,12 @@ function commonConfig() {
 let configs = [];
 
 let nonMinConfig = commonConfig();
-nonMinConfig.output.filename = './build/autocomplete-lhc.js';
+nonMinConfig.output.filename = './dist/latest/autocomplete-lhc.js';
 nonMinConfig.mode = 'none';
 configs.push(nonMinConfig);
 
 let minConfig = commonConfig();
-minConfig.output.filename = './build/autocomplete-lhc.min.js'
+minConfig.output.filename = './dist/latest/autocomplete-lhc.min.js'
 minConfig.mode = 'production';
 configs.push(minConfig);
 

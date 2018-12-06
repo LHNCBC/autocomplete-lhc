@@ -135,19 +135,6 @@ describe('search lists', function() {
     expect(po.listIsVisible()).toBeTruthy();
     expect(po.firstSearchRes.getText()).toEqual('CAD3');
     expect(po.secondSearchRes.getText()).toEqual('zArm pain3');
-
-    // Now try the non-match suggestion list.
-    po.searchCWE.click();
-    po.searchCWE.sendKeys('ab - c');
-    po.nonField.click(); // leave the field to trigger the suggestions
-    browser.wait(function() {
-      return po.suggestionDialog.isPresent();
-    }, 5000);
-    expect(po.suggestionDialog.isDisplayed()).toBeTruthy();
-    expect(po.firstSugLink.isDisplayed()).toBeTruthy();
-    expect(po.firstSugLink.getText()).toEqual('Blue');
-    // Close the dialog before continuing to the next test
-    po.suggestionDialogClose.click();
   });
 
   describe('clearCachedResults', function() {
@@ -231,21 +218,6 @@ describe('search lists', function() {
   });
 
 
-  describe('suggestion dialog', function() {
-    it('should provide a link to return to the field', function() {
-      // This tests that the return link focuses the field
-      po.clearField(po.searchCWE);
-      po.searchCWE.sendKeys('z');
-      po.searchCWE.sendKeys(protractor.Key.TAB);
-      browser.wait(function() {
-        return po.suggestionDialog.isPresent();
-      }, 5000);
-      $('#returnLink').click();
-      expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(po.searchCWEID);
-    });
-  });
-
-
   describe('getItemData', function() {
     describe('for items picked from the autocompletion list', function() {
       it('should return the code system when available', function() {
@@ -277,28 +249,6 @@ describe('search lists', function() {
         let itemData = browser.driver.executeScript(
           'return jQuery("'+po.searchCNECSS+'")[0].autocomp.getItemData();');
         expect(itemData.data).toBe(undefined);
-      });
-    });
-
-    describe('for items picked from the suggestion list', function() {
-      it('should return the code system when available', function() {
-        po.openTestPage();
-        po.waitForNoSearchResults();
-        po.searchCWE.click();
-        po.sendKeys(po.searchCWE, 'ar');
-        po.waitForSearchResults();
-        po.nonField.click();
-        browser.wait(function() {
-          return po.suggestionDialog.isPresent();
-        }, 5000);
-        expect(po.suggestionDialog.isDisplayed()).toBeTruthy();
-        expect(po.firstSugLink.isDisplayed()).toBeTruthy();
-        po.firstSugLink.click();
-        let itemData = browser.driver.executeScript(
-          'return jQuery("#'+po.searchCWEID+'")[0].autocomp.getItemData();');
-        expect(itemData).toEqual({code: "2886",
-          text: "Aortic insufficiency", code_system: "gopher",
-          data: {term_icd9_code: "424.1"}});
       });
     });
   });

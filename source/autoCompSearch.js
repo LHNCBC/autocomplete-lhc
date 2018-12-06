@@ -166,9 +166,7 @@
        *  values are:
        *  <ul>
        *    <li>matchListValue - Whether the field value is required to be one from
-       *     the list (default: false).  When this field is false, for a
-       *     non-matching value a dialog will be shown with a list of suggestions
-       *     that are on the list.</li>
+       *     the list (default: false).</li>
        *    <li>sort - Whether or not values should be sorted after being
        *     retrieved from the server.  (Default: true).  Note that if you do not
        *     want sorting, you might also want set the suggestionMode parameter to
@@ -192,9 +190,13 @@
        *     case the list element might be unusually short.
        *     Note:  At present the only tested cases of this parameter are the
        *     default value and null.</li>
-       *    <li>nonMatchSuggestions - (default: false) Whether the user should be
-       *     given a list of suggestions if they enter a non-matching value.
-       *     This only applies when matchListValue is false.</li>
+       *    <li>nonMatchSuggestions - (default: false, as of version 10)
+       *     Whether a list of suggestions should be generated if the user
+       *     enters a non-matching value.  To receive the list of suggestions,
+       *     the program should register a callback function via
+       *     Def.Autocompleter.Event.observeSuggestions.  See section on
+       *     Notifications in the documenation. This only applies when
+       *     matchListValue is false.
        *    <li>headerBar - If the page has a fixed-position element at the top of
        *     the page (e.g. a top navigation bar), the autocompleter needs to know
        *     that so that when scrolling to show the list it doesn't scroll the current
@@ -1003,11 +1005,6 @@
           data: paramData,
           complete: jQuery.proxy(this.onFindSuggestionComplete, this)
         };
-        var suggestionDialog = Def.Autocompleter.SuggestionDialog.getSuggestionDialog();
-        suggestionDialog.resetDialog();
-        suggestionDialog.show();
-        $('suggestionFieldVal').innerHTML =
-          Def.PrototypeAPI.escapeHTML(fieldVal);
 
         jQuery.ajax(this.url, options);
       },
@@ -1025,12 +1022,9 @@
           var responseData = response.responseJSON || JSON.parse(response.responseText);
           var codes = responseData[0];
           var eventData = [];
-          var suggestionDialog = Def.Autocompleter.SuggestionDialog.getSuggestionDialog();
-          suggestionDialog.prepareSuggestionDialogForList(this.element);
           var foundMatch = false;
           if (codes.length > 0) {
-            // Put up a dialog box with the suggestions, unless one of the
-            // suggestions matches what was typed (in which case we just accept
+            // See if one of the suggestions matches what was typed (in which case we just accept
             // that item as the selection).
             var listItems = responseData[1];
             this.suggestionList_ = responseData;
@@ -1044,22 +1038,16 @@
               listItems[i] = listItems[i].join(fieldSep);
               if (listItems[i].toLowerCase() === lowerCaseFieldVal) {
                 foundMatch = true;
-                suggestionDialog.hide();
                 if (this.observer)
                   clearTimeout(this.observer); // stop the autocompletion
                 this.acceptSuggestion(i);
               }
             }
-            if (!foundMatch) {
+            if (!foundMatch)
               eventData = listItems;
-              suggestionDialog.showSuggestions(listItems, this.element);
-            }
           }
-          else {
-            suggestionDialog.showNotFoundMsg(this.element);
-          }
-          // Do not notify if we found a match and are not actually showing
-          // the suggestion dialog message.
+          // Do not notify if we found a match and are not providing
+          // suggestions.
           if (!foundMatch) {
             Def.Autocompleter.Event.notifyObservers(this.element, 'SUGGESTIONS',
               {suggestion_list: eventData});
@@ -1101,7 +1089,6 @@
         this.itemCodeSystems_ = this.suggestionList_[3];
         this.listSelectionNotification(valTyped, true); // not typed, on list
 
-        // No field is focused at the moment (because of the dialog).
         // Put the focus back into the field we just updated.
         this.element.focus();
       }

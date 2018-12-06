@@ -58,12 +58,6 @@
       Selected code: <input name="list3Code" id="list3Code" type="text"
        ng-model="listFieldVal3.code" readonly>
       <p>
-      Search CWE list with suggestions:
-      <input name="list4" id="list4" type="text"
-        ng-required="false" placeholder="Select or type a value"
-        ng-model="listFieldVal4"
-        autocomplete-lhc="searchList4Opts">
-      <p>
       Search CWE list without suggestions:
       <input name="list4b" id="list4b" type="text"
         ng-required="false" placeholder="Select or type a value"
@@ -134,30 +128,30 @@
       <p>
       <input name="nonlist" type="text">
     </div>
+    <script
+     src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/build/autocomplete-lhc.js"></script>
+    <script src="/test/protractor/ajaxMock.js"></script>
+<!--
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="/bower_components/jquery-ui/ui/core.js"></script>
-    <script src="/bower_components/jquery-ui/ui/widget.js"></script>
-    <script src="/bower_components/jquery-ui/ui/button.js"></script>
-    <script src="/bower_components/jquery-ui/ui/dialog.js"></script>
     <script src="/source/polyfill.js"></script>
     <script src="/source/prototype_api.js"></script>
+    <script src="/source/jqueryLite.js"></script>
     <script src="/source/effects.js"></script>
-    <script src="/source/dialog.js"></script>
     <script src="/source/observable.js"></script>
     <script src="/source/screenReaderLog.js"></script>
     <script src="/source/recordDataRequester.js"></script>
     <script src="/source/fieldAlarms.js"></script>
     <script src="/soundmanager/bonk.js"></script>
     <script src="/source/autoCompBase.js"></script>
-    <script src="/source/suggestionDialog.js"></script>
     <script src="/source/autoCompPrefetch.js"></script>
     <script src="/source/autoCompSearch.js"></script>
     <script src="/source/autoCompEvents.js"></script>
     <script src="/source/effectScroll.js"></script>
     <script src="/source/event.simulate.js"></script>
-    <script src="/bower_components/angular/angular.js"></script>
     <script src="/source/autocomplete-lhc.js"></script>
-    <script src="/test/protractor/ajaxMock.js"></script>
+-->
     <script>
       angular.module('someApp', ['someModule', 'autocompleteLhcMod']);
       var someMod = angular.module('someModule', []);
@@ -218,14 +212,6 @@
           url: '/form/get_search_res_list?fd_id=1284',
           matchListValue: true,
           autocomp: true,
-          suggestionMode: 0
-        };
-
-        $scope.searchList4Opts = {
-          url: '/form/get_search_res_list?fd_id=2163',
-          matchListValue: false,
-          autocomp: true,
-          nonMatchSuggestions: true,
           suggestionMode: 0
         };
 

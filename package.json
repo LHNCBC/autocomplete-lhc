@@ -1,6 +1,6 @@
 {
   "name": "autocomp",
-  "version": "0.0.0",
+  "version": "17.0.0",
   "description": "",
   "main": "autoCompBase.js",
   "directories": {
@@ -16,6 +16,7 @@
     "@babel/preset-env": "^7.1.0",
     "babel-loader": "^8.0.4",
     "bower": "^1.7.9",
+    "clean-css-cli": "^4.2.1",
     "connect": "^3.4.1",
     "grunt": "^1.0.0",
     "grunt-cli": "^1.2.0",
@@ -39,7 +40,13 @@
   },
   "scripts": {
     "postinstall": "node_modules/protractor/bin/webdriver-manager update",
-    "test": "test/run_tests.sh"
+    "test": "test/run_tests.sh",
+    "build:clean": "rm -rf dist",
+    "build:mkdist": "mkdir dist; mkdir dist/$npm_package_version; (cd dist; ln -s $npm_package_version latest)",
+    "build:css": "cleancss --skip-rebase -o dist/latest/autocomplete-lhc.min.css source/auto_completion.css",
+    "build:cp": "cp source/*png LICENSE.md README-dist.md dist/latest",
+    "build:zip": "cd dist && zip --exclude $npm_package_version/autocomplete-lhc.js -r autocomplete-lhc-$npm_package_version.zip $npm_package_version",
+    "build": "npm run build:clean && npm run build:mkdist && webpack && npm run build:css && npm run build:cp && npm run build:zip"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 // A simple web server to serve the test files.
 // Start with:  node app.js
-// and browse to port 3000 from localhost.
+// and browse to the port specified in config.js.
 //
 // Based on http://stackoverflow.com/a/12019645/360782
 var connect = require('connect'),
