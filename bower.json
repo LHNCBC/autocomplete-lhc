@@ -20,12 +20,20 @@
     "source/autoCompSearch.js",
     "source/autoCompEvents.js",
     "source/autocomplete-lhc.js"
-   ],
+  ],
   "dependencies": {
+    "jquery": "^3.3.1"
   },
   "devDependencies": {
     "angular": "~1.3.1"
   },
-  "ignore": ["bashrc.autocomp", "bin", "node_modules", "package.json",
-             "npm-shrinkwrap.json", "test/**", "!test/protractor/basePage.js"]
+  "ignore": [
+    "bashrc.autocomp",
+    "bin",
+    "node_modules",
+    "package.json",
+    "npm-shrinkwrap.json",
+    "test/**",
+    "!test/protractor/basePage.js"
+  ]
 }

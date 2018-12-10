@@ -1,31 +1,37 @@
 // Tests minified versions of files.
 var po = require('../minifiedPages.js');
+var EC = protractor.ExpectedConditions;
 
 describe('minified files', function() {
-  it('should work with just the autocomplete-lhc files minified', function() {
+  it('should produce working prefetch lists', function() {
     browser.ignoreSynchronization = true;
-    po.openMinTest1();
+    po.openMinTest();
     po.prefetchList.click();
     expect(po.searchResults.isDisplayed()).toBe(true);
     browser.ignoreSynchronization = false;
   });
 
-  it('should work with the autocomplete-lhc files minified with the jQuery UI '+
-     'files', function() {
+  it('should produce working search lists', function() {
     browser.ignoreSynchronization = true;
-    po.openMinTest2();
-    po.prefetchList.click();
+    po.openMinTest();
+    po.searchList.click();
+    po.searchList.sendKeys('a');
     expect(po.searchResults.isDisplayed()).toBe(true);
     browser.ignoreSynchronization = false;
   });
 
-  it('should work with the autocomplete-lhc files minified with the jQuery '+
-     'and jQuery UI files', function() {
-    browser.ignoreSynchronization = true;
-    po.openMinTest3();
-    po.prefetchList.click();
-    expect(po.searchResults.isDisplayed()).toBe(true);
-    browser.ignoreSynchronization = false;
-  });
+  describe('directive', function() {
+    it('should produce working prefetch lists', function() {
+      po.openMinTestAngular();
+      po.prefetchList.click();
+      expect(po.searchResults.isDisplayed()).toBe(true);
+    });
 
+    it('should produce working search lists', function() {
+      po.openMinTestAngular();
+      po.searchList.click();
+      po.searchList.sendKeys('a');
+      browser.wait(EC.visibilityOf(po.searchResults), 2000);
+    });
+  });
 });

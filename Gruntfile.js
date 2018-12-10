@@ -127,8 +127,9 @@ module.exports = function(grunt) {
   grunt.registerTask('compressDist', ['readBowerVersion',
     'compress']);
 
-  grunt.registerTask('dist', ['clean', 'readBowerVersion', 'copy:dist', 'cssmin',
-        'uglify', 'compress', 'shell:dist_dir_link']);
+//  grunt.registerTask('dist', ['clean', 'readBowerVersion', 'copy:dist', 'cssmin',
+//        'uglify', 'compress', 'shell:dist_dir_link']);
+// switch to npm run build
 
   grunt.registerTask('test', ['dist', 'shell:run_tests']);
 

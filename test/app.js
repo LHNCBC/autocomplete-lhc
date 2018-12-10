@@ -31,6 +31,19 @@ connect()
        if (pathOkay)
          next();
      })
+    .use(function(req, resp, next) {
+       // Add a fake search response for testing
+       var p = req.url;
+       if (p.indexOf('/search') === 0) {
+         resp.statusCode = 200;
+         resp.setHeader('Content-Type', 'application/json');
+         resp.end('[218,["2315","3982","2208","2179","7939","11192","4591"],'+
+           'null,[["Back pain"],["Abdominal pain"],["Chest pain"],["Headache"],'+
+           '["Poliomyelitis"],["Lower back pain"],["Cut (laceration)"]]]');
+       }
+       else
+         next();
+     })
     .use(serveIndex(docRoot))
     .use(serveStatic(docRoot))
     .listen(config.port);

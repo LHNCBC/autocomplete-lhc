@@ -3,7 +3,7 @@ var dp = require('../directivePage.js'); // dp = DirectivePage instance
 helpers = require('../test_helpers.js');
 var hasClass = helpers.hasClass;
 
-fdescribe('directive', function() {
+describe('directive', function() {
   describe(': search lists', function() {
     it('should show a result list when the user types', function() {
       dp.openDirectiveTestPage();
@@ -93,7 +93,7 @@ fdescribe('directive', function() {
       expect(dp.searchResults.isDisplayed()).toBeTruthy();
     });
 
-    fdescribe('CWE lists', function() {
+    describe('CWE lists', function() {
       it('should set _notOnList for off-list items, but not empty values',
           function() {
         dp.openDirectiveTestPage();

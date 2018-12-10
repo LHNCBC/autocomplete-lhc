@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test of minified autocomplete-lhc files</title>
+    <link href="../../dist/latest/autocomplete-lhc.min.css" rel="stylesheet" />
+  </head>
+  <body ng-app="someApp">
+    <div ng-controller="testPageController">
+      <input id="field1" ng-model="field1Val" autocomplete-lhc="list1Opts"><br>
+      <input id="field2" ng-model="field2Val" autocomplete-lhc="list2Opts">
+    </div>
+    <script
+     src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/dist/latest/autocomplete-lhc.min.js"></script>
+    <script>
+      angular.module('someApp', ['someModule', 'autocompleteLhcMod']);
+      var someMod = angular.module('someModule', []);
+
+      someMod.controller('testPageController', ['$scope', function ($scope) {
+        $scope.listFieldVal1b = {text: 'a pre-populated model value'};
+
+        $scope.list1Opts = {
+          listItems: [
+            // Including spaces on display string to test trimming
+            {text: '  Green ', // label is the display string
+             code: 'G' // item objects can contain any other data too
+            },
+            {text: ' Blue ', code: 'B'},
+            {text: 'Red', code: 'R'}
+          ],
+        };
+
+        $scope.list2Opts = {
+          url: '/search'
+        };
+     }]);
+    </script>
+  </body>
+</html>

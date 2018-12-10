@@ -6,23 +6,18 @@ var MinifiedPage = function() {
   BasePage.call(this);
 
   this.prefetchList = $('#field1');
+  this.searchList = $('#field2');
 
-  this.openMinTest1 = function() {
-    setAngularSite(false);
-    browser.driver.get('http://localhost:'+config.port+
-      '/test/protractor/minificationTest1.html');
-  };
-
-  this.openMinTest2 = function() {
+  this.openMinTest = function() {
     setAngularSite(false);
     browser.get('http://localhost:'+config.port+
-      '/test/protractor/minificationTest2.html');
+      '/test/protractor/minificationTest.html');
   };
 
-  this.openMinTest3 = function() {
+  this.openMinTestAngular = function() {
     setAngularSite(false);
     browser.get('http://localhost:'+config.port+
-      '/test/protractor/minificationTest3.html');
+      '/test/protractor/minificationTestAngular.html');
   };
 };
 
