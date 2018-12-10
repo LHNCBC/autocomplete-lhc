@@ -1,8 +1,8 @@
 {
-  "name": "autocomp",
+  "name": "autocomplete-lhc",
   "version": "17.0.0",
   "description": "",
-  "main": "autoCompBase.js",
+  "main": "source/index.js",
   "directories": {
     "test": "test"
   },
