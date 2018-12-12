@@ -101,7 +101,6 @@ describe('directive', function() {
         testField.click();
         testField.sendKeys('zzz');
         testField.sendKeys(protractor.Key.TAB);
-browser.sleep(10000);
         expect(dp.getModel(testField)).toEqual({text: 'zzz', _notOnList: true});
         // Now set it to an empty value.  The model value should be null.
         testField.click();
