@@ -300,4 +300,38 @@ describe('search lists', function() {
       });
     });
   });
+
+  describe('non-match suggestions', function() {
+    beforeAll(function() {
+      po.openTestPage();
+      let field = po.searchCWE;
+      field.click();
+      po.sendKeys(field, 'ar');
+      po.sendKeys(field, protractor.Key.TAB);
+    });
+
+    it('should generate a suggestion list', function() {
+      browser.wait(function() {
+        return browser.executeScript(function(){
+          return window.fe_search_cwe_suggestions && fe_search_cwe_suggestions.suggestion_list.length>0
+        });
+      }, 2000);
+    });
+
+    it('should be possible to accept a suggestion', function() {
+      browser.executeScript(function(fieldID) {
+        $('#'+fieldID)[0].autocomp.acceptSuggestion(0);
+      }, po.searchCWEID);
+      expect(po.searchCWE.getAttribute('value')).toBe('Aortic insufficiency');
+    });
+
+    it('should result in a "suggestion used" event after one is accepted', function() {
+      browser.wait(function () {
+        return browser.executeScript(function() {
+          return window.fe_search_cwe_suggUsedData &&
+            fe_search_cwe_suggUsedData.field_id === 'fe_search_cwe';
+        });
+      }, 2000);
+    });
+  });
 });

@@ -34,6 +34,12 @@ var opts = {'matchListValue': false, nonMatchSuggestions: true,
  'suggestionMode': Def.Autocompleter.SUGGEST_SHORTEST, 'autocomp': true};
 new Def.Autocompleter.Search('fe_search_cwe',
     '/form/get_search_res_list?fd_id=2163', opts);
+Def.Autocompleter.Event.observeSuggestions('fe_search_cwe', function(data) {
+  window.fe_search_cwe_suggestions = data; // store suggestion list for testing
+});
+Def.Autocompleter.Event.observeSuggestionUsed('fe_search_cwe', function(data){
+  window.fe_search_cwe_suggUsedData = data;
+});
 
 var opts = {'matchListValue': false,
  'suggestionMode': Def.Autocompleter.NO_COMPLETION_SUGGESTIONS, 'autocomp': true};

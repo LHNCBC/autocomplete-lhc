@@ -194,9 +194,11 @@
        *     Whether a list of suggestions should be generated if the user
        *     enters a non-matching value.  To receive the list of suggestions,
        *     the program should register a callback function via
-       *     Def.Autocompleter.Event.observeSuggestions.  See section on
-       *     Notifications in the documenation. This only applies when
-       *     matchListValue is false.
+       *     Def.Autocompleter.Event.observeSuggestions, and if the user selects
+       *     a suggestion, the function acceptSuggestion should be called on the
+       *     autocompleter instance with the index of the selected suggestion.
+       *     See section on Notifications in the documentation. This only
+       *     applies when matchListValue is false.
        *    <li>headerBar - If the page has a fixed-position element at the top of
        *     the page (e.g. a top navigation bar), the autocompleter needs to know
        *     that so that when scrolling to show the list it doesn't scroll the current
