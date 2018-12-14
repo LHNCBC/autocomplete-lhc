@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [17.0.1] - 2018-12-14
+### Fixed
+- Added the package name back to the directory inside the zip distribution file.
+
 ## [17.0.0] - 2018-12-10
 ### Removed
 - No longer includes jQuery in the distribution file.  It assumed that users
