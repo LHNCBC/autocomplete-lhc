@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [17.0.2] - 2018-12-14
+### Fixed
+- Forgot to update the version in package.json, as our build system now
+  requires.
+
 ## [17.0.1] - 2018-12-14
 ### Fixed
 - Added the package name back to the directory inside the zip distribution file.
