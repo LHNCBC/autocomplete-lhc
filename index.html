@@ -350,34 +350,28 @@ package ("bower install autocomplete-lhc") or if you are not using bower, you ca
 the <a
 href="https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/">latest
 pre-built version</a> from the Clinical Table Search Service website, or you can use the files
-directly from the Clinical Table Search Service website.  There are three flavors of the
-minified JavaScript, depending on what dependencies you already have.
-<table>
-  <thead>
-    <tr><th>If your website already has</th><th>Use</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>jQuery & jQueryUI</td><td
-     >https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc.min.js</td>
-    <tr><td>jQuery </td><td
-     >https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc_jQueryUI.min.js</td>
-    <tr><td>(neither)</td><td
-     >https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc_jQuery.min.js</td>
-  </tbody>
-</table>
+directly from the Clinical Table Search Service website.</p>
 
-(Note that you can substitute for 10.2.1 any of the other prebuilt versions
-available at https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions).
+<h3>Using the Pre-built Versions</h3>
+<p>Starting with version 17, this package does not bundle its jQuery depenendency,
+so you will need to include that separately, but that can be obtained from one
+of several CDNs (an example of which is below).
 
-<p>For the CSS, a minified file is available with or without a jQueryUI theme as:
- <ul>
-   <li>https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc.min.css</li>
-   <li>https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/10.2.1/autocomplete-lhc_jQueryUI.min.css</li>
- </ul>
-You will only need the jQueryUI style part of the CSS if you are using the
-suggestion dialog feature with the "search" (AJAX) list (by setting the
-nonMatchSuggestions option).
-</p>
+<p>For the Javascript, include:</p>
+<code>&lt;script
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"&gt;&lt;/script&gt;
+&lt;!-- example CDN-- you may choose another source --&gt;
+<br>
+&lt;script
+src=https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/17.0.0/autocomplete-lhc.min.js&gt;&lt;/script&gt;</code>
+
+<p>(Note that you can substitute for "17.0.0" one of the other prebuilt versions
+available at https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions).</p>
+
+<p>For the CSS, include:</p>
+<code>&lt;link
+href="https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/17.0.0/autocomplete-lhc.min.css"
+rel="stylesheet" /&gt;</code>
 
 
 <h2>License, etc.</h2>

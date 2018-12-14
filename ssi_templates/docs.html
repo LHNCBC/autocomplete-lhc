@@ -193,14 +193,7 @@
                  of characters that must be in the field before autocompletion
                  will start.</li>
                 <li>matchListValue - Whether the field value is required to be one from
-                 the list (default: false).  When this field is false, for a
-                 non-matching value a dialog will be shown with a list of suggestions
-                 that are on the list-- unless that is disabled by setting
-                 nonMatchSuggestions to false.</li>
-                <li>nonMatchSuggestions - (default: false, as of version 10)
-                 Whether the user should be given a list of suggestions if they
-                 enter a non-matching value.
-                 This only applies when matchListValue is false.</li>
+                 the list (default: false).</li>
                 <li>tableFormat - If true, then if the list's items contain
                  multiple fields, the list will be formatted in a table instead of just
                  concatenating the fields together for each list item.</li>
@@ -227,6 +220,20 @@
                  the field's value.  This is useful if you do not want the field
                  to autocomplete (i.e. autocomp==false) but you still want to show a list of search
                  results in response to a button.</li>
+                <li>nonMatchSuggestions - (optional; default: false, as of version 10)
+                 If this is set to true, and matchListValue is false, then if
+                 the user enters a value that did not match a list value, a
+                 second query will be sent (using the "suggest" parameter
+                 described above) to retrieve a list of suggestions to be shown
+                 to the user.  As of version 17, the autocompleter no longer
+                 opens a dialog to show these suggestions.  If suggestions are
+                 desired, it is now up the to program using the autocompleter,
+                 to 1) register an event callback (for receiving the
+                 suggestion list) via
+                 Def.Autocompleter.Event.observeSuggestions, 2) show the
+                 suggestions to the user, and 3) call the
+                 acceptSuggestion function on the instance of the autocompleter
+                 with the index of the selected suggestion.</li>
               </ul>
             </li>
           </ol>
