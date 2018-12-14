@@ -103,10 +103,6 @@
 | storeExpression | javascript{a={}} | callbackData |
 | type | fe_search_cwe | |
 | fireEvent | fe_search_cwe | focus |
-# Because this test brings up the suggestion box, I will take the opportunity
-# test the callback for that event.
-| storeExpression | javascript{a={}} | suggestionData |
-| assertExpression | javascript{Def.Autocompleter.Event.observeSuggestionsShown('fe_search_cwe', function(data){storedVars['suggestionData']=data}); 1} | 1|
 | typeKeys | fe_search_cwe | zzz |
 | keyDown | fe_search_cwe | \9 |
 | waitForExpression | javascript{storedVars['callbackData']['input_method']} | typed |
@@ -115,11 +111,6 @@
 | assertExpression | javascript{storedVars['callbackData']['used_list']} | false |
 | assertExpression | javascript{storedVars['callbackData']['list'].length} | 0 |
 | assertExpression | javascript{storedVars['callbackData']['on_list']} | false |
-| waitForExpression | javascript{s=storedVars.suggestionData.suggestion_list; s && s.length} | 0 |
-# Wait for the suggestion list to appear, and then hide it to avoid causing
-# problems for subsequent tests.
-| waitForVisible | suggestionList | |
-| assertExpression | javascript{Def.Autocompleter.SuggestionDialog.getSuggestionDialog().hide(); 1} | 1 |
 
 # Test the focus callback
 | storeExpression | javascript{a={}} | callbackData |
@@ -150,33 +141,6 @@
 | type | race_or_ethnicity | |
 | type | fe_search_cne | |
 | type | fe_search_cwe | |
-
-# Test that if you type something in a search field that doesn't match a list
-# value, and then hit control+return, and then try to leave the field, you get
-# the suggestion box.
-| assertNotVisible | moreResults | |
-| assertNotVisible | suggestionList | |
-| fireEvent | fe_search_cwe | focus |
-| type | fe_search_cwe | a |
-| typeKeys | fe_search_cwe | r |
-| waitForVisible | searchResults | |
-| controlKeyDown | | |
-| typeKeys | fe_search_cwe | \13 |
-| controlKeyUp | | |
-| waitForNotVisible | moreResults | |
-| waitForVisible | searchResults | |
-| waitForNotVisible | moreResults | |
-| typeKeys | fe_search_cwe | \9 |
-| waitForVisible | suggestionList | |
-| waitForExpression | javascript{storedVars['suggestionData']['suggestion_list'].length>0} | true |
-# Try using the suggestion box, and setting up a event listener
-| assertExpression | javascript{Def.Autocompleter.Event.observeSuggestionUsed('fe_search_cwe', function(data){storedVars['suggestionUsed']=data}); 1} | 1|
-| storeExpression | javascript{a={}} | suggestionUsed |
-# | click | css=#suggestionList a:first | # Selenium didn't like the :first
-# selector for some reason.
-| click | css=#suggestionList ul li a:nth-of-type(1) |
-| waitForExpression | javascript{storedVars['suggestionUsed']['field_id']} | fe_search_cwe |
-| waitForNotVisible | suggestionList |
 
 # Test of a Prefetch CNE autocompleter
 | fireEvent | race_or_ethnicity | focus |

@@ -1,6 +1,6 @@
 // A simple web server to serve the test files.
 // Start with:  node app.js
-// and browse to port 3000 from localhost.
+// and browse to the port specified in config.js.
 //
 // Based on http://stackoverflow.com/a/12019645/360782
 var connect = require('connect'),
@@ -29,6 +29,19 @@ connect()
            p = path.dirname(p);
        }
        if (pathOkay)
+         next();
+     })
+    .use(function(req, resp, next) {
+       // Add a fake search response for testing
+       var p = req.url;
+       if (p.indexOf('/search') === 0) {
+         resp.statusCode = 200;
+         resp.setHeader('Content-Type', 'application/json');
+         resp.end('[218,["2315","3982","2208","2179","7939","11192","4591"],'+
+           'null,[["Back pain"],["Abdominal pain"],["Chest pain"],["Headache"],'+
+           '["Poliomyelitis"],["Lower back pain"],["Cut (laceration)"]]]');
+       }
+       else
          next();
      })
     .use(serveIndex(docRoot))

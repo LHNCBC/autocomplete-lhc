@@ -46,24 +46,10 @@ describe('directive', function() {
         {text: 'zArm pain', code: '2958',
          data: {term_icd9_code: '729.5', other_field: 'green'}});
 
-      // Try the suggestion list
-      dp.searchWithSug.sendKeys('ar');
-      // Click someplace else to leave 'ar' in the field
-      dp.searchList.click();
-      expect(dp.suggestionDialog.isDisplayed()).toBeTruthy();
-      expect(dp.firstSugLink.isDisplayed()).toBeTruthy();
-      dp.firstSugLink.click();
-      expect(dp.searchWithSug.getAttribute('value')).toBe('Aortic insufficiency');
-      expect(dp.searchWithSug.evaluate(dp.searchWithSugModel)).toEqual(
-        {text: 'Aortic insufficiency', code: '2886',
-         data: {term_icd9_code: '424.1'}, code_system: 'gopher'});
-
-
       // Try the search list that has suggestions turned off.
       dp.searchWithoutSug.sendKeys('ar');
       // Click someplace else to leave 'ar' in the field
       dp.inputElem.click();
-      expect(dp.suggestionDialog.isDisplayed()).toBeFalsy();
       expect(dp.searchWithoutSug.getAttribute('value')).toBe('ar');
       // The only entry in the model should be the text, because it is not on
       // the list.
@@ -91,18 +77,6 @@ describe('directive', function() {
       browser.driver.executeScript(
         "window.multiSearchCWEOpts.url = window.multiSearchCWEOpts.originalUrl;"+
         "angular.element('"+dp.multiSearchCWECSS+"').scope().$digest();");
-    });
-
-    it('should provide suggestions when no list has been brought up', function() {
-      // This was added for issue LF-95.  The suggestions box failed to appear
-      // if the field had not previously shown a list when the field was left
-      // with a changed value.
-      dp.openDirectiveTestPage();
-      dp.searchWithSug.click();
-      dp.searchWithSug.sendKeys('a');
-      // Click someplace else to leave 'a' in the field
-      dp.inputElem.click();
-      expect(dp.suggestionDialog.isDisplayed()).toBeTruthy();
     });
 
     it('should allow the URL to be undefined', function() {

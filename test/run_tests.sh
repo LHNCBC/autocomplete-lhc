@@ -31,7 +31,7 @@ then
   firefox http://localhost:${port}/test/scriptaculous_unit/autoComp_test.html \
           http://localhost:${port}/test/scriptaculous_unit/recordDataRequester_test.html
 
-  grunt mochaTest
+  mocha -R spec test/mocha/*.js
   code=$?
   if [ $code != "0" ]
   then

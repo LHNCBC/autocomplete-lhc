@@ -1,5 +1,6 @@
 var assert = require('assert');
-var observable = require('../../source/observable.js');
+var Def = {}
+var observable = require('../../source/observable.js')(Def);
 
 describe('Observable', function() {
   describe('removeCallback', function() {

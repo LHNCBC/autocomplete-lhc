@@ -3,6 +3,25 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [17.0.0] - 2018-12-10
+### Removed
+- No longer includes jQuery in the distribution file.  It assumed that users
+  will link that in with a separate script tag.
+- No longer includes pieces of jQuery-UI.
+- No longer includes "suggestion" dialogs in response to field entries that do
+  not match an item on the list.  Instead, the way to handle suggestions is now
+  to register an event listener with Def.Autocompleter.Event.observeSuggesions.
+  It is now up to the external program to decide how to show the suggestions to
+  the user, and when one is selected, the the acceptSuggestion function on the
+  autocompleter instance should be called with the index of the selected
+  suggestion.  This is some additional work for the program using the
+  autocompleter, but 1) it did not seem right that the autocompleter was opening
+  a dialog, and 2) as far as we know, the suggestion dialog feature was not be
+  used outside NLM.
+### Changed
+- Replace the observeSuggestionsShown event listener registration with
+  observeSuggestions.  See note above about the removal of "suggestion" dialogs.
+
 ## [16.1.0] - 2018-08-28
 ### Added
  - The search autocompleter now has an option "sort" which controls whether the

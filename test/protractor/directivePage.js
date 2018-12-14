@@ -12,8 +12,6 @@ var DirectivePage = function() {
   this.searchListID = 'list3';
   this.searchList = $('#'+this.searchListID);
   this.searchListModel = 'listFieldVal3'; // model name for searchList
-  this.searchWithSug = $('#list4');  // search list with suggestions
-  this.searchWithSugModel = 'listFieldVal4'; // model name
   this.searchWithoutSug = $('#list4b');  // search list without suggestions
   this.searchWithoutSugModel = 'listFieldVal4b';  // search list without suggestions
   this.prefetchCWEBlank = $('#list5');
@@ -67,6 +65,7 @@ var DirectivePage = function() {
   this.multiSearchCWEPrePop = $('#'+this.multiSearchCWEPrePopID);
 
   this.openDirectiveTestPage = function() {
+    setAngularSite(true);
     browser.get('http://localhost:'+config.port+
       '/test/protractor/directiveTest.html');
   }

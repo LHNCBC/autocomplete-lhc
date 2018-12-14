@@ -135,19 +135,6 @@ describe('search lists', function() {
     expect(po.listIsVisible()).toBeTruthy();
     expect(po.firstSearchRes.getText()).toEqual('CAD3');
     expect(po.secondSearchRes.getText()).toEqual('zArm pain3');
-
-    // Now try the non-match suggestion list.
-    po.searchCWE.click();
-    po.searchCWE.sendKeys('ab - c');
-    po.nonField.click(); // leave the field to trigger the suggestions
-    browser.wait(function() {
-      return po.suggestionDialog.isPresent();
-    }, 5000);
-    expect(po.suggestionDialog.isDisplayed()).toBeTruthy();
-    expect(po.firstSugLink.isDisplayed()).toBeTruthy();
-    expect(po.firstSugLink.getText()).toEqual('Blue');
-    // Close the dialog before continuing to the next test
-    po.suggestionDialogClose.click();
   });
 
   describe('clearCachedResults', function() {
@@ -231,21 +218,6 @@ describe('search lists', function() {
   });
 
 
-  describe('suggestion dialog', function() {
-    it('should provide a link to return to the field', function() {
-      // This tests that the return link focuses the field
-      po.clearField(po.searchCWE);
-      po.searchCWE.sendKeys('z');
-      po.searchCWE.sendKeys(protractor.Key.TAB);
-      browser.wait(function() {
-        return po.suggestionDialog.isPresent();
-      }, 5000);
-      $('#returnLink').click();
-      expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(po.searchCWEID);
-    });
-  });
-
-
   describe('getItemData', function() {
     describe('for items picked from the autocompletion list', function() {
       it('should return the code system when available', function() {
@@ -277,28 +249,6 @@ describe('search lists', function() {
         let itemData = browser.driver.executeScript(
           'return jQuery("'+po.searchCNECSS+'")[0].autocomp.getItemData();');
         expect(itemData.data).toBe(undefined);
-      });
-    });
-
-    describe('for items picked from the suggestion list', function() {
-      it('should return the code system when available', function() {
-        po.openTestPage();
-        po.waitForNoSearchResults();
-        po.searchCWE.click();
-        po.sendKeys(po.searchCWE, 'ar');
-        po.waitForSearchResults();
-        po.nonField.click();
-        browser.wait(function() {
-          return po.suggestionDialog.isPresent();
-        }, 5000);
-        expect(po.suggestionDialog.isDisplayed()).toBeTruthy();
-        expect(po.firstSugLink.isDisplayed()).toBeTruthy();
-        po.firstSugLink.click();
-        let itemData = browser.driver.executeScript(
-          'return jQuery("#'+po.searchCWEID+'")[0].autocomp.getItemData();');
-        expect(itemData).toEqual({code: "2886",
-          text: "Aortic insufficiency", code_system: "gopher",
-          data: {term_icd9_code: "424.1"}});
       });
     });
   });
@@ -348,6 +298,40 @@ describe('search lists', function() {
         expect(po.fifthSearchRes.getText()).toEqual("Shoulder or upper arm injury");
         expect(po.searchResult(6).getText()).toEqual("Kidney failure (short-term renal failure)");
       });
+    });
+  });
+
+  describe('non-match suggestions', function() {
+    beforeAll(function() {
+      po.openTestPage();
+      let field = po.searchCWE;
+      field.click();
+      po.sendKeys(field, 'ar');
+      po.sendKeys(field, protractor.Key.TAB);
+    });
+
+    it('should generate a suggestion list', function() {
+      browser.wait(function() {
+        return browser.executeScript(function(){
+          return window.fe_search_cwe_suggestions && fe_search_cwe_suggestions.suggestion_list.length>0
+        });
+      }, 2000);
+    });
+
+    it('should be possible to accept a suggestion', function() {
+      browser.executeScript(function(fieldID) {
+        $('#'+fieldID)[0].autocomp.acceptSuggestion(0);
+      }, po.searchCWEID);
+      expect(po.searchCWE.getAttribute('value')).toBe('Aortic insufficiency');
+    });
+
+    it('should result in a "suggestion used" event after one is accepted', function() {
+      browser.wait(function () {
+        return browser.executeScript(function() {
+          return window.fe_search_cwe_suggUsedData &&
+            fe_search_cwe_suggUsedData.field_id === 'fe_search_cwe';
+        });
+      }, 2000);
     });
   });
 });
