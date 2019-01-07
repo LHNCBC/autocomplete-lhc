@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [17.0.3] - 2018-01-07
+### Fixed
+-  Removed the postinstall script, which was causing installations in other
+   packages to fail.
+
 ## [17.0.2] - 2018-12-14
 ### Fixed
 - Forgot to update the version in package.json, as our build system now
