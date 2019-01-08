@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "17.0.2",
+  "version": "17.0.3",
   "description": "",
   "main": "source/index.js",
   "directories": {
@@ -30,7 +30,7 @@
     "wiredep": "^4.0.0"
   },
   "scripts": {
-    "postinstall": "node_modules/protractor/bin/webdriver-manager update",
+    "update_webdriver": "node_modules/protractor/bin/webdriver-manager update",
     "test": "test/run_tests.sh",
     "test:e2e": "test/run_tests.sh skip_unit_tests",
     "build:clean": "rm -rf dist",

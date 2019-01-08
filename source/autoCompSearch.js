@@ -367,33 +367,35 @@
         if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
           this.lastAjaxRequest_.abort();
 
-        this.searchInProgress = true;
-        this.searchStartTime = new Date().getTime();
+        if (this.url) { // we also this to be initially undefined
+          this.searchInProgress = true;
+          this.searchStartTime = new Date().getTime();
 
-        // See if the search has been run before.
-        var searchStr = this.getSearchStr();
-        var results = null;
-        if (this.useResultCache_) {
-          results = this.getCachedResults(searchStr,
-                              Def.Autocompleter.Search.RESULT_CACHE_SEARCH_RESULTS);
-          if (results)
-            this.onComplete(results, null, true);
-        }
-        if (!results) { // i.e. if it wasn't cached
-          // Run the search
-          var paramData = {
-            authenticity_token: window._token || '',
-            maxList: null, // no value
-            terms: searchStr
+          // See if the search has been run before.
+          var searchStr = this.getSearchStr();
+          var results = null;
+          if (this.useResultCache_) {
+            results = this.getCachedResults(searchStr,
+                                Def.Autocompleter.Search.RESULT_CACHE_SEARCH_RESULTS);
+            if (results)
+              this.onComplete(results, null, true);
           }
-          var options = {
-            data: paramData,
-            complete: this.options.onComplete
+          if (!results) { // i.e. if it wasn't cached
+            // Run the search
+            var paramData = {
+              authenticity_token: window._token || '',
+              maxList: null, // no value
+              terms: searchStr
+            }
+            var options = {
+              data: paramData,
+              complete: this.options.onComplete
+            }
+            this.changed = false;
+            this.hasFocus = true;
+            this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
+            this.lastAjaxRequest_.requestParamData_ = paramData;
           }
-          this.changed = false;
-          this.hasFocus = true;
-          this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
-          this.lastAjaxRequest_.requestParamData_ = paramData;
         }
       },
 
@@ -957,37 +959,39 @@
         if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
           this.lastAjaxRequest_.abort();
 
-        this.searchStartTime = new Date().getTime() ;
+        if (this.url) { // we also this to be initially undefined
+          this.searchStartTime = new Date().getTime() ;
 
-        var results = null;
-        var autocompSearch =  Def.Autocompleter.Search;
-        var fieldVal = this.getSearchStr();
-        // Truncate fieldVal to some maximum length so we limit the number of
-        // autocompletion requests that get generated if a user sets a book on the
-        // keyboard.
-        if (fieldVal.length > autocompSearch.MAX_VALUE_SIZE_FOR_AUTOCOMP)
-          fieldVal = fieldVal.substr(0, autocompSearch.MAX_VALUE_SIZE_FOR_AUTOCOMP);
+          var results = null;
+          var autocompSearch =  Def.Autocompleter.Search;
+          var fieldVal = this.getSearchStr();
+          // Truncate fieldVal to some maximum length so we limit the number of
+          // autocompletion requests that get generated if a user sets a book on the
+          // keyboard.
+          if (fieldVal.length > autocompSearch.MAX_VALUE_SIZE_FOR_AUTOCOMP)
+            fieldVal = fieldVal.substr(0, autocompSearch.MAX_VALUE_SIZE_FOR_AUTOCOMP);
 
-        if (this.useResultCache_) {
-          // See if the search has been run before.
-          results = this.getCachedResults(fieldVal,
-                                      autocompSearch.RESULT_CACHE_AUTOCOMP_RESULTS);
-          if (results)
-            this.onComplete(results, null, true);
-        }
-        if (!results) {
-          // Run the search
-          var paramData = {
-            authenticity_token: window._token || '',
-            terms: fieldVal,
-          };
-          var options = {
-            data: paramData,
-            dataType: 'json',
-            complete: this.options.onComplete
+          if (this.useResultCache_) {
+            // See if the search has been run before.
+            results = this.getCachedResults(fieldVal,
+                                        autocompSearch.RESULT_CACHE_AUTOCOMP_RESULTS);
+            if (results)
+              this.onComplete(results, null, true);
           }
-          this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
-          this.lastAjaxRequest_.requestParamData_ = paramData;
+          if (!results) {
+            // Run the search
+            var paramData = {
+              authenticity_token: window._token || '',
+              terms: fieldVal,
+            };
+            var options = {
+              data: paramData,
+              dataType: 'json',
+              complete: this.options.onComplete
+            }
+            this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
+            this.lastAjaxRequest_.requestParamData_ = paramData;
+          }
         }
       },
 
@@ -997,18 +1001,20 @@
        *  not match the list.
        */
       findSuggestions: function() {
-        var fieldVal = this.getSearchStr();
-        var paramData = {
-          authenticity_token: window._token || '',
-          field_val: fieldVal,
-          suggest: 1
-        };
-        var options = {
-          data: paramData,
-          complete: jQuery.proxy(this.onFindSuggestionComplete, this)
-        };
+        if (this.url) { // we also this to be initially undefined
+          var fieldVal = this.getSearchStr();
+          var paramData = {
+            authenticity_token: window._token || '',
+            field_val: fieldVal,
+            suggest: 1
+          };
+          var options = {
+            data: paramData,
+            complete: jQuery.proxy(this.onFindSuggestionComplete, this)
+          };
 
-        jQuery.ajax(this.url, options);
+          jQuery.ajax(this.url, options);
+        }
       },
 
 
