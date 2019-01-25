@@ -40,8 +40,6 @@
     "build:zip": "cd dist && zip -r autocomplete-lhc-$npm_package_version.zip $npm_package_name-$npm_package_version",
     "build": "npm run build:clean && npm run build:mkdist && webpack && npm run build:css && npm run build:cp && npm run build:zip"
   },
-  "repository": {
-    "type": "git",
-    "url": "/proj/git/autocomp.git"
-  }
+  "repository": "github:lhncbc/autocomplete-lhc",
+  "license": "BSD-3-Clause"
 }
