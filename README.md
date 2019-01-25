@@ -11,7 +11,7 @@ For features and demos, please visit the [project
 page](http://lhncbc.github.io/autocomplete-lhc/).
 
 
-This software, autocomp-phr, was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH).
+This software was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH).
 
 Please cite as:
 
