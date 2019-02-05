@@ -20,7 +20,7 @@ lists are small enough to be fully specified at construction time are called
 lists are shown in small, AJAX-retrieved chunks that match the user's input are
 called "<b>Search</b>", and are supported by autoCompSearch.js.</p>
 
-<p>Below are a few <a href="#demos">demos</a> to show off the <a
+<p>Below are a few <a href="#demos">demos</a> of the <a
 href="#features">features</a> and the code to use them.</p>
 
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
@@ -123,14 +123,26 @@ Some complete HTML page examples hosted on Plunker:
 </ol>
 
 <h2><a id="installation"></a>Installation:</h2>
-<p>The autocomplete-lhc files can be installed as a <a href="http://bower.io">bower</a>
-package ("bower install autocomplete-lhc") or if you are not using bower, you can either download
-the <a
-href="https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/">latest
-pre-built version</a> from the Clinical Table Search Service website, or you can use the files
-directly from the Clinical Table Search Service website.</p>
+<p>There are four ways to install and use autocomplete-lhc code:
+<ul>
+  <li>Linking directly to the browser-ready release files hosted on the Clinical Table
+  Search Service website.  (See "<a href="#prebuiltFiles">Using the Hosted
+  Browser-Ready Releases"</a> below).</li>
+  <li>Downloading the <a
+  href="https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/">latest
+  release</a> from the release zip files
+  hosted the Clinical Table Search Service website.</li>
+  <li>Using <a href="https://www.npmjs.com/">npm</a>:  <code>npm install
+  autocomplete-lhc</code>.  To use this, you would need to run the code through
+  something <a href="https://webpack.js.org/">webpack</a> to build a version
+  usable in a web browser.</li>
+  <li>Using <a href="http://bower.io">bower</a>: <code>bower install
+  autocomplete-lhc</code>.  These files are ready to use in a web browser.
+  However, note that bower itself is now deprecated, so you would not want to
+  start a new project using it.</li>
+</ul>
 
-<h3>Using the Pre-built Versions</h3>
+<h3><a id="prebuiltFiles"></a>Using the Hosted Browser-Ready Releases</h3>
 <p>Starting with version 17, this package does not bundle its jQuery depenendency,
 so you will need to include that separately, but that can be obtained from one
 of several CDNs (an example of which is below).
@@ -141,14 +153,14 @@ src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"&gt;&lt;/s
 &lt;!-- example CDN-- you may choose another source --&gt;
 <br>
 &lt;script
-src=https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/17.0.0/autocomplete-lhc.min.js&gt;&lt;/script&gt;</code>
+src=https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/17.0.3/autocomplete-lhc.min.js&gt;&lt;/script&gt;</code>
 
-<p>(Note that you can substitute for "17.0.0" one of the other prebuilt versions
+<p>(Note that you can substitute for "17.0.3" one of the other prebuilt versions
 available at https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions).</p>
 
 <p>For the CSS, include:</p>
 <code>&lt;link
-href="https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/17.0.0/autocomplete-lhc.min.css"
+href="https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/17.0.3/autocomplete-lhc.min.css"
 rel="stylesheet" /&gt;</code>
 
 
