@@ -5,7 +5,7 @@
 // http://prototypejs.org/
 
 if (typeof Def === 'undefined')
-  window.Def = {};
+  var Def = {};
 
 Def.PrototypeAPI = function() {
   "use strict";
@@ -41,14 +41,14 @@ Def.PrototypeAPI = function() {
 
 
   var Browser = (function(){
-    var ua = navigator.userAgent;
+    var ua = typeof navigator !== 'undefined' ? navigator.userAgent : false;
     var isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
     return {
       IE:             !!window.attachEvent && !isOpera,
       Opera:          isOpera,
-      WebKit:         ua.indexOf('AppleWebKit/') > -1,
-      Gecko:          ua.indexOf('Gecko') > -1 && ua.indexOf('KHTML') === -1,
-      MobileSafari:   /Apple.*Mobile/.test(ua)
+      WebKit:         ua && ua.indexOf('AppleWebKit/') > -1,
+      Gecko:          ua && ua.indexOf('Gecko') > -1 && ua.indexOf('KHTML') === -1,
+      MobileSafari:   ua && /Apple.*Mobile/.test(ua)
     }
   })();
 

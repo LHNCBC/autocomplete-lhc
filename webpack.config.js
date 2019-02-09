@@ -9,6 +9,7 @@ function commonConfig() {
     entry: './source/index.js',
     output: {
       path: __dirname,
+      library: 'Def'
     },
     module: {
       rules: [

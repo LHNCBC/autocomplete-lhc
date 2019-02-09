@@ -25,7 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 if (typeof Def === 'undefined')
-  window.Def = {};
+  var Def = {};
 
 (function() {
   function initEffects($, jQuery, Def) {

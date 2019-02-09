@@ -1,5 +1,5 @@
 if (typeof Def === 'undefined')
-  Def = {};
+  var Def = {};
 
 (function() {
   function initObservable(Def) {
