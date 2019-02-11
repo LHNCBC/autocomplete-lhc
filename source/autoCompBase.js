@@ -28,7 +28,7 @@
 
 
 if (typeof Def === 'undefined')
-  window.Def = {};
+  var Def = {};
 
 (function() {
   // Wrap the definitions in a function to protect our version of global variables
@@ -37,7 +37,8 @@ if (typeof Def === 'undefined')
 
     // A test for IE, borrowed from PrototypeJS -- and modified.
     var Browser = Def.PrototypeAPI.Browser;
-    var isIE = !!window.attachEvent && !Browser.isOpera || navigator.userAgent.indexOf('Trident') >= 0;
+    var isIE = !!window.attachEvent && !Browser.isOpera ||
+       (typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Trident') >= 0);
 
     Def.Autocompleter = { // Namespace for DEF autocompletion stuff
       // Variables related to autocompleters but independent of any particular

@@ -1,5 +1,5 @@
 if (typeof Def === 'undefined')
-  window.Def = {};
+  var Def = {};
 
 (function() {
   // Wrap the definitions in a function to protect our version of global variables

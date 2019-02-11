@@ -3,10 +3,17 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
-## [17.0.3] - 2018-01-07
+## [18.0.0] - 2019-02-08
+### Changed
+- Changed the npm package so that when it is required, it does not set the "Def"
+  variable on window, but just exports that variable.  The browser-ready
+  JavaScript file is built to still set window.Def, so this is only a breaking
+  change for anyone using the npm package.
+
+## [17.0.3] - 2019-01-07
 ### Fixed
--  Removed the postinstall script, which was causing installations in other
-   packages to fail.
+- Removed the postinstall script, which was causing installations in other
+  packages to fail.
 
 ## [17.0.2] - 2018-12-14
 ### Fixed
