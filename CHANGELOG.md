@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.0.1] - 2019-03-20
+### Changed
+- The peer dependency of the npm jquery package has been relaxed to accept any
+  3.*.* version.
+
 ## [18.0.0] - 2019-02-08
 ### Changed
 - Changed the npm package so that when it is required, it does not set the "Def"

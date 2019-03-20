@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "18.0.0",
+  "version": "18.0.1",
   "description": "",
   "main": "source/index.js",
   "directories": {
@@ -8,7 +8,7 @@
   },
   "commentsOnDeps": {},
   "peerDependencies": {
-    "jquery": "~3.0.0"
+    "jquery": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
