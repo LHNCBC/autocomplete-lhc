@@ -75,6 +75,14 @@ var fe_search_button_cne_autoComp =
   new Def.Autocompleter.Search('fe_search_button_cne',
     '/form/get_search_res_list?fd_id=1285', opts);var opts = {};
 
+// FHIR
+new Def.Autocompleter.Search('fhir_search',
+  'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum',
+  {fhir: true});
+new Def.Autocompleter.Search('fhir_search_w_button',
+  'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum',
+  {fhir: true, buttonID: 'fhir_search_button'});
+
 // prefetch list with match required and a default
 opts = {};
 opts['matchListValue']=true;

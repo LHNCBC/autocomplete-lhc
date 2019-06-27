@@ -46,6 +46,13 @@
       MAX_VALUE_SIZE_FOR_AUTOCOMP: 25,
 
       /**
+       *  The number of results to request if the user clicks "see more".  This
+       *  really only applies if the "fhir" option is set.  Otherwise, it is up
+       *  to the server to pick a number of results when "maxList" is set.
+       */
+      EXPANDED_COUNT: 500,
+
+      /**
        *  The constructor function.
        */
       constructor: Def.Autocompleter.Search,
@@ -103,7 +110,8 @@
        * @param field the ID or the DOM element of the field for which the
        *  list is displayed.  If an element is provided, it must contain an ID
        *  attribute, or one will be assigned.
-       * @param url for getting the completion list.  The website answering the
+       * @param url for getting the completion list.  Unless "fhir" is set as an
+       * option (see below), the website answering the
        *  URL is expected to understand the following parameters:
        *  <ul>
        *    <li>terms - the text from the field.  This should be used to find
@@ -123,7 +131,12 @@
        *    <li>field_val - When "suggest"==1, this contains the value the user
        *     typed.</li>
        *  </ul>
-       *  The URL's response should be an array.  For a non-suggestion request
+       *  When "fhir" is set, standard FHIR ValueSet $expand parameters will be
+       *  used.  In this case, the URL should be the URL for a full expansion of
+       *  the ValueSet.
+       *
+       *  The URL's response should be an array (unless the "fhir" option is
+       *  set).  For a non-suggestion request
        *  (suggest != '1'), it should have the following elements:
        *  <ul>
        *    <li>position 0 - the total search result count (including the ones not
@@ -162,9 +175,16 @@
        *     position 0.  This is useful for lists that contain entries from
        *     different code systems.</li>
        *  </ul>
+       *  When the "fhir" option is present, the response will be expected to be
+       *  a FHIR ValueSet expansion.
        * @param options A hash of optional parameters.  The allowed keys and their
        *  values are:
        *  <ul>
+       *    <li>fhir - If present, this parameter will switch the autompleter in
+       *     HL7 FHIR mode, sending FHIR $expand requsts and processing ValueSet
+       *     expansion results.  In the future, this parameter's value might be a hash
+       *     of FHIR-specific options, but only its presence is checked
+       *     currently.</li>
        *    <li>matchListValue - Whether the field value is required to be one from
        *     the list (default: false).</li>
        *    <li>sort - Whether or not values should be sorted after being
@@ -253,6 +273,7 @@
           Def.Autocompleter.Base.classInit();
 
         this.url = url;
+        this.fhir = options.fhir !== undefined;
 
         this.defAutocompleterBaseInit(fieldID, options);
 
@@ -382,11 +403,19 @@
           }
           if (!results) { // i.e. if it wasn't cached
             // Run the search
-            var paramData = {
-              authenticity_token: window._token || '',
-              maxList: null, // no value
-              terms: searchStr
+            var paramData = {};
+            if (this.fhir) {
+              paramData.filter = searchStr;
+              paramData.count = Def.Autocompleter.Search.EXPANDED_COUNT;
+              //paramData._format='application/fhir+json';
+              paramData._format='application/json';
             }
+            else {
+              paramData.terms = searchStr;
+              paramData.maxList = null; // no value
+            }
+            if (window._token)
+              params.authenticity_token = window._token;
             var options = {
               data: paramData,
               complete: this.options.onComplete
@@ -704,8 +733,14 @@
         }
         if (xhrObj.status === 200) { // 200 is the "OK" status
           var reqParams = xhrObj.requestParamData_;
-          var searchStr = reqParams['terms'];
-          var autocomp = reqParams['maxList'] === undefined;
+          if (this.fhir) {
+            var searchStr = reqParams.filter;
+            var autocomp = reqParams.count === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
+          }
+          else {
+            searchStr = reqParams.terms;
+            autocomp = reqParams.maxList === undefined;
+          }
           var searchAC = Def.Autocompleter.Search;
 
           if (!fromCache && this.useResultCache_) {
@@ -735,11 +770,27 @@
             // Retrieve the response data, which is in JSON format.
             var responseData = xhrObj.responseJSON || JSON.parse(xhrObj.responseText);
 
-            var totalCount = responseData[0];
-            this.itemCodes_ = responseData[1];
-            this.listExtraData_ = responseData[2];
-            this.itemCodeSystems_ = responseData[4];
-            this.rawList_ = responseData[3]; // rawList_ is used in list selection events
+            if (!this.fhir) {
+              var totalCount = responseData[0];
+              this.itemCodes_ = responseData[1];
+              this.listExtraData_ = responseData[2];
+              this.itemCodeSystems_ = responseData[4];
+              this.rawList_ = responseData[3]; // rawList_ is used in list selection events
+            }
+            else {
+              totalCount = responseData.expansion.total;
+              this.listExtraData_ = null;
+              this.itemCodes_ = [];
+              this.itemCodeSystems_ = [];
+              this.rawList_ = [];
+              var items = responseData.expansion.contains;
+              for (let i=0, len=items.length; i<len; ++i) {
+                var expItem = items[i];
+                this.itemCodes_[i] = expItem.code;
+                this.itemCodeSystems_[i] = expItem.system;
+                this.rawList_[i] = [expItem.display];
+              }
+            }
             var fieldValToItemFields = this.createFieldVals(this.rawList_);
             var data = this.processChoices(fieldValToItemFields);
             var listFieldVals=data[0], bestMatchFound=data[1];
@@ -980,10 +1031,17 @@
           }
           if (!results) {
             // Run the search
-            var paramData = {
-              authenticity_token: window._token || '',
-              terms: fieldVal,
-            };
+            var paramData = {};
+            if (this.fhir) {
+              paramData.filter = fieldVal;
+              //paramData._format='application/fhir+json';
+              paramData._format='application/json';
+              paramData.count = Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
+            }
+            else
+              paramData.terms = fieldVal;
+            if (window._token)
+              params.authenticity_token = window._token;
             var options = {
               data: paramData,
               dataType: 'json',
@@ -1004,10 +1062,11 @@
         if (this.url) { // we also this to be initially undefined
           var fieldVal = this.getSearchStr();
           var paramData = {
-            authenticity_token: window._token || '',
             field_val: fieldVal,
             suggest: 1
           };
+          if (window._token)
+            params.authenticity_token = window._token;
           var options = {
             data: paramData,
             complete: jQuery.proxy(this.onFindSuggestionComplete, this)
