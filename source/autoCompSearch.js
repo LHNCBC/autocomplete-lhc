@@ -186,10 +186,8 @@
        *     expansion results.  Optionally, its value can be a hash with the
        *     key "search", the value of which should be a function that takes
        *     the current field value and a requested result count, and returns a
-       *     promise that resolves to an array consisting of the requested count
-       *     and the ValueSet expansion that is the result of
-       *     that search.  If this "search" key is present, the "url" parameter value
-       *     is not used.</li>
+       *     promise that resolves to a ValueSet expansion.  If this "search"
+       *     key is present, the "url" parameter value is not used.</li>
        *    <li>matchListValue - Whether the field value is required to be one from
        *     the list (default: false).</li>
        *    <li>sort - Whether or not values should be sorted after being
@@ -393,7 +391,8 @@
         if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
           this.lastAjaxRequest_.abort();
 
-        if (this.url) { // we also this to be initially undefined
+        var searchFn = this.fhir && this.fhir.search;
+        if (this.url || searchFn) {
           this.searchInProgress = true;
           this.searchStartTime = new Date().getTime();
 
@@ -408,29 +407,52 @@
           }
           if (!results) { // i.e. if it wasn't cached
             // Run the search
-            var paramData = {};
-            if (this.fhir) {
-              paramData.filter = searchStr;
-              paramData.count = Def.Autocompleter.Search.EXPANDED_COUNT;
-              //paramData._format='application/fhir+json';
-              paramData._format='application/json';
-            }
+            if (searchFn)
+              this.useSearchFn(searchStr, Def.Autocompleter.Search.EXPANDED_COUNT);
             else {
-              paramData.terms = searchStr;
-              paramData.maxList = null; // no value
+              var paramData = {};
+              if (this.fhir) {
+                paramData.filter = searchStr;
+                paramData.count = Def.Autocompleter.Search.EXPANDED_COUNT;
+                //paramData._format='application/fhir+json';
+                paramData._format='application/json';
+              }
+              else {
+                paramData.terms = searchStr;
+                paramData.maxList = null; // no value
+              }
+              if (window._token)
+                params.authenticity_token = window._token;
+              var options = {
+                data: paramData,
+                complete: this.options.onComplete
+              }
+              this.changed = false;
+              this.hasFocus = true;
+              this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
+              this.lastAjaxRequest_.requestParamData_ = paramData;
             }
-            if (window._token)
-              params.authenticity_token = window._token;
-            var options = {
-              data: paramData,
-              complete: this.options.onComplete
-            }
-            this.changed = false;
-            this.hasFocus = true;
-            this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
-            this.lastAjaxRequest_.requestParamData_ = paramData;
           }
         }
+      },
+
+
+      /**
+       *  Runs the fhir.search function to get results back as a ValueSet.
+       * @param searchStr the search string
+       * @param requestedCount the requested number of results
+       */
+      useSearchFn: function(searchStr, requestedCount) {
+        var self = this;
+        this.fhir.search(searchStr, requestedCount)
+          .then(function(valueSet) {
+            valueSet.requestedCount = requestedCount;
+            valueSet.searchStr = searchStr;
+            self.onComplete(valueSet)
+          },
+          function(failReason) {
+            console.log("%%% failed, "+failReason); // TBD debugging
+          });
       },
 
 
@@ -750,7 +772,7 @@
               var autocomp = reqParams.count === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
             }
             else {
-              searchStr = xhrObj.compose.include[0].filter[0].value;
+              searchStr = xhrObj.searchStr;
               autocomp = xhrObj.requestedCount === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
             }
           }
@@ -1030,8 +1052,8 @@
         if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
           this.lastAjaxRequest_.abort();
 
-        var fhirSearch = this.fhir && this.fhir.search;
-        if (this.url || fhirSearch) { // url can be initially undefined and set later
+        var searchFn = this.fhir && this.fhir.search;
+        if (this.url || searchFn) { // url can be initially undefined and set later
           this.searchStartTime = new Date().getTime() ;
 
           var results = null;
@@ -1051,7 +1073,9 @@
               this.onComplete(results, null, true);
           }
           if (!results) {
-            if (this.url) {
+            if (searchFn)
+              this.useSearchFn(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
+            else  {
               // Run the search
               var paramData = {};
               if (this.fhir) { // a FHIR query without a FHIR client
@@ -1071,19 +1095,6 @@
               }
               this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
               this.lastAjaxRequest_.requestParamData_ = paramData;
-            }
-            else if (fhirSearch) {
-              var self = this;
-              this.fhir.search(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD)
-                .then(function(resultData) {
-                  var valueSet = resultData[1];
-                  var count = resultData[0];
-                  valueSet.requestedCount = count;
-                  self.onComplete(valueSet)
-                },
-                function(failReason) {
-                  console.log("%%% failed, "+failReason); // TBD debugging
-                });
             }
           }
         }
