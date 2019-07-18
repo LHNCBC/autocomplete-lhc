@@ -409,29 +409,10 @@
             // Run the search
             if (searchFn)
               this.useSearchFn(searchStr, Def.Autocompleter.Search.EXPANDED_COUNT);
-            else {
-              var paramData = {};
-              if (this.fhir) {
-                paramData.filter = searchStr;
-                paramData.count = Def.Autocompleter.Search.EXPANDED_COUNT;
-                //paramData._format='application/fhir+json';
-                paramData._format='application/json';
-              }
-              else {
-                paramData.terms = searchStr;
-                paramData.maxList = null; // no value
-              }
-              if (window._token)
-                params.authenticity_token = window._token;
-              var options = {
-                data: paramData,
-                complete: this.options.onComplete
-              }
-              this.changed = false;
-              this.hasFocus = true;
-              this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
-              this.lastAjaxRequest_.requestParamData_ = paramData;
-            }
+            else
+              this.urlSearch(searchStr, Def.Autocompleter.Search.EXPANDED_COUNT);
+            this.changed = false;
+            this.hasFocus = true;
           }
         }
       },
@@ -453,6 +434,36 @@
           function(failReason) {
             console.log("%%% failed, "+failReason); // TBD debugging
           });
+      },
+
+
+      /**
+       *  Runs an AJAX search using the autocompleter's URL.
+       * @param searchStr the search string
+       * @param requestedCount the requested number of results
+       */
+      urlSearch: function(searchStr, requestedCount) {
+        var paramData = {};
+        if (this.fhir) { // a FHIR query without a FHIR client
+          paramData.filter = searchStr;
+          //paramData._format='application/fhir+json';
+          paramData._format='application/json';
+          paramData.count = requestedCount;
+        }
+        else {
+          paramData.terms = searchStr;
+          if (requestedCount != Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD)
+            paramData.maxList = null; // maxList does not need a value
+        }
+        if (window._token)
+          params.authenticity_token = window._token;
+        var options = {
+          data: paramData,
+          dataType: 'json',
+          complete: this.options.onComplete
+        }
+        this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
+        this.lastAjaxRequest_.requestParamData_ = paramData;
       },
 
 
@@ -1075,27 +1086,8 @@
           if (!results) {
             if (searchFn)
               this.useSearchFn(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
-            else  {
-              // Run the search
-              var paramData = {};
-              if (this.fhir) { // a FHIR query without a FHIR client
-                paramData.filter = fieldVal;
-                //paramData._format='application/fhir+json';
-                paramData._format='application/json';
-                paramData.count = Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
-              }
-              else
-                paramData.terms = fieldVal;
-              if (window._token)
-                params.authenticity_token = window._token;
-              var options = {
-                data: paramData,
-                dataType: 'json',
-                complete: this.options.onComplete
-              }
-              this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
-              this.lastAjaxRequest_.requestParamData_ = paramData;
-            }
+            else
+              this.urlSearch(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
           }
         }
       },
