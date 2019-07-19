@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.1.0]
+### Added
+- Added support for search lists that get input from FHIR ValueSet
+  expansions.
+
 ## [18.0.2] - 2019-06-11
 ### Fixed
 - Updated dependencies to get patches for vulnerabilities.  The vulnerabilities
