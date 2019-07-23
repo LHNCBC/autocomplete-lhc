@@ -48,7 +48,8 @@ function BasePage() {
     // Use a string rather than a function object so fieldID can be passed to
     // the browser.
     return browser.driver.executeScript(
-      'var ac = jQuery("#'+fieldID+'")[0].autocomp;'+
+      // The replace below escapes / characters in fieldID
+      'var ac = jQuery("#'+fieldID.replace(/\//g, '\\\\/')+'")[0].autocomp;'+
       'return [ac.getSelectedCodes(), ac.getSelectedItems()];'
     );
   };
@@ -63,7 +64,8 @@ function BasePage() {
     // Use a string rather than a function object so fieldID can be passed to
     // the browser.
     return browser.driver.executeScript(
-      'var ac = jQuery("#'+fieldID+'")[0].autocomp;'+
+      // The replace below escapes / characters in fieldID
+      'var ac = jQuery("#'+fieldID.replace(/\//g, '\\\\/')+'")[0].autocomp;'+
       'return ac.getSelectedItems();'
     );
   };
