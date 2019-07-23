@@ -167,7 +167,6 @@ jQuery.ajax = function(url, options) {
   ++jQuery.ajax.ajaxCtr;
 
   var params = options.data;
-console.log("%%% params="+JSON.stringify(params));
   if (!params.filter) { // assume filter is present for FHIR requests (for testing)
     var resultType =
       params.suggest ? 'suggest' : params.maxList === undefined ? 'partial' : 'full';
