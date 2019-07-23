@@ -778,7 +778,7 @@
         if (xhrObj.status === 200 || isValueSet) { // 200 is the "OK" status
           var reqParams = xhrObj.requestParamData_;
           if (this.fhir) {
-            if (!isValueSet) {
+            if (!isValueSet) {  // xhrObj could be the jQuery-wrapped XMLHttpRequest
               var searchStr = reqParams.filter;
               var autocomp = reqParams.count === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
             }
