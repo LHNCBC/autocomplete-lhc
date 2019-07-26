@@ -133,6 +133,33 @@ mockData_ = {
   })()
 };
 
+var fhirMockData = { // url to count to response (any filter value)
+  'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum': {
+    7: // count
+      '{"resourceType":"ValueSet","url":"http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum?terms=pmol",'+
+      '"status":"active","expansion":{"timestamp":"2019-06-26T14:55:53.945Z","total":10,'+
+      '"contains":[{"code":"pmol","system":"http://unitsofmeasure.org","display":"picomole"},'+
+      '{"code":"pmol/umol","system":"http://unitsofmeasure.org","display":"picomole per micromole"},'+
+      '{"code":"pmol/L","system":"http://unitsofmeasure.org","display":"picomole per liter"},'+
+      '{"code":"pmol/dL","system":"http://unitsofmeasure.org","display":"picomole per deciliter"},'+
+      '{"code":"pmol/g","system":"http://unitsofmeasure.org","display":"picomole per gram"},'+
+      '{"code":"pmol/mL","system":"http://unitsofmeasure.org","display":"picomole per milliliter"},'+
+      '{"code":"pmol/d","system":"http://unitsofmeasure.org","display":"picomole per day"}]}}',
+    500:
+      '{"resourceType":"ValueSet","url":"http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum?terms=pmol",'+
+      '"status":"active","expansion":{"timestamp":"2019-06-26T14:58:25.718Z","total":10,'+
+      '"contains":[{"code":"pmol","system":"http://unitsofmeasure.org","display":"picomole"},'+
+      '{"code":"pmol/umol","system":"http://unitsofmeasure.org","display":"picomole per micromole"},'+
+      '{"code":"pmol/L","system":"http://unitsofmeasure.org","display":"picomole per liter"},'+
+      '{"code":"pmol/dL","system":"http://unitsofmeasure.org","display":"picomole per deciliter"},'+
+      '{"code":"pmol/g","system":"http://unitsofmeasure.org","display":"picomole per gram"},'+
+      '{"code":"pmol/mL","system":"http://unitsofmeasure.org","display":"picomole per milliliter"},'+
+      '{"code":"pmol/d","system":"http://unitsofmeasure.org","display":"picomole per day"},'+
+      '{"code":"pmol/(24.h)","system":"http://unitsofmeasure.org","display":"picomole per 24 hour"},'+
+      '{"code":"pmol/min","system":"http://unitsofmeasure.org","display":"picomole per minute"},'+
+      '{"code":"pmol/h/mL","system":"http://unitsofmeasure.org","display":"picomole per hour per milliliter "}]}}'
+}};
+
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.
 jQuery.ajax = function(url, options) {
   // Keep track of the number of calls to this method, so we can detect in
@@ -140,17 +167,23 @@ jQuery.ajax = function(url, options) {
   ++jQuery.ajax.ajaxCtr;
 
   var params = options.data;
-  var resultType =
-    params.suggest ? 'suggest' : params.maxList === undefined ? 'partial' : 'full';
-  // This is just for testing, so assume the right parameters.
-  var fd_id = url.match(/fd_id=(\w+)/)[1];
-  var terms = params.terms || params.field_val; // suggest uses field_val
-  var responseText = mockData_[fd_id][resultType][terms];
-  if (!responseText) {
-    if (params.suggest === '1')
-      responseText = '[[],[]]';
-    else
-      responseText = '[0,[],null,[],false]';
+  if (!params.filter) { // assume filter is present for FHIR requests (for testing)
+    var resultType =
+      params.suggest ? 'suggest' : params.maxList === undefined ? 'partial' : 'full';
+    // This is just for testing, so assume the right parameters.
+    var fd_id = url.match(/fd_id=(\w+)/)[1];
+    var terms = params.terms || params.field_val; // suggest uses field_val
+    var responseText = mockData_[fd_id][resultType][terms];
+    if (!responseText) {
+      if (params.suggest === '1')
+        responseText = '[[],[]]';
+      else
+        responseText = '[0,[],null,[],false]';
+    }
+  }
+  else {
+    var count = params.count;
+    responseText = fhirMockData[url][count];
   }
 
   var response = {};

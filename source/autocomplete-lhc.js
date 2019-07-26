@@ -100,8 +100,9 @@
             this.removeAutocompFunction(controller.$parsers);
           }
 
-          this.ac = acOptions.hasOwnProperty('url') ?
-           this.searchList() : this.prefetchList();
+          var isSearch = acOptions.hasOwnProperty('url') ||
+            (acOptions.fhir && acOptions.fhir.search);
+          this.ac = isSearch ? this.searchList() : this.prefetchList();
 
           // See if there is an existing model value for the field (which
           // might have been set by the prefetchList call above, if there

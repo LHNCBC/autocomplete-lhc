@@ -46,6 +46,13 @@
       MAX_VALUE_SIZE_FOR_AUTOCOMP: 25,
 
       /**
+       *  The number of results to request if the user clicks "see more".  This
+       *  really only applies if the "fhir" option is set.  Otherwise, it is up
+       *  to the server to pick a number of results when "maxList" is set.
+       */
+      EXPANDED_COUNT: 500,
+
+      /**
        *  The constructor function.
        */
       constructor: Def.Autocompleter.Search,
@@ -103,7 +110,8 @@
        * @param field the ID or the DOM element of the field for which the
        *  list is displayed.  If an element is provided, it must contain an ID
        *  attribute, or one will be assigned.
-       * @param url for getting the completion list.  The website answering the
+       * @param url for getting the completion list.  Unless "fhir" is set as an
+       * option (see below), the website answering the
        *  URL is expected to understand the following parameters:
        *  <ul>
        *    <li>terms - the text from the field.  This should be used to find
@@ -123,7 +131,13 @@
        *    <li>field_val - When "suggest"==1, this contains the value the user
        *     typed.</li>
        *  </ul>
-       *  The URL's response should be an array.  For a non-suggestion request
+       *  When "fhir" is set, standard FHIR ValueSet $expand parameters will be
+       *  used.  In this case, the URL should be the URL for a full expansion of
+       *  the ValueSet, unless the fhir.search function is provided, in which
+       *  case this parameter is not used.
+       *
+       *  The URL's response should be an array (unless the "fhir" option is
+       *  set).  For a non-suggestion request
        *  (suggest != '1'), it should have the following elements:
        *  <ul>
        *    <li>position 0 - the total search result count (including the ones not
@@ -162,9 +176,18 @@
        *     position 0.  This is useful for lists that contain entries from
        *     different code systems.</li>
        *  </ul>
+       *  When the "fhir" option is present, the response will be expected to be
+       *  a FHIR ValueSet expansion.
        * @param options A hash of optional parameters.  The allowed keys and their
        *  values are:
        *  <ul>
+       *    <li>fhir - If present, this parameter will switch the autompleter in
+       *     HL7 FHIR mode, sending FHIR $expand requsts and processing ValueSet
+       *     expansion results.  Optionally, its value can be a hash with the
+       *     key "search", the value of which should be a function that takes
+       *     the current field value and a requested result count, and returns a
+       *     promise that resolves to a ValueSet expansion.  If this "search"
+       *     key is present, the "url" parameter value is not used.</li>
        *    <li>matchListValue - Whether the field value is required to be one from
        *     the list (default: false).</li>
        *    <li>sort - Whether or not values should be sorted after being
@@ -253,6 +276,7 @@
           Def.Autocompleter.Base.classInit();
 
         this.url = url;
+        this.fhir = options.fhir;
 
         this.defAutocompleterBaseInit(fieldID, options);
 
@@ -367,7 +391,8 @@
         if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
           this.lastAjaxRequest_.abort();
 
-        if (this.url) { // we also this to be initially undefined
+        var searchFn = this.fhir && this.fhir.search;
+        if (this.url || searchFn) {
           this.searchInProgress = true;
           this.searchStartTime = new Date().getTime();
 
@@ -382,21 +407,63 @@
           }
           if (!results) { // i.e. if it wasn't cached
             // Run the search
-            var paramData = {
-              authenticity_token: window._token || '',
-              maxList: null, // no value
-              terms: searchStr
-            }
-            var options = {
-              data: paramData,
-              complete: this.options.onComplete
-            }
+            if (searchFn)
+              this.useSearchFn(searchStr, Def.Autocompleter.Search.EXPANDED_COUNT);
+            else
+              this.urlSearch(searchStr, Def.Autocompleter.Search.EXPANDED_COUNT);
             this.changed = false;
             this.hasFocus = true;
-            this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
-            this.lastAjaxRequest_.requestParamData_ = paramData;
           }
         }
+      },
+
+
+      /**
+       *  Runs the fhir.search function to get results back as a ValueSet.
+       * @param searchStr the search string
+       * @param requestedCount the requested number of results
+       */
+      useSearchFn: function(searchStr, requestedCount) {
+        var self = this;
+        this.fhir.search(searchStr, requestedCount)
+          .then(function(valueSet) {
+            valueSet.requestedCount = requestedCount;
+            valueSet.searchStr = searchStr;
+            self.onComplete(valueSet)
+          },
+          function(failReason) {
+            console.log("%%% failed, "+failReason); // TBD debugging
+          });
+      },
+
+
+      /**
+       *  Runs an AJAX search using the autocompleter's URL.
+       * @param searchStr the search string
+       * @param requestedCount the requested number of results
+       */
+      urlSearch: function(searchStr, requestedCount) {
+        var paramData = {};
+        if (this.fhir) { // a FHIR query without a FHIR client
+          paramData.filter = searchStr;
+          //paramData._format='application/fhir+json';
+          paramData._format='application/json';
+          paramData.count = requestedCount;
+        }
+        else {
+          paramData.terms = searchStr;
+          if (requestedCount != Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD)
+            paramData.maxList = null; // maxList does not need a value
+        }
+        if (window._token)
+          params.authenticity_token = window._token;
+        var options = {
+          data: paramData,
+          dataType: 'json',
+          complete: this.options.onComplete
+        }
+        this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
+        this.lastAjaxRequest_.requestParamData_ = paramData;
       },
 
 
@@ -618,7 +685,7 @@
        * @param totalCount the total hits found on the server (possibly more than
        *  returned.)
        * @param shownCount the number of hits to be shown in the list
-       * @param responseLength the number of characters in the returned data
+       * @param responseLength (optional) the number of characters in the returned data
        */
       setSearchCountDiv: function(totalCount, shownCount, responseLength) {
         var searchCountElem = $('searchCount');
@@ -643,7 +710,10 @@
           if (bytes.length < 3)
             bytes += '&nbsp;';
 
-          var resultInfo = '; ' + bytes + ' bytes in ' + elapsedTime + ' ms';
+          var resultInfo = '; ';
+          if (responseLength !== undefined)
+            resultInfo += bytes + ' bytes in ';
+          resultInfo += elapsedTime + ' ms';
           if (elapsedTime.length < 3)
             resultInfo += '&nbsp;';
 
@@ -691,7 +761,9 @@
       /**
        *  This gets called when an Ajax request returns.  (See Prototype's
        *  Ajax.Request and callback sections.)
-       * @param xhrObj A jQuery-extended XMLHttpRequest object
+       * @param xhrObj A jQuery-extended XMLHttpRequest object, or a FHIR
+       *  ValueSet expansion.  If the latter, we expect "requestedCount" to have
+       *  been added as a field.
        * @param textStatus A jQuery text version of the status of the request
        *  (e.g. "success")
        * @param fromCache whether "response" is from the cache (optional).
@@ -702,10 +774,23 @@
         if (this.lastAjaxRequest_ === xhrObj) {
           this.lastAjaxRequest_ = null;
         }
-        if (xhrObj.status === 200) { // 200 is the "OK" status
+        var isValueSet = xhrObj.resourceType == "ValueSet";
+        if (xhrObj.status === 200 || isValueSet) { // 200 is the "OK" status
           var reqParams = xhrObj.requestParamData_;
-          var searchStr = reqParams['terms'];
-          var autocomp = reqParams['maxList'] === undefined;
+          if (this.fhir) {
+            if (!isValueSet) {  // xhrObj could be the jQuery-wrapped XMLHttpRequest
+              var searchStr = reqParams.filter;
+              var autocomp = reqParams.count === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
+            }
+            else {
+              searchStr = xhrObj.searchStr;
+              autocomp = xhrObj.requestedCount === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
+            }
+          }
+          else {
+            searchStr = reqParams.terms;
+            autocomp = reqParams.maxList === undefined;
+          }
           var searchAC = Def.Autocompleter.Search;
 
           if (!fromCache && this.useResultCache_) {
@@ -733,13 +818,32 @@
               searchStrForFieldVal === searchStr) {
 
             // Retrieve the response data, which is in JSON format.
-            var responseData = xhrObj.responseJSON || JSON.parse(xhrObj.responseText);
+            var responseData = isValueSet ? xhrObj :
+              xhrObj.responseJSON || JSON.parse(xhrObj.responseText);
 
-            var totalCount = responseData[0];
-            this.itemCodes_ = responseData[1];
-            this.listExtraData_ = responseData[2];
-            this.itemCodeSystems_ = responseData[4];
-            this.rawList_ = responseData[3]; // rawList_ is used in list selection events
+            if (!this.fhir) {
+              var totalCount = responseData[0];
+              this.itemCodes_ = responseData[1];
+              this.listExtraData_ = responseData[2];
+              this.itemCodeSystems_ = responseData[4];
+              this.rawList_ = responseData[3]; // rawList_ is used in list selection events
+            }
+            else {
+              totalCount = responseData.expansion.total;
+              this.listExtraData_ = null;
+              this.itemCodes_ = [];
+              this.itemCodeSystems_ = [];
+              this.rawList_ = [];
+              var items = responseData.expansion.contains;
+              if (items) {
+                for (var i=0, len=items.length; i<len; ++i) {
+                  var expItem = items[i];
+                  this.itemCodes_[i] = expItem.code;
+                  this.itemCodeSystems_[i] = expItem.system;
+                  this.rawList_[i] = [expItem.display];
+                }
+              }
+            }
             var fieldValToItemFields = this.createFieldVals(this.rawList_);
             var data = this.processChoices(fieldValToItemFields);
             var listFieldVals=data[0], bestMatchFound=data[1];
@@ -749,10 +853,10 @@
 
             var shownCount = listFieldVals.length;
             this.setSearchCountDiv(totalCount, shownCount,
-              xhrObj.responseText.length);
+              isValueSet ? undefined: xhrObj.responseText.length);
 
             // Show "see more" link depending on whether this was an autocompletion
-            // event and whether there are more items to see.
+            // event and whether, and vice-versa there are more items to see.
             if (shownCount < totalCount && autocomp)
               $('moreResults').style.display ='block';
             else {
@@ -959,7 +1063,8 @@
         if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
           this.lastAjaxRequest_.abort();
 
-        if (this.url) { // we also this to be initially undefined
+        var searchFn = this.fhir && this.fhir.search;
+        if (this.url || searchFn) { // url can be initially undefined and set later
           this.searchStartTime = new Date().getTime() ;
 
           var results = null;
@@ -979,18 +1084,10 @@
               this.onComplete(results, null, true);
           }
           if (!results) {
-            // Run the search
-            var paramData = {
-              authenticity_token: window._token || '',
-              terms: fieldVal,
-            };
-            var options = {
-              data: paramData,
-              dataType: 'json',
-              complete: this.options.onComplete
-            }
-            this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
-            this.lastAjaxRequest_.requestParamData_ = paramData;
+            if (searchFn)
+              this.useSearchFn(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
+            else
+              this.urlSearch(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
           }
         }
       },
@@ -1004,10 +1101,11 @@
         if (this.url) { // we also this to be initially undefined
           var fieldVal = this.getSearchStr();
           var paramData = {
-            authenticity_token: window._token || '',
             field_val: fieldVal,
             suggest: 1
           };
+          if (window._token)
+            params.authenticity_token = window._token;
           var options = {
             data: paramData,
             complete: jQuery.proxy(this.onFindSuggestionComplete, this)

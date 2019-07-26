@@ -3,6 +3,16 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.1.0]
+### Added
+- Added support for search lists that get input from FHIR ValueSet
+  expansions.
+
+## [18.0.2] - 2019-06-11
+### Fixed
+- Updated dependencies to get patches for vulnerabilities.  The vulnerabilities
+  were all in development dependencies, and so should not affect anyone.
+
 ## [18.0.1] - 2019-03-20
 ### Changed
 - The peer dependency of the npm jquery package has been relaxed to accept any
