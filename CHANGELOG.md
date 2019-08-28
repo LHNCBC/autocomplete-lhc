@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.1.1]
+### Fixed
+- An issue with search lists using the fhir.search parameter sharing a common
+  results cache.
+
 ## [18.1.0]
 ### Added
 - Added support for search lists that get input from FHIR ValueSet
