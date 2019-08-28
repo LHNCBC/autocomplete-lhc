@@ -669,6 +669,12 @@ if (typeof Def === 'undefined')
         this.options.minChars     = this.options.minChars || 1;
 
         this.element     = typeof field === 'string' ? $(field) : field;
+        if (!this.element) {
+          if (typeof field === 'string')
+            throw new Error("Could not find the field with id '"+field+'"');
+          else
+            throw new Error("The autocompleter constructor requires an field element or an ID");
+        }
         this.ensureNeededAttrs();
 
         // --- start of section copied from controls.js baseInitialize ---
