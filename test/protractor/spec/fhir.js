@@ -56,7 +56,7 @@ describe('FHIR Search Lists', function() {
   });
 });
 
-fdescribe('FHIR search by function', function() {
+describe('FHIR search by function', function() {
   var searchFunctionFieldID = 'fhir_search_w_function';
   var searchFunctionField = $('#'+searchFunctionFieldID);
 
@@ -84,12 +84,4 @@ fdescribe('FHIR search by function', function() {
     expect(po.firstSearchRes.getText()).toBe("Back pain 2");
   });
 });
-/*
-po.shownItemCount()
-po.listCountMessage()
-po.clearField();
-po.sendKeys(field, text);
-po.putElementAtBottomOfWindow
-po.waitForScrollToStop(fieldID);
-*/
 

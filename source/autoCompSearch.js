@@ -181,7 +181,7 @@
        * @param options A hash of optional parameters.  The allowed keys and their
        *  values are:
        *  <ul>
-       *    <li>fhir - If present, this parameter will switch the autompleter in
+       *    <li>fhir - If present, this parameter will switch the autompleter into
        *     HL7 FHIR mode, sending FHIR $expand requsts and processing ValueSet
        *     expansion results.  Optionally, its value can be a hash with the
        *     key "search", the value of which should be a function that takes
@@ -432,7 +432,7 @@
             self.onComplete(valueSet)
           },
           function(failReason) {
-            console.log("%%% failed, "+failReason); // TBD debugging
+            console.log("FHIR search failed: "+failReason);
           });
       },
 
@@ -471,10 +471,15 @@
        *  Initializes this.resultCache_.
        */
       initResultCache: function() {
-        this.resultCache_ = Def.Autocompleter.Search.urlToCache_[this.url];
+        // If the search will be done using this.url, we share the results with
+        // any other autocompleters using the same URL.  Otherwise (e.g. if
+        // this.fhir.search is set) we just assign a cache object for this
+        // individual autocompleter.
+        this.resultCache_ = this.url ? Def.Autocompleter.Search.urlToCache_[this.url] : null;
         if (!this.resultCache_) {
           this.resultCache_ = [{}, {}];
-          Def.Autocompleter.Search.urlToCache_[this.url] = this.resultCache_;
+          if (this.url)
+            Def.Autocompleter.Search.urlToCache_[this.url] = this.resultCache_;
         }
       },
 
