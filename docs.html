@@ -64,9 +64,20 @@
             <li><a href="#listSelection">List selections</a></li>
           </ul>
         </li>
-        <li><a href="#selectionData">Getting the selection data</a></li>
+        <li><a href="#apis">Autocompleter APIs</a>
+          <ul>
+            <li><a href="#selectionData">Getting the selection data</a></li>
+            <li><a href="#prefetchAPIs">Prefetch list APIs</a>
+              <ul>
+                <li><a href="#setListAndField">setListAndField</a></li>
+                <li><a href="#setFieldToListValue">setFieldToListValue</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
         <li><a href="#directive">AngularJS Directive</a></li>
       </ul>
+
       <section id="main_content" class="inner">
         <h1>Documentation for autocomplete-lhc</h1>
 
@@ -134,9 +145,9 @@
             <li>the ID or DOM Element of the form field for which the list is
                 displayed.  If an element is provided, it must contain an ID
                 attribute, or one will be assigned.</li>
-            <li>the array of completion options (list values).  If not
-               specified here, the list can be supplied later by a call to the
-               setListAndField function.</li>
+            <li>the array of completion options (list values).  This must be at
+               least an empty array (in which case the list can be specified
+               later with the setListAndField function.</li>
             <li>(optional) an options hash, which can include:
               <ul>
                 <li>any of the <a href="#construction_common">common options</a>
@@ -334,7 +345,11 @@
           </ul>
         </p>
 
-        <h2 id="selectionData">Getting the selection data</h2>
+        <h2 id="apis">Autocompleter APIs</h2>
+        <p>The following sections document functions that can be called on
+         instances of the autocompleter returned by the constructors above.</p>
+
+        <h3 id="selectionData">Getting the selection data</h3>
         <p>For simple use cases, getting what the user picked is as simple as
           looking in the field.  For more complicated ones, APIs are provided
           for getting the code for the selected item, for getting selected items for
@@ -376,6 +391,23 @@
             returned by the getSelectedItemData() call above, which might be
             easier to use.</dd>
         </dl>
+
+        <h3 id="prefetchAPIs">Prefetch list APIs</h3>
+        <p>The following functions are availble on instance of the prefetch
+        autocompleter.</p>
+        <h4 id="setListAndField">setListAndField</h4>
+        <p>If the prefetch list needs to be changed to a new list, you can do
+         that with setListAndField([array of items], [array of codes]).  If there
+         is just one item in the new list, the field will be set to that value;
+         otherwise the field value will be cleared.</p>
+        <h4 id="setFieldToListValue">setFieldToListValue</h4>
+        <p>After constructing the prefetch list, the field value can be
+         initialized with one of the list values by calling
+         setFieldToListValue(fieldValue) where the "fieldValue" should be one
+         of the list's display values.  The autocompleter keeps track of what has
+         been selected, so it is necessary to call this function rather than just
+         assign to the .value attribute of the field.</p>
+
 
         <h2 id="directive">AngularJS Directive</h2>
         <p>If you are using AngularJS, you can set up your autocompleters via
