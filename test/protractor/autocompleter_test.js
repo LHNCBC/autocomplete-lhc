@@ -146,6 +146,8 @@ opts['codes']=["LA44-3","LA45-0","LA46-8"];
 opts['maxSelect'] = '*';
 var fe_multi_sel_cne_autoComp =
  new Def.Autocompleter.Prefetch('multi_sel_cwe', ["Spanish","French","Other"], opts);
+document.querySelector('#dest_multi_sel_cwe').addEventListener('click', (event)=>{
+  fe_multi_sel_cne_autoComp.destroy()});
 
 // multi-select search list without match required
 opts = {

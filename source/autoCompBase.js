@@ -2599,6 +2599,15 @@ if (typeof Def === 'undefined')
        *  Frees any references this autocompleter has to DOM objects.
        */
       detachFromDOM: function() {
+        // If this is a multiselect list, remove the div we put around the
+        // field, which also has the selected item list.
+        if (this.multiSelect_) {
+          var fieldDiv = this.element.parentNode;
+          var originalParent = fieldDiv.parentNode;
+          originalParent.replaceChild(this.element, fieldDiv);
+          this.selectedList = null;
+        }
+
         this.element.autocomp = null ;
         this.element = null;
         this.update = null;
