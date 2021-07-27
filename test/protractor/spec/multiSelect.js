@@ -236,5 +236,14 @@ describe('multi-select lists', function() {
     // more".
     expect(po.expandLink.isDisplayed()).toBe(false);
   });
+
+  it('should remove the selected items when destroyed', function () {
+    po.openTestPage();
+    po.multiPrefetchCWE.click();
+    po.firstSearchRes.click();
+    expect(po.multiPrefetchCWESelected.count()).toEqual(1);
+    $('#dest_multi_sel_cwe').click();
+    expect(po.multiPrefetchCWESelected.count()).toEqual(0);
+  });
 });
 
