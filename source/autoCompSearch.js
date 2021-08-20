@@ -696,7 +696,9 @@
         var searchCountElem = $('searchCount');
         var searchCountStr = '';
         if (totalCount > 0) {
-          searchCountStr = shownCount + ' of ' + totalCount + ' total';
+          searchCountStr = shownCount + ' of ' +
+              (totalCount === Infinity ? 'unknown' : totalCount)
+              + ' total';
 
           // Dan Clark of Freedom Scientific reported that the search count made
           // the output for JAWS too verbose, so I am commenting out this call.
