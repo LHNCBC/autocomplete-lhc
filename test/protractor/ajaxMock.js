@@ -129,7 +129,8 @@ mockData_ = {
     for (var i=0, len=returnCodes.length; i<len; ++i)
       returnFields.push([returnCodes[i]]); // wrap in array
     var paRtn = JSON.stringify([returnCodes.length, returnCodes, null, returnFields]);
-    return {partial: {'pA': paRtn, 'Pa': paRtn}}; // CTSS is case-insenstive
+    var ppRtn = JSON.stringify([null, returnCodes, null, returnFields]);
+    return {partial: {'pA': paRtn, 'Pa': paRtn, 'pp': ppRtn}}; // CTSS is case-insenstive
   })()
 };
 

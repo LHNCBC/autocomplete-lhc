@@ -689,16 +689,16 @@
        *  there were any results.
        * @param totalCount the total hits found on the server (possibly more than
        *  returned.)
-       *  undefined should be passed in if total count is not known.
+       *  null should be passed in if total count is not known.
        * @param shownCount the number of hits to be shown in the list
        * @param responseLength (optional) the number of characters in the returned data
        */
       setSearchCountDiv: function(totalCount, shownCount, responseLength) {
         var searchCountElem = $('searchCount');
         var searchCountStr = '';
-        if (totalCount > 0 || totalCount === undefined) {
+        if (totalCount > 0 || totalCount === null) {
           searchCountStr = shownCount + ' of ' +
-              (totalCount === undefined ? 'unknown' : totalCount)
+              (totalCount === null ? 'unknown' : totalCount)
               + ' total';
 
           // Dan Clark of Freedom Scientific reported that the search count made
