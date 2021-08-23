@@ -141,7 +141,7 @@
        *  (suggest != '1'), it should have the following elements:
        *  <ul>
        *    <li>position 0 - the total search result count (including the ones not
-       *     returned, if autocomp==1). undefined if total is not known.</li>
+       *     returned, if autocomp==1). null if total is not known.</li>
        *    <li>position 1 - the list of codes for the list items (if the items are
        *     coded)</li>
        *    <li>position 2 - A hash of extra data about the list items (e.g.
@@ -865,7 +865,7 @@
 
             // Show "see more" link depending on whether this was an autocompletion
             // event and whether, and vice-versa there are more items to see.
-            if ((shownCount < totalCount || totalCount === undefined) && autocomp)
+            if ((shownCount < totalCount || totalCount === null) && autocomp)
               $('moreResults').style.display ='block';
             else {
               $('moreResults').style.display ='none';
