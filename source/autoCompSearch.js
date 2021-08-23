@@ -695,9 +695,9 @@
       setSearchCountDiv: function(totalCount, shownCount, responseLength) {
         var searchCountElem = $('searchCount');
         var searchCountStr = '';
-        if (totalCount > 0) {
+        if (totalCount === undefined || totalCount > 0) {
           searchCountStr = shownCount + ' of ' +
-              (totalCount === Infinity ? 'unknown' : totalCount)
+              (totalCount === undefined ? 'unknown' : totalCount)
               + ' total';
 
           // Dan Clark of Freedom Scientific reported that the search count made
@@ -864,7 +864,7 @@
 
             // Show "see more" link depending on whether this was an autocompletion
             // event and whether, and vice-versa there are more items to see.
-            if (shownCount < totalCount && autocomp)
+            if ((shownCount < totalCount || totalCount === undefined) && autocomp)
               $('moreResults').style.display ='block';
             else {
               $('moreResults').style.display ='none';
