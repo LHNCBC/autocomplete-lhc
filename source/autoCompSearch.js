@@ -141,7 +141,7 @@
        *  (suggest != '1'), it should have the following elements:
        *  <ul>
        *    <li>position 0 - the total search result count (including the ones not
-       *     returned, if autocomp==1).</li>
+       *     returned, if autocomp==1). undefined if total is not known.</li>
        *    <li>position 1 - the list of codes for the list items (if the items are
        *     coded)</li>
        *    <li>position 2 - A hash of extra data about the list items (e.g.
@@ -689,13 +689,14 @@
        *  there were any results.
        * @param totalCount the total hits found on the server (possibly more than
        *  returned.)
+       *  undefined should be passed in if total count is not known.
        * @param shownCount the number of hits to be shown in the list
        * @param responseLength (optional) the number of characters in the returned data
        */
       setSearchCountDiv: function(totalCount, shownCount, responseLength) {
         var searchCountElem = $('searchCount');
         var searchCountStr = '';
-        if (totalCount === undefined || totalCount > 0) {
+        if (totalCount > 0 || totalCount === undefined) {
           searchCountStr = shownCount + ' of ' +
               (totalCount === undefined ? 'unknown' : totalCount)
               + ' total';
