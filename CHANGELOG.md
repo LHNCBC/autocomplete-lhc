@@ -5,8 +5,8 @@ This log documents significant changes for each release.  This project follows
 
 ## [18.1.3] - 2021-08-20
 ### Changed
-- Display "unknown total" instead of "Infinity total" at the bottom of the
-  dropdown list.
+- Display "unknown total" at the bottom of the dropdown list, if null is passed
+  in for total count.
 
 ## [18.1.2] - 2021-07-26
 ### Fixed
