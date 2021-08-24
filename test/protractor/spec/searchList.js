@@ -137,6 +137,17 @@ describe('search lists', function() {
     expect(po.secondSearchRes.getText()).toEqual('zArm pain3');
   });
 
+  it('should display unknown total', function() {
+    po.openTestPage();
+    po.clearField(po.csMatchSearch);
+    po.sendKeys(po.csMatchSearch, 'pp');
+    po.waitForSearchResults();
+    expect(po.listCountMessage()).toMatch('4 of unknown total');
+    po.csMatchSearch.sendKeys(protractor.Key.TAB);
+    expect(po.csMatchSearch.getAttribute('value')).toEqual('pp');
+    po.clearField(po.csMatchSearch);
+  });
+
   describe('clearCachedResults', function() {
     it('should cause new results to be fetched for the next search', function () {
       po.openTestPage(); // clear field values

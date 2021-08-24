@@ -141,7 +141,7 @@
        *  (suggest != '1'), it should have the following elements:
        *  <ul>
        *    <li>position 0 - the total search result count (including the ones not
-       *     returned, if autocomp==1).</li>
+       *     returned, if autocomp==1). null if total is not known.</li>
        *    <li>position 1 - the list of codes for the list items (if the items are
        *     coded)</li>
        *    <li>position 2 - A hash of extra data about the list items (e.g.
@@ -689,14 +689,17 @@
        *  there were any results.
        * @param totalCount the total hits found on the server (possibly more than
        *  returned.)
+       *  null should be passed in if total count is not known.
        * @param shownCount the number of hits to be shown in the list
        * @param responseLength (optional) the number of characters in the returned data
        */
       setSearchCountDiv: function(totalCount, shownCount, responseLength) {
         var searchCountElem = $('searchCount');
         var searchCountStr = '';
-        if (totalCount > 0) {
-          searchCountStr = shownCount + ' of ' + totalCount + ' total';
+        if (totalCount > 0 || totalCount === null) {
+          searchCountStr = shownCount + ' of ' +
+              (totalCount === null ? 'unknown' : totalCount)
+              + ' total';
 
           // Dan Clark of Freedom Scientific reported that the search count made
           // the output for JAWS too verbose, so I am commenting out this call.
@@ -862,7 +865,7 @@
 
             // Show "see more" link depending on whether this was an autocompletion
             // event and whether, and vice-versa there are more items to see.
-            if (shownCount < totalCount && autocomp)
+            if ((shownCount < totalCount || totalCount === null) && autocomp)
               $('moreResults').style.display ='block';
             else {
               $('moreResults').style.display ='none';

@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.1.3] - 2021-08-20
+### Changed
+- Display "unknown total" at the bottom of the dropdown list, if null is passed
+  in for total count.
+
 ## [18.1.2] - 2021-07-26
 ### Fixed
 - An issue with the destroy() method on multi-select lists.  It was not removing
