@@ -64,6 +64,12 @@ describe('FHIR search by function', function() {
     po.openTestPage();
   });
 
+  it('should show 5 results when empty', function() {
+    po.sendKeys(searchFunctionField, '');
+    po.waitForSearchResults();
+    expect(po.shownItemCount()).toBe(5);
+  });
+
   it('should show 7 results for a non-expanded search', function() {
     po.sendKeys(searchFunctionField, 'b');
     po.waitForSearchResults();
