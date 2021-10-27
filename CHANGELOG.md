@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.1.4] - 2021-10-19
+### Added
+- An option "showListOnFocusIfEmpty" in Search autocomplete. If set to true, it
+  will cause a list to be shown when the empty field receives focus.
+
 ## [18.1.3] - 2021-08-20
 ### Changed
 - Display "unknown total" at the bottom of the dropdown list, if null is passed
