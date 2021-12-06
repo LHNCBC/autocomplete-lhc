@@ -5,7 +5,7 @@ var fhirFieldWButton = $('#fhir_search_w_button');
 var fhirFieldButtonID = 'fhir_search_button';
 var fhirFieldButton = $('#'+fhirFieldButtonID);
 
-describe('FHIR Search Lists', function() {
+fdescribe('FHIR Search Lists', function() {
 
   beforeAll(function() {
     po.openTestPage();
