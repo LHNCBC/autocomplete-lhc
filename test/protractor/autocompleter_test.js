@@ -79,28 +79,15 @@ var fe_search_button_cne_autoComp =
 new Def.Autocompleter.Search('non_fhir_search_w_function', null, {
     search: function(fieldVal, count) {
   // Return a ValueSet, wrapped in a Promise.
-  return Promise.resolve(count===Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD ?
-     {"resourceType":"ValueSet","url":"http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/conditions?terms=b",
-      "status":"active","expansion":{"timestamp":"2019-07-18T19:01:51.448Z","total":621,"contains":[
-      {"code":"2315","system":"cs-conditions","display":"Back pain"},
-      {"code":"3982","system":"cs-conditions","display":"Abdominal pain"},
-      {"code":"374","system":"cs-conditions","display":"High blood pressure (hypertension (HTN))"},
-      {"code":"14674","system":"cs-conditions","display":"Hepatitis B"},
-      {"code":"18370","system":"cs-conditions","display":"Hemophilia B"},
-      {"code":"14678","system":"cs-conditions","display":"Flu B (Influenza B) infection"},
-      {"code":"2281","system":"cs-conditions","display":"Urinary tract infection (UTI)"}]}}
-     : {"resourceType":"ValueSet","url":"http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/conditions?terms=b",
-      "status":"active","expansion":{"timestamp":"2019-07-18T19:07:44.863Z","total":621,"contains":[
-      {"code":"2315","system":"cs-conditions","display":"Back pain"},
-      {"code":"3982","system":"cs-conditions","display":"Abdominal pain"},
-      {"code":"374","system":"cs-conditions","display":"High blood pressure (hypertension (HTN))"},
-      {"code":"14674","system":"cs-conditions","display":"Hepatitis B"},
-      {"code":"18370","system":"cs-conditions","display":"Hemophilia B"},
-      {"code":"14678","system":"cs-conditions","display":"Flu B (Influenza B) infection"},
-      {"code":"2281","system":"cs-conditions","display":"Urinary tract infection (UTI)"},
-      {"code":"3850","system":"cs-conditions","display":"Hypertension - essential"},
-      {"code":"8140","system":"cs-conditions","display":"Thiamine (vitamin B1) deficiency"},
-      {"code":"26621","system":"cs-conditions","display":"Hepatitis B exposure"}]}});
+  return Promise.resolve(
+     [7, undefined, undefined, [
+      ["Back pain"],
+      ["Abdominal pain"],
+      ["High blood pressure (hypertension (HTN))"],
+      ["Hepatitis B"],
+      ["Hemophilia B"],
+      ["Flu B (Influenza B) infection"],
+      ["Urinary tract infection (UTI)"]]]);
 }});
 
 

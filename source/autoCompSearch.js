@@ -290,7 +290,7 @@
 
         this.url = url;
         this.fhir = options.fhir;
-        this.search = this.search || (this.fhir && this.fhir.search); // backward compatibility
+        this.search = options.search || (this.fhir && this.fhir.search); // backward compatibility
 
         this.defAutocompleterBaseInit(fieldID, options);
 

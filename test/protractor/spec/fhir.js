@@ -5,7 +5,7 @@ var fhirFieldWButton = $('#fhir_search_w_button');
 var fhirFieldButtonID = 'fhir_search_button';
 var fhirFieldButton = $('#'+fhirFieldButtonID);
 
-fdescribe('FHIR Search Lists', function() {
+describe('FHIR Search Lists', function() {
 
   beforeAll(function() {
     po.openTestPage();
@@ -89,5 +89,21 @@ describe('FHIR search by function', function() {
     po.sendKeys(secondField, 'b');
     expect(po.firstSearchRes.getText()).toBe("Back pain 2");
   });
+});
+
+describe('Non FHIR search by function', function() {
+  var searchFunctionFieldID = 'non_fhir_search_w_function';
+  var searchFunctionField = $('#'+searchFunctionFieldID);
+
+  beforeAll(function() {
+    po.openTestPage();
+  });
+
+  it('should show 7 results for a non-fhir search', function() {
+    po.sendKeys(searchFunctionField, 'b');
+    po.waitForSearchResults();
+    expect(po.shownItemCount()).toBe(7);
+  });
+
 });
 
