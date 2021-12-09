@@ -207,8 +207,10 @@
                  to results in the same format as specified for the "url" parameter
                  above, unless the "fhir" option is specified, in which case the
                  Promise should resolve to a ValueSet expansion.
-                <li>fhir - If present, this parameter will switch the autompleter into
-                 HL7 FHIR mode, sending FHIR $expand requsts and processing ValueSet
+                <li>fhir - If present, this parameter will switch the autocompleter into
+                 <a href="https://www.hl7.org/fhir/">HL7 FHIR</a> mode, sending FHIR
+                 <a href="https://www.hl7.org/fhir/valueset-operation-expand.html">$expand</a>
+                 requests and processing <a href="https://www.hl7.org/fhir/valueset.html">ValueSet</a>
                  expansion results.</li>
                 <li>minChars - (default 1, as of version 11) The minimum number
                  of characters that must be in the field before autocompletion
