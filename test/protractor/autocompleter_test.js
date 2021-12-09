@@ -78,7 +78,7 @@ var fe_search_button_cne_autoComp =
 // Custom search function (non-FHIR)
 new Def.Autocompleter.Search('non_fhir_search_w_function', null, {
     search: function(fieldVal, count) {
-  // Return a ValueSet, wrapped in a Promise.
+  // Return CTSS formatted results, wrapped in a Promise.
   return Promise.resolve(
      [7, undefined, undefined, [
       ["Back pain"],

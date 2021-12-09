@@ -185,14 +185,13 @@
        *  </ul>
        *  When the "fhir" option is present, the response will be expected to be
        *  a FHIR ValueSet expansion.
-       * @param
        * @param options A hash of optional parameters.  The allowed keys and their
        *  values are:
        *  <ul>
        *    <li>search - Either this or the "url" paramter should be set, but
        *     not both, and this will take precedence if both are specified.
        *     When set, this should be a function that takes the current field
-       *     value and a requested result, and returns a promise that resolves
+       *     value and a requested result count, and returns a promise that resolves
        *     to results in the same format as specified for the "url" parameter
        *     above, unless the "fhir" option is specified, in which case the
        *     Promise should resolve to a ValueSet expansion.
