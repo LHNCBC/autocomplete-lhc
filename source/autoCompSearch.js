@@ -195,8 +195,8 @@
        *     to results in the same format as specified for the "url" parameter
        *     above, unless the "fhir" option is specified, in which case the
        *     Promise should resolve to a ValueSet expansion.
-       *    <li>fhir - If present, this parameter will switch the autompleter into
-       *     HL7 FHIR mode, sending FHIR $expand requsts and processing ValueSet
+       *    <li>fhir - If present, this parameter will switch the autocompleter into
+       *     HL7 FHIR mode, sending FHIR $expand requests and processing ValueSet
        *     expansion results.</li>
        *    <li>matchListValue - Whether the field value is required to be one from
        *     the list (default: false).</li>
