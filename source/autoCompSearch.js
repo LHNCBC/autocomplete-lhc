@@ -809,7 +809,7 @@
               searchStr = reqParams.filter;
               autocomp = reqParams.count === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
             }
-            else { // non-FHIR URL search
+            else { // non-FHIR URL search, see format http://lhncbc.github.io/autocomplete-lhc/docs.html#searchList
               searchStr = reqParams.terms;
               autocomp = reqParams.maxList === undefined ||
                 reqParams.maxList === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
