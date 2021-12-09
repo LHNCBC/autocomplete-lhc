@@ -91,3 +91,19 @@ describe('FHIR search by function', function() {
   });
 });
 
+describe('Non FHIR search by function', function() {
+  var searchFunctionFieldID = 'non_fhir_search_w_function';
+  var searchFunctionField = $('#'+searchFunctionFieldID);
+
+  beforeAll(function() {
+    po.openTestPage();
+  });
+
+  it('should show 7 results for a non-fhir search', function() {
+    po.sendKeys(searchFunctionField, 'b');
+    po.waitForSearchResults();
+    expect(po.shownItemCount()).toBe(7);
+  });
+
+});
+

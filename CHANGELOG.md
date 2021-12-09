@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.2.0] - 2021-12-07
+### Changed
+- Added options.search for specifying a function to return results.
+
 ## [18.1.4] - 2021-10-19
 ### Added
 - An option "showListOnFocusIfEmpty" in Search autocomplete. If set to true, it

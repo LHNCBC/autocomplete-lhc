@@ -75,6 +75,22 @@ var fe_search_button_cne_autoComp =
   new Def.Autocompleter.Search('fe_search_button_cne',
     '/form/get_search_res_list?fd_id=1285', opts);var opts = {};
 
+// Custom search function (non-FHIR)
+new Def.Autocompleter.Search('non_fhir_search_w_function', null, {
+    search: function(fieldVal, count) {
+  // Return CTSS formatted results, wrapped in a Promise.
+  return Promise.resolve(
+     [7, undefined, undefined, [
+      ["Back pain"],
+      ["Abdominal pain"],
+      ["High blood pressure (hypertension (HTN))"],
+      ["Hepatitis B"],
+      ["Hemophilia B"],
+      ["Flu B (Influenza B) infection"],
+      ["Urinary tract infection (UTI)"]]]);
+}});
+
+
 // FHIR
 new Def.Autocompleter.Search('fhir_search',
   'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum',
