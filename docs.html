@@ -247,6 +247,18 @@
               <ul>
                 <li>any of the <a href="#construction_common">common options</a>
                  described above</li>
+                <li>search - Either this or the "url" paramter should be set, but
+                 not both, and this will take precedence if both are specified.
+                 When set, this should be a function that takes the current field
+                 value and a requested result count, and returns a promise that resolves
+                 to results in the same format as specified for the "url" parameter
+                 above, unless the "fhir" option is specified, in which case the
+                 Promise should resolve to a ValueSet expansion.
+                <li>fhir - If present, this parameter will switch the autocompleter into
+                 <a href="https://www.hl7.org/fhir/">HL7 FHIR</a> mode, sending FHIR
+                 <a href="https://www.hl7.org/fhir/valueset-operation-expand.html">$expand</a>
+                 requests and processing <a href="https://www.hl7.org/fhir/valueset.html">ValueSet</a>
+                 expansion results.</li>
                 <li>minChars - (default 1, as of version 11) The minimum number
                  of characters that must be in the field before autocompletion
                  will start.</li>
