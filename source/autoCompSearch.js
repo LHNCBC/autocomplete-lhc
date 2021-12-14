@@ -113,7 +113,7 @@
 
       /**
        *  The constructor.  (See Prototype's Class.create method.)
-       * @param field the ID or the DOM element of the field for which the
+       * @param fieldID the ID or the DOM element of the field for which the
        *  list is displayed.  If an element is provided, it must contain an ID
        *  attribute, or one will be assigned.
        * @param url for getting the completion list.  Either this or the
@@ -440,7 +440,7 @@
        */
       useSearchFn: function(searchStr, requestedCount) {
         var self = this;
-        this.search(searchStr, requestedCount)
+        this.search(searchStr, requestedCount + (Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD === requestedCount ? this.getSelectedItems().length : 0))
           .then(function(results) {
             self.onComplete({results, requestedCount, searchStr});
           },
@@ -461,7 +461,7 @@
           paramData.filter = searchStr;
           //paramData._format='application/fhir+json';
           paramData._format='application/json';
-          paramData.count = requestedCount;
+          paramData.count = requestedCount + (Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD === requestedCount ? this.getSelectedItems().length : 0);
         }
         else {
           paramData.terms = searchStr;
@@ -583,12 +583,13 @@
        *  items, sorts the items, and picks the default item.
        * @param fieldValToItemFields a hash from field value version of the list
        *  items to the list item arrays received from the AJAX call
+       * @param requestedCount the requested number of results
        * @return an array of two elements, an array of field value strings from
        *  fieldValToItemFields ordered in the way the items should appear in the
        *  list, and a boolean indicating whether the
        *  topmost item is placed as a suggested item.
        */
-      processChoices: function(fieldValToItemFields) {
+      processChoices: function(fieldValToItemFields, requestedCount) {
         // Filter out already selected items for multi-select lists
         var filteredItems = [];
         var fieldVals = Object.keys(fieldValToItemFields);
@@ -631,6 +632,11 @@
             var temp = filteredItems[0];
             filteredItems[0] = filteredItems[topItemIndex];
             filteredItems[topItemIndex] = temp;
+          }
+          // Truncate the list of values to the requested count
+          // (for correct display, this must be after sorting).
+          if (filteredItems.length > requestedCount) {
+            filteredItems.length = requestedCount;
           }
         }
         return [filteredItems, topItemIndex > -1];
@@ -870,7 +876,7 @@
               }
             }
             var fieldValToItemFields = this.createFieldVals(this.rawList_);
-            var data = this.processChoices(fieldValToItemFields);
+            var data = this.processChoices(fieldValToItemFields, resultData.requestedCount);
             var listFieldVals=data[0], bestMatchFound=data[1];
             var listHTML = this.buildUpdateHTML(listFieldVals, bestMatchFound,
               fieldValToItemFields);

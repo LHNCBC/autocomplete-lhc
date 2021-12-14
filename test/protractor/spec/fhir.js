@@ -1,6 +1,8 @@
 var helpers = require('../test_helpers.js');
 var po = require('../autocompPage.js');
 var fhirField = $('#fhir_search');
+var fhirFieldMulti = $('#fhir_search_multi');
+var searchFunctionFieldMulti = $('#fhir_search_w_function_multi');
 var fhirFieldWButton = $('#fhir_search_w_button');
 var fhirFieldButtonID = 'fhir_search_button';
 var fhirFieldButton = $('#'+fhirFieldButtonID);
@@ -54,6 +56,20 @@ describe('FHIR Search Lists', function() {
     po.sendKeys(fhirField, 'pmol');
     expect(po.shownItemCount()).toBe(7);
   });
+
+  it('should show 7 results after selecting items', function() {
+    // autoCompSearch should request extra items when some are selected
+    po.sendKeys(fhirFieldMulti, 'pmol');
+    po.waitForSearchResults();
+    expect(po.shownItemCount()).toBe(7);
+    expect(po.listCountMessage().then((val)=>{
+      return val.indexOf('7 of 10 total') >= 0;
+    })).toBe(true);
+    po.firstSearchRes.click();
+    po.clearField(fhirFieldMulti);
+    po.sendKeys(fhirFieldMulti, 'pmol');
+    expect(po.shownItemCount()).toBe(7);
+  });
 });
 
 describe('FHIR search by function', function() {
@@ -89,6 +105,17 @@ describe('FHIR search by function', function() {
     po.sendKeys(secondField, 'b');
     expect(po.firstSearchRes.getText()).toBe("Back pain 2");
   });
+
+  it('should show 7 results after selecting items', function() {
+    // autoCompSearch should request extra items when some are selected
+    po.sendKeys(searchFunctionFieldMulti, '');
+    po.waitForSearchResults();
+    expect(po.shownItemCount()).toBe(7);
+    po.firstSearchRes.click();
+    po.sendKeys(searchFunctionFieldMulti, 'b');
+    expect(po.shownItemCount()).toBe(7);
+  });
+
 });
 
 describe('Non FHIR search by function', function() {

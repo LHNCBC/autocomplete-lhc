@@ -146,6 +146,17 @@ var fhirMockData = { // url to count to response (any filter value)
       '{"code":"pmol/g","system":"http://unitsofmeasure.org","display":"picomole per gram"},'+
       '{"code":"pmol/mL","system":"http://unitsofmeasure.org","display":"picomole per milliliter"},'+
       '{"code":"pmol/d","system":"http://unitsofmeasure.org","display":"picomole per day"}]}}',
+    8: // count
+      '{"resourceType":"ValueSet","url":"http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum?terms=pmol",'+
+      '"status":"active","expansion":{"timestamp":"2019-06-26T14:55:53.945Z","total":10,'+
+      '"contains":[{"code":"pmol","system":"http://unitsofmeasure.org","display":"picomole"},'+
+      '{"code":"pmol/umol","system":"http://unitsofmeasure.org","display":"picomole per micromole"},'+
+      '{"code":"pmol/L","system":"http://unitsofmeasure.org","display":"picomole per liter"},'+
+      '{"code":"pmol/dL","system":"http://unitsofmeasure.org","display":"picomole per deciliter"},'+
+      '{"code":"pmol/g","system":"http://unitsofmeasure.org","display":"picomole per gram"},'+
+      '{"code":"pmol/mL","system":"http://unitsofmeasure.org","display":"picomole per milliliter"},'+
+      '{"code":"pmol/d","system":"http://unitsofmeasure.org","display":"picomole per day"},' +
+      '{"code":"pmol/(24.h)","system":"http://unitsofmeasure.org","display":"picomole per 24 hour"}]}}',
     500:
       '{"resourceType":"ValueSet","url":"http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum?terms=pmol",'+
       '"status":"active","expansion":{"timestamp":"2019-06-26T14:58:25.718Z","total":10,'+
