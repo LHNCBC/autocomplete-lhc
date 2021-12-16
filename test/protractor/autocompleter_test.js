@@ -97,7 +97,7 @@ new Def.Autocompleter.Search('fhir_search',
   {fhir: true});
 new Def.Autocompleter.Search('fhir_search_multi',
   'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum',
-  {fhir: true, maxSelect: '*', useResultCache: false});
+  {fhir: true, maxSelect: '*'});
 new Def.Autocompleter.Search('fhir_search_w_button',
   'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum',
   {fhir: true, buttonID: 'fhir_search_button'});
@@ -140,7 +140,6 @@ new Def.Autocompleter.Search('fhir_search_w_function', null, {
 new Def.Autocompleter.Search('fhir_search_w_function_multi', null, {
   showListOnFocusIfEmpty: true,
   maxSelect: '*',
-  useResultCache: false,
   fhir: true,
   search: function(fieldVal, count) {
       // Return a ValueSet, wrapped in a Promise.

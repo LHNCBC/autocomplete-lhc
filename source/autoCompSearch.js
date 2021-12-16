@@ -25,20 +25,6 @@
       urlToCache_: {},
 
       /**
-       *  The index into the resultCache_ (an instance variable) for the part
-       *  of the cache used to store autocompletion results (which are generally
-       *  fewer than the search results, which can be up to 500.)
-       */
-      RESULT_CACHE_AUTOCOMP_RESULTS: 1,
-
-      /**
-       *  The index into the resultCache_ (an instance variable) for the part
-       *  of the cache used to store search results (which generally have many
-       *  more returned hits than the autcompletions results.)
-       */
-      RESULT_CACHE_SEARCH_RESULTS: 0,
-
-      /**
        *  The maximum number of characters in the field for which we will send
        *  an autocompletion request.  If the field value is longer than this,
        *  we will truncate it when sending the request.
@@ -416,7 +402,7 @@
           var results = null;
           if (this.useResultCache_) {
             results = this.getCachedResults(searchStr,
-                                Def.Autocompleter.Search.RESULT_CACHE_SEARCH_RESULTS);
+                                this.getLoadCount(Def.Autocompleter.Search.EXPANDED_COUNT));
             if (results)
               this.onComplete(results, null, true);
           }
@@ -432,6 +418,28 @@
         }
       },
 
+      /**
+       * Returns the number of results to load or 0 for default value.
+       * @param requestedCount the requested number of results
+       */
+      getLoadCount(requestedCount) {
+        if (this.search || this.fhir) {
+          return requestedCount +
+            (this.multiSelect_ && Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD === requestedCount
+              ? this.getSelectedItems().length
+              : 0);
+        } else {
+          if (this.multiSelect_ && requestedCount === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD) {
+            return requestedCount + this.getSelectedItems().length;
+          } else if (requestedCount !== Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD) {
+            return requestedCount;
+          } else {
+            // Returns 0 if it is the default value
+            return 0;
+          }
+        }
+      },
+
 
       /**
        *  Runs the search function to get matching results.
@@ -440,10 +448,7 @@
        */
       useSearchFn: function(searchStr, requestedCount) {
         var self = this;
-        this.search(searchStr, requestedCount +
-          (this.multiSelect_ && Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD === requestedCount
-            ? this.getSelectedItems().length
-            : 0))
+        this.search(searchStr, this.getLoadCount(requestedCount))
           .then(function(results) {
             self.onComplete({results, requestedCount, searchStr});
           },
@@ -464,18 +469,14 @@
           paramData.filter = searchStr;
           //paramData._format='application/fhir+json';
           paramData._format='application/json';
-          paramData.count = requestedCount +
-            (this.multiSelect_ && Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD === requestedCount
-              ? this.getSelectedItems().length
-              : 0);
+          paramData.count = this.getLoadCount(requestedCount);
         }
         else {
           paramData.terms = searchStr;
-          // Set requestedCount if it is not the default value
-          if (this.multiSelect_ && requestedCount === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD) {
-              paramData.maxList = requestedCount + this.getSelectedItems().length;
-          } else if (requestedCount !== Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD)
-            paramData.maxList = requestedCount;
+          var maxList = this.getLoadCount(requestedCount);
+          if (maxList) {
+            paramData.maxList = maxList;
+          }
         }
         if (window._token)
           params.authenticity_token = window._token;
@@ -500,7 +501,7 @@
         // individual autocompleter.
         this.resultCache_ = this.url ? Def.Autocompleter.Search.urlToCache_[this.url] : null;
         if (!this.resultCache_) {
-          this.resultCache_ = [{}, {}];
+          this.resultCache_ = [];
           if (this.url)
             Def.Autocompleter.Search.urlToCache_[this.url] = this.resultCache_;
         }
@@ -512,15 +513,12 @@
        *  for a request initiated by runSearch or getUpdatedChoices)
        *  for the given search string, or null if there are no cached results.
        * @param str the search string
-       * @param autocomp RESULT_CACHE_AUTOCOMP_RESULTS if the results were for an
-       *  autocompletion request (as opposed to a search request, which returns a
-       *  much longer list of results), and RESULT_CACHE_SEARCH_RESULTS if they were
-       *  for a search request.
+       * @param requestedCount the requested number of results
        */
-      getCachedResults: function(str, autocomp) {
+      getCachedResults: function(str, requestedCount) {
         if (!this.resultCache_)
           this.initResultCache();
-        return this.resultCache_[autocomp][str];
+        return this.resultCache_[requestedCount] && this.resultCache_[requestedCount][str];
       },
 
 
@@ -528,17 +526,17 @@
        *  Stores search results for the given search string, for later re-use
        *  via getCachedResults.
        * @param str the search string
-       * @param autocomp RESULT_CACHE_AUTOCOMP_RESULTS if the results were for an
-       *  autocompletion request (as opposed to a search request, which returns a
-       *  much longer list of results), and RESULT_CACHE_SEARCH_RESULTS if they were
-       *  for a search request.
+       * @param requestedCount the requested number of results
        * @param results the AJAX response object for a search initiated by
        *  runSearch or getUpdatedChoices.
        */
-      storeCachedResults: function(str, autocomp, results) {
+      storeCachedResults: function(str, requestedCount, results) {
         if (!this.resultCache_)
           this.initResultCache();
-        this.resultCache_[autocomp][str] = results;
+        if (!this.resultCache_[requestedCount]) {
+          this.resultCache_[requestedCount] = {};
+        }
+        this.resultCache_[requestedCount][str] = results;
       },
 
 
@@ -807,6 +805,7 @@
        * @param fromCache whether "response" is from the cache (optional).
        */
       onComplete: function(resultData, textStatus, fromCache) {
+        const requestedCount = resultData.requestedCount || this.lastAjaxRequest_.requestedCount;
         var untrimmedFieldVal = this.getToken();
         this.trimmedElemVal = untrimmedFieldVal.trim(); // used in autoCompBase
         if (this.lastAjaxRequest_ === resultData) {
@@ -823,26 +822,19 @@
             var reqParams = resultData.requestParamData_;
             if (this.fhir) { // FHIR URL search
               searchStr = reqParams.filter;
-              autocomp = reqParams.count === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD +
-                (this.multiSelect_ ? this.getSelectedItems().length
-                  : 0);
+              autocomp = reqParams.count === this.getLoadCount(Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
             }
             else { // non-FHIR URL search, see format http://lhncbc.github.io/autocomplete-lhc/docs.html#searchList
               searchStr = reqParams.terms;
               autocomp = reqParams.maxList === undefined ||
-                reqParams.maxList === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD +
-                (this.multiSelect_ ? this.getSelectedItems().length
-                  : 0);
+                reqParams.maxList === this.getLoadCount(Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
             }
           }
 
           var searchAC = Def.Autocompleter.Search;
 
           if (!fromCache && this.useResultCache_) {
-            var resultCacheIndex = autocomp ?
-              searchAC.RESULT_CACHE_AUTOCOMP_RESULTS :
-              searchAC.RESULT_CACHE_SEARCH_RESULTS;
-            this.storeCachedResults(searchStr, resultCacheIndex, resultData);
+            this.storeCachedResults(searchStr, this.getLoadCount(requestedCount), resultData);
           }
 
           // The search string is a truncated version of the field value for
@@ -890,7 +882,7 @@
               }
             }
             var fieldValToItemFields = this.createFieldVals(this.rawList_);
-            var data = this.processChoices(fieldValToItemFields, resultData.requestedCount || this.lastAjaxRequest_.requestedCount);
+            var data = this.processChoices(fieldValToItemFields, requestedCount);
             var listFieldVals=data[0], bestMatchFound=data[1];
             var listHTML = this.buildUpdateHTML(listFieldVals, bestMatchFound,
               fieldValToItemFields);
@@ -1125,8 +1117,7 @@
 
           if (this.useResultCache_) {
             // See if the search has been run before.
-            results = this.getCachedResults(fieldVal,
-                                        autocompSearch.RESULT_CACHE_AUTOCOMP_RESULTS);
+            results = this.getCachedResults(fieldVal, this.getLoadCount(Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD));
             if (results)
               this.onComplete(results, null, true);
           }
