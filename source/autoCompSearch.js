@@ -440,7 +440,10 @@
        */
       useSearchFn: function(searchStr, requestedCount) {
         var self = this;
-        this.search(searchStr, requestedCount + (Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD === requestedCount ? this.getSelectedItems().length : 0))
+        this.search(searchStr, requestedCount +
+          (this.multiSelect_ && Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD === requestedCount
+            ? this.getSelectedItems().length
+            : 0))
           .then(function(results) {
             self.onComplete({results, requestedCount, searchStr});
           },
@@ -461,12 +464,17 @@
           paramData.filter = searchStr;
           //paramData._format='application/fhir+json';
           paramData._format='application/json';
-          paramData.count = requestedCount + (Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD === requestedCount ? this.getSelectedItems().length : 0);
+          paramData.count = requestedCount +
+            (this.multiSelect_ && Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD === requestedCount
+              ? this.getSelectedItems().length
+              : 0);
         }
         else {
           paramData.terms = searchStr;
           // Set requestedCount if it is not the default value
-          if (requestedCount != Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD)
+          if (this.multiSelect_ && requestedCount === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD) {
+              paramData.maxList = requestedCount + this.getSelectedItems().length;
+          } else if (requestedCount !== Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD)
             paramData.maxList = requestedCount;
         }
         if (window._token)
@@ -478,6 +486,7 @@
         }
         this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
         this.lastAjaxRequest_.requestParamData_ = paramData;
+        this.lastAjaxRequest_.requestedCount = requestedCount;
       },
 
 
@@ -747,6 +756,7 @@
 
           searchCountStr += resultInfo;
           searchCountElem.innerHTML = searchCountStr;
+          $('searchCount').style.display='block';
         }
       },
 
@@ -813,12 +823,16 @@
             var reqParams = resultData.requestParamData_;
             if (this.fhir) { // FHIR URL search
               searchStr = reqParams.filter;
-              autocomp = reqParams.count === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
+              autocomp = reqParams.count === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD +
+                (this.multiSelect_ ? this.getSelectedItems().length
+                  : 0);
             }
             else { // non-FHIR URL search, see format http://lhncbc.github.io/autocomplete-lhc/docs.html#searchList
               searchStr = reqParams.terms;
               autocomp = reqParams.maxList === undefined ||
-                reqParams.maxList === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD;
+                reqParams.maxList === Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD +
+                (this.multiSelect_ ? this.getSelectedItems().length
+                  : 0);
             }
           }
 
@@ -876,7 +890,7 @@
               }
             }
             var fieldValToItemFields = this.createFieldVals(this.rawList_);
-            var data = this.processChoices(fieldValToItemFields, resultData.requestedCount);
+            var data = this.processChoices(fieldValToItemFields, resultData.requestedCount || this.lastAjaxRequest_.requestedCount);
             var listFieldVals=data[0], bestMatchFound=data[1];
             var listHTML = this.buildUpdateHTML(listFieldVals, bestMatchFound,
               fieldValToItemFields);

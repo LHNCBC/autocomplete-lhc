@@ -69,6 +69,9 @@ describe('FHIR Search Lists', function() {
     po.clearField(fhirFieldMulti);
     po.sendKeys(fhirFieldMulti, 'pmol');
     expect(po.shownItemCount()).toBe(7);
+    expect(po.listCountMessage().then((val)=>{
+      return val.indexOf('7 of 10 total') >= 0;
+    })).toBe(true);
   });
 });
 
@@ -111,9 +114,15 @@ describe('FHIR search by function', function() {
     po.sendKeys(searchFunctionFieldMulti, '');
     po.waitForSearchResults();
     expect(po.shownItemCount()).toBe(7);
+    expect(po.listCountMessage().then((val)=>{
+      return val.indexOf('7 of 621 total') >= 0;
+    })).toBe(true);
     po.firstSearchRes.click();
     po.sendKeys(searchFunctionFieldMulti, 'b');
     expect(po.shownItemCount()).toBe(7);
+    expect(po.listCountMessage().then((val)=>{
+      return val.indexOf('7 of 621 total') >= 0;
+    })).toBe(true);
   });
 
 });

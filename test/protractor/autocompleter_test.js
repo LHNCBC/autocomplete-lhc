@@ -141,7 +141,8 @@ new Def.Autocompleter.Search('fhir_search_w_function_multi', null, {
   showListOnFocusIfEmpty: true,
   maxSelect: '*',
   useResultCache: false,
-  fhir: {search: function(fieldVal, count) {
+  fhir: true,
+  search: function(fieldVal, count) {
       // Return a ValueSet, wrapped in a Promise.
       return Promise.resolve({
         "resourceType":"ValueSet",
@@ -159,7 +160,7 @@ new Def.Autocompleter.Search('fhir_search_w_function_multi', null, {
             {"code":"8140","system":"cs-conditions","display":"Thiamine (vitamin B1) deficiency"},
             {"code":"26621","system":"cs-conditions","display":"Hepatitis B exposure"}
           ].splice(0, count)}});
-    }}});
+    }});
 new Def.Autocompleter.Search('fhir_search_cache_test', null, {fhir: {search: function(fieldVal, count) {
   // Return a ValueSet, wrapped in a Promise, different from other other
   // fhir.search function to test for a caching bug.

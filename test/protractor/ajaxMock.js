@@ -181,7 +181,7 @@ jQuery.ajax = function(url, options) {
   var params = options.data;
   if (!params.filter) { // assume filter is present for FHIR requests (for testing)
     var resultType =
-      params.suggest ? 'suggest' : params.maxList === undefined ? 'partial' : 'full';
+      params.suggest ? 'suggest' : params.maxList === undefined || params.maxList < 100 ? 'partial' : 'full';
     // This is just for testing, so assume the right parameters.
     var fd_id = url.match(/fd_id=(\w+)/)[1];
     var terms = params.terms || params.field_val; // suggest uses field_val
