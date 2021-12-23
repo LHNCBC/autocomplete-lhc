@@ -61,7 +61,7 @@ describe('multi-field lists', function() {
     po.nonField.click();
     po.multiSelectTableSearch.click();
     po.sendKeys(po.multiSelectTableSearch, 'ar');
-    expect(po.shownItemCount()).toBe(6);
+    expect(po.shownItemCount()).toBe(7);
     expect(po.tableSearchResult(1).getAttribute("innerHTML")).not.toBe('<td>NM_001113511</td>');
   });
 

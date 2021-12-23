@@ -66,7 +66,6 @@ describe('FHIR Search Lists', function() {
       return val.indexOf('7 of 10 total') >= 0;
     })).toBe(true);
     po.firstSearchRes.click();
-    po.clearField(fhirFieldMulti);
     po.sendKeys(fhirFieldMulti, 'pmol');
     expect(po.shownItemCount()).toBe(7);
     expect(po.listCountMessage().then((val)=>{
