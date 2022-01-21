@@ -289,8 +289,16 @@
             assertEqual('', $('fe_pseudonym').value,
               'Field "fe_pseudonym" should have been cleared again');
 
-            // Tests for a field that does require a match.  For this field,
-            // the invalid value indicator should be set.
+
+            // Tests for a field that does require a match. This field should
+            // clear selected item data.
+            fe_other_list_field2_autoComp.storeSelectedItem("apples");
+            assert(fe_other_list_field2_autoComp.getSelectedItemData().length === 1,
+                "fe_other_list_field2 should have one item stored");
+            fe_other_list_field2_autoComp.handleNonListEntry();
+            assert(fe_other_list_field2_autoComp.getSelectedItemData() === null,
+                "fe_other_list_field2 should clear selected item data");
+            // For this field, the invalid value indicator should be set.
             fe_other_list_field2_autoComp.setFieldVal('carrot', false);
             fe_other_list_field2_autoComp.handleNonListEntry();
             var jqElem2 = jQuery(fe_other_list_field2_autoComp.element);
