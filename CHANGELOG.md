@@ -5,8 +5,8 @@ This log documents significant changes for each release.  This project follows
 
 ## [18.3.0] - 2021-12-14
 ### Changed
-- Added request for extra items when some are selected to keep the number of
-  dropdown items.
+- For the search autocompleter, added request for extra items when some are
+  selected to keep the number of dropdown items.
 
 ## [18.2.0] - 2021-12-07
 ### Changed
