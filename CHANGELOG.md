@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.2.1] - 2022-01-20
+### Fixed
+- Selected item data should be cleared when user types non-matching value.
+
 ## [18.2.0] - 2021-12-07
 ### Changed
 - Added options.search for specifying a function to return results.
