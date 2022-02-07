@@ -2178,6 +2178,7 @@ if (typeof Def === 'undefined')
         if (!this.multiSelect_) {
           this.selectedCodes_ = {};
           this.selectedItems_ = {};
+          this.selectedItemData_ = [];
         }
 
         // Blank values should not look different than values that haven't been
