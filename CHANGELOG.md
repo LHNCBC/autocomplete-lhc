@@ -3,7 +3,7 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
-## [18.3.0] - 2021-02-07
+## [18.3.0] - 2022-02-07
 ### Changed
 - For the search autocompleter, added request for extra items when some are
   selected to keep the number of dropdown items.
