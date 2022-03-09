@@ -73,7 +73,7 @@ opts['buttonID']='fe_search_button_cne_button'
 opts['autocomp']=true
 var fe_search_button_cne_autoComp =
   new Def.Autocompleter.Search('fe_search_button_cne',
-    '/form/get_search_res_list?fd_id=1285', opts);var opts = {};
+    '/form/get_search_res_list?fd_id=1285', opts);
 
 // Custom search function (non-FHIR)
 new Def.Autocompleter.Search('non_fhir_search_w_function', null, {
@@ -95,6 +95,9 @@ new Def.Autocompleter.Search('non_fhir_search_w_function', null, {
 new Def.Autocompleter.Search('fhir_search',
   'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum',
   {fhir: true});
+new Def.Autocompleter.Search('fhir_search_multi',
+  'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum',
+  {fhir: true, maxSelect: '*'});
 new Def.Autocompleter.Search('fhir_search_w_button',
   'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum',
   {fhir: true, buttonID: 'fhir_search_button'});
@@ -134,6 +137,29 @@ new Def.Autocompleter.Search('fhir_search_w_function', null, {
       {"code":"8140","system":"cs-conditions","display":"Thiamine (vitamin B1) deficiency"},
       {"code":"26621","system":"cs-conditions","display":"Hepatitis B exposure"}]}});
 }}});
+new Def.Autocompleter.Search('fhir_search_w_function_multi', null, {
+  showListOnFocusIfEmpty: true,
+  maxSelect: '*',
+  fhir: true,
+  search: function(fieldVal, count) {
+      // Return a ValueSet, wrapped in a Promise.
+      return Promise.resolve({
+        "resourceType":"ValueSet",
+        "expansion":{
+          "total":621,
+          "contains": [
+            {"code":"2315","system":"cs-conditions","display":"Back pain"},
+            {"code":"3982","system":"cs-conditions","display":"Abdominal pain"},
+            {"code":"374","system":"cs-conditions","display":"High blood pressure (hypertension (HTN))"},
+            {"code":"14674","system":"cs-conditions","display":"Hepatitis B"},
+            {"code":"18370","system":"cs-conditions","display":"Hemophilia B"},
+            {"code":"14678","system":"cs-conditions","display":"Flu B (Influenza B) infection"},
+            {"code":"2281","system":"cs-conditions","display":"Urinary tract infection (UTI)"},
+            {"code":"3850","system":"cs-conditions","display":"Hypertension - essential"},
+            {"code":"8140","system":"cs-conditions","display":"Thiamine (vitamin B1) deficiency"},
+            {"code":"26621","system":"cs-conditions","display":"Hepatitis B exposure"}
+          ].splice(0, count)}});
+    }});
 new Def.Autocompleter.Search('fhir_search_cache_test', null, {fhir: {search: function(fieldVal, count) {
   // Return a ValueSet, wrapped in a Promise, different from other other
   // fhir.search function to test for a caching bug.

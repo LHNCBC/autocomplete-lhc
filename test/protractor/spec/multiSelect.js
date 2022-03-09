@@ -87,6 +87,17 @@ describe('multi-select lists', function() {
     po.checkSelected(po.multiSearchCWEID, expected);
   });
 
+  it('should load extra items when some are selected', function () {
+    po.openTestPage();
+    po.multiSearchCWE.click();
+    po.sendKeys(po.multiSearchCWE, 'ar');
+    po.waitForSearchResults();
+    po.firstSearchRes.click();
+    po.firstSearchRes.click();
+    po.sendKeys(po.multiSearchCWE, 'ar');
+    expect(po.shownItemCount()).toBe(7);
+  });
+
   it('should not allow the user to select a heading', function() {
     po.openTestPage();
     po.multiHeadingCWE.click();

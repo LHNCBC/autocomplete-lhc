@@ -4,7 +4,7 @@
 //   mockData_[fd_id][partial || full || suggest][user text]
 // The "fd_id" is just an identifier put in the URL to distinguish between the
 // different fields.
-mockData_ = {
+const mockData_ = {
   '1284': { // fe_search_cne
     'partial': {
       'ar' : '[65,["5398","2910","154","4077","1051","4836","5529"],{"term_icd9_code":["042","518.82","704.01","","284.9","424.1","322.9"]},[["AIDS-related complex"],["Adult respiratory distress syndrome (ARDS)"],["Alopecia areata"],["Androblastoma"],["Anemia - refractory"],["Aortic insufficiency"],["Arachnoiditis"]],false]',
@@ -124,42 +124,34 @@ mockData_ = {
   },
 
   'cs_match_search': (function() {
-    var returnCodes = ["aa", "pA", "Pa", "pB"];
-    var returnFields = [];
-    for (var i=0, len=returnCodes.length; i<len; ++i)
+    let returnCodes = ["aa", "pA", "Pa", "pB"];
+    let returnFields = [];
+    for (let i=0, len=returnCodes.length; i<len; ++i)
       returnFields.push([returnCodes[i]]); // wrap in array
-    var paRtn = JSON.stringify([returnCodes.length, returnCodes, null, returnFields]);
-    var ppRtn = JSON.stringify([null, returnCodes, null, returnFields]);
+    const paRtn = JSON.stringify([returnCodes.length, returnCodes, null, returnFields]);
+    const ppRtn = JSON.stringify([null, returnCodes, null, returnFields]);
     return {partial: {'pA': paRtn, 'Pa': paRtn, 'pp': ppRtn}}; // CTSS is case-insenstive
   })()
 };
 
-var fhirMockData = { // url to count to response (any filter value)
+const fhirMockData = { // url to count to response (any filter value)
   'https://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/$expand?url=http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum': {
-    7: // count
-      '{"resourceType":"ValueSet","url":"http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum?terms=pmol",'+
-      '"status":"active","expansion":{"timestamp":"2019-06-26T14:55:53.945Z","total":10,'+
-      '"contains":[{"code":"pmol","system":"http://unitsofmeasure.org","display":"picomole"},'+
-      '{"code":"pmol/umol","system":"http://unitsofmeasure.org","display":"picomole per micromole"},'+
-      '{"code":"pmol/L","system":"http://unitsofmeasure.org","display":"picomole per liter"},'+
-      '{"code":"pmol/dL","system":"http://unitsofmeasure.org","display":"picomole per deciliter"},'+
-      '{"code":"pmol/g","system":"http://unitsofmeasure.org","display":"picomole per gram"},'+
-      '{"code":"pmol/mL","system":"http://unitsofmeasure.org","display":"picomole per milliliter"},'+
-      '{"code":"pmol/d","system":"http://unitsofmeasure.org","display":"picomole per day"}]}}',
-    500:
-      '{"resourceType":"ValueSet","url":"http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum?terms=pmol",'+
-      '"status":"active","expansion":{"timestamp":"2019-06-26T14:58:25.718Z","total":10,'+
-      '"contains":[{"code":"pmol","system":"http://unitsofmeasure.org","display":"picomole"},'+
-      '{"code":"pmol/umol","system":"http://unitsofmeasure.org","display":"picomole per micromole"},'+
-      '{"code":"pmol/L","system":"http://unitsofmeasure.org","display":"picomole per liter"},'+
-      '{"code":"pmol/dL","system":"http://unitsofmeasure.org","display":"picomole per deciliter"},'+
-      '{"code":"pmol/g","system":"http://unitsofmeasure.org","display":"picomole per gram"},'+
-      '{"code":"pmol/mL","system":"http://unitsofmeasure.org","display":"picomole per milliliter"},'+
-      '{"code":"pmol/d","system":"http://unitsofmeasure.org","display":"picomole per day"},'+
-      '{"code":"pmol/(24.h)","system":"http://unitsofmeasure.org","display":"picomole per 24 hour"},'+
-      '{"code":"pmol/min","system":"http://unitsofmeasure.org","display":"picomole per minute"},'+
-      '{"code":"pmol/h/mL","system":"http://unitsofmeasure.org","display":"picomole per hour per milliliter "}]}}'
-}};
+    "resourceType": "ValueSet", "url": "http://clinicaltables.nlm.nih.gov/fhir/R3/ValueSet/ucum?terms=pmol",
+    "status": "active", "expansion": {
+      "timestamp": "2019-06-26T14:58:25.718Z", "total": 10,
+      "contains": [{"code": "pmol", "system": "http://unitsofmeasure.org", "display": "picomole"},
+        {"code": "pmol/umol", "system": "http://unitsofmeasure.org", "display": "picomole per micromole"},
+        {"code": "pmol/L", "system": "http://unitsofmeasure.org", "display": "picomole per liter"},
+        {"code": "pmol/dL", "system": "http://unitsofmeasure.org", "display": "picomole per deciliter"},
+        {"code": "pmol/g", "system": "http://unitsofmeasure.org", "display": "picomole per gram"},
+        {"code": "pmol/mL", "system": "http://unitsofmeasure.org", "display": "picomole per milliliter"},
+        {"code": "pmol/d", "system": "http://unitsofmeasure.org", "display": "picomole per day"},
+        {"code": "pmol/(24.h)", "system": "http://unitsofmeasure.org", "display": "picomole per 24 hour"},
+        {"code": "pmol/min", "system": "http://unitsofmeasure.org", "display": "picomole per minute"},
+        {"code": "pmol/h/mL", "system": "http://unitsofmeasure.org", "display": "picomole per hour per milliliter "}]
+    }
+  }
+};
 
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.
 jQuery.ajax = function(url, options) {
@@ -167,32 +159,54 @@ jQuery.ajax = function(url, options) {
   // tests whether an AJAX request was sent or whether the cache was used.
   ++jQuery.ajax.ajaxCtr;
 
-  var params = options.data;
+  let params = options.data;
+  let responseJSON;
+
   if (!params.filter) { // assume filter is present for FHIR requests (for testing)
-    var resultType =
-      params.suggest ? 'suggest' : params.maxList === undefined ? 'partial' : 'full';
+    const resultType = params.suggest
+      ? 'suggest'
+      : params.maxList === undefined || params.maxList < 100
+        ? 'partial'
+        : 'full';
+
+
     // This is just for testing, so assume the right parameters.
-    var fd_id = url.match(/fd_id=(\w+)/)[1];
-    var terms = params.terms || params.field_val; // suggest uses field_val
-    var responseText = mockData_[fd_id][resultType][terms];
+    const fd_id = url.match(/fd_id=(\w+)/)[1];
+    const terms = params.terms || params.field_val; // suggest uses field_val
+    const responseText = mockData_[fd_id][resultType][terms];
     if (!responseText) {
       if (params.suggest === '1')
-        responseText = '[[],[]]';
+        responseJSON = [[],[]];
       else
-        responseText = '[0,[],null,[],false]';
+        responseJSON = [0,[],null,[],false];
+    } else {
+      responseJSON = JSON.parse(responseText);
+      // Add items from full data if the length of partial data is less than maxList
+      if (resultType === 'partial' && mockData_[fd_id].full && responseJSON[1].length < params.maxList) {
+        const fullData = JSON.parse(mockData_[fd_id].full[terms]);
+        const partialDataLength = responseJSON[1].length;
+        responseJSON[1] = responseJSON[1].concat(fullData[1].slice(partialDataLength, params.maxList));
+        responseJSON[3] = responseJSON[3].concat(fullData[3].slice(partialDataLength, params.maxList));
+      }
     }
   }
   else {
-    var count = params.count;
-    responseText = fhirMockData[url][count];
+    const count = params.count;
+    responseJSON = fhirMockData[url] ? {
+      ...fhirMockData[url],
+      expansion: {
+        ...fhirMockData[url].expansion,
+        contains: fhirMockData[url].expansion.contains.slice(0, count)
+      },
+    } : '';
   }
 
-  var response = {};
+  let response = {};
   response.request = this;
   this.options = options;
   response.status = 200;
-  response.responseText = responseText;
-  response.responseJSON = JSON.parse(responseText);
+  response.responseText = JSON.stringify(responseJSON);
+  response.responseJSON = responseJSON;
   setTimeout(function() {options.complete(response);}, 1);
   return response;
 };

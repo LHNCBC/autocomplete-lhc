@@ -39,7 +39,6 @@
     <label for="prefetch_cwe" id="prefetch_cwe_lbl">
     A Prefetch CWE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" id="prefetch_cwe" type="text" />
     </div>
-    <div class="field">
 
     <div class="field">
       <label for="race_or_ethnicity" id="prefetch_default_cne_lbl">
@@ -107,6 +106,7 @@
         A test for sorting extra data returned with search lists
         <input autocomplete="off" id="allele_search" style="width: 25em"
          placeholder="Type rs">
+      </label>
     </div>
 
     <div class="field">
@@ -231,11 +231,15 @@
     <h2>FHIR</h2>
     <p>FHIR search list:
     <input autocomplete="off" id="fhir_search" type="text" /><br>
+    FHIR search list (multi-select):
+    <input autocomplete="off" id="fhir_search_multi" type="text" /><br>
     FHIR search list with search button:
     <input autocomplete="off" id="fhir_search_w_button" type="text" />
       <button id="fhir_search_button" type="button">Search</button><br>
     FHIR search with custom search function:<input autocomplete="off"
-     id="fhir_search_w_function" type="text"></p>
+     id="fhir_search_w_function" type="text"><br>
+    FHIR search with custom search function (multi-select):<input autocomplete="off"
+     id="fhir_search_w_function_multi" type="text"></p>
     Another FHIR search with a custom search function:<input autocomplete="off"
      id="fhir_search_cache_test" type="text"></p>
     A non-FHIR search with a custom search function:<input autocomplete="off"
@@ -254,7 +258,6 @@
 
   <!-- Notice displayed while a user-initiated save is being performed.-->
   <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="/test/protractor/ajaxMock.js"></script>
   <script src="/source/polyfill.js"></script>
   <script src="/source/prototype_api.js"></script>
   <script src="/source/jqueryLite.js"></script>
