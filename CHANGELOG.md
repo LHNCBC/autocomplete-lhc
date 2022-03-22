@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.4.0] - 2022-03-22
+### Added
+- clearStoredSelection()- clears the internal data model for selected items
+
 ## [18.3.0] - 2022-02-07
 ### Changed
 - For the search autocompleter, added request for extra items when some are

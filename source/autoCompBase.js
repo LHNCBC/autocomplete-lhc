@@ -651,9 +651,7 @@ if (typeof Def === 'undefined')
           this.nonMatchSuggestions_ = false; // default
         this.constructorOpts_ = options;
 
-        this.selectedCodes_ = {};
-        this.selectedItems_ = {};
-        this.selectedItemData_ = [];
+        this.initStoredSelectionData();
 
         var dataRequester = options.dataRequester;
 
@@ -791,6 +789,28 @@ if (typeof Def === 'undefined')
 
 
       /**
+       *  Initializes the stored selection data structures (to empty).
+       */
+      initStoredSelectionData: function () {
+        this.selectedCodes_ = {};
+        this.selectedItems_ = {};
+        this.selectedItemData_ = [];
+      },
+
+      /**
+       *  Clears the stored selection, and if it is a multi-select list, also
+       *  clears the "selection" area that shows the selected items.  If this is
+       *  not a multi-select list, it is up to the caller to clear the input field
+       *  value.
+       */
+      clearStoredSelection: function() {
+        this.initStoredSelectionData();
+        if (this.multiSelect_)
+          this.selectedList.innerHTML = '';
+      },
+
+
+      /**
        *  Used by the dupForField methods (defined in the subclasses) to
        *  duplicate the RecordDataRequester.
        * @param fieldID the ID of the field being assigned to the new RecordDataRequester
@@ -862,9 +882,7 @@ if (typeof Def === 'undefined')
           code = this.getItemCode(itemText);
         }
         if (!this.multiSelect_) {
-          this.selectedCodes_ = {};
-          this.selectedItems_ = {};
-          this.selectedItemData_ = [];
+          this.clearStoredSelection();
         }
         if (itemText) {
           var hasCode = code !== null && code !== undefined;
@@ -2176,9 +2194,7 @@ if (typeof Def === 'undefined')
 
         // For a single selection list, clear the stored selection
         if (!this.multiSelect_) {
-          this.selectedCodes_ = {};
-          this.selectedItems_ = {};
-          this.selectedItemData_ = [];
+          this.clearStoredSelection();
         }
 
         // Blank values should not look different than values that haven't been
