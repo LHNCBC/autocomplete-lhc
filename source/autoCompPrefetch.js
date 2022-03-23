@@ -110,7 +110,7 @@
        *    <li>matchListValue - whether the field should validate its value
        *      against the list (default: false)</li>
        *    <li>autoFill - If true, the field will be filled in with
-       *      the list's value if there is just one item in the list.</li>
+       *      the list's value if there is just one item in the list (default: true).</li>
        *    <li>suggestionMode - an integer specifying what type of suggestion
        *      should be offered based on what the user has typed.  For values, see
        *      defAutocompleterBaseInit in autoCompBase.js.
