@@ -2309,7 +2309,7 @@ if (typeof Def === 'undefined')
             // and so has to do its hide() call via a timeout.  We're using
             // mousedown events, which means the field never loses focus when a list
             // item is clicked, so we can just make the call directly.  For this
-            // reason, we don't call the base onBlur.
+            // reason, we don't call the base nBlur.
             // Autocompleter.Base.prototype.onBlur.apply(this, [event]);
             this.hide();
             this.hasFocus = false;

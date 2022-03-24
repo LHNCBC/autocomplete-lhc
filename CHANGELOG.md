@@ -6,6 +6,12 @@ This log documents significant changes for each release.  This project follows
 ## [18.4.0] - 2022-03-22
 ### Added
 - clearStoredSelection()- clears the internal data model for selected items
+### Fixed
+- Prefetched lists now call the base onFocus method even when there is no list
+  to show.
+- When the prefetch autoFill is disabled, lists of length 1 are now shown.
+- Added commments clarifying that autoFill and setListAndField() should not be
+  used when maxList is set to something other than 1.
 
 ## [18.3.0] - 2022-02-07
 ### Changed
