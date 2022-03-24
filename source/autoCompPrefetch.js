@@ -83,7 +83,7 @@
       defaultSelectionIndex_: null,
 
       /**
-       *  If true, the field will be filled in with
+       *  If true, when setListAndField is called the field will be filled in with
        *  the list's value if there is just one item in the list.
        */
       autoFill_: true,
@@ -109,8 +109,11 @@
        *     null, in which case no request for additional data is made.</li>
        *    <li>matchListValue - whether the field should validate its value
        *      against the list (default: false)</li>
-       *    <li>autoFill - If true, the field will be filled in with
-       *      the list's value if there is just one item in the list.</li>
+       *    <li>autoFill - If true, if setListAndField is called with a one-item list,
+       *      the field will be filled in with that value.  (default: true).  Not recommended
+       *      for multi-selection lists (set by the maxSelect parameter.  A
+       *      future version might disable autoFill when maxSelect is set to
+       *      something other than 1.)</li>
        *    <li>suggestionMode - an integer specifying what type of suggestion
        *      should be offered based on what the user has typed.  For values, see
        *      defAutocompleterBaseInit in autoCompBase.js.
@@ -552,7 +555,9 @@
 
         // Add a class to the field if there is more than 1 item in the list
         // (so that CSS can add a small arrow-shaped background image).
-        if (listItems.length > 1)
+        // We don't add the class when autofill is enabled because the user
+        // won't see a list if the value is already chosen.
+        if (listItems.length > 1 || !this.autoFill_)
           jQuery(this.element).addClass('ac_multiple');
         else
           jQuery(this.element).removeClass('ac_multiple')
@@ -592,7 +597,9 @@
        *  Sets the list of items.  If there is just one value in the list, the
        *  field value is set to that value too.  If there is more than one value
        *  in the list, the field value is set to blank, because the user should
-       *  select a new value if the field now has a new list.
+       *  select a new value if the field now has a new list.  It is not
+       *  recommended to call this for multi-selection lists (where maxSelect
+       *  was set to something other than 1).
        *
        *  This is invoked when the list is populated based on the value
        *  specified in a different field.  For example, and specifically, the
@@ -832,11 +839,13 @@
             this.loadList();
           }
 
+          // The base onFocus needs to be called even if this is not "enabled"
+          // (i.e., no list) so processFieldVal_ is set.
+          Def.Autocompleter.Base.prototype.onFocus.apply(this);
           if (this.enabled_) {
             this.listBelowField_ = true;
             this.focusInProgress_ = true;
             this.hideList(); // while we reposition
-            Def.Autocompleter.Base.prototype.onFocus.apply(this);
             this.element.shakeCanceled = false;
 
             this.maybeShowList();
@@ -875,8 +884,9 @@
           blnShowList = this.entryCount > 0;
         }
         else {
-          //show list if number of choices > 1 and sequence number added
-          if (this.entryCount > 1) {
+          // show list if number of choices > 1 and sequence number added, or if
+          // autoFill was false (in which case the value is not already selected).
+          if (this.entryCount > 1 || !this.autoFill_) {
             blnShowList = true;
           }
           //check if the list item value matches field value

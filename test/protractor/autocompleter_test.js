@@ -326,3 +326,11 @@ opts.matchListValue = true;
 new Def.Autocompleter.Search(jQuery('#search_for_el')[0],
   '/form/get_search_res_list?fd_id=1284', opts);
 
+// Autofill test fields.  To test autoFill_, setListAndField must be called.
+var autoFillAC = new Def.Autocompleter.Prefetch('list_w_autofill', [],
+  {autoFill: true});
+autoFillAC.setListAndField(['Blue']);
+autoFillAC = new Def.Autocompleter.Prefetch('list_wo_autofill', [],
+  {autoFill: false});
+autoFillAC.setListAndField(['Blue']);
+
