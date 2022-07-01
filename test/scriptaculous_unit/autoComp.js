@@ -826,6 +826,25 @@
       }},
 
 
+      /**
+       * Tests for isListHTML option.
+       */
+      testIsListHTML: function () {with(this) {
+          var list = ['apples', 'oranges', 'pears', 'bananas'];
+          var formattedListItems = ['apples <span style="color: blue;">(big red apples)</span>', 'oranges', 'pears', 'bananas'];
+          var elem = AutoCompTestUtil.createInputElement();
+          var otherAutoComp =
+              new Def.Autocompleter.Prefetch(elem.id,
+                  list,
+                  {'addSeqNum': false, 'formattedListItems': formattedListItems});
+
+          otherAutoComp.onFocus();
+          var listItems = jQuery('#completionOptions li');
+          assertEqual(4, listItems.length);
+          assertEqual("apples <span style=\"color: blue;\">(big red apples)</span>", listItems[0].innerHTML);
+      }},
+
+
       // ---------------- Tests for the Search class ---------------------
       /**
        *  Tests the sorting in the processChoices function.

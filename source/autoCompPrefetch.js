@@ -88,6 +88,10 @@
        */
       autoFill_: true,
 
+      /**
+       * Whether a list of HTML is provided for list display.
+       */
+      isListHTML_: false,
 
       /**
        *  The constructor.  (See Prototype's Class.create method.)
@@ -156,6 +160,10 @@
         var autoFill = options['autoFill'];
         if (autoFill !== undefined)
           this.autoFill_ = autoFill;
+
+        var isListHTML = options['formattedListItems'];
+        if (isListHTML !== undefined)
+          this.isListHTML_ = true;
 
         // Call the base class' initialize method.  We do this via the "apply"
         // function, which lets us specify the "this" object plus an array of
@@ -326,14 +334,16 @@
         var headerCount = 0;
         var headingsShown = 0;
         var skippedSelected = 0; // items already selected that are left out of the list
-        var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
+        // Do not escape HTML if formattedListItems option is set.
+        var escapeHTML = instance.options.formattedListItems ? function (x) {return x;} : Def.Autocompleter.Base.escapeAttribute;
         if (instance.options.ignoreCase)
           entry = entry.toLowerCase();
-        for (var i=0, max=instance.rawList_.length; i<max; ++i) {
+        const htmlList = instance.options.formattedListItems || instance.rawList_;
+        for (var i=0, max=htmlList.length; i<max; ++i) {
           var tmp = instance.indexToHeadingLevel_[i];
           var isSelectedByNumber = false;
           if (tmp) {
-            lastHeading = instance.rawList_[i];
+            lastHeading = htmlList[i];
             foundItemForLastHeading = false;
             ++headerCount;
           }
@@ -342,7 +352,7 @@
             // Find all of the matches, even though we don't return them all,
             // so we can give the user a count.
             // This part does not yet support multi-level headings
-            var rawItemText = instance.rawList_[i];
+            var rawItemText = htmlList[i];
             if (useFullList) {
               ++totalCount;
               itemText = escapeHTML(rawItemText);
@@ -940,7 +950,13 @@
       listItemValue: function(li) {
         var value = li.innerHTML;
 
-        if (this.add_seqnum) {
+        if (this.isListHTML_) {
+          // If a custom HTML array is provided for list display, the value of the list item
+          // should be looked up from the raw list instead of the <li> mark up.
+          const autocompleteIndex = li.autocompleteIndex;
+          value = this.rawList_[autocompleteIndex];
+        }
+        else if (this.add_seqnum) {
           // Check to see if browser is IE.
           // All versions of IE convert lower case tag names to upper case - anantha (11/17/09)
           if (Browser.IE)
