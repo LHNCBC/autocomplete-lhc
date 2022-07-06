@@ -842,6 +842,28 @@
           var listItems = jQuery('#completionOptions li');
           assertEqual(4, listItems.length);
           assertEqual("apples <span style=\"color: blue;\">(big red apples)</span>", listItems[0].innerHTML);
+
+          // should not search on HTML tag
+          otherAutoComp.setFieldVal('span');
+          otherAutoComp.matchListItemsToField_ = true;
+          var htmlList = otherAutoComp.selector(otherAutoComp);
+          var vals = AutoCompTestUtil.extractListVals(htmlList);
+          assertEqual(0, vals.length);
+
+          // should filter based on list value
+          otherAutoComp.setFieldVal('app');
+          otherAutoComp.matchListItemsToField_ = true;
+          htmlList = otherAutoComp.selector(otherAutoComp);
+          vals = AutoCompTestUtil.extractListVals(htmlList);
+          assertEqual(1, vals.length);
+          assertEqual("<strong>app</strong>les <span style=\"color: blue;\">(big red apples)</span>", vals[0]);
+
+          // should not search on text in formattedListItems
+          otherAutoComp.setFieldVal('big');
+          otherAutoComp.matchListItemsToField_ = true;
+          htmlList = otherAutoComp.selector(otherAutoComp);
+          vals = AutoCompTestUtil.extractListVals(htmlList);
+          assertEqual(0, vals.length);
       }},
 
 
