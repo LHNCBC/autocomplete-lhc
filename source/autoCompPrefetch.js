@@ -334,16 +334,14 @@
         var headerCount = 0;
         var headingsShown = 0;
         var skippedSelected = 0; // items already selected that are left out of the list
-        // Do not escape HTML if formattedListItems option is set.
-        var escapeHTML = instance.options.formattedListItems ? function (x) {return x;} : Def.Autocompleter.Base.escapeAttribute;
+        var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
         if (instance.options.ignoreCase)
           entry = entry.toLowerCase();
-        const htmlList = instance.options.formattedListItems || instance.rawList_;
-        for (var i=0, max=htmlList.length; i<max; ++i) {
+        for (var i=0, max=instance.rawList_.length; i<max; ++i) {
           var tmp = instance.indexToHeadingLevel_[i];
           var isSelectedByNumber = false;
           if (tmp) {
-            lastHeading = htmlList[i];
+            lastHeading = instance.rawList_[i];
             foundItemForLastHeading = false;
             ++headerCount;
           }
@@ -352,10 +350,10 @@
             // Find all of the matches, even though we don't return them all,
             // so we can give the user a count.
             // This part does not yet support multi-level headings
-            var rawItemText = htmlList[i];
+            var rawItemText = instance.rawList_[i];
             if (useFullList) {
               ++totalCount;
-              itemText = escapeHTML(rawItemText);
+              itemText = instance.options.formattedListItems ? instance.options.formattedListItems[i] : escapeHTML(rawItemText);
             }
 
             // We need to be careful not to match the HTML we've put around the
@@ -376,12 +374,25 @@
                     '</strong>' + itemNumStr.substr(entry.length);
                   matchesItemNum = true;
                   itemText = instance.SEQ_NUM_PREFIX + itemNumStr +
-                             instance.SEQ_NUM_SEPARATOR + escapeHTML(rawItemText);
+                             instance.SEQ_NUM_SEPARATOR;
+                  itemText += instance.options.formattedListItems ? instance.options.formattedListItems[i] : escapeHTML(rawItemText);
                 }
               }
             } // if we're adding sequence numbers to this list
 
             if (!matchInItemNum && !useFullList) {
+              // Function to form HTML for a matching item, with user entry highlighted in formatted HTML.
+              function getFormattedItemText(instance, entry) {
+                var elemCompFormatted = instance.options.formattedListItems[i];
+                if (instance.options.ignoreCase)
+                  elemCompFormatted = elemCompFormatted.toLowerCase();
+                var foundPos = elemCompFormatted.indexOf(entry);
+                var prefix = elemCompFormatted.substr(0, foundPos);
+                return prefix + '<strong>' +
+                    elemCompFormatted.substr(foundPos, entry.length) +
+                    '</strong>' +
+                    elemCompFormatted.substr(foundPos + entry.length);
+              }
               // See if it matches the item at the beginning
               var foundMatch = false;
               var elemComp = rawItemText;
@@ -393,9 +404,13 @@
                   ++totalCount;
                   foundMatch = true;
                   if (totalCount <= maxReturn) {
-                    itemText = '<strong>' +
-                      escapeHTML(rawItemText.substr(0, entry.length))+'</strong>'+
-                      escapeHTML(rawItemText.substr(entry.length));
+                    if (instance.options.formattedListItems) {
+                      itemText = getFormattedItemText(instance, entry);
+                    } else {
+                      itemText = '<strong>' +
+                          escapeHTML(rawItemText.substr(0, entry.length)) + '</strong>' +
+                          escapeHTML(rawItemText.substr(entry.length));
+                    }
                   }
                 }
                 else { // foundPos > 0
@@ -405,11 +420,15 @@
                     ++totalCount;
                     foundMatch = true;
                     if (totalCount <= maxReturn) {
-                      var prefix = escapeHTML(rawItemText.substr(0, foundPos));
-                      itemText = prefix + '<strong>' +
-                        escapeHTML(rawItemText.substr(foundPos, entry.length)) +
-                       '</strong>' +
-                        escapeHTML(rawItemText.substr(foundPos + entry.length));
+                      if (instance.options.formattedListItems) {
+                        itemText = getFormattedItemText(instance, entry);
+                      } else {
+                        var prefix = escapeHTML(rawItemText.substr(0, foundPos));
+                        itemText = prefix + '<strong>' +
+                            escapeHTML(rawItemText.substr(foundPos, entry.length)) +
+                            '</strong>' +
+                            escapeHTML(rawItemText.substr(foundPos + entry.length));
+                      }
                     }
                   }
                 }
