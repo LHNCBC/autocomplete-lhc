@@ -873,7 +873,7 @@ if (typeof Def === 'undefined')
        *  than the current item in the field.  When this is provided, it is
        *  assumed that "code" is provided too.
        * @param code (optional) if provided, this will be the code for the
-       *  selected text rather that then code for the item currently in the field.
+       *  selected text rather than the code for the item currently in the field.
        *  If this is provided, itemText must be provided too.
        */
       storeSelectedItem: function(itemText, code) {
