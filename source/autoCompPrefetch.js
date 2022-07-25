@@ -150,6 +150,7 @@
           ignoreCase: true,
           fullSearch: false,
           selector: this.selector,
+          getFormattedItemText: this.getFormattedItemText,
           onShow: this.onShow,
           onHide: this.onHide
         }, options || { });
@@ -297,6 +298,26 @@
 
 
       /**
+       * Forms HTML for a matching item, with user entry highlighted in formatted HTML.
+       * @param instance the autocompleter instance
+       * @param entry user entry
+       * @param index index of item from the prefetch list
+       * @returns {string}
+       */
+      getFormattedItemText: function(instance, entry, index) {
+        var elemCompFormatted = instance.options.formattedListItems[index];
+        if (instance.options.ignoreCase)
+          elemCompFormatted = elemCompFormatted.toLowerCase();
+        var foundPos = elemCompFormatted.indexOf(entry);
+        var prefix = elemCompFormatted.substr(0, foundPos);
+        return prefix + '<strong>' +
+            elemCompFormatted.substr(foundPos, entry.length) +
+            '</strong>' +
+            elemCompFormatted.substr(foundPos + entry.length);
+      },
+
+
+      /**
        *  Generates the list of items that match the user's input.  This was
        *  copied from the Scriptaculous controls.js Autocompleter.Local.prototype
        *  and modified (initially to allow matches at word boundaries).
@@ -381,18 +402,6 @@
             } // if we're adding sequence numbers to this list
 
             if (!matchInItemNum && !useFullList) {
-              // Function to form HTML for a matching item, with user entry highlighted in formatted HTML.
-              function getFormattedItemText(instance, entry) {
-                var elemCompFormatted = instance.options.formattedListItems[i];
-                if (instance.options.ignoreCase)
-                  elemCompFormatted = elemCompFormatted.toLowerCase();
-                var foundPos = elemCompFormatted.indexOf(entry);
-                var prefix = elemCompFormatted.substr(0, foundPos);
-                return prefix + '<strong>' +
-                    elemCompFormatted.substr(foundPos, entry.length) +
-                    '</strong>' +
-                    elemCompFormatted.substr(foundPos + entry.length);
-              }
               // See if it matches the item at the beginning
               var foundMatch = false;
               var elemComp = rawItemText;
@@ -405,7 +414,7 @@
                   foundMatch = true;
                   if (totalCount <= maxReturn) {
                     if (instance.options.formattedListItems) {
-                      itemText = getFormattedItemText(instance, entry);
+                      itemText = this.getFormattedItemText(instance, entry, i);
                     } else {
                       itemText = '<strong>' +
                           escapeHTML(rawItemText.substr(0, entry.length)) + '</strong>' +
@@ -421,7 +430,7 @@
                     foundMatch = true;
                     if (totalCount <= maxReturn) {
                       if (instance.options.formattedListItems) {
-                        itemText = getFormattedItemText(instance, entry);
+                        itemText = this.getFormattedItemText(instance, entry, i);
                       } else {
                         var prefix = escapeHTML(rawItemText.substr(0, foundPos));
                         itemText = prefix + '<strong>' +
