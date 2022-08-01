@@ -298,26 +298,6 @@
 
 
       /**
-       * Forms HTML for a matching item, with user entry highlighted in formatted HTML.
-       * @param instance the autocompleter instance
-       * @param entry user entry
-       * @param index index of item from the prefetch list
-       * @returns {string}
-       */
-      getFormattedItemText: function(instance, entry, index) {
-        var elemCompFormatted = instance.options.formattedListItems[index];
-        if (instance.options.ignoreCase)
-          elemCompFormatted = elemCompFormatted.toLowerCase();
-        var foundPos = elemCompFormatted.indexOf(entry);
-        var prefix = elemCompFormatted.substr(0, foundPos);
-        return prefix + '<strong>' +
-            elemCompFormatted.substr(foundPos, entry.length) +
-            '</strong>' +
-            elemCompFormatted.substr(foundPos + entry.length);
-      },
-
-
-      /**
        *  Generates the list of items that match the user's input.  This was
        *  copied from the Scriptaculous controls.js Autocompleter.Local.prototype
        *  and modified (initially to allow matches at word boundaries).
@@ -374,7 +354,9 @@
             var rawItemText = instance.rawList_[i];
             if (useFullList) {
               ++totalCount;
-              itemText = instance.options.formattedListItems ? instance.options.formattedListItems[i] : escapeHTML(rawItemText);
+              itemText = escapeHTML(rawItemText);
+              if (instance.options.formattedListItems)
+                itemText += instance.options.formattedListItems[i];
             }
 
             // We need to be careful not to match the HTML we've put around the
@@ -395,8 +377,9 @@
                     '</strong>' + itemNumStr.substr(entry.length);
                   matchesItemNum = true;
                   itemText = instance.SEQ_NUM_PREFIX + itemNumStr +
-                             instance.SEQ_NUM_SEPARATOR;
-                  itemText += instance.options.formattedListItems ? instance.options.formattedListItems[i] : escapeHTML(rawItemText);
+                             instance.SEQ_NUM_SEPARATOR + escapeHTML(rawItemText);
+                  if (instance.options.formattedListItems)
+                    itemText += instance.options.formattedListItems[i];
                 }
               }
             } // if we're adding sequence numbers to this list
@@ -413,13 +396,11 @@
                   ++totalCount;
                   foundMatch = true;
                   if (totalCount <= maxReturn) {
-                    if (instance.options.formattedListItems) {
-                      itemText = this.getFormattedItemText(instance, entry, i);
-                    } else {
                       itemText = '<strong>' +
                           escapeHTML(rawItemText.substr(0, entry.length)) + '</strong>' +
                           escapeHTML(rawItemText.substr(entry.length));
-                    }
+                    if (instance.options.formattedListItems)
+                      itemText += instance.options.formattedListItems[i];
                   }
                 }
                 else { // foundPos > 0
@@ -429,15 +410,13 @@
                     ++totalCount;
                     foundMatch = true;
                     if (totalCount <= maxReturn) {
-                      if (instance.options.formattedListItems) {
-                        itemText = this.getFormattedItemText(instance, entry, i);
-                      } else {
                         var prefix = escapeHTML(rawItemText.substr(0, foundPos));
                         itemText = prefix + '<strong>' +
                             escapeHTML(rawItemText.substr(foundPos, entry.length)) +
                             '</strong>' +
                             escapeHTML(rawItemText.substr(foundPos + entry.length));
-                      }
+                        if (instance.options.formattedListItems)
+                          itemText += instance.options.formattedListItems[i];
                     }
                   }
                 }

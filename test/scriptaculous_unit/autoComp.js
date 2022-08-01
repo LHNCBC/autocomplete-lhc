@@ -831,7 +831,7 @@
        */
       testIsListHTML: function () {with(this) {
           var list = ['apples', 'oranges', 'pears', 'bananas'];
-          var formattedListItems = ['apples <span style="color: blue;">(big red apples)</span>', 'oranges', 'pears', 'bananas'];
+          var formattedListItems = [' <span style="color: blue;">(big red apples)</span>', '', '', ''];
           var elem = AutoCompTestUtil.createInputElement();
           var otherAutoComp =
               new Def.Autocompleter.Prefetch(elem.id,
