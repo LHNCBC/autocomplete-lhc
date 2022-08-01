@@ -141,6 +141,9 @@
        *     that so that when scrolling to show the list it doesn't scroll the current
        *     field under the header bar.  This is the element ID for such a header
        *     bar.</li>
+       *    <li>formattedListItems - an optional HTML formatted list of descriptions.
+       *     When provided, the descriptions will be appended to corresponding items
+       *     for display. Filtering does not cover content in this formatted list.</li>
        *  </ul>
        */
       initialize: function(id, listItems, options) {
