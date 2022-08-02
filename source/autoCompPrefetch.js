@@ -355,11 +355,12 @@
             // so we can give the user a count.
             // This part does not yet support multi-level headings
             var rawItemText = instance.rawList_[i];
+            var formattedListItems = instance.options.formattedListItems;
             if (useFullList) {
               ++totalCount;
               itemText = escapeHTML(rawItemText);
-              if (instance.options.formattedListItems)
-                itemText += instance.options.formattedListItems[i];
+              if (formattedListItems)
+                itemText += formattedListItems[i];
             }
 
             // We need to be careful not to match the HTML we've put around the
@@ -381,8 +382,8 @@
                   matchesItemNum = true;
                   itemText = instance.SEQ_NUM_PREFIX + itemNumStr +
                              instance.SEQ_NUM_SEPARATOR + escapeHTML(rawItemText);
-                  if (instance.options.formattedListItems)
-                    itemText += instance.options.formattedListItems[i];
+                  if (formattedListItems)
+                    itemText += formattedListItems[i];
                 }
               }
             } // if we're adding sequence numbers to this list
@@ -402,8 +403,8 @@
                       itemText = '<strong>' +
                           escapeHTML(rawItemText.substr(0, entry.length)) + '</strong>' +
                           escapeHTML(rawItemText.substr(entry.length));
-                    if (instance.options.formattedListItems)
-                      itemText += instance.options.formattedListItems[i];
+                    if (formattedListItems)
+                      itemText += formattedListItems[i];
                   }
                 }
                 else { // foundPos > 0
@@ -418,8 +419,8 @@
                             escapeHTML(rawItemText.substr(foundPos, entry.length)) +
                             '</strong>' +
                             escapeHTML(rawItemText.substr(foundPos + entry.length));
-                        if (instance.options.formattedListItems)
-                          itemText += instance.options.formattedListItems[i];
+                        if (formattedListItems)
+                          itemText += formattedListItems[i];
                     }
                   }
                 }
