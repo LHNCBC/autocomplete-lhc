@@ -516,16 +516,20 @@
         // Process the first item separately, because it might be a suggestion.
         i = 0;
         if (topItemIndex >= 0) {
-          rtn += '<li class="suggestion">' + itemToHTMLData[topItem][0] + '</li>'
+          // Save the index from this.rawList_ as an attribute in <li>, so that listItemValue() can get the right value
+          // regardless of how many items are filterd out and whether some item is moved to the top of display list.
+          var rawListIndex = this.rawList_.findIndex(x => x === topItem);
+          rtn += '<li class="suggestion" autocompRawListIndex="' + rawListIndex + '">' + itemToHTMLData[topItem][0] + '</li>'
           ++i;
         }
         for (var len=itemsInList.length; i<len; ++i) {
           var itemData = itemToHTMLData[itemsInList[i]];
+          var rawListIndex = this.rawList_.findIndex(x => x === itemsInList[i]);
           var cls = itemData[1];
           if (cls)
-            rtn += '<li class="'+cls+'">'+itemData[0]+'</li>';
+            rtn += '<li class="'+cls+'" autocompRawListIndex="' + rawListIndex + '">'+itemData[0]+'</li>';
           else
-            rtn += '<li>'+itemData[0]+'</li>';
+            rtn += '<li autocompRawListIndex="' + rawListIndex + '">'+itemData[0]+'</li>';
         }
         rtn += '</ul>';
         return rtn;
@@ -954,36 +958,15 @@
 
 
       /**
-       *  Returns the value of a list item (minus any sequence number an
-       *  separator.)
+       *  Returns the value of a list item
        * @param li the list item DOM element.
        */
       listItemValue: function(li) {
-        var value = li.innerHTML;
-
-        if (this.isListHTML_) {
-          // If a custom HTML array is provided for list display, the value of the list item
-          // should be looked up from the raw list instead of the <li> mark up.
-          const autocompleteIndex = li.autocompleteIndex;
-          value = this.rawList_[autocompleteIndex];
-        }
-        else if (this.add_seqnum) {
-          // Check to see if browser is IE.
-          // All versions of IE convert lower case tag names to upper case - anantha (11/17/09)
-          if (Browser.IE)
-            value = value.replace( "SPAN", "span" );
-
-          var index = value.indexOf(this.SEQ_NUM_SEPARATOR);
-          if (index >= 0)  // headings won't have the list number
-            value = value.substring(index + this.SEQ_NUM_SEPARATOR.length);
-
-          // Strip out any remaining tags and unescape the HTML
-          value = value.replace(/(<([^>]+)>)/ig,"");
-          value = Def.Autocompleter.Base.unescapeAttribute(value);
-        }
-        else
-          value = li.textContent;
-
+        // Regardless of the <li> HTML mark up, the value of the list item is
+        // looked up from the raw list, according to the autocompRawListIndex
+        // attribute assigned earlier.
+        const autocompleteIndex = li.attributes.autocompRawListIndex.value;
+        const value = this.rawList_[autocompleteIndex];
         return value;
       },
 
