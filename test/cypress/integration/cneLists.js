@@ -1,104 +1,94 @@
-var helpers = require('../test_helpers.js');
-var hasClass = helpers.hasClass;
-var po = require('../autocompPage.js');
+//var helpers = require('../test_helpers.js');
+//var hasClass = helpers.hasClass;
+//var po = require('../autocompPage.js');
+import { TestPages } from '../support/testPages.js';
+import { default as po } from '../support/autocompPage.js';
 
 describe('CNE lists', function() {
-  var cneList = $('#fe_multi_sel_cne');
+  var cneList = '#fe_multi_sel_cne';
 
   it('should warn user about invalid values', function() {
-    po.openTestPage();
-    expect(hasClass(cneList, 'no_match')).toBe(false);
-    expect(hasClass(cneList, 'invalid')).toBe(false);
+    cy.visit(TestPages.autocomp_atr);
+    cy.get(cneList).should('not.have.class', 'no_match').should('not.have.class', 'invalid');
 
-    cneList.click();
-    cneList.sendKeys('zzz');
-    cneList.sendKeys(protractor.Key.TAB); // shift focus from field
-    expect(hasClass(cneList, 'no_match')).toBe(true);
-    expect(hasClass(cneList, 'invalid')).toBe(true);
-    // Focus should be returned to the field
-    expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual('fe_multi_sel_cne');
+    cy.get(cneList).click().type('zzz').blur();
+    cy.get(cneList).should('have.class', 'no_match').should('have.class', 'invalid');
+    cy.get(cneList).should('have.focus');
   });
 
+
   it('should send a list selection event even for non-matching values', function() {
-    po.openTestPage();
-    browser.driver.executeScript(function() {
-      window.callCount = 0;
-      Def.Autocompleter.Event.observeListSelections('race_or_ethnicity', function(eventData) {
-        ++callCount;
+    cy.visit(TestPages.autocomp_atr);
+    cy.window().then((win)=>{
+      win.callCount = 0;
+      win.Def.Autocompleter.Event.observeListSelections('race_or_ethnicity', function(eventData) {
+        ++win.callCount;
       });
     });
 
-    expect(browser.driver.executeScript('return window.callCount')).toBe(0);
-    po.prefetchCNE.click();
-    po.sendKeys(po.prefetchCNE, 'zzz');
-    expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
-    po.prefetchCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
-    expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
-    expect(browser.driver.executeScript('return window.callCount')).toBe(1);
-    po.prefetchCNE.sendKeys(protractor.Key.TAB); // shift focus from field, field should clear
-    expect(po.prefetchCNE.getAttribute('value')).toBe('');
+    cy.window().its('callCount').should('eq', 0);
+    cy.get(po.prefetchCNE).click().type('zzz')
+      .should('have.value', 'zzz').blur().should('have.focus'); // shift focus from field; should return
+    cy.get(po.prefetchCNE).should('have.value', 'zzz');
+    cy.window().its('callCount').should('eq', 1);
+    //cy.window().then(win=>cy.wrap(win).its('callCount').should('eq', 1));
+//    cy.window().then(win=>expect(win.callCount).to.equal(1));
+    cy.get(po.prefetchCNE).blur().should('have.value', ''); // shift focus from field, field should clear
     // Another event should be sent when the field is cleared, because we sent
     // one with the invalid value above.
-    expect(browser.driver.executeScript('return window.callCount')).toBe(2);
+    cy.window().its('callCount').should('eq', 2);
 
     // Also confirm that there is one event sent for the field being cleared
     // when the initial value was not blank.
-    po.prefetchCNE.click();
-    var item = $('#searchResults li:first-child');
-    item.click();
+    cy.get(po.prefetchCNE).click();
+    cy.get('#searchResults li:first-child').click();
     // For that selection, there should have been one event sent.
-    expect(browser.driver.executeScript('return window.callCount')).toBe(3);
+    cy.window().its('callCount').should('eq', 3);
     // Tab away and refocus
-    po.prefetchCNE.sendKeys(protractor.Key.TAB);
-    browser.driver.switchTo().activeElement().sendKeys(
-      protractor.Key.chord(protractor.Key.SHIFT, protractor.Key.TAB));
+    cy.get(po.prefetchCNE).blur().click();
     // Now try entering an invalid value again.
-    po.prefetchCNE.sendKeys('zzz');
-    expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
-    po.prefetchCNE.sendKeys(protractor.Key.TAB); // shift focus from field; should return
-    expect(po.prefetchCNE.getAttribute('value')).toBe('zzz');
+    cy.get(po.prefetchCNE).clear().type('zzz').should('have.value', 'zzz');
+    cy.get(po.prefetchCNE).blur().should('have.focus'); // shift focus from field; should return
+    cy.get(po.prefetchCNE).should('have.value', 'zzz');
     // An event should have been sent for the invalid value
-    expect(browser.driver.executeScript('return window.callCount')).toBe(4);
-    po.prefetchCNE.sendKeys(protractor.Key.TAB); // shift focus from field, field should clear
-    expect(po.prefetchCNE.getAttribute('value')).toBe('');
+    cy.window().its('callCount').should('eq', 4);
+    cy.get(po.prefetchCNE).blur().should('have.value', ''); // shift focus from field, field should clear
     // Now we should have had another call, because the end result is that the
     // field was cleared.
-    expect(browser.driver.executeScript('return window.callCount')).toBe(5);
+    cy.window().its('callCount').should('eq', 5);
   });
 
 
-  it('should not let the ENTER key submit the form with an invalid value',
-    function() {
-    po.openTestPage();
-    po.prefetchCNE.click();
-    po.sendKeys(po.prefetchCNE, 'zzz');
-    po.prefetchCNE.sendKeys(protractor.Key.ENTER);
+  it('should not let the ENTER key submit the form with an invalid value', function() {
+    cy.visit(TestPages.autocomp_atr);
+    //po.openTestPage();
+    cy.get(po.prefetchCNE).click().type('zzz').type('{enter}');
     // If the form wasn't submitted, the page URL will have changed.
-    expect(browser.driver.executeScript('return ""+window.location.href')
-          ).toBe(po.testPageURL);
+    cy.task('log', 'hello to log');
+    cy.window().then(win=>{cy.task('log', 'hello to log2'); cy.task('log', win.location.href)});
+    cy.window().its('location.href').should('contain', TestPages.autocomp_atr);
 
     // Try to hit enter a second time.  This time the field should be cleared.
     // We also let the event go through, which submits the form.  To test that
     // the field is cleared, we need to prevent the form from submitting.
-    browser.driver.executeScript('jQuery("#'+po.prefetchCNEFieldName+'").'+
-      'keydown(function(event) {event.preventDefault()})');
-    expect(po.prefetchCNE.getAttribute('value')).not.toBe('');
-    po.sendKeys(po.prefetchCNE, protractor.Key.ENTER);
-    expect(browser.driver.executeScript('return window.location.href')
-          ).toBe(po.testPageURL);
-    expect(po.prefetchCNE.getAttribute('value')).toBe('');
+    cy.window().then((win)=> {
+      win.document.getElementsByTagName('form')[0].addEventListener('submit', (event)=>event.preventDefault());
+    });
+    //cy.wait(2000);
+    cy.get(po.prefetchCNE).should('not.have.value', '');
+    cy.get(po.prefetchCNE).type('{enter}');
+    cy.window().its('location.href').should('contain', TestPages.autocomp_atr); // form did not submit
+    cy.get(po.prefetchCNE).should('have.value', ''); // or undefined
 
     // Repeat the above but without the preventDefault() call, to confirm that
     // the form is allowed to be submitted (which means the page URL will have
-    // chanegd).
-    po.openTestPage();
-    po.prefetchCNE.click();
-    po.sendKeys(po.prefetchCNE, 'zzz');
-    po.prefetchCNE.sendKeys(protractor.Key.ENTER);
-    po.prefetchCNE.sendKeys(protractor.Key.ENTER);
-    expect(browser.driver.executeScript('return window.location.href')
-          ).not.toBe(po.testPageURL);
+    // changed).
+    cy.visit(TestPages.autocomp_atr);
+    //po.openTestPage();
+    cy.get(po.prefetchCNE).click().type('zzz').type('{enter}').type('{enter}');
+    cy.window().then(win=>{expect(win.location.href).not.to.equal(po.testPageURL)});
   });
+
 
 
   it('should accept a valid value when the user erases extra characters',
@@ -109,64 +99,26 @@ describe('CNE lists', function() {
     // characters so the value is valid and click away, the field clears.
     // The following test (should move to the next field...) tests for a variant
     // of this bug involving the TAB key.
-    po.openTestPage();
-    po.prefetchCNE.click();
-    po.prefetchCNE.sendKeys('Unknown');
-    po.prefetchCNE.sendKeys(protractor.Key.TAB);
-    // At the point the field should be in a valid state.
-    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(false);
+    cy.visit(TestPages.autocomp_atr);
+    cy.get(po.prefetchCNE).click().type('Unknown').blur();
+    // At this point the field should be in a valid state.
+    cy.get(po.prefetchCNE).should('not.have.class', 'invalid');
     // Add extra characters
-    po.prefetchCNE.click();
-    po.prefetchCNE.sendKeys('z');
-    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknownz');
-    po.nonField.click();
+    cy.get(po.prefetchCNE).click().type('z');
+    cy.get(po.prefetchCNE).should('have.value', 'Unknownz');
+    cy.get(po.nonField).click();
     // Now it should be invalid
-    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(true);
+    cy.get(po.prefetchCNE).should('have.class', 'invalid');
     // Now erase the bad key.  Hit the right arrow key to move to the end of the
     // field, because the text might be highlighted.
-    po.prefetchCNE.sendKeys(protractor.Key.ARROW_RIGHT);
-    po.prefetchCNE.sendKeys(protractor.Key.BACK_SPACE);
-    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknown');
-    po.nonField.click();
+    cy.get(po.prefetchCNE).click().type('{moveToEnd}').type('{backspace}');
+    cy.get(po.prefetchCNE).should('have.value', 'Unknown');
+    cy.get(po.nonField).click();
     // The field should be valid and still have its value.
-    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(false);
-    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknown');
-  });
-
-
-  it('should move to the next field after the user erases extra characters',
-      function() {
-    // This is a part of LF-185.  If the list has an valid value, and then the
-    // user adds extra characters and tabs and gets the invalid value warning,
-    // and then the user deletes the extra characters so the is is valid again,
-    // the field remained in its invalid state when the TAB key was pressed and
-    // the focus stayed in the field.
-    po.openTestPage();
-    po.prefetchCNE.click();
-    po.prefetchCNE.sendKeys('Unknown');
-    po.prefetchCNE.sendKeys(protractor.Key.TAB);
-    // At the point the field should be in a valid state.
-    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(false);
-    po.prefetchCNE.click();
-    po.prefetchCNE.sendKeys('z');
-    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknownz');
-    po.prefetchCNE.sendKeys(protractor.Key.TAB);
-    // Now it should be invalid
-    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(true);
-    // Now erase the bad key.  Hit the right arrow key to move to the end of the
-    // field, because the text might be highlighted.
-    po.prefetchCNE.sendKeys(protractor.Key.ARROW_RIGHT);
-    po.prefetchCNE.sendKeys(protractor.Key.BACK_SPACE);
-    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknown');
-    po.prefetchCNE.sendKeys(protractor.Key.TAB);
-    // Now the field should be valid, and shoud not have focus anymore.
-    // (I am not testing which field should have focus, to avoid introducing
-    // a dependency on the order of the fields on the page, but just that this
-    // field does not have the focus.)
-    expect(hasClass(po.prefetchCNE, 'invalid')).toBe(false);
-    expect(po.prefetchCNE.getAttribute('id')).not.toEqual(
-      browser.driver.switchTo().activeElement().getAttribute('id'));
-    expect(po.prefetchCNE.getAttribute('value')).toEqual('Unknown');
+    cy.get(po.prefetchCNE).should('not.have.class', 'invalid');
+    cy.get(po.prefetchCNE).should('have.value', 'Unknown');
+    // The field should also not be focused anymore
+    cy.get(po.prefetchCNE).should('not.have.focus');
   });
 
 
@@ -180,18 +132,20 @@ describe('CNE lists', function() {
     // reason, the problem does not occur when I do the same actions here with
     // selenium that I do using a browser.  Nonetheless, it seems worthwhile to
     // have this test.
-    po.openTestPage();
-    po.searchCNE.click();
-    po.sendKeys(po.searchCNE, 'zzz'); // non-match
-    browser.sleep(100);
-    po.prefetchCNE.click();
+    cy.visit(TestPages.autocomp_atr);
+    cy.get(po.searchCNECSS).click().should('have.focus').type('aazzz'); // non-match
+    cy.get(po.prefetchCNE).click().should('not.have.focus');
+    cy.get(po.searchCNECSS).click().type('zzz'); // non-match
+    cy.wait(100);// wait for mocked Ajax requests to be processed
+    cy.get(po.prefetchCNE).click();
     // Focus should be returned to the non-matching field
     // Note:  Could not catch movement to prefetchCNE, so we just wait a bit to
     // make sure that happened.
-    browser.sleep(500);
-    expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(po.searchCNEID);
+    cy.wait(100);
+    cy.get(po.prefetchCNE).should('not.have.focus'); // should lose focus
+    cy.get(po.searchCNECSS).should('have.focus');
     // The search result list should close
     po.waitForNoSearchResults();
   });
-});
 
+});

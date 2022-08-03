@@ -70,17 +70,6 @@ exports.config = {
   },
 
   onPrepare: function(){
-    /**
-     * By default, protractor expects it to be angular application. This is used
-     * to switch between angular and non angular sites.
-     *
-     * @param {Boolean} flag
-     * @returns {Void}
-     */
-    global.setAngularSite = function(flag){
-      browser.ignoreSynchronization = !flag;
-    };
-
     // Replace default dot reporter with something better.
     var SpecReporter = require('jasmine-spec-reporter');
     // add jasmine spec reporter
