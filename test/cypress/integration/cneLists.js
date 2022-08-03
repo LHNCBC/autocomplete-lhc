@@ -64,8 +64,6 @@ describe('CNE lists', function() {
     //po.openTestPage();
     cy.get(po.prefetchCNE).click().type('zzz').type('{enter}');
     // If the form wasn't submitted, the page URL will have changed.
-    cy.task('log', 'hello to log');
-    cy.window().then(win=>{cy.task('log', 'hello to log2'); cy.task('log', win.location.href)});
     cy.window().its('location.href').should('contain', TestPages.autocomp_atr);
 
     // Try to hit enter a second time.  This time the field should be cleared.
