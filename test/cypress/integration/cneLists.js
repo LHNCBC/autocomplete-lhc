@@ -7,8 +7,11 @@ import { default as po } from '../support/autocompPage.js';
 describe('CNE lists', function() {
   var cneList = '#fe_multi_sel_cne';
 
-  it('should warn user about invalid values', function() {
+  beforeEach(()=>{
     cy.visit(TestPages.autocomp_atr);
+  });
+
+  it('should warn user about invalid values', function() {
     cy.get(cneList).should('not.have.class', 'no_match').should('not.have.class', 'invalid');
 
     cy.get(cneList).click().type('zzz').blur();
@@ -18,7 +21,6 @@ describe('CNE lists', function() {
 
 
   it('should send a list selection event even for non-matching values', function() {
-    cy.visit(TestPages.autocomp_atr);
     cy.window().then((win)=>{
       win.callCount = 0;
       win.Def.Autocompleter.Event.observeListSelections('race_or_ethnicity', function(eventData) {
@@ -31,8 +33,6 @@ describe('CNE lists', function() {
       .should('have.value', 'zzz').blur().should('have.focus'); // shift focus from field; should return
     cy.get(po.prefetchCNE).should('have.value', 'zzz');
     cy.window().its('callCount').should('eq', 1);
-    //cy.window().then(win=>cy.wrap(win).its('callCount').should('eq', 1));
-//    cy.window().then(win=>expect(win.callCount).to.equal(1));
     cy.get(po.prefetchCNE).blur().should('have.value', ''); // shift focus from field, field should clear
     // Another event should be sent when the field is cleared, because we sent
     // one with the invalid value above.
@@ -60,8 +60,6 @@ describe('CNE lists', function() {
 
 
   it('should not let the ENTER key submit the form with an invalid value', function() {
-    cy.visit(TestPages.autocomp_atr);
-    //po.openTestPage();
     cy.get(po.prefetchCNE).click().type('zzz').type('{enter}');
     // If the form wasn't submitted, the page URL will have changed.
     cy.window().its('location.href').should('contain', TestPages.autocomp_atr);
@@ -97,7 +95,6 @@ describe('CNE lists', function() {
     // characters so the value is valid and click away, the field clears.
     // The following test (should move to the next field...) tests for a variant
     // of this bug involving the TAB key.
-    cy.visit(TestPages.autocomp_atr);
     cy.get(po.prefetchCNE).click().type('Unknown').blur();
     // At this point the field should be in a valid state.
     cy.get(po.prefetchCNE).should('not.have.class', 'invalid');
@@ -130,7 +127,6 @@ describe('CNE lists', function() {
     // reason, the problem does not occur when I do the same actions here with
     // selenium that I do using a browser.  Nonetheless, it seems worthwhile to
     // have this test.
-    cy.visit(TestPages.autocomp_atr);
     cy.get(po.searchCNECSS).click().should('have.focus').type('aazzz'); // non-match
     cy.get(po.prefetchCNE).click().should('not.have.focus');
     cy.get(po.searchCNECSS).click().type('zzz'); // non-match
