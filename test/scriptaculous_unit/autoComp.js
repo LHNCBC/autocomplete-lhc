@@ -808,7 +808,7 @@
       /**
        * Tests for isListHTML option.
        */
-      testIsListHTML: function () {with(this) {
+      testFormattedListItems: function () {with(this) {
         var list = ['apples and bananas', 'oranges', 'pears', 'bananas'];
         var formattedListItems = [' <span style="color: blue;">(big red apples)</span>', '', '', ''];
         var elem = AutoCompTestUtil.createInputElement();

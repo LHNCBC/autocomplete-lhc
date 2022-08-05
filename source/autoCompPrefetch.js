@@ -89,11 +89,6 @@
       autoFill_: true,
 
       /**
-       * Whether a list of HTML is provided for list display.
-       */
-      isListHTML_: false,
-
-      /**
        *  The constructor.  (See Prototype's Class.create method.)
        *
        * @param field the ID or the DOM element of the field for which the
@@ -164,10 +159,6 @@
         var autoFill = options['autoFill'];
         if (autoFill !== undefined)
           this.autoFill_ = autoFill;
-
-        var isListHTML = options['formattedListItems'];
-        if (isListHTML !== undefined)
-          this.isListHTML_ = true;
 
         // Call the base class' initialize method.  We do this via the "apply"
         // function, which lets us specify the "this" object plus an array of
@@ -342,6 +333,7 @@
         var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
         if (instance.options.ignoreCase)
           entry = entry.toLowerCase();
+        var formattedListItems = instance.options.formattedListItems;
         for (var i=0, max=instance.rawList_.length; i<max; ++i) {
           var tmp = instance.indexToHeadingLevel_[i];
           var isSelectedByNumber = false;
@@ -356,7 +348,6 @@
             // so we can give the user a count.
             // This part does not yet support multi-level headings
             var rawItemText = instance.rawList_[i];
-            var formattedListItems = instance.options.formattedListItems;
             if (useFullList) {
               ++totalCount;
               itemText = escapeHTML(rawItemText);
