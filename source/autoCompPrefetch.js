@@ -447,6 +447,7 @@
               if (lastHeading && !foundItemForLastHeading) {
                 foundItemForLastHeading = true;
                 itemsInList.push(lastHeading);
+                rawListIndexes.push(i - 1);
                 ++headingsShown;
                 itemToHTMLData[lastHeading] = [escapeHTML(lastHeading), 'heading'];
                 countForLastHeading = 0;
