@@ -331,7 +331,8 @@
           maxItemsPerHeading = 1;
         var countForLastHeading = 0; // number of items for the last header
 
-        var itemsInList = []
+        var itemsInList = [];
+        var rawListIndexes = [];
         var itemToHTMLData = {};
         var lastHeading = null;
         var foundItemForLastHeading = false;
@@ -457,6 +458,7 @@
                     instance.SEQ_NUM_SEPARATOR + itemText;
                 }
                 itemsInList.push(rawItemText);
+                rawListIndexes.push(i);
                 if (isSelectedByNumber)
                   suggestionIndex = itemsInList.length-1;
                 itemToHTMLData[rawItemText] = [itemText];
@@ -479,13 +481,14 @@
           $('searchCount').style.display = 'none';
         }
 
-        return instance.buildHTML(itemsInList, itemToHTMLData, suggestionIndex);
+        return instance.buildHTML(itemsInList, rawListIndexes, itemToHTMLData, suggestionIndex);
       },
 
 
       /**
        *  Constructs the HTML for the list.
        * @param itemsInList an array of the raw item text for the items to shown
+       * @param rawListIndexes an array of the index of itemsInList items in this.rawList_
        * @param itemToHTMLData a hash from raw item texts to an array of data for
        *  the HTML output.  The first item should be the item text with any needed
        *  HTML markup.  The second item, if present, should be a class to apply to
@@ -493,7 +496,7 @@
        * @param suggestionIndex the index of the item found for the suggested
        *  item, or null if one is not known yet.
        */
-      buildHTML: function(itemsInList, itemToHTMLData, suggestionIndex) {
+      buildHTML: function(itemsInList, rawListIndexes, itemToHTMLData, suggestionIndex) {
         // Don't use suggestions if there are headings, or if we are showing the
         // full list.
         var topItemIndex = -1;
@@ -504,11 +507,16 @@
           var topItemIndex = haveSug ?
             suggestionIndex : this.pickBestMatch(itemsInList);
           if (topItemIndex >= 0) {
-            // Move that item to the start of the list
-            var topItem = itemsInList[topItemIndex]
-            for (i=topItemIndex; i>0; --i)
-              itemsInList[i] = itemsInList[i-1];
+            // Move that item to the start of the list.
+            // Also move rawListIndexes list correspondingly.
+            var topItem = itemsInList[topItemIndex];
+            var topItemRawIndex = rawListIndexes[topItemIndex];
+            for (i=topItemIndex; i>0; --i) {
+              itemsInList[i] = itemsInList[i - 1];
+              rawListIndexes[i] = rawListIndexes[i - 1];
+            }
             itemsInList[0] = topItem;
+            rawListIndexes[0] = topItemRawIndex;
           }
         }
 
@@ -518,18 +526,16 @@
         if (topItemIndex >= 0) {
           // Save the index from this.rawList_ as an attribute in <li>, so that listItemValue() can get the right value
           // regardless of how many items are filterd out and whether some item is moved to the top of display list.
-          var rawListIndex = this.rawList_.findIndex(x => x === topItem);
-          rtn += '<li class="suggestion" autocompRawListIndex="' + rawListIndex + '">' + itemToHTMLData[topItem][0] + '</li>'
+          rtn += '<li class="suggestion" autocompRawListIndex="' + rawListIndexes[0] + '">' + itemToHTMLData[topItem][0] + '</li>'
           ++i;
         }
         for (var len=itemsInList.length; i<len; ++i) {
           var itemData = itemToHTMLData[itemsInList[i]];
-          var rawListIndex = this.rawList_.findIndex(x => x === itemsInList[i]);
           var cls = itemData[1];
           if (cls)
-            rtn += '<li class="'+cls+'" autocompRawListIndex="' + rawListIndex + '">'+itemData[0]+'</li>';
+            rtn += '<li class="'+cls+'" autocompRawListIndex="' + rawListIndexes[i] + '">'+itemData[0]+'</li>';
           else
-            rtn += '<li autocompRawListIndex="' + rawListIndex + '">'+itemData[0]+'</li>';
+            rtn += '<li autocompRawListIndex="' + rawListIndexes[i] + '">'+itemData[0]+'</li>';
         }
         rtn += '</ul>';
         return rtn;
@@ -965,7 +971,7 @@
         // Regardless of the <li> HTML mark up, the value of the list item is
         // looked up from the raw list, according to the autocompRawListIndex
         // attribute assigned earlier.
-        const autocompleteIndex = li.attributes.autocompRawListIndex.value;
+        const autocompleteIndex = li.getAttribute('autocompRawListIndex');
         const value = this.rawList_[autocompleteIndex];
         return value;
       },
