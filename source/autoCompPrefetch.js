@@ -438,6 +438,7 @@
               if (lastHeading && !foundItemForLastHeading) {
                 foundItemForLastHeading = true;
                 itemsInList.push(lastHeading);
+                // lastHeading has index of (i - 1) since we are at the first item under this heading.
                 rawListIndexes.push(i - 1);
                 ++headingsShown;
                 itemToHTMLData[lastHeading] = [escapeHTML(lastHeading), 'heading'];
