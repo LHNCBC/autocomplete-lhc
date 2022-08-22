@@ -88,7 +88,6 @@
        */
       autoFill_: true,
 
-
       /**
        *  The constructor.  (See Prototype's Class.create method.)
        *
@@ -137,6 +136,9 @@
        *     that so that when scrolling to show the list it doesn't scroll the current
        *     field under the header bar.  This is the element ID for such a header
        *     bar.</li>
+       *    <li>formattedListItems - an optional HTML formatted list of descriptions.
+       *     When provided, the descriptions will be appended to corresponding items
+       *     for display. Filtering does not cover content in this formatted list.</li>
        *  </ul>
        */
       initialize: function(id, listItems, options) {
@@ -146,6 +148,7 @@
           ignoreCase: true,
           fullSearch: false,
           selector: this.selector,
+          getFormattedItemText: this.getFormattedItemText,
           onShow: this.onShow,
           onHide: this.onHide
         }, options || { });
@@ -319,7 +322,8 @@
           maxItemsPerHeading = 1;
         var countForLastHeading = 0; // number of items for the last header
 
-        var itemsInList = []
+        var itemsInList = [];
+        var rawListIndexes = [];
         var itemToHTMLData = {};
         var lastHeading = null;
         var foundItemForLastHeading = false;
@@ -329,6 +333,7 @@
         var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
         if (instance.options.ignoreCase)
           entry = entry.toLowerCase();
+        var formattedListItems = instance.options.formattedListItems;
         for (var i=0, max=instance.rawList_.length; i<max; ++i) {
           var tmp = instance.indexToHeadingLevel_[i];
           var isSelectedByNumber = false;
@@ -346,6 +351,8 @@
             if (useFullList) {
               ++totalCount;
               itemText = escapeHTML(rawItemText);
+              if (formattedListItems)
+                itemText += formattedListItems[i];
             }
 
             // We need to be careful not to match the HTML we've put around the
@@ -367,6 +374,8 @@
                   matchesItemNum = true;
                   itemText = instance.SEQ_NUM_PREFIX + itemNumStr +
                              instance.SEQ_NUM_SEPARATOR + escapeHTML(rawItemText);
+                  if (formattedListItems)
+                    itemText += formattedListItems[i];
                 }
               }
             } // if we're adding sequence numbers to this list
@@ -383,9 +392,11 @@
                   ++totalCount;
                   foundMatch = true;
                   if (totalCount <= maxReturn) {
-                    itemText = '<strong>' +
-                      escapeHTML(rawItemText.substr(0, entry.length))+'</strong>'+
-                      escapeHTML(rawItemText.substr(entry.length));
+                      itemText = '<strong>' +
+                          escapeHTML(rawItemText.substr(0, entry.length)) + '</strong>' +
+                          escapeHTML(rawItemText.substr(entry.length));
+                    if (formattedListItems)
+                      itemText += formattedListItems[i];
                   }
                 }
                 else { // foundPos > 0
@@ -395,11 +406,13 @@
                     ++totalCount;
                     foundMatch = true;
                     if (totalCount <= maxReturn) {
-                      var prefix = escapeHTML(rawItemText.substr(0, foundPos));
-                      itemText = prefix + '<strong>' +
-                        escapeHTML(rawItemText.substr(foundPos, entry.length)) +
-                       '</strong>' +
-                        escapeHTML(rawItemText.substr(foundPos + entry.length));
+                        var prefix = escapeHTML(rawItemText.substr(0, foundPos));
+                        itemText = prefix + '<strong>' +
+                            escapeHTML(rawItemText.substr(foundPos, entry.length)) +
+                            '</strong>' +
+                            escapeHTML(rawItemText.substr(foundPos + entry.length));
+                        if (formattedListItems)
+                          itemText += formattedListItems[i];
                     }
                   }
                 }
@@ -425,6 +438,8 @@
               if (lastHeading && !foundItemForLastHeading) {
                 foundItemForLastHeading = true;
                 itemsInList.push(lastHeading);
+                // lastHeading has index of (i - 1) since we are at the first item under this heading.
+                rawListIndexes.push(i - 1);
                 ++headingsShown;
                 itemToHTMLData[lastHeading] = [escapeHTML(lastHeading), 'heading'];
                 countForLastHeading = 0;
@@ -436,6 +451,7 @@
                     instance.SEQ_NUM_SEPARATOR + itemText;
                 }
                 itemsInList.push(rawItemText);
+                rawListIndexes.push(i);
                 if (isSelectedByNumber)
                   suggestionIndex = itemsInList.length-1;
                 itemToHTMLData[rawItemText] = [itemText];
@@ -458,13 +474,14 @@
           $('searchCount').style.display = 'none';
         }
 
-        return instance.buildHTML(itemsInList, itemToHTMLData, suggestionIndex);
+        return instance.buildHTML(itemsInList, rawListIndexes, itemToHTMLData, suggestionIndex);
       },
 
 
       /**
        *  Constructs the HTML for the list.
        * @param itemsInList an array of the raw item text for the items to shown
+       * @param rawListIndexes an array of the index of itemsInList items in this.rawList_
        * @param itemToHTMLData a hash from raw item texts to an array of data for
        *  the HTML output.  The first item should be the item text with any needed
        *  HTML markup.  The second item, if present, should be a class to apply to
@@ -472,7 +489,7 @@
        * @param suggestionIndex the index of the item found for the suggested
        *  item, or null if one is not known yet.
        */
-      buildHTML: function(itemsInList, itemToHTMLData, suggestionIndex) {
+      buildHTML: function(itemsInList, rawListIndexes, itemToHTMLData, suggestionIndex) {
         // Don't use suggestions if there are headings, or if we are showing the
         // full list.
         var topItemIndex = -1;
@@ -483,11 +500,16 @@
           var topItemIndex = haveSug ?
             suggestionIndex : this.pickBestMatch(itemsInList);
           if (topItemIndex >= 0) {
-            // Move that item to the start of the list
-            var topItem = itemsInList[topItemIndex]
-            for (i=topItemIndex; i>0; --i)
-              itemsInList[i] = itemsInList[i-1];
+            // Move that item to the start of the list.
+            // Also move rawListIndexes list correspondingly.
+            var topItem = itemsInList[topItemIndex];
+            var topItemRawIndex = rawListIndexes[topItemIndex];
+            for (i=topItemIndex; i>0; --i) {
+              itemsInList[i] = itemsInList[i - 1];
+              rawListIndexes[i] = rawListIndexes[i - 1];
+            }
             itemsInList[0] = topItem;
+            rawListIndexes[0] = topItemRawIndex;
           }
         }
 
@@ -495,16 +517,18 @@
         // Process the first item separately, because it might be a suggestion.
         i = 0;
         if (topItemIndex >= 0) {
-          rtn += '<li class="suggestion">' + itemToHTMLData[topItem][0] + '</li>'
+          // Save the index from this.rawList_ as an attribute in <li>, so that listItemValue() can get the right value
+          // regardless of how many items are filterd out and whether some item is moved to the top of display list.
+          rtn += '<li class="suggestion" autocompRawListIndex="' + rawListIndexes[0] + '">' + itemToHTMLData[topItem][0] + '</li>'
           ++i;
         }
         for (var len=itemsInList.length; i<len; ++i) {
           var itemData = itemToHTMLData[itemsInList[i]];
           var cls = itemData[1];
           if (cls)
-            rtn += '<li class="'+cls+'">'+itemData[0]+'</li>';
+            rtn += '<li class="'+cls+'" autocompRawListIndex="' + rawListIndexes[i] + '">'+itemData[0]+'</li>';
           else
-            rtn += '<li>'+itemData[0]+'</li>';
+            rtn += '<li autocompRawListIndex="' + rawListIndexes[i] + '">'+itemData[0]+'</li>';
         }
         rtn += '</ul>';
         return rtn;
@@ -933,30 +957,15 @@
 
 
       /**
-       *  Returns the value of a list item (minus any sequence number an
-       *  separator.)
+       *  Returns the value of a list item
        * @param li the list item DOM element.
        */
       listItemValue: function(li) {
-        var value = li.innerHTML;
-
-        if (this.add_seqnum) {
-          // Check to see if browser is IE.
-          // All versions of IE convert lower case tag names to upper case - anantha (11/17/09)
-          if (Browser.IE)
-            value = value.replace( "SPAN", "span" );
-
-          var index = value.indexOf(this.SEQ_NUM_SEPARATOR);
-          if (index >= 0)  // headings won't have the list number
-            value = value.substring(index + this.SEQ_NUM_SEPARATOR.length);
-
-          // Strip out any remaining tags and unescape the HTML
-          value = value.replace(/(<([^>]+)>)/ig,"");
-          value = Def.Autocompleter.Base.unescapeAttribute(value);
-        }
-        else
-          value = li.textContent;
-
+        // Regardless of the <li> HTML mark up, the value of the list item is
+        // looked up from the raw list, according to the autocompRawListIndex
+        // attribute assigned earlier.
+        const autocompleteIndex = li.getAttribute('autocompRawListIndex');
+        const value = this.rawList_[autocompleteIndex];
         return value;
       },
 

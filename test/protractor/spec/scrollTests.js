@@ -20,7 +20,7 @@ describe('autocomp scroll function', function() {
     po.putElementAtBottomOfWindow(po.longOddCNEID);
     po.longOddCNE.click();
     var winScrollPos = po.windowScrollTop();
-    browser.sleep(100); // wait for scroll to happen
+    browser.sleep(200); // wait for scroll to happen
     expect(po.windowScrollTop()).toBeGreaterThan(winScrollPos);
   });
 
@@ -30,7 +30,7 @@ describe('autocomp scroll function', function() {
     po.putElementAtBottomOfWindow(po.longOddCNENoScrollID);
     var winScrollPos = po.windowScrollTop();
     po.longOddCNENoScroll.click();
-    browser.sleep(100); // wait for scroll to happen (if it does)
+    browser.sleep(200); // wait for scroll to happen (if it does)
     expect(po.windowScrollTop()).toBe(winScrollPos); // no change
   });
 
@@ -51,13 +51,13 @@ describe('autocomp scroll function', function() {
       var initialWinScroll = po.windowScrollTop();
       // Now click in the field.  The field shouldn't move upward.
       po.longOddCNE.click();
-      browser.sleep(100); // allow for scrolling to (not) happen
+      browser.sleep(200); // allow for scrolling to (not) happen
       expect(po.windowScrollTop()).toBe(initialWinScroll);
       // Now shorten the header and confirm that the field scrolls
       browser.executeScript('jQuery("#testHeaderBar")[0].style.height="10px"')
       po.nonField.click();
       po.longOddCNE.click();
-      browser.sleep(100); // allow for scrolling to happen
+      browser.sleep(200); // allow for scrolling to happen
       expect(po.windowScrollTop()).toBeGreaterThan(initialWinScroll);
     });
   });

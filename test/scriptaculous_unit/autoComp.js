@@ -761,27 +761,6 @@
 
       // ---------------- Tests for the Prefetch class --------------
       /**
-       *  Tests listItemValue.
-       */
-      testListItemValue: function() {with(this) {
-        var liContainer = $('testListItemValue');
-        // Test without a sequence number or HTML character.
-        liContainer.innerHTML = '<li>hello</li>';
-        assertEqual('hello',
-          fe_other_list_field_autoComp.listItemValue(liContainer.firstChild));
-        // Test without a sequence number but with an HTML character
-        liContainer.innerHTML = '<li>hello &gt;</li>';
-        assertEqual('hello >',
-          fe_other_list_field_autoComp.listItemValue(liContainer.firstChild));
-        // Test with a sequence number and an HTML character
-        liContainer.innerHTML =
-          '<li><span class="listNum">4:</span>&nbsp; GTE (&gt;=)</li>';
-        assertEqual('GTE (>=)',
-          fe_seq_num_list_autoComp.listItemValue(liContainer.firstChild));
-      }},
-
-
-      /**
        *  Tests which items appear in a list with headings.
        */
       testListWithHeadings: function() {with(this) {
@@ -823,6 +802,59 @@
         assertEqual('Medication allergies', vals[2]);
         assertEqual('<span class="listNum">80:</span>&nbsp; DEPAKOTE ER (Valproic <strong>Ac</strong>id)', vals[3]);
         assertEqual('<span class="listNum">126:</span>&nbsp; TYLENOL (<strong>Ac</strong>etaminophen)', vals[4]);
+      }},
+
+
+      /**
+       * Tests for isListHTML option.
+       */
+      testFormattedListItems: function () {with(this) {
+        var list = ['apples and bananas', 'oranges', 'pears', 'bananas'];
+        var formattedListItems = [' <span style="color: blue;">(big red apples)</span>', '', '', ''];
+        var elem = AutoCompTestUtil.createInputElement();
+        var otherAutoComp =
+          new Def.Autocompleter.Prefetch(elem.id,
+            list,
+            {'addSeqNum': false, 'formattedListItems': formattedListItems});
+
+        otherAutoComp.onFocus();
+        var listItems = jQuery('#completionOptions li');
+        assertEqual(4, listItems.length);
+        assertEqual("apples and bananas <span style=\"color: blue;\">(big red apples)</span>", listItems[0].innerHTML);
+
+        // should not search on HTML tag
+        otherAutoComp.setFieldVal('span');
+        otherAutoComp.matchListItemsToField_ = true;
+        var htmlList = otherAutoComp.selector(otherAutoComp);
+        var vals = AutoCompTestUtil.extractListVals(htmlList);
+        assertEqual(0, vals.length);
+
+        // should filter based on list value
+        otherAutoComp.setFieldVal('app');
+        otherAutoComp.matchListItemsToField_ = true;
+        htmlList = otherAutoComp.selector(otherAutoComp);
+        vals = AutoCompTestUtil.extractListVals(htmlList);
+        assertEqual(1, vals.length);
+        assertEqual("<strong>app</strong>les and bananas <span style=\"color: blue;\">(big red apples)</span>", vals[0]);
+
+        // should not search on text in formattedListItems
+        otherAutoComp.setFieldVal('big');
+        otherAutoComp.matchListItemsToField_ = true;
+        htmlList = otherAutoComp.selector(otherAutoComp);
+        vals = AutoCompTestUtil.extractListVals(htmlList);
+        assertEqual(0, vals.length);
+
+        // should pick the suggested value with attemptSelection()
+        otherAutoComp.setFieldVal(
+            otherAutoComp.trimmedElemVal = 'bana', false);
+        otherAutoComp.setMatchStatusIndicator(false);
+        otherAutoComp.setInvalidValIndicator(true);
+        // Set hasFocus so getUpdatedChoices will work
+        otherAutoComp.hasFocus = true;
+        otherAutoComp.getUpdatedChoices();
+        otherAutoComp.index = 0; // pick the first
+        otherAutoComp.attemptSelection();
+        assertEqual('bananas', otherAutoComp.element.value);
       }},
 
 
