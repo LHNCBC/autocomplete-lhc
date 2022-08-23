@@ -1,6 +1,3 @@
-//var helpers = require('../test_helpers.js');
-//var hasClass = helpers.hasClass;
-//var po = require('../autocompPage.js');
 import { TestPages } from '../support/testPages.js';
 import { default as po } from '../support/autocompPage.js';
 
