@@ -3,6 +3,12 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.5.0] - 2022-08-01
+### Added
+- New Prefetch option formattedListItems. When provided, the HTML list from this
+  option will be appended for display in the UI list. Filtering will only work on
+  the original list, not considering formattedListItems.
+
 ## [18.4.0] - 2022-03-22
 ### Added
 - clearStoredSelection()- clears the internal data model for selected items
