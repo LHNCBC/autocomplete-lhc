@@ -23,3 +23,21 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+//
+
+// Type in a search box and wait until search queries are finished.
+// (Copied from lforms)
+Cypress.Commands.add(
+  'typeAndWait',
+  { prevSubject: 'optional' },
+  (subject, term) => {
+    // Intercept the last query which would contain '={term}'.
+    cy.intercept('GET', '*=' + term + '**').as('lastSearchQuery');
+    cy.wrap(subject).type(term);
+    cy.wait('@lastSearchQuery');
+    // It's guaranteed that the queries have returned. But there was still a slight
+    // chance that the next Cypress command catches some element before the application
+    // finishes updating DOM.
+    cy.wait(100);
+  }
+);

@@ -1,6 +1,8 @@
+import { TestPages } from '../support/testPages.js';
+
 describe('autoFill parameter', () => {
   it('should work for multi-select lists', () => {
-    cy.visit('test/protractor/autocomp_atr.html');
+    cy.visit(TestPages.autocomp_atr);
     // Check field with autofill enabled
     cy.get('#list_w_autofill').should('have.value', 'Blue');
     // check data model
