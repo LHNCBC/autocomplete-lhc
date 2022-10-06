@@ -1,68 +1,66 @@
-var helpers = require('../test_helpers.js');
-var hasClass = helpers.hasClass;
 describe('directive', function() {
-  var dp = require('../directivePage.js'); // dp = DirectivePage instance
+  var dp = require('../support/directivePage.js'); // dp = DirectivePage instance
 
   it('should create an area on the page for the list', function() {
     dp.openDirectiveTestPage();
-    expect(dp.searchResults).not.toBeNull();
+    cy.get(dp.searchResCSS).should('exist');
   });
 
   it('should assign an ID to the autocompleting field', function() {
-    expect(dp.inputElem).not.toBeNull();
+    cy.get(dp.inputElem).should('exist');
   });
 
   it('should assign a name attribute to the autocompleting field', function() {
-    expect(dp.inputElem.getAttribute('name')).toBe('ac1');
+    cy.get(dp.inputElem).should('have.attr', 'name', 'ac1');
   });
 
   it('should show the list when the field is clicked', function() {
-    expect(dp.searchResults.isDisplayed()).toBeFalsy();
-    dp.inputElem.click();
-    expect(dp.searchResults.isDisplayed()).toBeTruthy();
+    cy.get(dp.searchResCSS).should('not.be.visible');
+    cy.get(dp.inputElem).click();
+    cy.get(dp.searchResCSS).should('be.visible');
   });
 
   it('should load the default item code and value', function() {
     dp.openDirectiveTestPage();
-    expect(dp.inputElem.getAttribute("value")).toEqual('Blue');
-    expect(dp.codeField.getAttribute("value")).toEqual('B');
+    cy.get(dp.inputElem).should('have.value', 'Blue');
+    cy.get(dp.codeField).should('have.value', 'B');
   });
 
   it('should not highlight the default value when the list is opened',
       function() {
-    dp.inputElem.click();
+    cy.get(dp.inputElem).click();
     // There should not be a highlight on 'Blue', so one down arrow should
     // select the first item in the list.
-    dp.inputElem.sendKeys(protractor.Key.ARROW_DOWN);
-    expect(dp.inputElem.getAttribute("value")).toEqual('Green');
+    cy.get(dp.inputElem).type('{downArrow}');
+    cy.get(dp.inputElem).should('have.value', 'Green');
   });
 
   it('should not load the default item code and value when the model is already populated', function() {
-    expect(dp.prePopElem.getAttribute("value")).toEqual('a pre-populated model value');
+    cy.get(dp.prePopElem).should('have.value', 'a pre-populated model value');
   });
 
   it('should allow specification of the default by a code', function() {
-    expect(dp.prefetchWithCodeDefault.getAttribute('value')).toEqual('Green');
+    cy.get(dp.prefetchWithCodeDefault).should('have.value', 'Green');
   });
 
   it('should populate the model when an item is selected', function() {
-    dp.inputElem.click();
-    expect(dp.searchResults.isDisplayed()).toBeTruthy();
-    dp.firstSearchRes.click();
+    cy.get(dp.inputElem).click();
+    cy.get(dp.searchResCSS).should('be.visible');
+    dp.searchResult(1).click();
     // Change focus to send change event
-    dp.codeField.click();
-    expect(dp.inputElem.getAttribute("value")).toEqual('Green');
-    expect(dp.codeField.getAttribute("value")).toEqual('G');
+    cy.get(dp.codeField).click();
+    cy.get(dp.inputElem).should('have.value', 'Green');
+    cy.get(dp.codeField).should('have.value', 'G');
   });
 
   it('should assign ng-invalid-parse only for CNE', function() {
     // Try a CWE
-    expect(hasClass(dp.prefetchCWEBlank, 'ng-invalid-parse')).toBe(false);
-    dp.prefetchCWEBlank.click();
-    dp.prefetchCWEBlank.sendKeys('zzz');
+    cy.get(dp.prefetchCWEBlank).should('not.have.class', 'ng-invalid-parse');
+    cy.get(dp.prefetchCWEBlank).click();
+    cy.get(dp.prefetchCWEBlank).type('zzz');
     // Change focus to send change event
-    dp.codeField.click();
-    expect(hasClass(dp.prefetchCWEBlank, 'ng-invalid-parse')).toBe(false);
+    cy.get(dp.codeField).click();
+    cy.get(dp.prefetchCWEBlank).should('not.have.class', 'ng-invalid-parse');
 
     // The parser no longer returns the invalid signal (undefined) so
     // ng-invalid-parse never gets set.  See comments in the test below,
@@ -82,12 +80,16 @@ describe('directive', function() {
     // This was traced to the parser code which went ahead and returned the
     // model value (undefined) for CNE fields, but switched to null for CWE
     // fields (which doesn't trigger the invalid status).
-    browser.driver.executeScript('angular.element("'+dp.prefetchCNEBlankSel+
-      '").isolateScope().modelData = undefined;');
-    dp.prefetchCNEBlank.click();
-    dp.prefetchCNEBlank.sendKeys(protractor.Key.ARROW_DOWN);
-    dp.prefetchCNEBlank.sendKeys(protractor.Key.TAB);
-    expect(hasClass(dp.prefetchCNEBlank, 'ng-invalid-parse')).toBe(false);
+    cy.window().then(win=> {
+      console.log('angular.element("'+dp.prefetchCNEBlank+
+        '").isolateScope().modelData = undefined;');
+      win.eval('angular.element("'+dp.prefetchCNEBlank+
+        '").isolateScope().modelData = undefined;');
+      cy.get(dp.prefetchCNEBlank).click();
+      cy.get(dp.prefetchCNEBlank).type('{downArrow}');
+      cy.get(dp.prefetchCNEBlank).blur();
+      cy.get(dp.prefetchCNEBlank).should('not.have.class', 'ng-invalid-parse');
+    });
   });
 
   it('should handle invalid model value assignments', function() {
@@ -98,116 +100,105 @@ describe('directive', function() {
 
     var testFieldCSS = '#list4b';
     var list4bModelAttrName = 'listFieldVal4b';
-    var testField = $(testFieldCSS);
 
-    // Returns the model data object for the test field
+    // Returns a promise resolving to the model data object for the test field.
+    // modelAttrName:  the attribute on scope() for the model data (default:
+    // list4bModelAttrName);
     function getModel(modelAttrName) {
       if (!modelAttrName)
         modelAttrName = list4bModelAttrName;
-      return browser.executeScript('var testField = $("'+testFieldCSS+'");'+
-        'return testField.scope().'+modelAttrName+';');
+      return dp.getModel(testFieldCSS, modelAttrName, false);
     }
 
     // Updates the model data for the test field, assigning it the given object.
     function setModel(model) {
       var modelString = model === undefined ? 'undefined' :
         JSON.stringify(model);
-      var script = 'var testField = $("'+testFieldCSS+'");'+
-        'testField.scope().'+list4bModelAttrName+' = '+modelString+';'+
-        'testField.scope().$digest();'
-      return browser.executeScript(script);
+      cy.window().then(win=> {
+        win.eval('var testField = $("'+testFieldCSS+'");'+
+          'testField.scope().'+list4bModelAttrName+' = '+modelString+';'+
+          'testField.scope().$digest();');
+      });
     }
 
     dp.openDirectiveTestPage();
-    expect(getModel()).toEqual({}); // precondition
+    getModel().then((m)=>expect(m).to.deep.equal({})); // precondition
     // Make sure the field value is empty, not "undefined"
-    expect(testField.getAttribute('value')).toEqual('');
+    cy.get(testFieldCSS).should('have.value', '');
 
     // Allow a string value for the model
     setModel('hello');
-    expect(testField.getAttribute('value')).toEqual('hello');
+    cy.get(testFieldCSS).should('have.value', 'hello');
 
     // Make sure a valid model still works
     setModel({text: 'hi'});
-    expect(testField.getAttribute('value')).toEqual('hi');
+    cy.get(testFieldCSS).should('have.value', 'hi');
 
     // Now try setting the model value to null, which previously resulted in an
     // exception being thrown.  I'm not sure how to make sure $digest doesn't
     // result in a thrown exception, because that seems to run asynchronously,
     // so we'll just check that the value gets set to the empty string.
     setModel(null)
-    expect(testField.getAttribute('value')).toBe('');
+    cy.get(testFieldCSS).should('have.value', '');
 
     // Try a model with a null text attribute.
     setModel({text: null, code: null});
-    expect(testField.getAttribute('value')).toBe('');
-    browser.executeScript(
-     'return $("'+testFieldCSS+'")[0].autocomp.domCache.get("elemVal")').then(
-     function(val) {
-      expect(val).toEqual('');
+    cy.get(testFieldCSS).should('have.value', '');
+    cy.window().then(win=> {
+      var elemVal = win.eval('$("'+testFieldCSS+'")[0].autocomp.domCache.get("elemVal")');
+      expect(elemVal).to.equal('');
     });
     // Try this for a field whose model was initially this invalid assignment
     // Previously this caused an issue with the DOM cache for elemVal.
-    expect(getModel('listfieldval11')).toEqual({text: null, code: null});
-    expect($('#list11').getAttribute('value')).toBe('');
-    browser.executeScript(
-     'return $("#list11")[0].autocomp.domCache.get("elemVal")').then(
-     function(val) {
-      expect(val).toEqual('');
+    getModel('listfieldval11').then(m=>expect(m).to.deep.equal({text: null, code: null}));
+    cy.get('#list11').should('have.value', '');
+    cy.window().then(win=> {
+      var elemVal = win.eval('$("#list11")[0].autocomp.domCache.get("elemVal")');
+      expect(elemVal).to.equal('');
     });
-
   });
 
   it('should watch on changes of autocomplete options', function() {
-    expect(dp.optChangeTest.getAttribute('value')).toEqual('Green');
-    dp.btnOptChangeTest.click();
-    browser.waitForAngular();
-    expect(dp.optChangeTest.getAttribute('value')).toEqual('');
-    dp.optChangeTest.click();
+    cy.get(dp.optChangeTest).should('have.value', 'Green');
+    cy.get(dp.btnOptChangeTest).click();
+    cy.get(dp.optChangeTest).should('have.value', '').click();
     // pick the 2nd item,
-    dp.optChangeTest.sendKeys(protractor.Key.ARROW_DOWN);
-    dp.optChangeTest.sendKeys(protractor.Key.ARROW_DOWN);
-    dp.optChangeTest.sendKeys(protractor.Key.TAB);
-    expect(dp.optChangeTest.getAttribute('value')).toEqual('Blue_NEW');
+    cy.get(dp.optChangeTest).type('{downArrow}{downArrow}{enter}');
+    cy.get(dp.optChangeTest).should('have.value', 'Blue_NEW');
   });
+
 
   describe('Prefetch lists', function() {
     it('should allow the displayed property to be configured', function() {
       dp.openDirectiveTestPage();
-      var testField = $('#list12');
-      testField.click();
-      dp.firstSearchRes.click();
-      expect(testField.getAttribute('value')).toEqual('Green');
+      var testField = '#list12';
+      cy.get(testField).click();
+      dp.searchResult(1).click();
+      cy.get(testField).should('have.value', 'Green');
     });
 
     it('should set _notOnList for off-list items, but not empty values',
         function() {
       var testField = dp.inputElem;
-      testField.click();
-      testField.sendKeys('zzz');
-      testField.sendKeys(protractor.Key.TAB);
-      expect(dp.getModel(testField)).toEqual({text: 'Bluezzz', _notOnList: true});
+      cy.get(testField).click().type('zzz{enter}');
+      dp.getModel(testField).then(m=>expect(m).to.deep.equal({text: 'Bluezzz', _notOnList: true}));
       // Now set it to an empty value.  The model value should be null.
-      testField.click();
-      dp.clearField(testField);
-      testField.sendKeys(protractor.Key.TAB);
-      expect(dp.getModel(testField)).toEqual(null);
+      cy.get(testField).click().clear().type('{enter}');
+      dp.getModel(testField).then(m=>expect(m).to.equal(null));
     });
   });
 
   describe('CNE lists', function() {
     it('should warn user about invalid values', function() {
       dp.openDirectiveTestPage();
-      expect(hasClass(dp.cneList, 'no_match')).toBe(false);
-      expect(hasClass(dp.cneList, 'invalid')).toBe(false);
+      cy.get(dp.cneListSel).should('not.have.class', 'no_match');
+      cy.get(dp.cneListSel).should('not.have.class', 'invalid');
 
-      dp.cneList.click();
-      dp.cneList.sendKeys('zzz');
-      dp.cneList.sendKeys(protractor.Key.TAB); // shift focus from field
-      expect(hasClass(dp.cneList, 'no_match')).toBe(true);
-      expect(hasClass(dp.cneList, 'invalid')).toBe(true);
+      cy.get(dp.cneListSel).click().type('zzz{enter}');
+      cy.get(dp.cneListSel).should('have.class', 'no_match');
+      cy.get(dp.cneListSel).should('have.class', 'invalid');
       // Focus should be back in the field
-      expect(browser.driver.switchTo().activeElement().getAttribute('id')).toEqual(dp.cneListID);
+      cy.focused().invoke('attr', 'id').should('equal', dp.cneListID);
     });
   });
 });
