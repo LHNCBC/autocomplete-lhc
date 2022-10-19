@@ -668,10 +668,6 @@
             newVal = this.assembleValue(listItems[0]);
           else
             newVal = '';
-          // Set the field value, but leave the running of change event observers
-          // until later.
-          this.setFieldVal(newVal, false);
-          this.fieldValIsListVal_ = true;
         }
 
 
