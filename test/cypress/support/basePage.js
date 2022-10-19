@@ -61,6 +61,42 @@ export function BasePage() {
   };
 
 
+  /**
+   *  Returns resolving to the model data object for the given element.
+   * @param elemCSSSel the CSS selector for the field
+   * @param modelAttrName (optional) the attribute on the scope holding the model data. (Default: modelData)
+   * @param isolatedScope (default: true) whether to look at the isolated scope
+   *  of the element.  (false=scope()).
+   */
+  this.getModel = function(elemCSSSel, modelAttrName, isolatedScope) {
+    if (!modelAttrName)
+      modelAttrName = 'modelData';
+    if (isolatedScope === undefined)
+      isolatedScope = true;
+    cy.get(elemCSSSel).should('exist'); // make sure it is present
+    return cy.window().then(win=> {
+      return new Cypress.Promise((resolve, reject) => {
+        function getScope() {
+          var tmp = 'var testField = $("'+elemCSSSel+'"); testField.'+
+            isolatedScope ? 'isolateScope()' : 'scope()';
+          console.log(tmp);
+         // win.console.log(tmp);
+          return win.eval('var testField = $("'+elemCSSSel+'"); testField.'+
+            (isolatedScope ? 'isolateScope()' : 'scope()'));
+        }
+        function waitForScope() {
+          var scope;
+          if ((scope=getScope()) === undefined) {
+            setTimeout(waitForScope, 50);
+          }
+          else
+            resolve(scope[modelAttrName]);
+        }
+        waitForScope();
+      });
+    });
+  }
+
 
 if (false) {
 // These functions will be ported to Cypress as needed.
@@ -218,18 +254,6 @@ if (false) {
     var lastParagraph = screenReaderLog.element(by.css('p:nth-last-child('+n+')'));
     return lastParagraph.getAttribute('textContent');
   };
-
-
-  /**
-   *  Returns the model data object for the given element.
-   * @param elem the field element
-   */
-  this.getModel = function(elem) {
-    return elem.getAttribute('id').then(function(id) {
-      return browser.driver.executeScript(
-        'return $("#'+id+'").isolateScope().modelData');
-    });
-  }
 
 
   /**
