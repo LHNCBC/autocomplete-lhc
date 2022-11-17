@@ -3,9 +3,20 @@ export function BasePage() {
   var searchResID = 'searchResults';
   var searchResCSS = '#'+searchResID;
   this.searchResCSS = searchResCSS;
+  this.allSearchRes = searchResCSS + ' li';
   this.expandLink = '#moreResults';
   this.completionOptionsCSS = '#completionOptions';
   this.completionOptionsScrollerCSS = '#completionOptionsScroller';
+
+  /**
+   *  Returns the list item in the search results list at the given position
+   *  number (starting at 1).  The returned item might be a heading.
+   * @param pos the item position number (starting at 1).
+   */
+  this.searchResult = function(pos) {
+    return cy.get(searchResCSS + ' li:nth-child('+pos+'), '+
+      searchResCSS + ' tr:nth-child('+pos+')');
+  };
 
   /**
    *  Returns the list item in the search results list at the given position
@@ -30,20 +41,61 @@ export function BasePage() {
 
 
   /**
+   *  Returns the results of getSelectedItems for the
+   *  autocompleter on the given field ID.
+   * @param fieldID the field for the autocompleter.
+   */
+  /*
+  this.getSelectedItems = function(fieldID) {
+    // Use a string rather than a function object so fieldID can be passed to
+    // the browser.
+    return cy.window().then(win=>{
+      // The replace below escapes / characters in fieldID
+      var ac = win.jQuery("#'+fieldID.replace(/\//g, '\\\\/')+'")[0].autocomp;
+      return ac.getSelectedItems();
+    });
+  };
+*/
+
+  /**
    *  Returns the results of getSelectedCodes and getSelectedItems for the
    *  autocompleter on the given field ID.  The two are returned as elements of
    *  an array.
    * @param fieldID the field for the autocompleter.
    */
-  this.getSelected = async function(fieldID) {
+  this.getSelected = function(fieldID) {
     // Use a string rather than a function object so fieldID can be passed to
     // the browser.
-    return await cy.window(win=> {
+    return cy.window().then(win=> {
       // The replace below escapes / characters in fieldID
-      var ac = win.jQuery("#'+fieldID.replace(/\//g, '\\\\/')+'")[0].autocomp;
+      var ac = win.jQuery('#'+fieldID.replace(/\//g, '\\\\/'))[0].autocomp;
       return [ac.getSelectedCodes(), ac.getSelectedItems()];
     });
   };
+
+
+  /**
+   *  Checks the values of getSelectedCodes and getSelectedItems for the
+   *  autocompleter on the given field ID.
+   * @param fieldID the field for the autocompleter.
+   * @param t2c a hash from display strings to code values.  (If there are no
+   * code values, the hash still must be passed, but the values should be null.)
+   */
+  this.checkSelected = function(fieldID, t2c) {
+    t2c = JSON.parse(JSON.stringify(t2c)); // the checks are done later, so clone
+    this.getSelected(fieldID).should(function(data) {
+        var codes = data[0];
+        var texts = data[1];
+        var expectedLength = Object.keys(t2c).length;
+        cy.wrap(codes).should('have.length', expectedLength);
+        cy.wrap(texts).should('have.length', expectedLength);
+        var actualT2C = {};
+        for (var i=0; i<expectedLength; ++i)
+          actualT2C[texts[i]] = codes[i];
+        cy.wrap(actualT2C).should('deep.equal', t2c);
+    });
+  };
+
 
 
   /**
@@ -78,9 +130,7 @@ export function BasePage() {
       return new Cypress.Promise((resolve, reject) => {
         function getScope() {
           var tmp = 'var testField = $("'+elemCSSSel+'"); testField.'+
-            isolatedScope ? 'isolateScope()' : 'scope()';
-          console.log(tmp);
-         // win.console.log(tmp);
+            (isolatedScope ? 'isolateScope()' : 'scope()');
           return win.eval('var testField = $("'+elemCSSSel+'"); testField.'+
             (isolatedScope ? 'isolateScope()' : 'scope()'));
         }
@@ -89,56 +139,29 @@ export function BasePage() {
           if ((scope=getScope()) === undefined) {
             setTimeout(waitForScope, 50);
           }
-          else
-            resolve(scope[modelAttrName]);
+          else {
+            // Not sure why, but if we resolve to undefined, the outside promise
+            // resolves to the window.  So, return null in that case.
+            resolve(scope[modelAttrName] === undefined ? Promise.resolve(null) : scope[modelAttrName] );
+          }
         }
         waitForScope();
       });
     });
   }
 
+/*
+      this.checkModel = function (fieldCSS, modelAttr, expectedModel) {
+        this.getModel(fieldCSS, modelAttr, false).then(m=>expect(m).to.deep.equal(expectedModel));
+      }
+
+      this.checkMultiFieldModel = function (expectedModel) {
+        this.checkModel(this.multiField, 'listFieldVal2', expectedModel);
+      }
+      */
 
 if (false) {
 // These functions will be ported to Cypress as needed.
-
-  /**
-   *  Returns the results of getSelectedItems for the
-   *  autocompleter on the given field ID.
-   * @param fieldID the field for the autocompleter.
-   */
-  this.getSelectedItems = function(fieldID) {
-    // Use a string rather than a function object so fieldID can be passed to
-    // the browser.
-    return browser.driver.executeScript(
-      // The replace below escapes / characters in fieldID
-      'var ac = jQuery("#'+fieldID.replace(/\//g, '\\\\/')+'")[0].autocomp;'+
-      'return ac.getSelectedItems();'
-    );
-  };
-
-
-  /**
-   *  Checks the values of getSelectedCodes and getSelectedItems for the
-   *  autocompleter on the given field ID.
-   * @param fieldID the field for the autocompleter.
-   * @param t2c a hash from display strings to code values.  (If there are no
-   * code values, the hash still must be passed, but the values should be null.)
-   */
-  this.checkSelected = function(fieldID, t2c) {
-    t2c = JSON.parse(JSON.stringify(t2c)); // the checks are done later, so clone
-    this.getSelected(fieldID).then(function(data) {
-      var codes = data[0];
-      var texts = data[1];
-      var expectedLength = Object.keys(t2c).length;
-      expect(codes.length).toBe(expectedLength);
-      expect(texts.length).toBe(expectedLength);
-      var actualT2C = {};
-      for (var i=0; i<expectedLength; ++i)
-        actualT2C[texts[i]] = codes[i];
-      expect(actualT2C).toEqual(t2c);
-    });
-  };
-
 
   /**
    *  Returns true if the selection list is currently visible, and false if not.

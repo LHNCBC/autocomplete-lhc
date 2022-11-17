@@ -1,205 +1,202 @@
 // Tests for directive-generated multi-select lists
-var dp = require('../directivePage.js'); // dp = DirectivePage instance
-helpers = require('../test_helpers.js');
-var hasClass = helpers.hasClass;
+import { default as dp } from '../support/directivePage.js'; // dp = DirectivePage instance
 
 describe('directive', function() {
   describe(': multi-select lists', function() {
+    function checkModel(fieldCSS, modelAttr, expectedModel) {
+      dp.getModel(fieldCSS, modelAttr, false).then(m=>{
+        if (JSON.stringify(m) != JSON.stringify(expectedModel))
+          console.log(JSON.stringify(m)+' (actual) != '+JSON.stringify(expectedModel)+' (expected)');
+      });
+      // The following 'should' syntax (without "then") is needed to preserve
+      // the stack trace when there is a problem.
+      dp.getModel(fieldCSS, modelAttr, false).should('deep.equal', expectedModel);
+    }
+
+    function checkMultiFieldModel(expectedModel) {
+      checkModel(dp.multiField, 'listFieldVal2', expectedModel);
+    }
+
     it('should have an empty selection area initially (without a default setting)',
        function() {
       dp.openDirectiveTestPage();
-      expect(dp.multiField.isPresent()).toBe(true);
-      var list = dp.multiField.element(by.xpath('../ul'));
-      expect(list.isPresent()).toBe(true);
-      var listItems = list.element(by.xpath('li'));
-      expect(listItems.isPresent()).toBe(false);
+      cy.get(dp.multiField).should('exist');
+      cy.get(dp.multiField).xpath('../ul').should('exist');
+      cy.get(dp.multiField).xpath('../ul').xpath('li').should('not.exist');
     });
 
     it('should be blank (without a default setting)', function() {
-      expect(dp.multiField.getAttribute('value')).toEqual('');
+      cy.get(dp.multiField).should('have.value', '');
     });
 
-    it ('should leave the field empty after a selection', function() {
-      dp.multiField.click();
-      expect(dp.searchResults.isDisplayed()).toBeTruthy();
-      dp.firstSearchRes.click();
-      expect(dp.multiField.getAttribute('value')).toEqual('');
+    it('should leave the field empty after a selection', function() {
+      cy.get(dp.multiField).click();
+      cy.get(dp.searchResCSS).should('be.visible');
+      dp.searchResult(1).should('exist').click();
+      cy.get(dp.multiField).should('have.value', '');
     });
 
     it('should store mutiple values on the data model', function() {
       dp.openDirectiveTestPage();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual(null);
-      dp.multiField.click();
-      expect(dp.searchResults.isDisplayed()).toBeTruthy();
-      dp.firstSearchRes.click();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
+      checkMultiFieldModel(null);
+      cy.get(dp.multiField).click();
+      cy.get(dp.searchResCSS).should('be.visible');
+      dp.searchResult(1).click();
+      checkMultiFieldModel([{text: 'Green', code: 'G'}]);
       // Now add a second item.
-      dp.firstSearchRes.click();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual(
-        [{text: 'Green', code: 'G'}, {text: 'Blue', code: 'B'}]);
+      dp.searchResult(1).click();
+      checkMultiFieldModel([{text: 'Green', code: 'G'}, {text: 'Blue', code: 'B'}]);
       // Now remove the first item
-      var button = dp.multiFieldFirstSelected.click();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual(
-        [{text: 'Blue', code: 'B'}]);
+      cy.get(dp.multiFieldFirstSelected).click();
+      checkMultiFieldModel([{text: 'Blue', code: 'B'}]);
       // Add an invalid value.  The existing value should not get lost if we
       // then add a second valid value.  (Note: dp.multiField is CNE).
-      dp.multiField.sendKeys('zzz');
-      dp.multiField.sendKeys(protractor.Key.TAB); // attempt to leave field
-      expect(hasClass(dp.multiField, 'no_match')).toBe(true);
-      expect(hasClass(dp.multiField, 'invalid')).toBe(true);
-      dp.multiField.sendKeys(protractor.Key.TAB); // shift focus from field (clearing it)
-      expect(dp.multiField.getAttribute('value')).toEqual('');
+      cy.get(dp.multiField).type('zzz');
+      cy.get(dp.multiField).type('{enter}');
+      cy.get(dp.multiField).should('have.class', 'no_match');
+      cy.get(dp.multiField).should('have.class', 'invalid');
+      cy.get(dp.inputElem).click(); // shift focus from multiField (clearing it)
+      cy.get(dp.multiField).should('have.value', '');
       // Add a valid item and check the model.
-      dp.multiField.click();
-      expect(dp.searchResults.isDisplayed()).toBeTruthy();
-      dp.firstSearchRes.click();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual(
-        [{text: 'Blue', code: 'B'},{text: 'Green', code: 'G'}]);
+      cy.get(dp.multiField).click();
+      cy.get(dp.searchResCSS).should('be.visible');
+      dp.searchResult(1).click();
+      checkMultiFieldModel([{text: 'Blue', code: 'B'}, {text: 'Green', code: 'G'}]);
       // Remove the first item again, to make sure that the new "span" element
       // within the button can receive clicks and still handle the event
       // correctly.
-      dp.multiFieldFirstSelectedSpan.click();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual(
-        [{text: 'Green', code: 'G'}]);
+      cy.get(dp.multiFieldFirstSelectedSpan).click();
+      checkMultiFieldModel([{text: 'Green', code: 'G'}]);
       // There should also just be one selected item on the page.
-      expect(dp.multiFieldSelectedItems.count()).toEqual(1);
+      cy.get(dp.multiFieldSelectedItems).should('have.length', 1);
     });
 
     it('should not show matches for selected items', function() {
       dp.openDirectiveTestPage();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual(null);
-      dp.multiField.click();
-      expect(dp.searchResults.isDisplayed()).toBeTruthy();
-      dp.firstSearchRes.click();
-      expect(dp.multiField.evaluate('listFieldVal2')).toEqual([{text: 'Green', code: 'G'}]);
-      dp.multiField.sendKeys('Gr');
+      checkMultiFieldModel(null);
+      cy.get(dp.multiField).click();
+      cy.get(dp.searchResCSS).should('be.visible');
+      dp.searchResult(1).click();
+      checkMultiFieldModel([{text: 'Green', code: 'G'}]);
+      cy.get(dp.multiField).type('Gr');
       // There should be no matches
-      expect(dp.firstSearchRes.isPresent()).toBeFalsy();
+      dp.searchResult(1).should('not.exist');
     });
 
     it('should allow non-matching values for prefetch CWE lists', function () {
       dp.openDirectiveTestPage();
       // Add a non-list value
-      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(null);
-      dp.multiPrefetchCWE.click();
-      dp.multiPrefetchCWE.sendKeys('non-list val 1');
-      dp.codeField.click(); // shift focus from field
-      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal', null);
+      cy.get(dp.multiPrefetchCWE).click().type('non-list val 1');
+      cy.get(dp.codeField).click(); // shift focus from field
+      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'non-list val 1', _notOnList: true}]);
-      expect(dp.multiPrefetchCWESelected.count()).toEqual(1);
-      expect(dp.multiPrefetchCWE.getAttribute('value')).toEqual('');
+      cy.get(dp.multiPrefetchCWESelected).should('have.length', 1);
+      cy.get(dp.multiPrefetchCWE).should('have.value', '');
       // Add a list value
-      dp.multiPrefetchCWE.click();
-      dp.firstSearchRes.click();
-      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+      cy.get(dp.multiPrefetchCWE).click();
+      dp.searchResult(1).click();
+      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'non-list val 1', _notOnList: true}, {text: 'Green', code: 'G'}]);
-      expect(dp.multiPrefetchCWESelected.count()).toEqual(2);
+      cy.get(dp.multiPrefetchCWESelected).should('have.length', 2);
       // Add another non-list value
-      dp.multiPrefetchCWE.click();
-      dp.multiPrefetchCWE.sendKeys('non-list val 2');
-      dp.codeField.click(); // shift focus from field
-      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+      cy.get(dp.multiPrefetchCWE).click().type('non-list val 2');
+      cy.get(dp.codeField).click(); // shift focus from field
+      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'non-list val 1', _notOnList: true}, {text: 'Green', code: 'G'},
          {text: 'non-list val 2', _notOnList: true}]);
-      expect(dp.multiPrefetchCWESelected.count()).toEqual(3);
-      expect(dp.multiPrefetchCWE.getAttribute('value')).toEqual('');
+      cy.get(dp.multiPrefetchCWESelected).should('have.length', 3);
+      cy.get(dp.multiPrefetchCWE).should('have.value', '');
       // Remove the first non-list value
-      dp.multiPrefetchCWE.click();
-      expect(dp.allSearchRes.count()).toBe(2);
-      dp.multiPrefetchCWEFirstSelected.click();
-      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+      cy.get(dp.multiPrefetchCWE).click();
+      cy.get(dp.allSearchRes).should('have.length', 2);
+      cy.get(dp.multiPrefetchCWEFirstSelected).click();
+      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'Green', code: 'G'}, {text: 'non-list val 2', _notOnList: true}]);
-      expect(dp.multiPrefetchCWESelected.count()).toEqual(2);
+      cy.get(dp.multiPrefetchCWESelected).should('have.length', 2);
       // A non-list item should not be added into the list when removed
-      dp.multiPrefetchCWE.click();
-      expect(dp.allSearchRes.count()).toBe(2);
+      cy.get(dp.multiPrefetchCWE).click();
+      cy.get(dp.allSearchRes).should('have.length', 2);
       // Remove a list value
-      dp.multiPrefetchCWEFirstSelected.click();
-      expect(dp.multiPrefetchCWE.evaluate('multiPrefetchCWEVal')).toEqual(
+      cy.get(dp.multiPrefetchCWEFirstSelected).click();
+      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'non-list val 2', _notOnList: true}]);
-      expect(dp.multiPrefetchCWESelected.count()).toEqual(1);
-      dp.multiPrefetchCWE.click();
-      expect(dp.allSearchRes.count()).toBe(3);
+      cy.get(dp.multiPrefetchCWESelected).should('have.length', 1);
+      cy.get(dp.multiPrefetchCWE).click();
+      cy.get(dp.allSearchRes).should('have.length', 3);
     });
 
     it('should allow non-matching values for search CWE lists', function () {
       dp.openDirectiveTestPage();
       // Add a non-list value
-      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(null);
-      dp.multiSearchCWE.click();
-      dp.sendKeys(dp.multiSearchCWE, 'non-list val 1');
-      dp.codeField.click(); // shift focus from field
-      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
+      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel, null);
+      cy.get(dp.multiSearchCWE).click().type('non-list val 1');
+      cy.get(dp.codeField).click(); // shift focus from field
+      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
         [{text: 'non-list val 1', _notOnList: true}]);
-      expect(dp.multiSearchCWESelected.count()).toEqual(1);
-      expect(dp.multiSearchCWE.getAttribute('value')).toEqual('');
+      cy.get(dp.multiSearchCWESelected).should('have.length', 1);
+      cy.get(dp.multiSearchCWE).should('have.value', '');
 
       // Add a list value
-      dp.multiSearchCWE.click();
-      dp.sendKeys(dp.multiSearchCWE, 'ar');
-      dp.waitForSearchResults();
-      dp.firstSearchRes.click();
-      expect(dp.searchList.getAttribute('value')).toEqual('');
-      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
+      cy.get(dp.multiSearchCWE).click().type('ar');
+      dp.searchResult(1).click();
+      cy.get(dp.searchList).should('have.value', '');
+      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
         [{text: 'non-list val 1', _notOnList: true},
          {text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
           data: {term_icd9_code: '518.82'}}]);
-      expect(dp.multiSearchCWESelected.count()).toEqual(2);
+      cy.get(dp.multiSearchCWESelected).should('have.length', 2);
 
       // Reload the page and add a list value first
       dp.openDirectiveTestPage();
-      dp.multiSearchCWE.click();
-      dp.sendKeys(dp.multiSearchCWE, 'ar');
-      dp.waitForSearchResults();
-      dp.firstSearchRes.click();
-      expect(dp.multiSearchCWESelected.count()).toEqual(1);
-      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
+      cy.get(dp.multiSearchCWE).click().type('ar');
+      dp.searchResult(1).click();
+      cy.get(dp.multiSearchCWESelected).should('have.length', 1);
+      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
         [{text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
           data: {term_icd9_code: '518.82'}}]);
       // Now add a non-list value
-      dp.sendKeys(dp.multiSearchCWE, 'non-list val 1');
-      dp.codeField.click(); // shift focus from field
-      expect(dp.multiSearchCWE.evaluate(dp.multiSearchCWEModel)).toEqual(
+      cy.get(dp.multiSearchCWE).type('non-list val 1');
+      cy.get(dp.codeField).click(); // shift focus from field
+      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
         [{text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
           data: {term_icd9_code: '518.82'}},
          {text: 'non-list val 1', _notOnList: true}]);
-      expect(dp.multiSearchCWESelected.count()).toEqual(2);
+      cy.get(dp.multiSearchCWESelected).should('have.length', 2);
     });
 
     it('should not allow non-matching values in a CNE', function() {
       // Testing one particular case that is currently failing.
       dp.openDirectiveTestPage();
       // Add a non-list value
-      expect(dp.multiPrefetchCNE.evaluate(dp.multiSearchCWEModel)).toEqual(null);
-      dp.multiPrefetchCNE.click();
-      dp.multiPrefetchCNE.sendKeys('non-list val 1');
-      // Hit the enter key
-      dp.multiPrefetchCNE.sendKeys(protractor.Key.ENTER);
+      checkModel(dp.multiPrefetchCNE, dp.multiSearchCWEModel, null);
+      cy.get(dp.multiPrefetchCNE).click();
+      cy.get(dp.multiPrefetchCNE).type('non-list val 1{enter}');
       // Click outside the field
-      dp.inputElem.click();
+      cy.get(dp.inputElem).click();
       // At this point the field should be cleared from its value (because there
       // were two attempts to leave the field without the field changing
       // inbetween.)
-      expect(dp.multiPrefetchCNE.getAttribute('value')).toEqual('');
+      cy.get(dp.multiPrefetchCNE).should('have.value', '');
     });
 
     it('should handle pre-populated model values', function () {
-      expect(dp.checkSelected(dp.multiSearchCWEPrePopID, {'item1': 'a', 'item2': 'b'}));
+      dp.checkSelected(dp.multiSearchCWEPrePopID, {'item1': 'a', 'item2': 'b'});
     });
 
     it('should load the default value for multi-select lists', function() {
       var listID = 'list10';
-      var listField = $('#'+listID);
-      expect(listField.getAttribute("value")).toEqual(''); // multiselect clears field
-      expect(dp.checkSelected(listID, {'Green': 'G'}));
+      var listField = '#'+listID;
+      cy.get(listField).should('have.value', ''); // multiselect clears field
+      dp.checkSelected(listID, {'Green': 'G'});
       // The model should be set
-      expect(listField.evaluate('listFieldVal10')).toEqual([{text: 'Green', code: 'G'}]);
+      checkModel(listField, 'listFieldVal10',[{text: 'Green', code: 'G'}]);
       // Green should not be in the list, because it is selected already
-      listField.click();
-      expect(dp.searchResults.isDisplayed()).toBeTruthy();
-      listField.sendKeys('Gr');
+      cy.get(listField).click();
+      cy.get(dp.searchResCSS).should('be.visible');
+      cy.get(listField).type('Gr');
       // There should be no matches
-      expect(dp.firstSearchRes.isPresent()).toBeFalsy();
+      dp.searchResult(1).should('not.exist');
     });
 
   });

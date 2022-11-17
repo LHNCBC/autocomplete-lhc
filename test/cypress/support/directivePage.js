@@ -1,4 +1,4 @@
-import { TestPages } from '../support/testPages.js';
+import { TestPages } from './testPages.js';
 var BasePage = require('./basePage').BasePage;
 
 var DirectivePage = function() {
@@ -22,47 +22,42 @@ var DirectivePage = function() {
 
   // Multi-select CNE prefetch list
   var multiFieldID = 'multiPrefetchCNE';
+  this.multiField = '#'+multiFieldID;
   this.multiPrefetchCNE = this.multiField; // alias
   var multiPrefetchCNESectionCSS = '#multiPrefetchCNESection'
-  this.multiFieldSelectedItemsCSS = multiPrefetchCNESectionCSS + ' .autocomp_selected li';
-  this.multiFieldFirstSelectedCSS = multiPrefetchCNESectionCSS+' li:first-child button';
-  this.multiFieldFirstSelectedSpan = this.multiFieldFirstSelectedCSS + ' span';
+  this.multiFieldSelectedItems = multiPrefetchCNESectionCSS + ' .autocomp_selected li';
+  this.multiFieldFirstSelected = multiPrefetchCNESectionCSS+' li:first-child button';
+  this.multiFieldFirstSelectedSpan = this.multiFieldFirstSelected + ' span';
 
   // CNE list
   // For now the CNE list test is using the multi-select CNE list field
   this.cneListID = multiFieldID;
-  this.cneListSel = '#'+this.cneListID;
+  this.cneListSel = this.multiField;
 
-if (false) {
-// TBD -remove after other tests using this page are ported if there is anything
-// left
   // Multi-select CWE prefetch list
-  var multiPrefetchCWECSS = '#multiPrefetchCWE';
-  this.multiPrefetchCWE = $(multiPrefetchCWECSS);
+  this.multiPrefetchCWE = '#multiPrefetchCWE';
   var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection'
   this.multiPrefetchCWEFirstSelected =
-    element(by.css(multiPrefetchCWESectionCSS + ' li:first-child button'));
+    multiPrefetchCWESectionCSS + ' li:first-child button';
   this.multiPrefetchCWESelected =
-    element.all(by.css(multiPrefetchCWESectionCSS + ' button'));
+    multiPrefetchCWESectionCSS + ' button';
 
   // Multi-select CWE search list
-  this.multiSearchCWECSS = '#multiSearchCWE';
-  this.multiSearchCWE = $(this.multiSearchCWECSS);
+  this.multiSearchCWE = '#multiSearchCWE';
   var multiSearchCWESectionCSS = '#multiSearchCWESection'
   this.multiSearchCWEFirstSelected =
-    element(by.css(multiSearchCWESectionCSS + ' li:first-child button'));
+    multiSearchCWESectionCSS + ' li:first-child button';
   this.multiSearchCWESelected =
-    element.all(by.css(multiSearchCWESectionCSS + ' button'));
+    multiSearchCWESectionCSS + ' button';
   this.multiSearchCWEModel = 'multiSearchCWEVal';
 
 
   // Multi-select CWE search list with pre-populated model value
   this.multiSearchCWEPrePopID = 'multiSearchCWEPrePop';
-  this.multiSearchCWEPrePop = $('#'+this.multiSearchCWEPrePopID);
-}
+
   this.openDirectiveTestPage = function() {
     cy.visit(TestPages.directiveTest);
   }
 }
 
-module.exports = new DirectivePage();
+export default new DirectivePage();
