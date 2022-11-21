@@ -122,7 +122,7 @@ describe('directive', function() {
     }
 
     dp.openDirectiveTestPage();
-    getModel().then((m)=>expect(m).to.deep.equal({})); // precondition
+    getModel().then((m)=>{console.log(m); expect(m).to.deep.equal({})}); // precondition
     // Make sure the field value is empty, not "undefined"
     cy.get(testFieldCSS).should('have.value', '');
 

@@ -19,6 +19,7 @@
     "clean-css-cli": "^4.2.1",
     "connect": "^3.4.1",
     "cypress": "^9.5.2",
+    "deep-equal": "^2.1.0",
     "grunt": "^1.5.3",
     "grunt-cli": "^1.2.0",
     "grunt-protractor-runner": "^5.0.0",

@@ -3,18 +3,8 @@ import { default as dp } from '../support/directivePage.js'; // dp = DirectivePa
 
 describe('directive', function() {
   describe(': multi-select lists', function() {
-    function checkModel(fieldCSS, modelAttr, expectedModel) {
-      dp.getModel(fieldCSS, modelAttr, false).then(m=>{
-        if (JSON.stringify(m) != JSON.stringify(expectedModel))
-          console.log(JSON.stringify(m)+' (actual) != '+JSON.stringify(expectedModel)+' (expected)');
-      });
-      // The following 'should' syntax (without "then") is needed to preserve
-      // the stack trace when there is a problem.
-      dp.getModel(fieldCSS, modelAttr, false).should('deep.equal', expectedModel);
-    }
-
     function checkMultiFieldModel(expectedModel) {
-      checkModel(dp.multiField, 'listFieldVal2', expectedModel);
+      dp.checkModel(dp.multiField, 'listFieldVal2', expectedModel);
     }
 
     it('should have an empty selection area initially (without a default setting)',
@@ -86,23 +76,23 @@ describe('directive', function() {
     it('should allow non-matching values for prefetch CWE lists', function () {
       dp.openDirectiveTestPage();
       // Add a non-list value
-      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal', null);
+      dp.checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal', null);
       cy.get(dp.multiPrefetchCWE).click().type('non-list val 1');
       cy.get(dp.codeField).click(); // shift focus from field
-      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
+      dp.checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'non-list val 1', _notOnList: true}]);
       cy.get(dp.multiPrefetchCWESelected).should('have.length', 1);
       cy.get(dp.multiPrefetchCWE).should('have.value', '');
       // Add a list value
       cy.get(dp.multiPrefetchCWE).click();
       dp.searchResult(1).click();
-      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
+      dp.checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'non-list val 1', _notOnList: true}, {text: 'Green', code: 'G'}]);
       cy.get(dp.multiPrefetchCWESelected).should('have.length', 2);
       // Add another non-list value
       cy.get(dp.multiPrefetchCWE).click().type('non-list val 2');
       cy.get(dp.codeField).click(); // shift focus from field
-      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
+      dp.checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'non-list val 1', _notOnList: true}, {text: 'Green', code: 'G'},
          {text: 'non-list val 2', _notOnList: true}]);
       cy.get(dp.multiPrefetchCWESelected).should('have.length', 3);
@@ -111,7 +101,7 @@ describe('directive', function() {
       cy.get(dp.multiPrefetchCWE).click();
       cy.get(dp.allSearchRes).should('have.length', 2);
       cy.get(dp.multiPrefetchCWEFirstSelected).click();
-      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
+      dp.checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'Green', code: 'G'}, {text: 'non-list val 2', _notOnList: true}]);
       cy.get(dp.multiPrefetchCWESelected).should('have.length', 2);
       // A non-list item should not be added into the list when removed
@@ -119,7 +109,7 @@ describe('directive', function() {
       cy.get(dp.allSearchRes).should('have.length', 2);
       // Remove a list value
       cy.get(dp.multiPrefetchCWEFirstSelected).click();
-      checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
+      dp.checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
         [{text: 'non-list val 2', _notOnList: true}]);
       cy.get(dp.multiPrefetchCWESelected).should('have.length', 1);
       cy.get(dp.multiPrefetchCWE).click();
@@ -129,10 +119,10 @@ describe('directive', function() {
     it('should allow non-matching values for search CWE lists', function () {
       dp.openDirectiveTestPage();
       // Add a non-list value
-      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel, null);
+      dp.checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel, null);
       cy.get(dp.multiSearchCWE).click().type('non-list val 1');
       cy.get(dp.codeField).click(); // shift focus from field
-      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
+      dp.checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
         [{text: 'non-list val 1', _notOnList: true}]);
       cy.get(dp.multiSearchCWESelected).should('have.length', 1);
       cy.get(dp.multiSearchCWE).should('have.value', '');
@@ -141,7 +131,7 @@ describe('directive', function() {
       cy.get(dp.multiSearchCWE).click().type('ar');
       dp.searchResult(1).click();
       cy.get(dp.searchList).should('have.value', '');
-      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
+      dp.checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
         [{text: 'non-list val 1', _notOnList: true},
          {text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
           data: {term_icd9_code: '518.82'}}]);
@@ -152,13 +142,13 @@ describe('directive', function() {
       cy.get(dp.multiSearchCWE).click().type('ar');
       dp.searchResult(1).click();
       cy.get(dp.multiSearchCWESelected).should('have.length', 1);
-      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
+      dp.checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
         [{text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
           data: {term_icd9_code: '518.82'}}]);
       // Now add a non-list value
       cy.get(dp.multiSearchCWE).type('non-list val 1');
       cy.get(dp.codeField).click(); // shift focus from field
-      checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
+      dp.checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
         [{text: 'Adult respiratory distress syndrome (ARDS)', code: '2910',
           data: {term_icd9_code: '518.82'}},
          {text: 'non-list val 1', _notOnList: true}]);
@@ -169,7 +159,7 @@ describe('directive', function() {
       // Testing one particular case that is currently failing.
       dp.openDirectiveTestPage();
       // Add a non-list value
-      checkModel(dp.multiPrefetchCNE, dp.multiSearchCWEModel, null);
+      dp.checkModel(dp.multiPrefetchCNE, dp.multiSearchCWEModel, null);
       cy.get(dp.multiPrefetchCNE).click();
       cy.get(dp.multiPrefetchCNE).type('non-list val 1{enter}');
       // Click outside the field
@@ -190,7 +180,7 @@ describe('directive', function() {
       cy.get(listField).should('have.value', ''); // multiselect clears field
       dp.checkSelected(listID, {'Green': 'G'});
       // The model should be set
-      checkModel(listField, 'listFieldVal10',[{text: 'Green', code: 'G'}]);
+      dp.checkModel(listField, 'listFieldVal10',[{text: 'Green', code: 'G'}]);
       // Green should not be in the list, because it is selected already
       cy.get(listField).click();
       cy.get(dp.searchResCSS).should('be.visible');

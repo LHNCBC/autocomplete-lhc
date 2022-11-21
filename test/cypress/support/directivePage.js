@@ -1,4 +1,5 @@
 import { TestPages } from './testPages.js';
+import { default as deepEqual } from 'deep-equal';
 var BasePage = require('./basePage').BasePage;
 
 var DirectivePage = function() {
@@ -58,6 +59,60 @@ var DirectivePage = function() {
   this.openDirectiveTestPage = function() {
     cy.visit(TestPages.directiveTest);
   }
+
+
+  /**
+   *  Asserts that an element has the expected model data.
+   * @param fieldCSS the CSS selector for the element
+   * @param modelAttr the attribute on the element's scope() for its data model
+   * @param expectedModel the data that is expected to be in the data model.
+   */
+  this.checkModel = function (fieldCSS, modelAttr, expectedModel) {
+    cy.get(fieldCSS).should('exist'); // make sure it is present
+    return cy.window().should(win=> {
+      return new Cypress.Promise((resolve, reject) => {
+        const waitPeriod = 50, maxWaits = 80;
+        let numWaits = 0;
+        function getScope() {
+          return win.eval('var testField = $("'+fieldCSS+'"); testField.scope()');
+        }
+        function waitForScope() {
+          ++numWaits;
+          var scope;
+          if ((scope=getScope()) === undefined) {
+            if (numWaits >= maxWaits) // fail the test
+              expect(scope).not.to.be.undefined;
+            else
+              setTimeout(waitForScope, waitPeriod);
+          }
+          else {
+            const actualModel = scope[modelAttr];
+            if (actualModel === undefined && expectedModel === null) {
+              // Ignore this different, and let the check pass
+              resolve(null);
+            }
+            else if (!deepEqual(actualModel, expectedModel)) {
+              // Wait for the model to update
+              if (numWaits >= maxWaits) {// fail the test
+                console.log(scope);
+                console.log(modelAttr);
+                expect(actualModel).to.deep.equal(expectedModel);
+                resolve(actualModel);
+              }
+              else
+                setTimeout(waitForScope, waitPeriod);
+            }
+            else {
+              expect(actualModel).to.deep.equal(expectedModel);
+              resolve(actualModel);
+            }
+          }
+        }
+        waitForScope();
+      });
+    });
+  }
 }
+
 
 export default new DirectivePage();

@@ -140,7 +140,7 @@ export function BasePage() {
             setTimeout(waitForScope, 50);
           }
           else {
-            // Not sure why, but if we resolve to undefined, the outside promise
+            // Per Cypress.Promise docs, if we resolve to undefined, the outside promise
             // resolves to the window.  So, return null in that case.
             resolve(scope[modelAttrName] === undefined ? Promise.resolve(null) : scope[modelAttrName] );
           }
@@ -150,15 +150,6 @@ export function BasePage() {
     });
   }
 
-/*
-      this.checkModel = function (fieldCSS, modelAttr, expectedModel) {
-        this.getModel(fieldCSS, modelAttr, false).then(m=>expect(m).to.deep.equal(expectedModel));
-      }
-
-      this.checkMultiFieldModel = function (expectedModel) {
-        this.checkModel(this.multiField, 'listFieldVal2', expectedModel);
-      }
-      */
 
 if (false) {
 // These functions will be ported to Cypress as needed.
