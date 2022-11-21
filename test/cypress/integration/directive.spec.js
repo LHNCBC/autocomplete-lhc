@@ -81,8 +81,6 @@ describe('directive', function() {
     // model value (undefined) for CNE fields, but switched to null for CWE
     // fields (which doesn't trigger the invalid status).
     cy.window().then(win=> {
-      console.log('angular.element("'+dp.prefetchCNEBlank+
-        '").isolateScope().modelData = undefined;');
       win.eval('angular.element("'+dp.prefetchCNEBlank+
         '").isolateScope().modelData = undefined;');
       cy.get(dp.prefetchCNEBlank).click();
@@ -122,7 +120,7 @@ describe('directive', function() {
     }
 
     dp.openDirectiveTestPage();
-    getModel().then((m)=>{console.log(m); expect(m).to.deep.equal({})}); // precondition
+    getModel().then((m)=>{expect(m).to.deep.equal({})}); // precondition
     // Make sure the field value is empty, not "undefined"
     cy.get(testFieldCSS).should('have.value', '');
 

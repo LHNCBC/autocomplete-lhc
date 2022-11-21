@@ -87,11 +87,9 @@ describe('directive', function() {
         var testField = dp.searchWithoutSug;
         cy.get(testField).click().type('zzz').blur();
         dp.checkModel(testField, 'listFieldVal4b', {text: 'zzz', _notOnList: true});
-        /*
         // Now set it to an empty value.  The model value should be null.
         cy.get(testField).click().clear().blur();
         dp.checkModel(testField, 'listFieldVal4b', null);
-        */
       });
     });
   });
