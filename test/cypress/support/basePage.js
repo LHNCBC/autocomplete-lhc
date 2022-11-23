@@ -19,16 +19,6 @@ export function BasePage() {
   };
 
   /**
-   *  Returns the list item in the search results list at the given position
-   *  number (starting at 1).  The returned item might be a heading.
-   * @param pos the item position number (starting at 1).
-   */
-  this.searchResult = function(pos) {
-    return cy.get(searchResCSS + ' li:nth-child('+pos+'), '+
-      searchResCSS + ' tr:nth-child('+pos+')');
-  };
-
-  /**
    *  Returns the item in the search results list at the given position
    *  number (starting at 1), assuming the table format is being used.  (This is
    *  the same thing as "searchResult" but for the table format.)  The returned
@@ -39,23 +29,6 @@ export function BasePage() {
     return cy.get(searchResCSS + ' tr:nth-child('+pos+')');
   };
 
-
-  /**
-   *  Returns the results of getSelectedItems for the
-   *  autocompleter on the given field ID.
-   * @param fieldID the field for the autocompleter.
-   */
-  /*
-  this.getSelectedItems = function(fieldID) {
-    // Use a string rather than a function object so fieldID can be passed to
-    // the browser.
-    return cy.window().then(win=>{
-      // The replace below escapes / characters in fieldID
-      var ac = win.jQuery("#'+fieldID.replace(/\//g, '\\\\/')+'")[0].autocomp;
-      return ac.getSelectedItems();
-    });
-  };
-*/
 
   /**
    *  Returns the results of getSelectedCodes and getSelectedItems for the
