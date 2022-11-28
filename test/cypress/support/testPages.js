@@ -3,5 +3,5 @@
  */
 export const TestPages = {
   autocomp_atr: 'test/protractor/autocomp_atr.html',
-  directiveTest: 'test/protractor/directiveTest.html'
+  directiveTest: 'test/pages/directiveTest.html'
 }

@@ -1,4 +1,5 @@
-import { TestPages } from '../support/testPages.js';
+import { TestPages } from './testPages.js';
+import { default as deepEqual } from 'deep-equal';
 var BasePage = require('./basePage').BasePage;
 
 var DirectivePage = function() {
@@ -22,47 +23,96 @@ var DirectivePage = function() {
 
   // Multi-select CNE prefetch list
   var multiFieldID = 'multiPrefetchCNE';
+  this.multiField = '#'+multiFieldID;
   this.multiPrefetchCNE = this.multiField; // alias
   var multiPrefetchCNESectionCSS = '#multiPrefetchCNESection'
-  this.multiFieldSelectedItemsCSS = multiPrefetchCNESectionCSS + ' .autocomp_selected li';
-  this.multiFieldFirstSelectedCSS = multiPrefetchCNESectionCSS+' li:first-child button';
-  this.multiFieldFirstSelectedSpan = this.multiFieldFirstSelectedCSS + ' span';
+  this.multiFieldSelectedItems = multiPrefetchCNESectionCSS + ' .autocomp_selected li';
+  this.multiFieldFirstSelected = multiPrefetchCNESectionCSS+' li:first-child button';
+  this.multiFieldFirstSelectedSpan = this.multiFieldFirstSelected + ' span';
 
   // CNE list
   // For now the CNE list test is using the multi-select CNE list field
   this.cneListID = multiFieldID;
-  this.cneListSel = '#'+this.cneListID;
+  this.cneListSel = this.multiField;
 
-if (false) {
-// TBD -remove after other tests using this page are ported if there is anything
-// left
   // Multi-select CWE prefetch list
-  var multiPrefetchCWECSS = '#multiPrefetchCWE';
-  this.multiPrefetchCWE = $(multiPrefetchCWECSS);
+  this.multiPrefetchCWE = '#multiPrefetchCWE';
   var multiPrefetchCWESectionCSS = '#multiPrefetchCWESection'
   this.multiPrefetchCWEFirstSelected =
-    element(by.css(multiPrefetchCWESectionCSS + ' li:first-child button'));
+    multiPrefetchCWESectionCSS + ' li:first-child button';
   this.multiPrefetchCWESelected =
-    element.all(by.css(multiPrefetchCWESectionCSS + ' button'));
+    multiPrefetchCWESectionCSS + ' button';
 
   // Multi-select CWE search list
-  this.multiSearchCWECSS = '#multiSearchCWE';
-  this.multiSearchCWE = $(this.multiSearchCWECSS);
+  this.multiSearchCWE = '#multiSearchCWE';
   var multiSearchCWESectionCSS = '#multiSearchCWESection'
   this.multiSearchCWEFirstSelected =
-    element(by.css(multiSearchCWESectionCSS + ' li:first-child button'));
+    multiSearchCWESectionCSS + ' li:first-child button';
   this.multiSearchCWESelected =
-    element.all(by.css(multiSearchCWESectionCSS + ' button'));
+    multiSearchCWESectionCSS + ' button';
   this.multiSearchCWEModel = 'multiSearchCWEVal';
 
 
   // Multi-select CWE search list with pre-populated model value
   this.multiSearchCWEPrePopID = 'multiSearchCWEPrePop';
-  this.multiSearchCWEPrePop = $('#'+this.multiSearchCWEPrePopID);
-}
+
   this.openDirectiveTestPage = function() {
     cy.visit(TestPages.directiveTest);
   }
+
+
+  /**
+   *  Asserts that an element has the expected model data.
+   * @param fieldCSS the CSS selector for the element
+   * @param modelAttr the attribute on the element's scope() for its data model
+   * @param expectedModel the data that is expected to be in the data model.
+   */
+  this.checkModel = function (fieldCSS, modelAttr, expectedModel) {
+    cy.get(fieldCSS).should('exist'); // make sure it is present
+    return cy.window().should(win=> {
+      return new Cypress.Promise((resolve, reject) => {
+        const waitPeriod = 50, maxWaits = 80;
+        let numWaits = 0;
+        function getScope() {
+          return win.eval('var testField = $("'+fieldCSS+'"); testField.scope()');
+        }
+        function waitForScope() {
+          ++numWaits;
+          var scope;
+          if ((scope=getScope()) === undefined) {
+            if (numWaits >= maxWaits) // fail the test
+              expect(scope).not.to.be.undefined;
+            else
+              setTimeout(waitForScope, waitPeriod);
+          }
+          else {
+            const actualModel = scope[modelAttr];
+            if (actualModel === undefined && expectedModel === null) {
+              // Ignore this different, and let the check pass
+              resolve(null);
+            }
+            else if (!deepEqual(actualModel, expectedModel)) {
+              // Wait for the model to update
+              if (numWaits >= maxWaits) {// fail the test
+                console.log(scope);
+                console.log(modelAttr);
+                expect(actualModel).to.deep.equal(expectedModel);
+                resolve(actualModel);
+              }
+              else
+                setTimeout(waitForScope, waitPeriod);
+            }
+            else {
+              expect(actualModel).to.deep.equal(expectedModel);
+              resolve(actualModel);
+            }
+          }
+        }
+        waitForScope();
+      });
+    });
+  }
 }
 
-module.exports = new DirectivePage();
+
+export default new DirectivePage();
