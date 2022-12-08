@@ -124,6 +124,35 @@ export function BasePage() {
   }
 
 
+  /**
+   *  Sets the field's value to the given text string, and picks the first
+   *  autocompletion result.
+   * @param field the CSS selector for an autocompleting field
+   * @param text the text with which to autocomplete
+   */
+  this.autocompPickFirst = function(field, text) {
+    this.autocompPickNth(field, text, 1);
+  };
+
+
+  /**
+   *  Sets the field's value to the given text string, and picks the nth
+   *  autocompletion result.
+   * @param field the CSS selector for an autocompleting field
+   * @param text the text with which to autocomplete.  This can be null or the
+   *  empty string for prefetch lists.
+   * @param n the number of the list item to pick (starting at 1).
+   */
+  this.autocompPickNth = function(field, text, n) {
+    cy.get(field).clear().should('have.value', '').click();
+    if (text)
+      cy.get(field).type(text);
+    this.waitForSearchResults();
+    this.searchResult(n).should('be.visible');
+    this.searchResult(n).click();
+  };
+
+
 if (false) {
 // These functions will be ported to Cypress as needed.
 
@@ -199,36 +228,6 @@ if (false) {
    */
   this.getAjaxCallCount = function() {
     return browser.driver.executeScript('return jQuery.ajax.ajaxCtr');
-  };
-
-
-  /**
-   *  Sets the field's value to the given text string, and picks the first
-   *  autocompletion result.
-   * @param field the autocompleting field
-   * @param text the text with which to autocomplete
-   */
-  this.autocompPickFirst = function(field, text) {
-    this.autocompPickNth(field, text, 1);
-  };
-
-
-  /**
-   *  Sets the field's value to the given text string, and picks the nth
-   *  autocompletion result.
-   * @param field the autocompleting field
-   * @param text the text with which to autocomplete.  This can be null or the
-   *  empty string for prefetch lists.
-   * @param n the number of the list item to pick (starting at 1).
-   */
-  this.autocompPickNth = function(field, text, n) {
-    this.clearField(field);
-    expect(field.getAttribute('value')).toEqual('');
-    field.click();
-    if (text)
-      this.sendKeys(field, text);
-    this.waitForSearchResults();
-    this.searchResult(n).click();
   };
 
 
