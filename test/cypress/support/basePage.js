@@ -153,6 +153,27 @@ export function BasePage() {
   };
 
 
+  /**
+   *  Returns the number of items shown in the list.
+   */
+  this.shownItemCount = function() {
+    return cy.window().then(win=>{
+      return win.Def.Autocompleter.listItemElements().length;
+    });
+  };
+
+
+  /**
+   *  Checks the message with the count and total count that appears below the
+   *  list.
+   * @param expectedMsg the expected text of the message
+   */
+  this.checkListCountMessage = function(expectedMsg) {
+    cy.get('#searchCount').invoke('text').should('match', new RegExp('^'+expectedMsg));
+  };
+
+
+
 if (false) {
 // These functions will be ported to Cypress as needed.
 
@@ -163,25 +184,6 @@ if (false) {
     return browser.driver.executeScript(
       'return jQuery("#'+searchResID+'")[0].style.visibility === "visible"'
     );
-  };
-
-
-  /**
-   *  Returns the number of items shown in the list.
-   */
-  this.shownItemCount = function() {
-    return browser.driver.executeScript(
-      'return Def.Autocompleter.listItemElements().length;'
-    );
-  };
-
-
-  /**
-   *  Returns the message with the count and total count that appears below the
-   *  list.
-   */
-  this.listCountMessage = function() {
-    return $('#searchCount').getText();
   };
 
 

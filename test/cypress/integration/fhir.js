@@ -1,143 +1,131 @@
-var helpers = require('../test_helpers.js');
-var po = require('../autocompPage.js');
-var fhirField = $('#fhir_search');
-var fhirFieldMulti = $('#fhir_search_multi');
-var searchFunctionFieldMulti = $('#fhir_search_w_function_multi');
-var fhirFieldWButton = $('#fhir_search_w_button');
+import { default as po } from '../support/autocompPage.js';
+
+var fhirField = '#fhir_search';
+var fhirFieldMulti = '#fhir_search_multi';
+var searchFunctionFieldMulti = '#fhir_search_w_function_multi';
+var fhirFieldWButton = '#fhir_search_w_button';
 var fhirFieldButtonID = 'fhir_search_button';
-var fhirFieldButton = $('#'+fhirFieldButtonID);
+var fhirFieldButton = '#'+fhirFieldButtonID;
 
 describe('FHIR Search Lists', function() {
 
-  beforeAll(function() {
+  before(function() {
     po.openTestPage();
-    po.putElementAtBottomOfWindow(fhirFieldButtonID);
   });
 
   it('should show 7 results for a non-expanded search', function() {
-    po.sendKeys(fhirField, 'pmol');
+    cy.get(fhirField).type('pmol');
     po.waitForSearchResults();
-    expect(po.shownItemCount()).toBe(7);
-    expect(po.listCountMessage().then((val)=>{
-      return val.indexOf('7 of 10 total') >= 0;
-    })).toBe(true);
-    po.firstSearchRes.click();
-    expect(fhirField.getAttribute('value')).toBe('picomole');
+    po.shownItemCount().should('equal', 7);
+    po.checkListCountMessage('7 of 10 total');
+    po.searchResult(1).click();
+    cy.get(fhirField).should('have.value', 'picomole');
   });
 
   it('should show > 7 results for an expanded search', function() {
-    po.clearField(fhirField);
+    cy.get(fhirField).clear();
     po.waitForNoSearchResults();
-    po.sendKeys(fhirField, 'pmol');
+    cy.get(fhirField).type('pmol');
     po.waitForSearchResults();
-    po.expandLink.click();
-    expect(po.shownItemCount()).toBe(10);
-    po.firstSearchRes.click();
-    expect(fhirField.getAttribute('value')).toBe('picomole');
+    cy.get(po.expandLink).click();
+    po.shownItemCount().should('equal', 10);
+    po.searchResult(1).click();
+    cy.get(fhirField).should('have.value', 'picomole');
   });
 
   it('should show 7 results after an expanded search', function() {
     // At one point, the expanded list was getting cached in place of the regular list
-    po.clearField(fhirField);
-    po.sendKeys(fhirField, 'pmol');
+    cy.get(fhirField).clear();
+    cy.get(fhirField).type('pmol');
     po.waitForSearchResults();
-    expect(po.shownItemCount()).toBe(7);
-    po.firstSearchRes.click(); // to dismiss the list
+    po.shownItemCount().should('equal', 7);
+    po.searchResult(1).click(); // to dismiss the list
   });
 
   it('should work with the search button', function() {
-    po.sendKeys(fhirFieldWButton, 'pmol');
+    cy.get(fhirFieldWButton).type('pmol');
     po.waitForSearchResults();
-    expect(po.shownItemCount()).toBe(7);
-    fhirFieldButton.click();
-    expect(po.shownItemCount()).toBe(10);
-    po.firstSearchRes.click(); // to dismiss the list
-    po.clearField(fhirField);
-    po.sendKeys(fhirField, 'pmol');
-    expect(po.shownItemCount()).toBe(7);
+    po.shownItemCount().should('equal', 7);
+    cy.get(fhirFieldButton).click();
+    po.shownItemCount().should('equal', 10);
+    po.searchResult(1).click(); // to dismiss the list
+    cy.get(fhirField).clear();
+    cy.get(fhirField).type('pmol');
+    po.shownItemCount().should('equal', 7);
   });
 
   it('should show 7 results after selecting items', function() {
     // autoCompSearch should request extra items when some are selected
-    po.sendKeys(fhirFieldMulti, 'pmol');
+    cy.get(fhirFieldMulti).type('pmol');
     po.waitForSearchResults();
-    expect(po.shownItemCount()).toBe(7);
-    expect(po.listCountMessage().then((val)=>{
-      return val.indexOf('7 of 10 total') >= 0;
-    })).toBe(true);
-    po.firstSearchRes.click();
-    po.sendKeys(fhirFieldMulti, 'pmol');
-    expect(po.shownItemCount()).toBe(7);
-    expect(po.listCountMessage().then((val)=>{
-      return val.indexOf('7 of 10 total') >= 0;
-    })).toBe(true);
+    po.shownItemCount().should('equal', 7);
+    po.checkListCountMessage('7 of 10 total');
+    po.searchResult(1).click();
+    cy.get(fhirFieldMulti).type('pmol');
+    po.shownItemCount().should('equal', 7);
+    po.checkListCountMessage('7 of 10 total');
   });
 });
 
 describe('FHIR search by function', function() {
   var searchFunctionFieldID = 'fhir_search_w_function';
-  var searchFunctionField = $('#'+searchFunctionFieldID);
+  var searchFunctionField = '#'+searchFunctionFieldID;
 
-  beforeAll(function() {
+  before(function() {
     po.openTestPage();
   });
 
   it('should show 5 results when empty', function() {
-    po.sendKeys(searchFunctionField, '');
+    cy.get(searchFunctionField).click();
     po.waitForSearchResults();
-    expect(po.shownItemCount()).toBe(5);
+    po.shownItemCount().should('equal', 5);
   });
 
   it('should show 7 results for a non-expanded search', function() {
-    po.sendKeys(searchFunctionField, 'b');
+    cy.get(searchFunctionField).type('b');
     po.waitForSearchResults();
-    expect(po.shownItemCount()).toBe(7);
+    po.shownItemCount().should('equal', 7);
   });
 
   it('should show > 7 results for an expanded search', function() {
-    po.expandLink.click();
-    expect(po.shownItemCount()).toBe(10);
-    po.sendKeys(searchFunctionField, protractor.Key.ESCAPE); // close the list
+    cy.get(po.expandLink).click();
+    po.shownItemCount().should('equal', 10);
+    cy.get(searchFunctionField).type('{esc}'); // close the list
   });
 
   it('should have its own results cache', function() {
     // Confirm that we get different results for a second fhir search field
-    var secondField = $('#fhir_search_cache_test');
-    secondField.click();
-    po.sendKeys(secondField, 'b');
-    expect(po.firstSearchRes.getText()).toBe("Back pain 2");
+    var secondField = '#fhir_search_cache_test';
+    cy.get(secondField).click().type('b');
+    po.searchResult(1).invoke('text').should('equal', "Back pain 2");
   });
 
   it('should show 7 results after selecting items', function() {
     // autoCompSearch should request extra items when some are selected
-    po.sendKeys(searchFunctionFieldMulti, '');
+    cy.get(searchFunctionFieldMulti).click();
     po.waitForSearchResults();
-    expect(po.shownItemCount()).toBe(7);
-    expect(po.listCountMessage().then((val)=>{
-      return val.indexOf('7 of 621 total') >= 0;
-    })).toBe(true);
-    po.firstSearchRes.click();
-    po.sendKeys(searchFunctionFieldMulti, 'b');
-    expect(po.shownItemCount()).toBe(7);
-    expect(po.listCountMessage().then((val)=>{
-      return val.indexOf('7 of 621 total') >= 0;
-    })).toBe(true);
+    po.shownItemCount().should('equal', 7);
+    po.checkListCountMessage('7 of 621 total');
+    po.searchResult(1).click();
+    cy.get(searchFunctionFieldMulti).type('b');
+    po.shownItemCount().should('equal', 7);
+    po.checkListCountMessage('7 of 621 total');
   });
 
 });
 
 describe('Non FHIR search by function', function() {
   var searchFunctionFieldID = 'non_fhir_search_w_function';
-  var searchFunctionField = $('#'+searchFunctionFieldID);
+  var searchFunctionField = '#'+searchFunctionFieldID;
 
-  beforeAll(function() {
+  before(function() {
     po.openTestPage();
   });
 
   it('should show 7 results for a non-fhir search', function() {
-    po.sendKeys(searchFunctionField, 'b');
+    cy.get(searchFunctionField).type('b');
     po.waitForSearchResults();
-    expect(po.shownItemCount()).toBe(7);
+    po.shownItemCount().should('equal', 7);
   });
 
 });
