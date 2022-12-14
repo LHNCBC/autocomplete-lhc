@@ -18,7 +18,7 @@
     "bower": "^1.8.8",
     "clean-css-cli": "^4.2.1",
     "connect": "^3.4.1",
-    "cypress": "^9.5.2",
+    "cypress": "^10.11.0",
     "deep-equal": "^2.1.0",
     "grunt": "^1.5.3",
     "grunt-cli": "^1.2.0",
