@@ -3,6 +3,9 @@
   "version": "18.5.0",
   "description": "",
   "main": "source/index.js",
+  "config": {
+    "testPort": 3003
+  },
   "directories": {
     "test": "test"
   },
@@ -33,8 +36,8 @@
   },
   "scripts": {
     "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version |awk '{print $NF}')",
-    "test": "test/run_tests.sh && cypress run",
-    "test:e2e": "test/run_tests.sh skip_unit_tests && cypress run",
+    "test": "test/run_tests.sh",
+    "test:e2e": "test/run_tests.sh skip_unit_tests",
     "build:clean": "rm -rf dist",
     "build:mkdist": "mkdir dist; mkdir dist/$npm_package_name-$npm_package_version; (cd dist; ln -s $npm_package_name-$npm_package_version latest)",
     "build:css": "cleancss --skip-rebase -o dist/latest/autocomplete-lhc.min.css source/auto_completion.css",

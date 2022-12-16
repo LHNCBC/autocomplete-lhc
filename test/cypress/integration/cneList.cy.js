@@ -67,7 +67,7 @@ describe('CNE lists', function() {
     cy.window().then((win)=> {
       win.document.getElementsByTagName('form')[0].addEventListener('submit', (event)=>event.preventDefault());
     });
-    //cy.wait(2000);
+
     cy.get(po.prefetchCNE).should('not.have.value', '');
     cy.get(po.prefetchCNE).type('{enter}');
     cy.window().its('location.href').should('contain', TestPages.autocomp_atr); // form did not submit

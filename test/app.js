@@ -41,6 +41,11 @@ connect()
            'null,[["Back pain"],["Abdominal pain"],["Chest pain"],["Headache"],'+
            '["Poliomyelitis"],["Lower back pain"],["Cut (laceration)"]]]');
        }
+       else if (p.indexOf('/form/test/autocompleter_test') === 0) {
+         resp.statusCode = 200;
+         resp.setHeader('Content-Type', 'text/html');
+         resp.end('Form data posted');
+       }
        else
          next();
      })

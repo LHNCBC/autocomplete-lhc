@@ -1,37 +1,30 @@
 // Tests minified versions of files.
-var po = require('../minifiedPages.js');
-var EC = protractor.ExpectedConditions;
+import { default as po } from '../support/minifiedPages.js';
 
 describe('minified files', function() {
   it('should produce working prefetch lists', function() {
-    browser.ignoreSynchronization = true;
     po.openMinTest();
-    po.prefetchList.click();
-    expect(po.searchResults.isDisplayed()).toBe(true);
-    browser.ignoreSynchronization = false;
+    cy.get(po.prefetchList).click();
+    po.waitForSearchResults();
   });
 
   it('should produce working search lists', function() {
-    browser.ignoreSynchronization = true;
     po.openMinTest();
-    po.searchList.click();
-    po.searchList.sendKeys('a');
-    expect(po.searchResults.isDisplayed()).toBe(true);
-    browser.ignoreSynchronization = false;
+    cy.get(po.searchList).click().type('a');
+    po.waitForSearchResults();
   });
 
   describe('directive', function() {
     it('should produce working prefetch lists', function() {
       po.openMinTestAngular();
-      po.prefetchList.click();
-      expect(po.searchResults.isDisplayed()).toBe(true);
+      cy.get(po.prefetchList).click();
+      po.waitForSearchResults();
     });
 
     it('should produce working search lists', function() {
       po.openMinTestAngular();
-      po.searchList.click();
-      po.searchList.sendKeys('a');
-      browser.wait(EC.visibilityOf(po.searchResults), 2000);
+      cy.get(po.searchList).click().type('a');
+      po.waitForSearchResults();
     });
   });
 });

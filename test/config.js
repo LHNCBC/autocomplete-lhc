@@ -1,3 +1,5 @@
+const { config } = require('../package.json');
+
 module.exports = {
-  port: 3003
+  port: config.testPort
 }

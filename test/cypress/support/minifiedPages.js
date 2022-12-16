@@ -1,24 +1,19 @@
 // Page objects for the pages that test minified versions of files
-var BasePage = require('./basePage').BasePage;
-var config = require('../config');
+import { BasePage } from './basePage';
 
 var MinifiedPage = function() {
   BasePage.call(this);
 
-  this.prefetchList = $('#field1');
-  this.searchList = $('#field2');
+  this.prefetchList = '#field1';
+  this.searchList = '#field2';
 
   this.openMinTest = function() {
-    setAngularSite(false);
-    browser.get('http://localhost:'+config.port+
-      '/test/protractor/minificationTest.html');
+    cy.visit('test/pages/minificationTest.html');
   };
 
   this.openMinTestAngular = function() {
-    setAngularSite(false);
-    browser.get('http://localhost:'+config.port+
-      '/test/protractor/minificationTestAngular.html');
+    cy.visit('test/pages/minificationTestAngular.html');
   };
 };
 
-module.exports = new MinifiedPage();
+export default new MinifiedPage();

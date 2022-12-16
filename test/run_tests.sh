@@ -27,7 +27,7 @@ then
   echo 'Running unit tests.  Check the result in the browser, and quit'
   echo 'the browser when finished.'
 
-  port=`grep port test/config.js | grep -oP '(\d+)'`
+  port=`grep testPort ./package.json | grep -oP '(\d+)'`
   firefox http://localhost:${port}/test/scriptaculous_unit/autoComp_test.html \
           http://localhost:${port}/test/scriptaculous_unit/recordDataRequester_test.html
 
@@ -40,6 +40,6 @@ then
 fi
 
 # Now run the e2e tests
-grunt protractor
+grunt protractor && cypress run
 code=$?
 shutdown_and_exit
