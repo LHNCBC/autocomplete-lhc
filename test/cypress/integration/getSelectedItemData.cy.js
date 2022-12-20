@@ -1,5 +1,5 @@
 // Tests for the getSelectedItemData function
-var po = require('../autocompPage.js');
+import { default as po } from '../support/autocompPage.js';
 
 /**
  *  Calls getSelectedItemData in the browser on the autocompleter associated
@@ -7,8 +7,9 @@ var po = require('../autocompPage.js');
  * @param fieldID the ID of the field whose data is being checked
  */
 function getSelectedItemData(fieldID) {
-  return browser.executeScript("return $('#"+fieldID+
-    "')[0].autocomp.getSelectedItemData()");
+  return cy.get('#'+fieldID).then(elem=>{
+    return elem.get(0).autocomp.getSelectedItemData();
+  });
 }
 
 describe('getSelectedItemData', () => {
@@ -17,107 +18,107 @@ describe('getSelectedItemData', () => {
     var listField = po.prefetchCWE;
     it('should return null when there is nothing in the field', () => {
       po.openTestPage();
-      listField.click();
-      expect(getSelectedItemData(listFieldID)).toBeNull();
+      cy.get(listField).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.be.null);
     });
 
     it('should return data for off-list items', () => {
-      po.sendKeys(listField, 'zzz');
-      po.nonField.click();
-      expect(getSelectedItemData(listFieldID)).toEqual([{text: 'zzz'}]);
+      cy.get(listField).type('zzz');
+      cy.get(po.nonField).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal([{text: 'zzz'}]));
     });
 
     it('should return null if the field is erased', () => {
-      po.clearField(listField);
-      po.nonField.click();
-      expect(listField.getAttribute('value')).toEqual('');
-      expect(getSelectedItemData(listFieldID)).toBeNull();
+      cy.get(listField).clear();
+      cy.get(po.nonField).click();
+      cy.get(listField).should('have.value', '');
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.be.null);
     });
 
     it('should return data for on-list items', ()=> {
-      listField.click();
+      cy.get(listField).click();
       po.autocompPickFirst(listField);
-      expect(getSelectedItemData(listFieldID)).toEqual(
-        [{"text":"Spanish","code":"LA44-3"}]);
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal(
+        [{"text":"Spanish","code":"LA44-3"}]));
     });
 
     it('should return different data when the list item changes', ()=>{
-      po.prefetchCWE.click();
+      cy.get(listField).click();
       po.autocompPickNth(listField, '', 2);
-      expect(getSelectedItemData(listFieldID)).toEqual(
-        [{"text":"French","code":"LA45-0"}]);
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal(
+        [{"text":"French","code":"LA45-0"}]));
     });
   });
 
 
   describe('multi-select prefetch lists', () => {
     let listFieldID = po.multiPrefetchCWEID;
-    let listField = po.multiPrefetchCWE;
+    let listField = '#' + po.multiPrefetchCWEID;
     let selectedItemRemoveButton = po.multiPrefetchCWEFirstSelected;
     it('should return null when there is nothing entered', () => {
       po.openTestPage();
-      listField.click();
-      expect(getSelectedItemData(listFieldID)).toBeNull();
+      cy.get(listField).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.be.null);
     });
 
     it('should return data for off-list items', () => {
-      po.sendKeys(listField, 'zzz');
-      po.nonField.click();
-      expect(getSelectedItemData(listFieldID)).toEqual([{text: 'zzz'}]);
+      cy.get(listField).type('zzz');
+      cy.get(po.nonField).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal([{text: 'zzz'}]));
     });
 
     it('should return null if the items are removed', () => {
-      selectedItemRemoveButton.click();
-      expect(getSelectedItemData(listFieldID)).toBeNull();
+      cy.get(selectedItemRemoveButton).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.be.null);
     });
 
     it('should return data for on-list items', ()=> {
-      listField.click();
+      cy.get(listField).click();
       po.autocompPickFirst(listField);
       // Also testing here multiple selections
       po.autocompPickFirst(listField);
-      expect(getSelectedItemData(listFieldID)).toEqual(
-        [{"text":"Spanish","code":"LA44-3"},{"text":"French","code":"LA45-0"}]);
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal(
+        [{"text":"Spanish","code":"LA44-3"},{"text":"French","code":"LA45-0"}]));
     });
   });
 
   describe('single select search lists', () => {
     var listFieldID = 'fe_search0_cwe';
-    var listField = $('#'+listFieldID);
+    var listField = '#'+listFieldID;
     it('should return null when there is nothing in the field', () => {
       po.openTestPage();
-      listField.click();
-      expect(getSelectedItemData(listFieldID)).toBeNull();
+      cy.get(listField).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.be.null);
     });
 
     it('should return data for off-list items', () => {
-      po.sendKeys(listField, 'zzz');
-      po.nonField.click();
-      expect(getSelectedItemData(listFieldID)).toEqual([{text: 'zzz'}]);
+      cy.get(listField).type('zzz');
+      cy.get(po.nonField).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal([{text: 'zzz'}]));
     });
 
     it('should return null if the field is erased', () => {
-      po.clearField(listField);
-      po.nonField.click();
-      expect(listField.getAttribute('value')).toEqual('');
-      expect(getSelectedItemData(listFieldID)).toBeNull();
+      cy.get(listField).clear();
+      cy.get(po.nonField).click();
+      cy.get(listField).should('have.value', '');
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.be.null);
     });
 
     it('should return data for on-list items', ()=> {
-      listField.click();
+      cy.get(listField).click();
       po.autocompPickFirst(listField, 'ar');
-      expect(getSelectedItemData(listFieldID)).toEqual(
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal(
         [{ code: '2958', text: 'Arm pain', data: { term_icd9_code: '729.5' },
-        code_system: 'gopher' }]);
+        code_system: 'gopher' }]));
     });
 
     it('should return different data when the list item changes', ()=>{
-      po.prefetchCWE.click();
+      cy.get(po.prefetchCWE).click();
       po.autocompPickNth(listField, 'ar', 2);
-      expect(getSelectedItemData(listFieldID)).toEqual(
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal(
         [{code: '2212',
         text: 'Coronary artery disease (CAD)', data: { term_icd9_code: '414.9' },
-        code_system: 'gopher' }]);
+        code_system: 'gopher' }]));
     });
   });
 
@@ -127,31 +128,32 @@ describe('getSelectedItemData', () => {
     let selectedItemRemoveButton = po.multiSearchCWEFirstSelected;
     it('should return null when there is nothing entered', () => {
       po.openTestPage();
-      listField.click();
-      expect(getSelectedItemData(listFieldID)).toBeNull();
+      cy.get(listField).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.be.null);
     });
 
     it('should return data for off-list items', () => {
-      po.sendKeys(listField, 'zzz');
-      po.nonField.click();
-      expect(getSelectedItemData(listFieldID)).toEqual([{text: 'zzz'}]);
+      cy.get(listField).type('zzz');
+      cy.get(po.nonField).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal([{text: 'zzz'}]));
     });
 
     it('should return null if the items are removed', () => {
-      selectedItemRemoveButton.click();
-      expect(getSelectedItemData(listFieldID)).toBeNull();
+      cy.get(selectedItemRemoveButton).click();
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.be.null);
     });
 
     it('should return data for on-list items', ()=> {
-      po.prefetchCWE.click();
+      cy.get(po.prefetchCWE).click();
       po.autocompPickFirst(listField, 'ar');
       // Also testing here multiple selections
       po.autocompPickFirst(listField, 'ar');
-      expect(getSelectedItemData(listFieldID)).toEqual([{code: '2212',
+      getSelectedItemData(listFieldID).then(data=>expect(data).to.deep.equal(
+        [{code: '2212',
         text: 'Coronary artery disease (CAD)', data: { term_icd9_code: '414.9' },
         code_system: 'gopher' },
         { code: '2958', text: 'Arm pain', data: { term_icd9_code: '729.5' },
-        code_system: 'gopher' }]);
+        code_system: 'gopher' }]));
     });
   });
 
