@@ -1,11 +1,11 @@
 import { default as po } from '../support/autocompPage.js';
 
-var fhirField = '#fhir_search';
-var fhirFieldMulti = '#fhir_search_multi';
-var searchFunctionFieldMulti = '#fhir_search_w_function_multi';
-var fhirFieldWButton = '#fhir_search_w_button';
-var fhirFieldButtonID = 'fhir_search_button';
-var fhirFieldButton = '#'+fhirFieldButtonID;
+const fhirField = '#fhir_search';
+const fhirFieldMulti = '#fhir_search_multi';
+const searchFunctionFieldMulti = '#fhir_search_w_function_multi';
+const fhirFieldWButton = '#fhir_search_w_button';
+const fhirFieldButtonID = 'fhir_search_button';
+const fhirFieldButton = '#'+fhirFieldButtonID;
 
 describe('FHIR Search Lists', function() {
 

@@ -1,7 +1,7 @@
 // Page objects for the pages that test minified versions of files
 import { BasePage } from './basePage';
 
-var MinifiedPage = function() {
+const MinifiedPage = function() {
   BasePage.call(this);
 
   this.prefetchList = '#field1';
