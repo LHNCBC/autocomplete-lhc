@@ -1,9 +1,8 @@
 // Tests for multi-field lists
-var po = require('../autocompPage.js');
-var hasClass = require('../test_helpers').hasClass;
+import { default as po } from '../support/autocompPage.js';
 
 describe('multi-field lists', function() {
-  beforeAll(function() {
+  before(function() {
     po.openTestPage();
   });
 
@@ -33,55 +32,47 @@ describe('multi-field lists', function() {
 
 
   it('should show both fields in the list for search fields', function() {
-    po.multiFieldSearch.click();
-    po.sendKeys(po.multiFieldSearch, 'ar');
+    cy.get(po.multiFieldSearch).click().type('ar');
     po.waitForSearchResults();
-    expect(po.tableSearchResult(1).isPresent(0)).toBe(true);
-    expect(po.tableSearchResult(1).getAttribute("innerHTML")).toBe(
+    po.tableSearchResult(1).should('be.visible').invoke('html').should('equal',
       '<td>Arm pain</td><td>pain in arm</td>');
   });
 
   it('should put only the second field into the search form field when configured that way',
      function() {
     po.tableSearchResult(1).click();
-    expect(po.multiFieldSearch.getAttribute('value')).toBe('pain in arm');
+    cy.get(po.multiFieldSearch).should('have.value', 'pain in arm');
   });
 
 
   it('should function properly with the multi-select feature', function() {
-    po.multiSelectTableSearch.click();
-    po.sendKeys(po.multiSelectTableSearch, 'ar');
+    cy.get(po.multiSelectTableSearch).click().type('ar');
     po.waitForSearchResults();
-    expect(po.tableSearchResult(1).getAttribute("innerHTML")).toBe('<td>NM_001113511</td>');
+    po.tableSearchResult(1).invoke('html').should('equal', '<td>NM_001113511</td>');
     po.tableSearchResult(1).click();
-    expect(po.getSelectedItems(po.multiSelectTableSearchID)).toEqual(
-      ['NM_001113511']);
-    expect(po.shownItemCount()).toBe(6);
-    expect(po.tableSearchResult(1).getAttribute("innerHTML")).not.toBe('<td>NM_001113511</td>');
-    po.nonField.click();
-    po.multiSelectTableSearch.click();
-    po.sendKeys(po.multiSelectTableSearch, 'ar');
-    expect(po.shownItemCount()).toBe(7);
-    expect(po.tableSearchResult(1).getAttribute("innerHTML")).not.toBe('<td>NM_001113511</td>');
+    po.getSelected(po.multiSelectTableSearchID).then((data)=>{
+      cy.wrap(data[1]).should('deep.equal', ['NM_001113511']);
+    });
+    po.shownItemCount().should('equal', 6);
+    po.tableSearchResult(1).invoke('html').should('not.equal', '<td>NM_001113511</td>');
+    cy.get(po.nonField).click();
+    cy.get(po.multiSelectTableSearch).click().type('ar');
+    po.shownItemCount().should('equal', 7);
+    po.tableSearchResult(1).invoke('html').should('not.equal', '<td>NM_001113511</td>');
   });
 
 
   it('should show the column headers when those are specified', function() {
-    po.multiFieldSearchHeaders.click();
-    po.sendKeys(po.multiFieldSearchHeaders, 'ar');
+    cy.get(po.multiFieldSearchHeaders).click().type('ar');
     po.waitForSearchResults();
-    expect(po.tableSearchResult(1).getAttribute("innerHTML")).toBe('<th>C1</th><th>C2</th>');
+    po.tableSearchResult(1).should('have.length', 2); // contains the header row and then the first row of tbody.
+    po.tableSearchResult(1).eq(0).invoke('html').should('equal', '<th>C1</th><th>C2</th>');
     // Make sure we can't click on the header and select it
-    po.tableSearchResult(1).click();
-    expect(po.multiFieldSearchHeaders.getAttribute('value')).toBe('ar');
+    po.tableSearchResult(1).eq(0).click();
+    cy.get(po.multiFieldSearchHeaders).should('have.value', 'ar');
     // Make sure we don't select the header by arrowing down
-    po.multiFieldSearchHeaders.sendKeys(protractor.Key.ARROW_DOWN);
-    element.all(by.css(po.searchResCSS + ' tr:nth-child(1)')).then(
-         function(firstRows) {
-      // firstRows contains the header row and then the first row of tbody.
-      expect(firstRows.length).toBe(2);
-      expect(hasClass(firstRows[0], 'selected')).toBe(false);
-      expect(hasClass(firstRows[1], 'selected')).toBe(true);
-    });
+    cy.get(po.multiFieldSearchHeaders).type('{downArrow}');
+    po.tableSearchResult(1).eq(0).should('not.have.class', 'selected');
+    po.tableSearchResult(1).eq(1).should('have.class', 'selected');
   });
 });

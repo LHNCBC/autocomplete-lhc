@@ -27,9 +27,8 @@ then
   echo 'Running unit tests.  Check the result in the browser, and quit'
   echo 'the browser when finished.'
 
-  port=`grep testPort ./package.json | grep -oP '(\d+)'`
-  firefox http://localhost:${port}/test/scriptaculous_unit/autoComp_test.html \
-          http://localhost:${port}/test/scriptaculous_unit/recordDataRequester_test.html
+  firefox test/scriptaculous_unit/autoComp_test.html \
+          test/scriptaculous_unit/recordDataRequester_test.html
 
   mocha -R spec test/mocha/*.js
   code=$?
