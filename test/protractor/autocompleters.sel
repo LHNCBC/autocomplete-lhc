@@ -1,4 +1,4 @@
-| open | /test/protractor/autocomp_atr.html |
+| open | /test/pages/autocomp_atr.html |
 
 # Tests for callbacks. Start with a test for list expansions
 | storeExpression | javascript{0} | callbackCount |

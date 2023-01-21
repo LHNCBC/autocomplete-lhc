@@ -75,7 +75,7 @@ var AutocompPage = function() {
   this.multiFieldSearchHeaders = $('#multi_field_search_headers');
 
   this.testPageURL = 'http://localhost:'+config.port+
-    '/test/protractor/autocomp_atr.html';
+    '/test/pages/autocomp_atr.html';
 
   this.openTestPage = function() {
     setAngularSite(false);
