@@ -55,17 +55,19 @@ export function BasePage() {
    * code values, the hash still must be passed, but the values should be null.)
    */
   this.checkSelected = function(fieldID, t2c) {
-    t2c = JSON.parse(JSON.stringify(t2c)); // the checks are done later, so clone
-    this.getSelected(fieldID).should(function(data) {
-        var codes = data[0];
-        var texts = data[1];
-        var expectedLength = Object.keys(t2c).length;
-        cy.wrap(codes).should('have.length', expectedLength);
-        cy.wrap(texts).should('have.length', expectedLength);
-        var actualT2C = {};
-        for (var i=0; i<expectedLength; ++i)
-          actualT2C[texts[i]] = codes[i];
-        cy.wrap(actualT2C).should('deep.equal', t2c);
+    t2c = {...t2c};
+    JSON.parse(JSON.stringify(t2c)); // the checks are done later, so clone
+    return this.getSelected(fieldID).should(function(data) {
+      var codes = data[0];
+      var texts = data[1];
+      var expectedLength = Object.keys(t2c).length;
+      cy.wrap(codes).should('have.length', expectedLength);
+      cy.wrap(texts).should('have.length', expectedLength);
+      var actualT2C = {};
+      for (var i=0; i<expectedLength; ++i) {
+        actualT2C[texts[i]] = codes[i];
+      }
+      cy.wrap(actualT2C).should('deep.equal', t2c);
     });
   };
 
@@ -172,6 +174,33 @@ export function BasePage() {
     cy.get('#searchCount').invoke('text').should('match', new RegExp('^'+expectedMsg));
   };
 
+
+  /**
+   *  Puts the given element's bottom edge at the bottom of the window.
+   *  Assumption:  The window is taller than the element (typically a field).
+   * @param elemID the ID of the element (field) to be moved to the bottom
+   */
+  this.putElementAtBottomOfWindow = (elemID) => {
+    // Add a div to the top of the page whose height is just bit enough to
+    // push the element below the bottom, and then scroll it into view.
+    return cy.window().then(win=>{
+      var elem = win.jQuery("#"+elemID);
+      var elemTop = elem.offset().top;
+      var winHeight = win.innerHeight;
+      if (winHeight > elemTop) {
+        var div = win.document.getElementById('scrollTestDiv');
+        if (!div) {
+          div = $('<div style="background-color: green" id=scrollTestDiv></div>')[0];
+          win.document.body.insertBefore(div, win.document.body.firstChild);
+        }
+        div.style.height = (winHeight-elemTop)+'px';
+        div.style.width = '100px'; // to make it visible
+      }
+      console.log(elem[0]);
+      elem[0].scrollIntoView(false);
+      win.document.body.style='background-color: blue';
+    });
+  };
 
 
 if (false) {
@@ -306,30 +335,6 @@ if (false) {
       });
   };
 
-
-  /**
-   *  Puts the given element's bottom edge at the bottom of the window.
-   *  Assumption:  The window is taller than the element (typically a field).
-   * @param elemID the ID of the element (field) to be moved to the bottom
-   */
-  this.putElementAtBottomOfWindow = (elemID) => {
-    // Add a div to the top of the page whose height is just bit enough to
-    // push the element below the bottom, and then scroll it into view.
-    return browser.driver.executeScript(
-     `var elem = jQuery("#"+arguments[0]);
-      var elemTop = elem.offset().top;
-      var winHeight = window.innerHeight;
-      if (winHeight > elemTop) {
-        var div = document.getElementById('scrollTestDiv');
-        if (!div) {
-          div = $('<div style="background-color: green" id=scrollTestDiv></div>')[0];
-          document.body.insertBefore(div, document.body.firstChild);
-        }
-        div.style.height = (winHeight-elemTop)+'px';
-        div.style.width = '100px'; // to make it visible
-      }
-      elem[0].scrollIntoView(false);`, elemID);
-  };
 
  }
 };

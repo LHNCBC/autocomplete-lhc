@@ -1,62 +1,59 @@
 // Tests for multi-select lists
 // See also:  directiveMultiSelect.js
-var po = require('../autocompPage.js');
-var hasClass = require('../test_helpers').hasClass;
+import { default as po } from '../support/autocompPage.js';
 
 describe('multi-select lists', function() {
 
   it('should allow non-matching values for prefetch CWE lists', function () {
     po.openTestPage();
     // Add a non-list value
-    po.multiPrefetchCWE.click();
-    po.multiPrefetchCWE.sendKeys('non-list val 1');
-    po.nonField.click(); // shift focus from field
-    expect(po.multiPrefetchCWESelected.count()).toEqual(1);
-    expect(po.multiPrefetchCWE.getAttribute('value')).toEqual('');
+    cy.get(po.multiPrefetchCWE).click().type('non-list val 1');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
     // Add a list value
-    po.multiPrefetchCWE.click();
-    po.firstSearchRes.click();
-    expect(po.multiPrefetchCWESelected.count()).toEqual(2);
+    cy.get(po.multiPrefetchCWE).click();
+    po.searchResult(1).click();
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 2);
     // Add another non-list value
-    po.multiPrefetchCWE.click();
-    po.multiPrefetchCWE.sendKeys('non-list val 2');
-    po.nonField.click(); // shift focus from field
-    expect(po.multiPrefetchCWESelected.count()).toEqual(3);
-    expect(po.multiPrefetchCWE.getAttribute('value')).toEqual('');
+    cy.get(po.multiPrefetchCWE).click().type('non-list val 2');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 3);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
     // Remove the first non-list value
-    po.multiPrefetchCWE.click();
-    expect(po.allSearchRes.count()).toBe(2);
-    po.multiPrefetchCWEFirstSelected.click();
-    expect(po.multiPrefetchCWESelected.count()).toEqual(2);
+    cy.get(po.multiPrefetchCWE).click();
+    cy.get(po.allSearchRes).should('have.length', 2);
+    cy.get(po.multiPrefetchCWEFirstSelected).click();
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 2);
     // A non-list item should not be added into the list when removed
-    po.multiPrefetchCWE.click();
-    expect(po.allSearchRes.count()).toBe(2);
+    cy.get(po.multiPrefetchCWE).click();
+    cy.get(po.allSearchRes).should('have.length', 2);
     // Remove a list value
-    po.multiPrefetchCWEFirstSelected.click();
-    expect(po.multiPrefetchCWESelected.count()).toEqual(1);
-    po.multiPrefetchCWE.click();
-    expect(po.allSearchRes.count()).toBe(3);
+    cy.get(po.multiPrefetchCWEFirstSelected).click();
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).click();
+    cy.get(po.allSearchRes).should('have.length', 3);
   });
 
   it('should return display strings and codes in the same order', function() {
     po.openTestPage();
     // Test both list items and non-list items.
-    po.multiPrefetchCWE.click();
-    po.firstSearchRes.click();
-    po.multiPrefetchCWE.sendKeys('zzz');
-    po.nonField.click(); // shift focus from field
-    po.multiPrefetchCWE.click();
-    po.firstSearchRes.click();
+    cy.get(po.multiPrefetchCWE).click();
+    po.searchResult(1).click();
+    cy.get(po.multiPrefetchCWE).type('zzz');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWE).click();
+    po.searchResult(1).click();
     // Note:  The orders of the following arrays depends on their storage in a
     // hash, so they could change;  However, whatever the order, the order
     // of the code and display strings should correspond to each other.
-    t2c =  {"Spanish": "LA44-3","French": "LA45-0", "zzz": null}
+    let t2c =  {"Spanish": "LA44-3","French": "LA45-0", "zzz": undefined};
     po.checkSelected(po.multiPrefetchCWEID, t2c);
     // Delete the first two items and confirm the codes are correct.
-    po.multiPrefetchCWEFirstSelected.click();
+    cy.get(po.multiPrefetchCWEFirstSelected).click();
     delete t2c['Spanish'];
     po.checkSelected(po.multiPrefetchCWEID, t2c);
-    po.multiPrefetchCWEFirstSelected.click();
+    cy.get(po.multiPrefetchCWEFirstSelected).click();
     delete t2c['zzz'];
     po.checkSelected(po.multiPrefetchCWEID, t2c);
   });
@@ -64,23 +61,22 @@ describe('multi-select lists', function() {
   it('should allow multiple items to be clicked without closing the list',
       function() {
     po.openTestPage();
-    po.multiSearchCWE.click();
-    po.sendKeys(po.multiSearchCWE, 'ar');
+    cy.get(po.multiSearchCWE).click().type('ar');
     po.waitForSearchResults();
-    po.firstSearchRes.click();
+    po.searchResult(1).click();
     // That element should be removed, and the new first element should now have
     // the "selected" class.
-    expect(hasClass(po.firstSearchRes, 'selected')).toBe(true);
-    po.firstSearchRes.click(); // firstSearchRes should now point to the second
+    po.searchResult(1).should('have.class', 'selected');
+    po.searchResult(1).click(); // should now be the second result
     // Try keys.  The first item should still be selected.
-    po.multiSearchCWE.sendKeys(protractor.Key.ENTER);
-    // Confirm that the new firstSearchRes has the "selected" class
-    expect(hasClass(po.firstSearchRes, 'selected')).toBe(true);
-    po.multiSearchCWE.sendKeys(protractor.Key.ARROW_DOWN);
+    cy.get(po.multiSearchCWE).type('{enter}');
+    // Confirm that the new first search result has the "selected" class
+    po.searchResult(1).should('have.class', 'selected');
+    cy.get(po.multiSearchCWE).type('{downArrow}');
     // Now we should be on the second item
-    po.multiSearchCWE.sendKeys(protractor.Key.ENTER);
+    cy.get(po.multiSearchCWE).type('{enter}');
 
-    expect(po.multiSearchCWESelected.count()).toEqual(4);
+    cy.get(po.multiSearchCWESelected).should('have.length', 4);
     var expected = {"Coronary artery disease (CAD)": "2212",
       "Arm pain": "2958", "Eye pain": "2189",
         "Kidney failure (short-term renal failure)": "11458"};
@@ -89,55 +85,53 @@ describe('multi-select lists', function() {
 
   it('should load extra items when some are selected', function () {
     po.openTestPage();
-    po.multiSearchCWE.click();
-    po.sendKeys(po.multiSearchCWE, 'ar');
+    cy.get(po.multiSearchCWE).click().type('ar');
     po.waitForSearchResults();
-    po.firstSearchRes.click();
-    po.firstSearchRes.click();
-    po.sendKeys(po.multiSearchCWE, 'ar');
-    expect(po.shownItemCount()).toBe(7);
+    po.searchResult(1).click();
+    po.searchResult(1).click();
+    cy.get(po.multiSearchCWE).type('ar');
+    po.shownItemCount().should('equal', 7);
   });
 
   it('should not allow the user to select a heading', function() {
     po.openTestPage();
-    po.multiHeadingCWE.click();
+    cy.get(po.multiHeadingCWE).click();
     // The first item is a heading; we should not be able to click on it
-    po.waitForScrollToStop(po.multiHeadingCWEID);
-    po.firstSearchRes.click();
+    po.searchResult(1).click();
     // Even though we clicked on the heading, the list should stay open
-    expect(po.searchResults.isDisplayed()).toBeTruthy();
+    cy.get(po.searchResCSS).should('be.visible');
     // Try moving the first non-heading item and selecting that
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_DOWN);
-    po.multiHeadingCWE.sendKeys(protractor.Key.ENTER);
-    expect(po.multiHeadingCWESelected.count()).toEqual(1);
+    cy.get(po.multiHeadingCWE).type('{downArrow}{enter}');
+    cy.get(po.multiHeadingCWESelected).should('have.length', 1);
     // In this list, after picking that one, there are two more items
     // in that section and then another heading.  Try moving to that heading and
     // selecting it.  Note that we cannot normally move to that item, unless
     // there is another bug, so we have to force the index there.
-    browser.driver.executeScript('return jQuery("#'+po.multiHeadingCWEID+
-                                 '")[0].autocomp.index = 3');
-    po.multiHeadingCWE.sendKeys(protractor.Key.ENTER);
-    // It should not have been added to the selction area.
-    expect(po.multiHeadingCWESelected.count()).toEqual(1);
-    // Also try clicking on that item
-    po.fourthSearchRes.click();
-    expect(po.multiHeadingCWESelected.count()).toEqual(1);
-    // Select the item immediately after the heading.  It should be selectable.
-    po.fifthSearchRes.click();
-    expect(po.multiHeadingCWESelected.count()).toEqual(2);
-    // The first list item should have lost its "selected" (highlighted)  state.
-    expect(hasClass(po.secondSearchRes, 'selected')).toBe(false);
-    // Select the item immediately before the heading.
-    po.thirdSearchRes.click();
-    expect(po.multiHeadingCWESelected.count()).toEqual(3);
-    // The heading should not be in a "selected" (highlighted) state
-    // That heading is now result 3.  (Two before it were removed).
-    expect(hasClass(po.thirdSearchRes, 'selected')).toBe(false);
-    // The item after the heading should now have the "selected" state.
-    expect(hasClass(po.fourthSearchRes, 'selected')).toBe(true);
-    // Confirm the selected items are as expected.
-    t2c = {"Chocolate": "FOOD-2","Cat": "OTHR-18","Egg": "FOOD-4"};
-    po.checkSelected(po.multiHeadingCWEID, t2c);
+    cy.window().then(win=>{
+      win.jQuery(po.multiHeadingCWE)[0].autocomp.index = 3;
+      cy.get(po.multiHeadingCWE).type('{enter}');
+      // It should not have been added to the selction area.
+      cy.get(po.multiHeadingCWESelected).should('have.length', 1);
+      // Also try clicking on that item
+      po.searchResult(4).click();
+      cy.get(po.multiHeadingCWESelected).should('have.length', 1);
+      // Select the item immediately after the heading.  It should be selectable.
+      po.searchResult(5).click();
+      cy.get(po.multiHeadingCWESelected).should('have.length', 2);
+      // The first list item should have lost its "selected" (highlighted)  state.
+      po.searchResult(2).should('not.have.class', 'selected');
+      // Select the item immediately before the heading.
+      po.searchResult(3).click();
+      cy.get(po.multiHeadingCWESelected).should('have.length', 3);
+      // The heading should not be in a "selected" (highlighted) state
+      // That heading is now result 3.  (Two before it were removed).
+      po.searchResult(3).should('not.have.class', 'selected');
+      // The item after the heading should now have the "selected" state.
+      po.searchResult(4).should('have.class', 'selected');
+      // Confirm the selected items are as expected.
+      const t2c = {"Chocolate": "FOOD-2","Cat": "OTHR-18","Egg": "FOOD-4"};
+      po.checkSelected(po.multiHeadingCWEID, t2c);
+    });
   });
 
   it('should not have a weird problem with picking items from list with headings',
@@ -147,49 +141,51 @@ describe('multi-select lists', function() {
     // pick the new first item, and the list closes.  No exception occurs.
     // It is probably due to other current bugs with the list headings.
     po.openTestPage();
-    po.multiHeadingCWE.click();
-    expect(po.searchResults.isDisplayed()).toBeTruthy();
-    // Pick the first three items.  (Note:  firstSearchRes is a heading.)
+    cy.get(po.multiHeadingCWE).click();
+    cy.get(po.searchResCSS).should('be.visible');
+    // Pick the first three items.  (Note:  the searchResult(1) is a heading.)
     po.waitForSearchResults();
-    po.secondSearchRes.click();
-    po.secondSearchRes.click();
-    po.secondSearchRes.click();
-    po.nonField.click(); // shift focus from field
-    po.multiHeadingCWE.click();
-    po.secondSearchRes.click();
-    expect(po.multiHeadingCWESelected.count()).toEqual(4);
-    expect(po.searchResults.isDisplayed()).toBeTruthy();
+    po.searchResult(2).click();
+    po.searchResult(2).click();
+    po.searchResult(2).click();
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiHeadingCWE).click();
+    po.searchResult(2).click();
+    cy.get(po.multiHeadingCWESelected).should('have.length', 4);
+    cy.get(po.searchResCSS).should('be.visible');
   });
 
   it('should not allow left/right arrows to pick headings', function() {
     po.openTestPage();
-    po.putElementAtBottomOfWindow(po.multiHeadingCWEID);
-    // Pick the first non-item item in the multi-select heading CWE field
-    po.multiHeadingCWE.click();
-    po.secondSearchRes.click();
-    // Now the list still has a heading as the first item, but the list is
-    // displaying as two columns, and next the first heading in the right column
-    // is a list item that we can get to with the arrow keys.
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_RIGHT);
-    // Confirm that this is a two column list by checking the selected item
-    expect(hasClass(po.tenthSearchRes, 'selected')).toBe(true);
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_UP);
-    expect(hasClass(po.searchResult(9), 'selected')).toBe(true);
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_LEFT);
-    expect(hasClass(po.firstSearchRes, 'selected')).toBe(false);
-    expect(hasClass(po.searchResult(9), 'selected')).toBe(true);
+    po.putElementAtBottomOfWindow(po.multiHeadingCWEID).then(()=>{
+      cy.get(po.multiHeadingCWE).click({scrollBehavior: false});
+      // Pick the first non-heading item in the multi-select heading CWE field
+      po.searchResult(2).click({scrollBehavior: false});
+      // Now the list still has a heading as the first item, but the list is
+      // displaying as two columns, and next the first heading in the right column
+      // is a list item that we can get to with the arrow keys.
+      cy.get(po.multiHeadingCWE).type('{rightArrow}');
+      // Confirm that this is a two column list by checking the selected item
+      po.searchResult(10).should('have.class', 'selected');
+      cy.get(po.multiHeadingCWE).type('{upArrow}');
+      po.searchResult(9).should('have.class', 'selected');
+      cy.get(po.multiHeadingCWE).type('{leftArrow}');
+      po.searchResult(1).should('not.have.class', 'selected');
+      po.searchResult(9).should('have.class', 'selected');
+    });
   });
 
   it('should not prevent shift-tab from leaving the field even when an item is '+
      'selected', function() {
     po.openTestPage();
-    po.multiPrefetchCWE.click();
+    cy.get(po.multiPrefetchCWE).click();
     // Select first item
-    po.multiPrefetchCWE.sendKeys(protractor.Key.ARROW_DOWN);
-    po.multiPrefetchCWE.sendKeys(protractor.Key.SHIFT, protractor.Key.TAB);
+    cy.get(po.multiPrefetchCWE).type('{downArrow}');
+    // https://github.com/kuceb/cypress-plugin-tab - TBD (or
+    // https://github.com/dmtrKovalenko/cypress-real-events)
+    cy.get(po.multiPrefetchCWE).tab({shift: true});
     // Focus should be on the button for the selected item now
-    expect(browser.driver.switchTo().activeElement().getAttribute('id')).
-      not.toEqual(po.multiPrefetchCWEID);
+    cy.get(po.multiPrefetchCWE).should('not.have.focus');
   });
 
   it('should not select an item when the tab key is pressed if there is nothing' +
@@ -198,12 +194,10 @@ describe('multi-select lists', function() {
     // selection, but if the field is empty we will ignore that
     // because the user might just be trying to leave the field.
     po.openTestPage();
-    po.multiPrefetchCWE.click();
-    po.multiPrefetchCWE.sendKeys(protractor.Key.ARROW_DOWN);
-    po.multiPrefetchCWE.sendKeys(protractor.Key.ENTER);
-    expect(po.multiPrefetchCWESelected.count()).toBe(1);
-    po.multiPrefetchCWE.sendKeys(protractor.Key.TAB);
-    expect(po.multiPrefetchCWESelected.count()).toBe(1);
+    cy.get(po.multiPrefetchCWE).type('{downArrow}{enter}');
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).tab();
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
   });
 
   it('should not show "see more" in a search list after a click on an item',
@@ -216,11 +210,10 @@ describe('multi-select lists', function() {
     // comments to make sure the link doesn't start appearing without a fix
     // being in place.
     po.openTestPage();
-    po.multiSearchCWE.click();
-    po.sendKeys(po.multiSearchCWE, 'ar');
+    cy.get(po.multiSearchCWE).click().type('ar');
     po.waitForSearchResults();
-    po.firstSearchRes.click();
-    expect(po.expandLink.isDisplayed()).toBe(false); // i.e. not visible
+    po.searchResult(1).click();
+    cy.get(po.expandLink).should('not.be.visible');
   });
 
   it('should expand list when "see more" is clicked after an item is selected',
@@ -228,33 +221,33 @@ describe('multi-select lists', function() {
     // Per the comments in the test above, currently the only way to have a "see
     // more" link after selecting an item is to select it with the keyboard.
     po.openTestPage();
-    po.multiSearchCWE.click();
-    po.sendKeys(po.multiSearchCWE, 'ar');
-    po.multiSearchCWE.sendKeys(protractor.Key.ARROW_DOWN);
-    po.multiSearchCWE.sendKeys(protractor.Key.ENTER);
-    po.expandLink.click();
-    expect(po.allSearchRes.count()).toBeGreaterThan(14);
+    //cy.get(po.multiSearchCWE).click().type('ar{downArrow}{enter}'); // too fast
+    cy.get(po.multiSearchCWE).click().type('ar');
+    cy.get(po.multiSearchCWE).type('{downArrow}');
+    cy.get(po.multiSearchCWE).type('{enter}');
+    cy.get(po.expandLink).click();
+    cy.get(po.allSearchRes).should('have.length.greaterThan', 14);
   });
 
   it('should not show "see more" just because an item is already selected',
       function() {
     po.openTestPage();
-    po.multiPrefetchCNE.click();
-    po.firstSearchRes.click();
-    po.nonField.click();
-    po.multiPrefetchCNE.click();
+    cy.get(po.multiPrefetchCNE).click();
+    po.searchResult(1).click();
+    cy.get(po.nonField).click();
+    cy.get(po.multiPrefetchCNE).click();
     // There are only three results total, so it is should not be showing "see
     // more".
-    expect(po.expandLink.isDisplayed()).toBe(false);
+    cy.get(po.expandLink).should('not.be.visible');
   });
 
   it('should remove the selected items when destroyed', function () {
     po.openTestPage();
-    po.multiPrefetchCWE.click();
-    po.firstSearchRes.click();
-    expect(po.multiPrefetchCWESelected.count()).toEqual(1);
-    $('#dest_multi_sel_cwe').click();
-    expect(po.multiPrefetchCWESelected.count()).toEqual(0);
+    cy.get(po.multiPrefetchCWE).click();
+    po.searchResult(1).click();
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get('#dest_multi_sel_cwe').click();
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 0);
   });
 });
 
