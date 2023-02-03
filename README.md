@@ -10,7 +10,19 @@ includes an AngularJS directive, but can be used without Angular.
 For features and demos, please visit the [project
 page](http://lhncbc.github.io/autocomplete-lhc/).
 
+## How to run the tests
+If you wish to modify this package, you will likely want to run the package's
+tests.  The steps are:
+1) Make sure node and npm are in your PATH.  If you are on a Linux operating system, you should be able to ```source bashrc.autocomp```.
+2) npm ci
+3) Add node_modules/.bin to your PATH.  Again, if you are on a Linux operating system, you should be able to re-run ```source bashrc.autocomp```.
+4) npm run build
+5) npm run update-webdriver # The need for this will go away when we remove our Protractor dependency.
+6) bower install # needed for the test pages
+7) npm run test
 
+
+## License and Disclaimer
 This software was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH).
 
 Please cite as:

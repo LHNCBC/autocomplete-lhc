@@ -22,6 +22,7 @@
     "clean-css-cli": "^4.2.1",
     "connect": "^3.4.1",
     "cypress": "^10.11.0",
+    "cypress-plugin-tab": "^1.0.5",
     "deep-equal": "^2.1.0",
     "grunt": "^1.5.3",
     "grunt-cli": "^1.2.0",
