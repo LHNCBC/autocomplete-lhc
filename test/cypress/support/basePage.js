@@ -203,6 +203,15 @@ export function BasePage() {
   };
 
 
+  /**
+   *  Returns the nth last log entry in the screen reader log.
+   * @param n the number of the log entry, starting with 1 for the last item.
+   */
+  this.nthLastLogEntry = function(n) {
+    return cy.get('#reader_log p:nth-last-child('+n+')').then(el=>el[0].innerText);
+  };
+
+
 if (false) {
 // These functions will be ported to Cypress as needed.
 
@@ -259,17 +268,6 @@ if (false) {
    */
   this.getAjaxCallCount = function() {
     return browser.driver.executeScript('return jQuery.ajax.ajaxCtr');
-  };
-
-
-  /**
-   *  Returns the nth last log entry in the screen reader log.
-   * @param n the number of the log entry, starting with 1 for the last item.
-   */
-  this.nthLastLogEntry = function(n) {
-    var screenReaderLog = $('#reader_log');
-    var lastParagraph = screenReaderLog.element(by.css('p:nth-last-child('+n+')'));
-    return lastParagraph.getAttribute('textContent');
   };
 
 
