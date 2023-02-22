@@ -198,7 +198,6 @@ export function BasePage() {
       }
       console.log(elem[0]);
       elem[0].scrollIntoView(false);
-      win.document.body.style='background-color: blue';
     });
   };
 
@@ -209,6 +208,20 @@ export function BasePage() {
    */
   this.nthLastLogEntry = function(n) {
     return cy.get('#reader_log p:nth-last-child('+n+')').then(el=>el[0].innerText);
+  };
+
+
+  /**
+   *  Waits for the page to stop scrolling the search results into view.
+   * @param fieldID the field whose autocompleter is doing the scrolling.
+   */
+  this.waitForScrollToStop = function(fieldID) {
+    if (!fieldID)
+      throw 'Missing fieldID parameter in waitForScrollToStop';
+    cy.get('#'+fieldID).then(el=>{
+      var ac = el[0].autocomp;
+      cy.waitForCondition(()=>ac.lastScrollEffect_.state != 'running');
+    });
   };
 
 
@@ -243,23 +256,6 @@ if (false) {
     return browser.driver.executeScript(
       'return jQuery("'+this.completionOptionsScrollerCSS+'")[0].scrollTop;'
     );
-  };
-
-
-  /**
-   *  Waits for the page to stop scrolling the search results into view.
-   * @param fieldID the field whose autocompleter is doing the scrolling.
-   */
-  this.waitForScrollToStop = function(fieldID) {
-    if (!fieldID)
-      throw 'Missing fieldID parameter in waitForScrollToStop';
-    function waitForEffectToFinish(fieldID) {
-      var ac = $('#'+fieldID)[0].autocomp;
-      return !ac.lastScrollEffect_ || ac.lastScrollEffect_.state === 'finished';
-    }
-    browser.wait(function() {
-      return browser.driver.executeScript(waitForEffectToFinish, fieldID);
-    });
   };
 
 

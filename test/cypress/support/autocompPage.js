@@ -83,7 +83,7 @@ var AutocompPage = function() {
 
   // Returns the scroll position of the window
   this.windowScrollTop = function() {
-    return cy.window((win)=>jQuery(window).scrollTop());
+    return cy.window().its('scrollY');
   }
 
 };
