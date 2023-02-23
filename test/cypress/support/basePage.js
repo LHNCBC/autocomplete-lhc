@@ -1,9 +1,9 @@
 // Page objects common to the autocompleter test pages.
 export function BasePage() {
   var searchResID = 'searchResults';
-  var searchResCSS = '#'+searchResID;
-  this.searchResCSS = searchResCSS;
-  this.allSearchRes = searchResCSS + ' li';
+  var searchResSel = '#'+searchResID;
+  this.searchResSel = searchResSel;
+  this.allSearchRes = searchResSel + ' li';
   this.expandLink = '#moreResults';
   this.completionOptionsCSS = '#completionOptions';
   this.completionOptionsScrollerCSS = '#completionOptionsScroller';
@@ -14,8 +14,8 @@ export function BasePage() {
    * @param pos the item position number (starting at 1).
    */
   this.searchResult = function(pos) {
-    return cy.get(searchResCSS + ' li:nth-child('+pos+'), '+
-      searchResCSS + ' tr:nth-child('+pos+')');
+    return cy.get(searchResSel + ' li:nth-child('+pos+'), '+
+      searchResSel + ' tr:nth-child('+pos+')');
   };
 
   /**
@@ -26,7 +26,7 @@ export function BasePage() {
    * @param pos the item position number (starting at 1).
    */
   this.tableSearchResult = function(pos) {
-    return cy.get(searchResCSS + ' tr:nth-child('+pos+')');
+    return cy.get(searchResSel + ' tr:nth-child('+pos+')');
   };
 
 
@@ -77,14 +77,14 @@ export function BasePage() {
    * Wait for the autocomplete results to be shown
    */
   this.waitForSearchResults = function() {
-    cy.get(searchResCSS).should('be.visible');
+    cy.get(searchResSel).should('be.visible');
   };
 
   /**
    * Wait for the autocomplete results to not be shown
    */
   this.waitForNoSearchResults = function() {
-    cy.get(searchResCSS).should('not.be.visible');
+    cy.get(searchResSel).should('not.be.visible');
   };
 
 
@@ -225,6 +225,14 @@ export function BasePage() {
   };
 
 
+  /**
+   *  Returns the number of times an AJAX call has been made.
+   */
+  this.getAjaxCallCount = function() {
+    return cy.window().then(win=>win.jQuery.ajax.ajaxCtr);
+  };
+
+
 if (false) {
 // These functions will be ported to Cypress as needed.
 
@@ -256,14 +264,6 @@ if (false) {
     return browser.driver.executeScript(
       'return jQuery("'+this.completionOptionsScrollerCSS+'")[0].scrollTop;'
     );
-  };
-
-
-  /**
-   *  Returns the number of times an AJAX call has been made.
-   */
-  this.getAjaxCallCount = function() {
-    return browser.driver.executeScript('return jQuery.ajax.ajaxCtr');
   };
 
 

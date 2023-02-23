@@ -47,6 +47,9 @@ Cypress.Commands.add(
   'waitForCondition',
   { prevSubject: 'optional' },
   (subject, conditionFn) => {
+    const MAX_WAIT = 4000;
+    const ITER_WAIT = 50;
+    let totalWait = 0;
     return new Cypress.Promise((resolve, reject) => {
       function waitForCondition() {
         var result;
@@ -55,7 +58,12 @@ Cypress.Commands.add(
         }
         catch (e) {}
         if (!result) {
-          setTimeout(waitForCondition, 50);
+          if (totalWait < MAX_WAIT) {
+            setTimeout(waitForCondition, ITER_WAIT);
+            totalWait += ITER_WAIT;
+          }
+          else
+            reject('Condition not satisfied after ' +MAX_WAIT+' ms');
         }
         else {
           // Per Cypress.Promise docs, if we resolve to undefined, the outside promise

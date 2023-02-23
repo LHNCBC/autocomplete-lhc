@@ -124,9 +124,9 @@ describe('CNE lists', function() {
     // reason, the problem does not occur when I do the same actions here with
     // selenium that I do using a browser.  Nonetheless, it seems worthwhile to
     // have this test.
-    cy.get(po.searchCNECSS).click().should('have.focus').type('aazzz'); // non-match
+    cy.get(po.searchCNESel).click().should('have.focus').type('aazzz'); // non-match
     cy.get(po.prefetchCNE).click().should('not.have.focus');
-    cy.get(po.searchCNECSS).click().type('zzz'); // non-match
+    cy.get(po.searchCNESel).click().type('zzz'); // non-match
     cy.wait(100);// wait for mocked Ajax requests to be processed
     cy.get(po.prefetchCNE).click();
     // Focus should be returned to the non-matching field
@@ -134,7 +134,7 @@ describe('CNE lists', function() {
     // make sure that happened.
     cy.wait(100);
     cy.get(po.prefetchCNE).should('not.have.focus'); // should lose focus
-    cy.get(po.searchCNECSS).should('have.focus');
+    cy.get(po.searchCNESel).should('have.focus');
     // The search result list should close
     po.waitForNoSearchResults();
   });

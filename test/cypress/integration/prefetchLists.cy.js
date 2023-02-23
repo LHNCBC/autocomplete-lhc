@@ -19,12 +19,12 @@ describe('Prefetch lists', function() {
   it('should show the list when clicked even if focused', function() {
     po.openTestPage();
     cy.get(po.prefetchCWE).click();
-    cy.get(po.searchResCSS).should('be.visible');
+    cy.get(po.searchResSel).should('be.visible');
     po.searchResult(1).click();
-    cy.get(po.searchResCSS).should('not.be.visible');
+    cy.get(po.searchResSel).should('not.be.visible');
     // Now click in the field.  The list should appear
     cy.get(po.prefetchCWE).click();
-    cy.get(po.searchResCSS).should('be.visible');
+    cy.get(po.searchResSel).should('be.visible');
   });
 
   it('should show the full list when clicked even after typing', function() {
@@ -107,10 +107,10 @@ describe('Prefetch lists', function() {
 
   it('should allow an element to be passed to the constructor', function() {
     var p = '#prefetch_for_el';
-    cy.get(po.searchResCSS).should('not.be.visible');
+    cy.get(po.searchResSel).should('not.be.visible');
     cy.get(p).click();
     po.waitForSearchResults();
-    cy.get(po.searchResCSS).should('be.visible');
+    cy.get(po.searchResSel).should('be.visible');
     po.searchResult(1).click();
     cy.get(p).should('have.value', 'Spanish');
   });

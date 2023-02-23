@@ -6,9 +6,9 @@ describe('directive', function() {
     it('should show a result list when the user types', function() {
       dp.openDirectiveTestPage();
       cy.get(dp.searchList).click();
-      cy.get(dp.searchResCSS).should('not.be.visible');
+      cy.get(dp.searchResSel).should('not.be.visible');
       cy.get(dp.searchList).type('ar');
-      cy.get(dp.searchResCSS).should('be.visible');
+      cy.get(dp.searchResSel).should('be.visible');
     });
 
     it('should have the extra data in the model for selected items', function() {
@@ -23,7 +23,7 @@ describe('directive', function() {
       // Try the expanded results list
       // Clear the field first
       cy.get(dp.searchList).clear().type('ar');
-      cy.get(dp.searchResCSS).should('be.visible');
+      cy.get(dp.searchResSel).should('be.visible');
       cy.get(dp.expandLink).should('be.visible').click();
       dp.searchResult(10).click();
       cy.get(dp.searchList).should('have.value', 'Arrhythmia');
@@ -70,14 +70,14 @@ describe('directive', function() {
     it('should allow the URL to be undefined', function() {
       dp.openDirectiveTestPage();
       cy.get(dp.noURLTest).click().type('ar');
-      cy.get(dp.searchResCSS).should('not.be.visible');
+      cy.get(dp.searchResSel).should('not.be.visible');
       // Set the URL to something and confirm the autocompleter starts working
       cy.window().then(win=>{
         win.searchList9Opts.url = '/form/get_search_res_list?fd_id=2163';
         win.angular.element(dp.noURLTest).scope().$digest();
       });
       cy.get(dp.noURLTest).clear().type('ar');
-      cy.get(dp.searchResCSS).should('be.visible');
+      cy.get(dp.searchResSel).should('be.visible');
     });
 
     describe('CWE lists', function() {

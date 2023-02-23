@@ -1,4 +1,5 @@
 import { default as po } from '../support/autocompPage.js';
+
 describe('autocomp scroll function', function() {
   var windowSize;
 
