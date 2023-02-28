@@ -1741,14 +1741,11 @@ if (typeof Def === 'undefined')
                 bottomOfListContainer - maxListContainerBottom;
               var elementTop = elementBoundingRect.top;
               var topNavBarHeight = 0;
-console.log('%%% hello');
               var headerBarID = this.constructorOpts_.headerBar;
               if (headerBarID) {
-console.log('%%% headerBarID='+headerBarID);
                 var headerBar = document.getElementById(headerBarID);
                 if (headerBar)
                   topNavBarHeight = headerBar.offsetHeight;
-console.log('%%% topNavBarHeight='+topNavBarHeight);
               }
 
               var maxScroll;
