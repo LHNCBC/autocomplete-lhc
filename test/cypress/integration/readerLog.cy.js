@@ -59,10 +59,15 @@ describe('Screen reader log', function() {
     it('should not read the row if there is just one column', function() {
       // This is because the single value in the column will be put into the
       // field as the user arrows down, and will be read by JAWS from that.
-      cy.get(po.multiFieldSearch1Col).click().type('ar');
+      // Type the characters one at a time to have a stable order of log messages.
+      cy.get(po.multiFieldSearch1Col).click().type('a');
+      po.nthLastLogEntry(1).should('equal', 'The field\'s value does not match any items in the list.')
+      cy.get(po.multiFieldSearch1Col).click().type('r');
       po.waitForSearchResults();
       cy.get(po.multiFieldSearch1Col).click().type('{downArrow}');
-      po.nthLastLogEntry(1).should('equal', 'A list has appeared below the field.');
+      // The last line with either be
+      po.nthLastLogEntry(2).should('equal', 'A list has appeared below the field.');
+      po.nthLastLogEntry(1).should('equal', 'The field no longer contains a non-matching value.');
     });
 
     it('should read the column headers', function() {
