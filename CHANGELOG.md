@@ -3,8 +3,8 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
-## [18.6.0] - 2023-02-23
-### Added
+## [18.5.1] - 2023-02-23
+### Fixed
 - Reading text to the item remove button.
 
 ## [18.5.0] - 2022-08-01
