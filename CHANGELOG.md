@@ -97,12 +97,12 @@ This log documents significant changes for each release.  This project follows
   not match an item on the list.  Instead, the way to handle suggestions is now
   to register an event listener with Def.Autocompleter.Event.observeSuggesions.
   It is now up to the external program to decide how to show the suggestions to
-  the user, and when one is selected, the the acceptSuggestion function on the
+  the user, and when one is selected, the acceptSuggestion function on the
   autocompleter instance should be called with the index of the selected
   suggestion.  This is some additional work for the program using the
   autocompleter, but 1) it did not seem right that the autocompleter was opening
-  a dialog, and 2) as far as we know, the suggestion dialog feature was not be
-  used outside NLM.
+  a dialog, and 2) as far as we know, the suggestion dialog feature was not
+  being used outside NLM.
 ### Changed
 - Replace the observeSuggestionsShown event listener registration with
   observeSuggestions.  See note above about the removal of "suggestion" dialogs.

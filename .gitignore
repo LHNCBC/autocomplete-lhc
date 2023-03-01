@@ -3,5 +3,6 @@ dist
 bower_components
 bonk.mp3
 .idea
+test/cypress/screenshots
 !.gitignore
 !.bowerrc

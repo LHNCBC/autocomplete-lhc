@@ -41,3 +41,37 @@ Cypress.Commands.add(
     cy.wait(100);
   }
 );
+
+// Wait for the given function to return something truthy
+Cypress.Commands.add(
+  'waitForCondition',
+  { prevSubject: 'optional' },
+  (subject, conditionFn) => {
+    const MAX_WAIT = 4000;
+    const ITER_WAIT = 50;
+    let totalWait = 0;
+    return new Cypress.Promise((resolve, reject) => {
+      function waitForCondition() {
+        var result;
+        try {
+          result = conditionFn();
+        }
+        catch (e) {}
+        if (!result) {
+          if (totalWait < MAX_WAIT) {
+            setTimeout(waitForCondition, ITER_WAIT);
+            totalWait += ITER_WAIT;
+          }
+          else
+            reject('Condition not satisfied after ' +MAX_WAIT+' ms');
+        }
+        else {
+          // Per Cypress.Promise docs, if we resolve to undefined, the outside promise
+          // resolves to the window.  So, return null in that case.
+          resolve(result);
+        }
+      }
+      waitForCondition();
+    });
+  }
+);

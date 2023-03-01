@@ -21,7 +21,7 @@ describe('directive', function() {
 
     it('should leave the field empty after a selection', function() {
       cy.get(dp.multiField).click();
-      cy.get(dp.searchResCSS).should('be.visible');
+      cy.get(dp.searchResSel).should('be.visible');
       dp.searchResult(1).should('exist').click();
       cy.get(dp.multiField).should('have.value', '');
     });
@@ -30,7 +30,7 @@ describe('directive', function() {
       dp.openDirectiveTestPage();
       checkMultiFieldModel(null);
       cy.get(dp.multiField).click();
-      cy.get(dp.searchResCSS).should('be.visible');
+      cy.get(dp.searchResSel).should('be.visible');
       dp.searchResult(1).click();
       checkMultiFieldModel([{text: 'Green', code: 'G'}]);
       // Now add a second item.
@@ -49,7 +49,7 @@ describe('directive', function() {
       cy.get(dp.multiField).should('have.value', '');
       // Add a valid item and check the model.
       cy.get(dp.multiField).click();
-      cy.get(dp.searchResCSS).should('be.visible');
+      cy.get(dp.searchResSel).should('be.visible');
       dp.searchResult(1).click();
       checkMultiFieldModel([{text: 'Blue', code: 'B'}, {text: 'Green', code: 'G'}]);
       // Remove the first item again, to make sure that the new "span" element
@@ -65,7 +65,7 @@ describe('directive', function() {
       dp.openDirectiveTestPage();
       checkMultiFieldModel(null);
       cy.get(dp.multiField).click();
-      cy.get(dp.searchResCSS).should('be.visible');
+      cy.get(dp.searchResSel).should('be.visible');
       dp.searchResult(1).click();
       checkMultiFieldModel([{text: 'Green', code: 'G'}]);
       cy.get(dp.multiField).type('Gr');
@@ -183,7 +183,7 @@ describe('directive', function() {
       dp.checkModel(listField, 'listFieldVal10',[{text: 'Green', code: 'G'}]);
       // Green should not be in the list, because it is selected already
       cy.get(listField).click();
-      cy.get(dp.searchResCSS).should('be.visible');
+      cy.get(dp.searchResSel).should('be.visible');
       cy.get(listField).type('Gr');
       // There should be no matches
       dp.searchResult(1).should('not.exist');

@@ -99,7 +99,7 @@ describe('multi-select lists', function() {
     // The first item is a heading; we should not be able to click on it
     po.searchResult(1).click();
     // Even though we clicked on the heading, the list should stay open
-    cy.get(po.searchResCSS).should('be.visible');
+    cy.get(po.searchResSel).should('be.visible');
     // Try moving the first non-heading item and selecting that
     cy.get(po.multiHeadingCWE).type('{downArrow}{enter}');
     cy.get(po.multiHeadingCWESelected).should('have.length', 1);
@@ -142,7 +142,7 @@ describe('multi-select lists', function() {
     // It is probably due to other current bugs with the list headings.
     po.openTestPage();
     cy.get(po.multiHeadingCWE).click();
-    cy.get(po.searchResCSS).should('be.visible');
+    cy.get(po.searchResSel).should('be.visible');
     // Pick the first three items.  (Note:  the searchResult(1) is a heading.)
     po.waitForSearchResults();
     po.searchResult(2).click();
@@ -152,7 +152,7 @@ describe('multi-select lists', function() {
     cy.get(po.multiHeadingCWE).click();
     po.searchResult(2).click();
     cy.get(po.multiHeadingCWESelected).should('have.length', 4);
-    cy.get(po.searchResCSS).should('be.visible');
+    cy.get(po.searchResSel).should('be.visible');
   });
 
   it('should not allow left/right arrows to pick headings', function() {

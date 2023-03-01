@@ -3,7 +3,7 @@ describe('directive', function() {
 
   it('should create an area on the page for the list', function() {
     dp.openDirectiveTestPage();
-    cy.get(dp.searchResCSS).should('exist');
+    cy.get(dp.searchResSel).should('exist');
   });
 
   it('should assign an ID to the autocompleting field', function() {
@@ -15,9 +15,9 @@ describe('directive', function() {
   });
 
   it('should show the list when the field is clicked', function() {
-    cy.get(dp.searchResCSS).should('not.be.visible');
+    cy.get(dp.searchResSel).should('not.be.visible');
     cy.get(dp.inputElem).click();
-    cy.get(dp.searchResCSS).should('be.visible');
+    cy.get(dp.searchResSel).should('be.visible');
   });
 
   it('should load the default item code and value', function() {
@@ -45,7 +45,7 @@ describe('directive', function() {
 
   it('should populate the model when an item is selected', function() {
     cy.get(dp.inputElem).click();
-    cy.get(dp.searchResCSS).should('be.visible');
+    cy.get(dp.searchResSel).should('be.visible');
     dp.searchResult(1).click();
     // Change focus to send change event
     cy.get(dp.codeField).click();

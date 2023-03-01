@@ -1,9 +1,9 @@
 // Page objects common to the autocompleter test pages.
 export function BasePage() {
   var searchResID = 'searchResults';
-  var searchResCSS = '#'+searchResID;
-  this.searchResCSS = searchResCSS;
-  this.allSearchRes = searchResCSS + ' li';
+  var searchResSel = '#'+searchResID;
+  this.searchResSel = searchResSel;
+  this.allSearchRes = searchResSel + ' li';
   this.expandLink = '#moreResults';
   this.completionOptionsCSS = '#completionOptions';
   this.completionOptionsScrollerCSS = '#completionOptionsScroller';
@@ -14,8 +14,8 @@ export function BasePage() {
    * @param pos the item position number (starting at 1).
    */
   this.searchResult = function(pos) {
-    return cy.get(searchResCSS + ' li:nth-child('+pos+'), '+
-      searchResCSS + ' tr:nth-child('+pos+')');
+    return cy.get(searchResSel + ' li:nth-child('+pos+'), '+
+      searchResSel + ' tr:nth-child('+pos+')');
   };
 
   /**
@@ -26,7 +26,7 @@ export function BasePage() {
    * @param pos the item position number (starting at 1).
    */
   this.tableSearchResult = function(pos) {
-    return cy.get(searchResCSS + ' tr:nth-child('+pos+')');
+    return cy.get(searchResSel + ' tr:nth-child('+pos+')');
   };
 
 
@@ -77,14 +77,14 @@ export function BasePage() {
    * Wait for the autocomplete results to be shown
    */
   this.waitForSearchResults = function() {
-    cy.get(searchResCSS).should('be.visible');
+    cy.get(searchResSel).should('be.visible');
   };
 
   /**
    * Wait for the autocomplete results to not be shown
    */
   this.waitForNoSearchResults = function() {
-    cy.get(searchResCSS).should('not.be.visible');
+    cy.get(searchResSel).should('not.be.visible');
   };
 
 
@@ -198,8 +198,38 @@ export function BasePage() {
       }
       console.log(elem[0]);
       elem[0].scrollIntoView(false);
-      win.document.body.style='background-color: blue';
     });
+  };
+
+
+  /**
+   *  Returns the nth last log entry in the screen reader log.
+   * @param n the number of the log entry, starting with 1 for the last item.
+   */
+  this.nthLastLogEntry = function(n) {
+    return cy.get('#reader_log p:nth-last-child('+n+')').then(el=>el[0].innerText);
+  };
+
+
+  /**
+   *  Waits for the page to stop scrolling the search results into view.
+   * @param fieldID the field whose autocompleter is doing the scrolling.
+   */
+  this.waitForScrollToStop = function(fieldID) {
+    if (!fieldID)
+      throw 'Missing fieldID parameter in waitForScrollToStop';
+    cy.get('#'+fieldID).then(el=>{
+      var ac = el[0].autocomp;
+      cy.waitForCondition(()=>ac.lastScrollEffect_.state != 'running');
+    });
+  };
+
+
+  /**
+   *  Returns the number of times an AJAX call has been made.
+   */
+  this.getAjaxCallCount = function() {
+    return cy.window().then(win=>win.jQuery.ajax.ajaxCtr);
   };
 
 
@@ -234,42 +264,6 @@ if (false) {
     return browser.driver.executeScript(
       'return jQuery("'+this.completionOptionsScrollerCSS+'")[0].scrollTop;'
     );
-  };
-
-
-  /**
-   *  Waits for the page to stop scrolling the search results into view.
-   * @param fieldID the field whose autocompleter is doing the scrolling.
-   */
-  this.waitForScrollToStop = function(fieldID) {
-    if (!fieldID)
-      throw 'Missing fieldID parameter in waitForScrollToStop';
-    function waitForEffectToFinish(fieldID) {
-      var ac = $('#'+fieldID)[0].autocomp;
-      return !ac.lastScrollEffect_ || ac.lastScrollEffect_.state === 'finished';
-    }
-    browser.wait(function() {
-      return browser.driver.executeScript(waitForEffectToFinish, fieldID);
-    });
-  };
-
-
-  /**
-   *  Returns the number of times an AJAX call has been made.
-   */
-  this.getAjaxCallCount = function() {
-    return browser.driver.executeScript('return jQuery.ajax.ajaxCtr');
-  };
-
-
-  /**
-   *  Returns the nth last log entry in the screen reader log.
-   * @param n the number of the log entry, starting with 1 for the last item.
-   */
-  this.nthLastLogEntry = function(n) {
-    var screenReaderLog = $('#reader_log');
-    var lastParagraph = screenReaderLog.element(by.css('p:nth-last-child('+n+')'));
-    return lastParagraph.getAttribute('textContent');
   };
 
 
