@@ -1,45 +1,42 @@
 // Tests related to the use of the "tokens" option.
-var helpers = require('../test_helpers.js');
-var po = require('../autocompPage.js');
+import { default as po } from '../support/autocompPage.js';
 
 describe('Prefetch list with tokens', function() {
   let field = po.prefetchCWETokens;
   describe('mouse selection', function() {
     it('should be able to autocomplete after a token character', function() {
       po.openTestPage();
-      field.click();
+      cy.get(field).click();
       po.waitForSearchResults();
-      po.firstSearchRes.click();
-      expect(field.getAttribute('value')).toBe(
-        'American Indian or Alaska Native');
-      field.sendKeys(',wh');
+      po.searchResult(1).click();
+      cy.get(field).should('have.value', 'American Indian or Alaska Native');
+      cy.get(field).type(',wh');
       po.waitForSearchResults();
-      po.firstSearchRes.click();
-      expect(field.getAttribute('value')).toBe(
+      po.searchResult(1).click();
+      cy.get(field).should('have.value',
         'American Indian or Alaska Native,White');
     });
 
     it('should be able to autocomplete before a token character', function() {
       po.openTestPage();
-      field.click();
-      field.sendKeys('As');
+      cy.get(field).click().type('As');
       po.waitForSearchResults();
-      po.firstSearchRes.click();
-      expect(field.getAttribute('value')).toBe('Asian');
-      field.sendKeys(',wh');
+      po.searchResult(1).click();
+      cy.get(field).should('have.value', 'Asian');
+      cy.get(field).type(',wh');
       po.waitForSearchResults();
-      po.firstSearchRes.click();
-      expect(field.getAttribute('value')).toBe('Asian,White');
+      po.searchResult(1).click();
+      cy.get(field).should('have.value', 'Asian,White');
       // Arrow back to the first value, and edit it to bring up the list
       for (var i=0; i<6; ++i)
-        field.sendKeys(protractor.Key.ARROW_LEFT);
+        cy.get(field).type('{leftArrow}');
       for (var i=0; i<5; ++i)
-        field.sendKeys(protractor.Key.BACK_SPACE);
-      field.sendKeys('U');
+        cy.get(field).type('{backspace}');
+      cy.get(field).type('U');
       // List should now say "Unknown"
       po.waitForSearchResults();
-      po.firstSearchRes.click();
-      expect(field.getAttribute('value')).toBe('Unknown,White');
+      po.searchResult(1).click();
+      cy.get(field).should('have.value', 'Unknown,White');
     });
 
 
@@ -48,20 +45,20 @@ describe('Prefetch list with tokens', function() {
       // First choose a short item to get the token bounds range set to
       // something small.
       po.openTestPage();
-      field.click();
+      cy.get(field).click();
       po.waitForSearchResults();
-      po.secondSearchRes.click();
-      expect(field.getAttribute('value')).toBe('Asian');
+      po.searchResult(2).click();
+      cy.get(field).should('have.value', 'Asian');
       // Now click to get the full list and pick a longer item
-      field.click();
+      cy.get(field).click();
       po.waitForSearchResults();
-      po.firstSearchRes.click();
-      expect(field.getAttribute('value')).toBe('American Indian or Alaska Native');
+      po.searchResult(1).click();
+      cy.get(field).should('have.value', 'American Indian or Alaska Native');
       // Now click and pick the short value again
-      field.click();
+      cy.get(field).click();
       po.waitForSearchResults();
-      po.secondSearchRes.click();
-      expect(field.getAttribute('value')).toBe('Asian');
+      po.searchResult(2).click();
+      cy.get(field).should('have.value', 'Asian');
     });
   });
 
@@ -69,110 +66,99 @@ describe('Prefetch list with tokens', function() {
   describe('arrow selection', function() {
     it('should allow down arrow to affect part of the field', function() {
       po.openTestPage();
-      field.click();
-      po.sendKeys(field, 'as');
+      cy.get(field).click().type('as');
       po.waitForSearchResults();
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe('Asian');
+      cy.get(field).type('{downArrow}');
+      cy.get(field).should('have.value', 'Asian');
       // After a down arrow, the field's text is selected, so hit right arrow
       // before typing more text.
-      field.sendKeys(protractor.Key.ARROW_RIGHT);
-      field.sendKeys(',wh');
+      cy.get(field).type('{rightArrow},wh');
       po.waitForSearchResults();
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe('Asian,White');
+      cy.get(field).type('{downArrow}');
+      cy.get(field).should('have.value', 'Asian,White');
     });
 
     it('should work for the second item', function() {
       po.openTestPage();
-      field.click();
-      po.sendKeys(field, 'am');
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe('American Indian or Alaska Native');
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe('Black or African-American');
+      cy.get(field).click().type('am');
+      cy.get(field).type('{downArrow}');
+      cy.get(field).should('have.value', 'American Indian or Alaska Native');
+      cy.get(field).type('{downArrow}');
+      cy.get(field).should('have.value', 'Black or African-American');
     });
 
     it('should allow the first value of the field to be changed', function() {
       // When there are two values in the field, and the first is edited, arrow
       // selection should work on that value.
       po.openTestPage();
-      field.click();
-      po.sendKeys(field, 'as');
+      cy.get(field).click().type('as');
       po.waitForSearchResults();
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe('Asian');
-      field.sendKeys(protractor.Key.ARROW_RIGHT); // deselect to the right
-      field.sendKeys(',wh');
+      cy.get(field).type('{downArrow}');
+      cy.get(field).should('have.value', 'Asian');
+      cy.get(field).type('{rightArrow},wh'); // deselect to the right, then type
       po.waitForSearchResults();
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe('Asian,White');
+      cy.get(field).type('{downArrow}');
+      cy.get(field).should('have.value', 'Asian,White');
       // Checking here that only the 'White' was selected text
-      expect(field.getAttribute('selectionStart')).toBe('6'); // after "Asian,"
-      field.sendKeys(protractor.Key.ARROW_LEFT); // deselect to the left
-      field.sendKeys(protractor.Key.ARROW_LEFT); // move before comma
+      po.assertSelectionStart(field, 6); // after "Asian,"
+      cy.get(field).type('{leftArrow}'); // deselect to the left
+      cy.get(field).type('{leftArrow}'); // move before comma
       for (var i=0; i<4; ++i)
-        field.sendKeys(protractor.Key.BACK_SPACE); // "A,White"
-      expect(field.getAttribute('value')).toBe('A,White');
+        cy.get(field).type('{backspace}');  // "A,White"
+      po.assertFieldVal(field, 'A,White');
       po.waitForSearchResults();
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe('Asian,White');
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe(
-        'American Indian or Alaska Native,White');
+      po.downArrow(field);
+      po.assertFieldVal(field, 'Asian,White');
+      po.downArrow(field);
+      po.assertFieldVal(field, 'American Indian or Alaska Native,White');
     });
 
-    it('should notice which field value the user clicks on', function() {
-      // This is difficult to test, because protractor does not let you specify
+    it.skip('should notice which field value the user clicks on', function() {
+      // Not testable with Cypress.  github.com/cypress-io/cypress/issues/5721
+      // This is difficult to test, because click() does not let you specify
       // a caret position.  However, a click on the element should put the caret
       // in the middle of the visible field.  So, to test this, we'll put a long
       // value as the first value in the field, and then click and see if the
       // list affects that value.
       po.openTestPage();
-      field.click();
-      po.sendKeys(field, 'na');
+      po.click(field);
+      po.type(field, 'na');
       po.waitForSearchResults();
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe(
-        'Native Hawaiian or Pacific Islander');
-      field.sendKeys(protractor.Key.ARROW_RIGHT); // deselect to the right
-      field.sendKeys(',wh');
+      po.downArrow(field);
+      po.assertFieldVal(field, 'Native Hawaiian or Pacific Islander');
+      po.rightArrow(field); // deselect to the right
+      po.type(field, ',wh');
       po.waitForSearchResults();
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe(
-        'Native Hawaiian or Pacific Islander,White');
-      field.sendKeys(protractor.Key.ARROW_RIGHT); // deselect to the right
+      po.downArrow(field);
+      po.assertFieldVal(field, 'Native Hawaiian or Pacific Islander,White');
+      po.rightArrow(field); // deselect to the right
       // Now click to bring the list full up and hopefully change the first
       // value.
-      field.click();
+      po.click(po.nonField);
+      po.click(field);
       po.waitForSearchResults();
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe(
-        'American Indian or Alaska Native,White');
+      po.downArrow(field);
+      po.assertFieldVal(field, 'American Indian or Alaska Native,White');
       // Check that just the first value is selected
-      expect(field.getAttribute('selectionStart')).toBe('0');
-      expect(field.getAttribute('selectionEnd')).toEqual(''+
-        'American Indian or Alaska Native'.length);
+      po.assertSelectionStart(field, 0);
+      po.assertSelectionEnd(field, 'American Indian or Alaska Native'.length);
     });
 
     it('should show the full list after token character', function() {
       po.openTestPage();
-      field.click();
-      field.sendKeys('as');
+      po.click(field);
+      po.type(field, 'as');
       po.waitForSearchResults();
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe('Asian');
-      field.sendKeys(protractor.Key.ARROW_RIGHT);
-      field.sendKeys(',');
+      po.downArrow(field);
+      po.assertFieldVal(field, 'Asian');
+      po.rightArrow(field);
+      po.type(field, ',');
       // Wait for the list to update, and check the result count
-      browser.wait(function() {
-        return po.shownItemCount().then(function(n) { return n === 7 });
-      });
-      expect(po.shownItemCount()).toBe(7);
+      po.assertPromiseVal(po.shownItemCount(), 7);
       // Also check that the first item is still the normal first item
       // and not a suggestion
-      field.sendKeys(protractor.Key.ARROW_DOWN);
-      expect(field.getAttribute('value')).toBe('Asian,Asian');
+      po.downArrow(field);
+      po.assertFieldVal(field, 'Asian,Asian');
     });
   })
 });
@@ -180,43 +166,49 @@ describe('Prefetch list with tokens', function() {
 
 describe('Search list with tokens', function() {
   afterEach(function() {
+    // Not currently supported by Cypress, but there is an open issue along
+    // these lines:
+    //   https://github.com/cypress-io/cypress/issues/448#issuecomment-613236352
+
     // Print out the browser's console messages (for debugging tests).
     // based on http://stackoverflow.com/a/24417431/360782
+    /*
     browser.manage().logs().get('browser').then(function(browserLogs) {
       // browserLogs is an array of objects with level and message fields
       browserLogs.forEach(function(log){
          console.log(log.message);
       });
     });
+    */
   });
 
   let field = po.searchCNETokens;
   it('should close the list if there are no matches for the second term',
       function() {
     po.openTestPage();
-    field.click();
-    po.sendKeys(field, 'ar');
+    po.click(field);
+    po.type(field, 'ar');
     po.waitForSearchResults();
-    field.sendKeys(protractor.Key.ARROW_DOWN);
-    expect(field.getAttribute('value')).toBe('Arachnoiditis');
-    field.sendKeys(protractor.Key.ARROW_RIGHT);
-    field.sendKeys(',qq'); // no matches
+    po.downArrow(field);
+    po.assertFieldVal(field, 'Arachnoiditis');
+    po.rightArrow(field);
+    po.type(field, ',qq'); // no matches
     po.waitForNoSearchResults();
-    expect(po.shownItemCount()).toBe(0);
+    po.assertPromiseVal(po.shownItemCount(), 0);
   });
 
 
   it('should show results for a second term after a token', function() {
     po.openTestPage();
-    field.click();
-    po.sendKeys(field, 'ar');
+    po.click(field);
+    po.type(field, 'ar');
     po.waitForSearchResults();
-    field.sendKeys(protractor.Key.ARROW_DOWN);
-    expect(field.getAttribute('value')).toBe('Arachnoiditis');
-    field.sendKeys(protractor.Key.ARROW_RIGHT);
-    field.sendKeys(',ar');
+    po.downArrow(field);
+    po.assertFieldVal(field, 'Arachnoiditis');
+    po.rightArrow(field);
+    po.type(field, ',ar');
     po.waitForSearchResults();
-    field.sendKeys(protractor.Key.ARROW_DOWN);
-    expect(field.getAttribute('value')).toBe('Arachnoiditis,Arachnoiditis');
+    po.downArrow(field);
+    po.assertFieldVal(field, 'Arachnoiditis,Arachnoiditis');
   });
 });

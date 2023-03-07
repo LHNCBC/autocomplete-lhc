@@ -1,5 +1,8 @@
 // Page objects common to the autocompleter test pages.
+import { TestHelpers } from './testHelpers';
+
 export function BasePage() {
+  TestHelpers.call(this);
   var searchResID = 'searchResults';
   var searchResSel = '#'+searchResID;
   this.searchResSel = searchResSel;
