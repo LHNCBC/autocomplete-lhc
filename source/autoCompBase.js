@@ -925,8 +925,8 @@ if (typeof Def === 'undefined')
        */
       addToSelectedArea:  function(text) {
         var escapedVal = Def.Autocompleter.Base.escapeAttribute(text);
-        var li = jQuery('<li><button type="button" alt="'+escapedVal+
-                        '"><span aria-hidden="true">&times;</span></button>'
+        var li = jQuery('<li><button type="button" aria-label="&quot;'+escapedVal+
+                        '&quot; item remove"><span aria-hidden="true">&times;</span></button>'
                         +escapedVal+'</li>')[0];
         this.selectedList.appendChild(li);
         var span = li.childNodes[0];
