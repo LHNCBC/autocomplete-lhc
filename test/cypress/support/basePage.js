@@ -2,7 +2,8 @@
 import { TestHelpers } from './testHelpers';
 
 export function BasePage() {
-  TestHelpers.call(this);
+  this.__proto__ = TestHelpers.prototype;
+
   var searchResID = 'searchResults';
   var searchResSel = '#'+searchResID;
   this.searchResSel = searchResSel;
@@ -20,6 +21,17 @@ export function BasePage() {
     return cy.get(searchResSel + ' li:nth-child('+pos+'), '+
       searchResSel + ' tr:nth-child('+pos+')');
   };
+
+
+  /**
+   *  Asserts that the search result at the given index is equal to the given
+   *  value.
+   * @param pos the position of the search result in the list (starting at 1)
+   * @param expectedVal the expected value of the search result.   */
+  this.assertSearchResVal = function(pos, expectedVal) {
+    return this.assertPromiseVal(this.searchResult(pos).invoke('text'), expectedVal);
+  };
+
 
   /**
    *  Returns the item in the search results list at the given position
@@ -44,10 +56,20 @@ export function BasePage() {
     // the browser.
     return cy.window().then(win=> {
       // The replace below escapes / characters in fieldID
-      var ac = win.jQuery('#'+fieldID.replace(/\//g, '\\\\/'))[0].autocomp;
-      return [ac.getSelectedCodes(), ac.getSelectedItems()];
+      return getSelectedWithWin(fieldID, win);
     });
   };
+
+
+  /**
+   *  The same as getSelected, but also takes a window object yielded from
+   *  cy.window().  This is needed because Cypress does not let you all
+   *  cy.window() inside a should().
+   */
+  function getSelectedWithWin(fieldID, win) {
+    var ac = win.jQuery('#'+fieldID.replace(/\//g, '\\\\/'))[0].autocomp;
+    return [ac.getSelectedCodes(), ac.getSelectedItems()];
+  }
 
 
   /**
@@ -55,11 +77,27 @@ export function BasePage() {
    *  autocompleter on the given field ID.
    * @param fieldID the field for the autocompleter.
    * @param t2c a hash from display strings to code values.  (If there are no
-   * code values, the hash still must be passed, but the values should be null.)
+   * code values, the hash still must be passed, but the code values should be undefined.)
    */
   this.checkSelected = function(fieldID, t2c) {
     t2c = {...t2c};
     JSON.parse(JSON.stringify(t2c)); // the checks are done later, so clone
+    return cy.window().then(win=> {
+      return cy.wrap(t2c).should(()=>{
+        const data = getSelectedWithWin(fieldID, win);
+        var codes = data[0];
+        var texts = data[1];
+        var expectedLength = Object.keys(t2c).length;
+        expect(codes).to.have.length(expectedLength);
+        expect(texts).to.have.length(expectedLength);
+        var actualT2C = {};
+        for (var i=0; i<expectedLength; ++i) {
+          actualT2C[texts[i]] = codes[i];
+        }
+        expect(actualT2C).to.deep.equal(t2c);
+      });
+    });
+    /*
     return this.getSelected(fieldID).should(function(data) {
       var codes = data[0];
       var texts = data[1];
@@ -72,6 +110,7 @@ export function BasePage() {
       }
       cy.wrap(actualT2C).should('deep.equal', t2c);
     });
+    */
   };
 
 
@@ -193,7 +232,7 @@ export function BasePage() {
       if (winHeight > elemTop) {
         var div = win.document.getElementById('scrollTestDiv');
         if (!div) {
-          div = $('<div style="background-color: green" id=scrollTestDiv></div>')[0];
+          div = win.$('<div style="background-color: green" id=scrollTestDiv></div>')[0];
           win.document.body.insertBefore(div, win.document.body.firstChild);
         }
         div.style.height = (winHeight-elemTop)+'px';
@@ -223,7 +262,7 @@ export function BasePage() {
       throw 'Missing fieldID parameter in waitForScrollToStop';
     cy.get('#'+fieldID).then(el=>{
       var ac = el[0].autocomp;
-      cy.waitForCondition(()=>ac.lastScrollEffect_.state != 'running');
+      cy.waitForCondition(()=>!ac.lastScrollEffect_ || ac.lastScrollEffect_.state != 'running');
     });
   };
 
@@ -233,6 +272,16 @@ export function BasePage() {
    */
   this.getAjaxCallCount = function() {
     return cy.window().then(win=>win.jQuery.ajax.ajaxCtr);
+  };
+
+
+  /**
+   *  Returns the scroll position of the list's scrollbar.
+   */
+  this.listScrollPos = function() {
+    return this.executeScript(
+      'return window.jQuery("'+this.completionOptionsScrollerCSS+'")[0].scrollTop;'
+    );
   };
 
 
@@ -257,16 +306,6 @@ if (false) {
     field.click();
     field.sendKeys(protractor.Key.CONTROL, 'a'); // select all
     field.sendKeys(protractor.Key.BACK_SPACE); // clear the field
-  };
-
-
-  /**
-   *  Returns the scroll position of the list's scrollbar.
-   */
-  this.listScrollPos = function() {
-    return browser.driver.executeScript(
-      'return jQuery("'+this.completionOptionsScrollerCSS+'")[0].scrollTop;'
-    );
   };
 
 

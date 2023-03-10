@@ -1,68 +1,63 @@
-var helpers = require('../test_helpers.js');
-var hasClass = helpers.hasClass;
-var po = require('../autocompPage.js');
+import { default as po } from '../support/autocompPage.js';
 
 describe('autocomp', function() {
-  var searchResults = $('#searchResults');
   var raceField = po.prefetchCNE;
-  var searchCNE =  po.searchCNE;
-  var suggestionMode0CWE = $('#fe_search0_cwe');
-  var suggestionMode1CWE = po.searchCWE;
-  var suggestionMode2CWE = $('#fe_search2_cwe');
+  var searchCNE =  po.searchCNESel;
+  var suggestionMode0CWE = '#fe_search0_cwe';
+  var suggestionMode1CWE = po.searchCWESel;
+  var suggestionMode2CWE = '#fe_search2_cwe';
 
   it('should respond to the suggestion mode setting',
      function() {
     po.openTestPage();
-    suggestionMode0CWE.click();
-    suggestionMode0CWE.sendKeys('arm');
+    po.click(suggestionMode0CWE);
+    po.type(suggestionMode0CWE, 'arm');
     po.waitForSearchResults();
-    expect(searchResults.isDisplayed()).toBeTruthy();
     // In suggestion mode 0, the first element should be what is alphabetically
     // first.
-    expect(po.firstSearchRes.getText()).toEqual('Arm painzzzzz');
+    po.assertSearchResVal(1, 'Arm painzzzzz');
     // Backspace to erase the field, or the non-match suggestions dialog will
     // appear (for the other kind of suggestion).
-    suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
-    suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
-    suggestionMode0CWE.sendKeys(protractor.Key.BACK_SPACE);
+    po.backspace(suggestionMode0CWE);
+    po.backspace(suggestionMode0CWE);
+    po.backspace(suggestionMode0CWE);
 
-    suggestionMode1CWE.click();
-    po.sendKeys(suggestionMode1CWE, 'arm');
+    po.click(suggestionMode1CWE);
+    po.type(suggestionMode1CWE, 'arm');
     po.waitForSearchResults();
     // In suggesion mode 1, the first element should be the shortest item
     // starting with the input text.
-    expect(po.firstSearchRes.getText()).toEqual('Arm z');
-    suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
-    suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
-    suggestionMode1CWE.sendKeys(protractor.Key.BACK_SPACE);
+    po.assertSearchResVal(1, 'Arm z');
+    po.backspace(suggestionMode1CWE);
+    po.backspace(suggestionMode1CWE);
+    po.backspace(suggestionMode1CWE);
 
-    suggestionMode2CWE.click();
-    suggestionMode2CWE.sendKeys('arm');
+    po.click(suggestionMode2CWE);
+    po.type(suggestionMode2CWE, 'arm');
     po.waitForSearchResults();
 
     // In suggestion mode 2, the first element should be the first returned in
     // the AJAX call.
-    expect(po.firstSearchRes.getText()).toEqual('Coronary artery disease (CAD)');
-    suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
-    suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
-    suggestionMode2CWE.sendKeys(protractor.Key.BACK_SPACE);
+    po.assertSearchResVal(1, 'Coronary artery disease (CAD)');
+    po.backspace(suggestionMode2CWE);
+    po.backspace(suggestionMode2CWE);
+    po.backspace(suggestionMode2CWE);
 
     // Confirm that the default is mode 1.
     // "Asian" is the short match and should be offered as a default
-    po.prefetchCNE.click();
-    po.prefetchCNE.sendKeys('a');
+    po.click(raceField);
+    po.type(raceField, 'a');
     po.waitForSearchResults();
-    po.firstSearchRes.click();
-    expect(po.prefetchCNE.getAttribute('value')).toEqual('Asian');
+    po.click(po.searchResult(1));
+    po.assertFieldVal(po.prefetchCNE, 'Asian');
 
     // The suggestion should not be offered if the user clicks in the field to
     // see the full list.  (A suggestion should be made only when the user is
     // typing.)
-    po.nonField.click();
-    po.prefetchCNE.click();
-    po.firstSearchRes.click();
-    expect(po.prefetchCNE.getAttribute('value')).toEqual(
-      'American Indian or Alaska Native');
+    po.click(po.nonField);
+    po.click(po.prefetchCNE);
+    po.click(po.searchResult(1));
+    po.assertFieldVal(po.prefetchCNE, 'American Indian or Alaska Native');
   });
 
 
@@ -70,43 +65,43 @@ describe('autocomp', function() {
      function() {
     po.openTestPage();
     var inputElem = raceField;
-    inputElem.click();
-    expect(searchResults.isDisplayed()).toBeTruthy();
-    inputElem.sendKeys(protractor.Key.ESCAPE);
-    expect(searchResults.isDisplayed()).toBeFalsy();
+    po.click(inputElem);
+    po.waitForSearchResults();
+    po.escapeKey(inputElem);
+    po.waitForNoSearchResults();
     // Now, if we send control or shift, the list should not redisplay
-    inputElem.sendKeys(protractor.Key.CONTROL);
-    expect(searchResults.isDisplayed()).toBeFalsy();
-    inputElem.sendKeys(protractor.Key.SHIFT);
-    expect(searchResults.isDisplayed()).toBeFalsy();
+    po.controlKey(inputElem);
+    po.waitForNoSearchResults();
+    po.shiftKey(inputElem);
+    po.waitForNoSearchResults();
     // But if we type an backspace, the list should display
-    inputElem.sendKeys(protractor.Key.BACK_SPACE);
-    expect(searchResults.isDisplayed()).toBeTruthy();
+    po.backspace(inputElem);
+    po.waitForSearchResults();
   });
 
 
   it('should not shift the selected item when the control key is down',
      function() {
     po.openTestPage();
-    raceField.click();
-    expect(searchResults.isDisplayed()).toBeTruthy();
-    raceField.sendKeys(protractor.Key.ARROW_DOWN); // first item
-    raceField.sendKeys(protractor.Key.ARROW_DOWN); // second item
-    expect(raceField.getAttribute('value')).toBe('Asian');
-    raceField.sendKeys(protractor.Key.CONTROL, protractor.Key.ARROW_DOWN);
+    po.click(raceField);
+    po.waitForSearchResults();
+    po.downArrow(raceField); // first item
+    po.downArrow(raceField); // second item
+    po.assertFieldVal(raceField, 'Asian');
+    po.downArrow(raceField, [po.KeyModifiers.CONTROL]);
     // second item should still be selected
-    expect(raceField.getAttribute('value')).toBe('Asian');
-    raceField.sendKeys(protractor.Key.ESCAPE); // Close the list
+    po.assertFieldVal(raceField, 'Asian');
+    po.escapeKey(raceField); // Close the list
 
     // Now try a search list
-    searchCNE.click();
-    po.sendKeys(searchCNE, 'ar');
-    expect(searchResults.isDisplayed()).toBeTruthy();
-    searchCNE.sendKeys(protractor.Key.ARROW_DOWN); // first item
-    expect(searchCNE.getAttribute('value')).toBe('Arachnoiditis');
-    searchCNE.sendKeys(protractor.Key.CONTROL, protractor.Key.ARROW_DOWN);
+    po.click(searchCNE);
+    po.type(searchCNE, 'ar');
+    po.waitForSearchResults();
+    po.downArrow(searchCNE); // first item
+    po.assertFieldVal(searchCNE, 'Arachnoiditis');
+    po.downArrow(searchCNE, [po.KeyModifiers.CONTROL]);
     // First item should still be selected
-    expect(searchCNE.getAttribute('value')).toBe('Arachnoiditis');
+    po.assertFieldVal(searchCNE, 'Arachnoiditis');
   });
 
 
@@ -116,36 +111,31 @@ describe('autocomp', function() {
     // non-list entry.  Second, we test clearing a non-list entry.
     po.openTestPage();
     // Check initial stored values of prefetchCWE
-    var selectedData = po.getSelected(po.prefetchCWEID);
-    expect(selectedData).toEqual([[], []]); // no codes or values
+    po.checkSelected(po.prefetchCWEID, {});
     // Select an item from the list
-    po.prefetchCWE.click();
-    po.firstSearchRes.click();
-    selectedData = po.getSelected(po.prefetchCWEID);
-    expect(selectedData).toEqual([["LA44-3"], ["Spanish"]]);
+    po.click(po.prefetchCWE);
+    po.click(po.searchResult(1));
+    po.checkSelected(po.prefetchCWEID, {"Spanish": "LA44-3"});
     // Change the value to a non-list item
-    po.prefetchCWE.sendKeys('zzz');
-    po.nonField.click(); // to remove focus from prefetchCWE
-    selectedData = po.getSelected(po.prefetchCWEID);
-    expect(selectedData).toEqual([[null], ["Spanishzzz"]]);
+    po.type(po.prefetchCWE, 'zzz');
+    po.click(po.nonField); // to remove focus from prefetchCWE
+    po.checkSelected(po.prefetchCWEID, {"Spanishzzz": undefined});
     // Select an item again.
-    po.prefetchCWE.click();
-    po.firstSearchRes.click();
-    selectedData = po.getSelected(po.prefetchCWEID);
-    expect(selectedData).toEqual([["LA44-3"], ["Spanish"]]);
+    po.click(po.prefetchCWE);
+    po.click(po.searchResult(1));
+    po.checkSelected(po.prefetchCWEID, {"Spanish": "LA44-3"});
     // For completeness, pick another coded item, this time by typing
-    var b = protractor.Key.BACK_SPACE;
-    po.nonField.click();
-    po.prefetchCWE.click();
-    po.prefetchCWE.sendKeys(b, b, b, b, b, b, b); // erase previous entry
-    po.prefetchCWE.sendKeys('French');
-    po.nonField.click();
-    selectedData = po.getSelected(po.prefetchCWEID);
-    expect(selectedData).toEqual([["LA45-0"], ["French"]]);
+    po.click(po.nonField);
+    po.click(po.prefetchCWE);
+    for (let i=0; i < 7; ++i)
+      po.backspace(po.prefetchCWE); // erase previous entry
+    po.type(po.prefetchCWE, 'French');
+    po.click(po.nonField);
+    po.checkSelected(po.prefetchCWEID, {"French": "LA45-0"});
     // Now clear the field
-    po.prefetchCWE.clear();
-    selectedData = po.getSelected(po.prefetchCWEID);
-    expect(selectedData).toEqual([[], []]);
+    po.clear(po.prefetchCWE).then(()=>console.log("%%% calling final checkSelected"));
+    po.click(po.nonField); // trigger change event on prefetchCWE
+    po.checkSelected(po.prefetchCWEID, {});
   });
 
 
@@ -154,20 +144,20 @@ describe('autocomp', function() {
     // object was out of date with respect to the actual code.  Hopefully a test
     // here will help stabilize that.
     po.openTestPage();
-    browser.driver.executeScript(
+    po.executeScript(
       'window.prefetchCWEEventData = null;'+
-      'Def.Autocompleter.Event.observeListSelections("'+po.prefetchCWEID+'",'+
+      'window.Def.Autocompleter.Event.observeListSelections("'+po.prefetchCWEID+'",'+
         'function(eventData) {'+
           'window.prefetchCWEEventData = eventData;'+
         '}'+
       ');'
     );
-    po.prefetchCWE.click();
-    po.firstSearchRes.click();
-    var eventData = browser.driver.executeScript('return window.prefetchCWEEventData');
+    po.click(po.prefetchCWE);
+    po.click(po.searchResult(1));
+    var eventData = po.executeScript('return window.prefetchCWEEventData');
     // If you updated the keys in this hash, please make sure the documentation
     // in autoCompEvents.js (observeListSelections) is also up to date.
-    expect(eventData).toEqual({val_typed_in: '', final_val: 'Spanish',
+    po.assertPromiseVal(eventData, {val_typed_in: '', final_val: 'Spanish',
       used_list: true, input_method: 'clicked', on_list: true,
       item_code: 'LA44-3', removed: false,
       list: ['Spanish', 'French', 'Other', 'escape<test>&'],
@@ -180,46 +170,48 @@ describe('autocomp', function() {
     // Position the field at the bottom of the window so the two-column layout
     // should be in effect.
     po.putElementAtBottomOfWindow(po.multiHeadingCWEID);
-    po.multiHeadingCWE.click();
+    //cy.get(po.multiHeadingCWE).click({scrollBehavior: false});
+    po.click(po.multiHeadingCWE, {scrollBehavior: false});
     // Move to first item past heading (second item)
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_DOWN);
-    expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
-    expect(po.multiHeadingCWE.getAttribute('value')).toBe('Chocolate');
+    po.downArrow(po.multiHeadingCWE);
+    po.assertCSSClass(po.searchResult(2), 'selected');
+    po.assertFieldVal(po.multiHeadingCWE, 'Chocolate');
     // Move to second non-heading item (third item)
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_DOWN);
-    expect(hasClass(po.secondSearchRes, 'selected')).toBe(false);
-    expect(hasClass(po.thirdSearchRes, 'selected')).toBe(true);
-    expect(po.multiHeadingCWE.getAttribute('value')).toBe('Crab');
+    po.downArrow(po.multiHeadingCWE);
+    po.assertNotCSSClass(po.searchResult(2), 'selected');
+    po.assertCSSClass(po.searchResult(3), 'selected');
+    po.assertFieldVal(po.multiHeadingCWE, 'Crab');
     // Move to the other column (11th item)
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_RIGHT);
-    expect(hasClass(po.thirdSearchRes, 'selected')).toBe(false);
-    expect(hasClass(po.searchResult(11), 'selected')).toBe(true);
-    expect(po.multiHeadingCWE.getAttribute('value')).toBe('Aminoglycosides');
+    po.rightArrow(po.multiHeadingCWE);
+    po.assertNotCSSClass(po.searchResult(3), 'selected');
+    po.assertCSSClass(po.searchResult(11), 'selected');
+    po.assertFieldVal(po.multiHeadingCWE, 'Aminoglycosides');
     // Move up (10th item)
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_UP);
-    expect(hasClass(po.searchResult(11), 'selected')).toBe(false);
-    expect(hasClass(po.searchResult(10), 'selected')).toBe(true);
-    expect(po.multiHeadingCWE.getAttribute('value')).toBe('ACE Inhibitors');
+    po.upArrow(po.multiHeadingCWE);
+    po.assertNotCSSClass(po.searchResult(11), 'selected');
+    po.assertCSSClass(po.searchResult(10), 'selected');
+    po.assertFieldVal(po.multiHeadingCWE, 'ACE Inhibitors');
     // Move left (back to second item)
-    po.multiHeadingCWE.sendKeys(protractor.Key.ARROW_LEFT);
-    expect(hasClass(po.searchResult(10), 'selected')).toBe(false);
-    expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
-    expect(po.multiHeadingCWE.getAttribute('value')).toBe('Chocolate');
+    po.leftArrow(po.multiHeadingCWE);
+    po.assertNotCSSClass(po.searchResult(10), 'selected');
+    po.assertCSSClass(po.searchResult(2), 'selected');
+    po.assertFieldVal(po.multiHeadingCWE, 'Chocolate');
   });
 
 
   it('should support the twoColumnFlow option', function() {
     po.openTestPage();
-    po.headings1ColCWE.click();
+    po.putElementAtBottomOfWindow(po.headings1ColCWEID);
+    po.click(po.headings1ColCWE, {scrollBehavior: false});
     // Move to first item past heading (second item)
-    po.headings1ColCWE.sendKeys(protractor.Key.ARROW_DOWN);
-    expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
-    expect(po.headings1ColCWE.getAttribute('value')).toBe('Chocolate');
+    po.downArrow(po.headings1ColCWE);
+    po.assertCSSClass(po.searchResult(2), 'selected');
+    po.assertFieldVal(po.headings1ColCWE, 'Chocolate');
     // In a two column list, the right arrow key would move to a different item.
     // Confirm that it does not.
-    po.headings1ColCWE.sendKeys(protractor.Key.ARROW_RIGHT);
-    expect(hasClass(po.secondSearchRes, 'selected')).toBe(true);
-    expect(po.headings1ColCWE.getAttribute('value')).toBe('Chocolate');
+    po.rightArrow(po.headings1ColCWE);
+    po.assertCSSClass(po.searchResult(2), 'selected');
+    po.assertFieldVal(po.headings1ColCWE, 'Chocolate');
   });
 
 
@@ -229,23 +221,23 @@ describe('autocomp', function() {
     po.openTestPage();
     // Preconditions -- need two search fields which do not have a name
     // attribute.
-    expect(po.multiSearchCWE.getAttribute('name')).toBe('');
-    expect(po.searchCNE.getAttribute('name')).toBe('');
-    po.multiSearchCWE.click();
-    po.sendKeys(po.multiSearchCWE, 'ar');
+    po.assertAttrVal(po.multiSearchCWE, 'name', null);
+    po.assertAttrVal(searchCNE, 'name', null);
+    po.click(po.multiSearchCWE);
+    po.type(po.multiSearchCWE, 'ar');
     po.waitForSearchResults();
     // A list should appear
     // This list is using statitics, so it pulls CAD to the top.  The second
     // result is what we can compare with the first result in the other list.
-    expect(po.secondSearchRes.getText()).toBe("Arm pain");
+    po.assertSearchResVal(2, "Arm pain");
     // Now go to another field, which like multiSearchCWE has no name field.
-    po.searchCNE.click();
-    po.sendKeys(po.searchCNE, 'ar');
+    po.click(searchCNE);
+    po.type(searchCNE, 'ar');
     po.waitForSearchResults();
     // The search result list should be different (even though the name
     // attribute is the same/missing for both).
-    expect(po.firstSearchRes.getText()).not.toBe("Arm pain");
-    expect(po.firstSearchRes.getText()).toBe("Arachnoiditis");
+    po.assertSearchResVal(2, "Adult respiratory distress syndrome (ARDS)");
+    po.assertSearchResVal(1, "Arachnoiditis");
   });
 
 
@@ -255,32 +247,30 @@ describe('autocomp', function() {
     // Move the field to the bottom of the window so the two-column layout would
     // be in effect for a non-tableFormat list.
     po.putElementAtBottomOfWindow(po.multiFieldSearchID);
-    po.multiFieldSearch.click();
-    po.sendKeys(po.multiFieldSearch, "ar");
+    po.click(po.multiFieldSearch, {scrollBehavior: false});
+    po.type(po.multiFieldSearch, "ar");
     // Arrow down to first item
-    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_DOWN);
-    expect(po.multiFieldSearch.getAttribute('value')).toBe(
-      'pain in arm');
+    po.downArrow(po.multiFieldSearch);
+    po.assertFieldVal(po.multiFieldSearch, 'pain in arm');
     // In a two column list, the right arrow key would move to a different item.
     // Confirm that it does not.
-    po.multiFieldSearch.sendKeys(protractor.Key.ARROW_RIGHT);
-    expect(po.multiFieldSearch.getAttribute('value')).toBe(
-      'pain in arm');
+    po.rightArrow(po.multiFieldSearch);
+    po.assertFieldVal(po.multiFieldSearch, 'pain in arm');
   });
 
 
   it('should respond to page up and down keys', function() {
     po.openTestPage();
-    po.headings1ColCWE.click();
+    po.click(po.headings1ColCWE);
     po.waitForScrollToStop(po.headings1ColCWEID);
-    po.expandLink.click();
+    po.click(po.expandLink);
     // Current scroll position of the list should be zero
-    expect(po.listScrollPos()).toBe(0);
-    po.headings1ColCWE.sendKeys(protractor.Key.PAGE_DOWN);
+    po.assertPromiseVal(po.listScrollPos(), 0);
+    po.pageDown(po.headings1ColCWE);
     // Now it should be something more than zero.
-    expect(po.listScrollPos()).toBeGreaterThan(0);
-    po.headings1ColCWE.sendKeys(protractor.Key.PAGE_UP);
+    po.assertPromiseValGT(po.listScrollPos(), 0);
+    po.pageUp(po.headings1ColCWE);
     // Now it should be back at the top (zero) again
-    expect(po.listScrollPos()).toBe(0);
+    po.assertPromiseVal(po.listScrollPos(), 0);
   });
 });

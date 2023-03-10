@@ -2,19 +2,38 @@
 // hide the particular test framework being used (which might very well change
 // yet again).
 
-// This class exports a function which assigns the helper function to the "this"
-// object.
 
+/**
+ *  Creates a Cypress modifier string for the given modifier keys.
+ * @param modifiers an array of modifier key values from
+ * TestHelpers.prototype.KeyModifiers.
+ */
+function modifierString(modifiers) {
+  let rtn = '';
+  if (modifiers) {
+    modifiers.forEach((modifier)=>{
+      switch(modifier) {
+        case TestHelpers.prototype.KeyModifiers.CONTROL:
+          rtn += '{control}';
+          break;
+        case TestHelpers.prototype.KeyModifiers.SHIFT:
+          rtn += '{shift}';
+          break;
+      }
+    });
+  }
+  return rtn;
+}
 
-export function TestHelpers() {
+export class TestHelpers {
   /**
    *  Asserts that the given field has the given value.
    * @param field the CSS selector for a field
    * @param value the expected value
    */
-  this.assertFieldVal = function(field, value) {
+  assertFieldVal(field, value) {
     cy.get(field).should('have.value', value);
-  };
+  }
 
 
   /**
@@ -22,26 +41,33 @@ export function TestHelpers() {
    * @param promise the promise to resolve
    * @param value the expected value
    */
-  this.assertPromiseVal = function(promise, value) {
-    promise.should('equal', value);
-  };
-
-
-  /**
-   *  Sends a down arrow event to the given field
-   * @param field the CSS selector for a field
-   */
-  this.downArrow = function(field) {
-    cy.get(field).type('{downArrow}');
+  assertPromiseVal(promise, value) {
+    promise.should('deep.equal', value);
   }
 
 
   /**
-   *  Sends a right arrow event to the given field
-   * @param field the CSS selector for a field
+   *  Asserts that the given promise resolves to a value greater than the given value.
+   * @param promise the promise to resolve
+   * @param value the value that should be less than the promise value
    */
-  this.rightArrow = function(field) {
-    cy.get(field).type('{rightArrow}');
+  assertPromiseValGT(promise, value) {
+    promise.should('be.greaterThan', value);
+  }
+
+
+  /**
+   *  Asserts that the field has an attribute with the given value.
+   * @param field the CSS selector for a field
+   * @param attr the attribute name
+   * @param value the expected attribute value.  If this is
+   *  null, the assertion is changed to assert the absence of the attribute.
+   */
+  assertAttrVal(field, attr, value) {
+    if (value === null)
+      cy.get(field).should('not.have.attr', attr);
+    else
+      cy.get(field).should('have.attr', attr, value);
   }
 
 
@@ -51,9 +77,9 @@ export function TestHelpers() {
    * @param field the CSS selector for a field
    * @param selStart the expected selection start position
    */
-  this.assertSelectionStart = function(field, selStart) {
+  assertSelectionStart(field, selStart) {
     cy.get(field).then(el=>expect(el[0].selectionStart).to.equal(selStart));
-  };
+  }
 
 
   /**
@@ -62,17 +88,66 @@ export function TestHelpers() {
    * @param field the CSS selector for a field
    * @param selEnd the expected selection end position
    */
-  this.assertSelectionEnd = function(field, selEnd) {
+  assertSelectionEnd(field, selEnd) {
     cy.get(field).then(el=>expect(el[0].selectionEnd).to.equal(selEnd));
-  };
+  }
 
 
-   /**
-   *  Clicks in the given field.
-   * @param field the CSS selector for a field
+  /**
+   *  Asserts that the given element has the given CSS class.
+   * @param field the CSS selector for a field, or the test framework's concept
+   *  of an element.
+   * @param cls the CSS class to assert
    */
-  this.click = function(field) {
-    cy.get(field).click();
+  assertCSSClass(field, cls) {
+    (typeof field == 'string' ? cy.get(field) : field).should('have.class', cls);
+  }
+
+  /**
+   *  Asserts that the given element does not have the given CSS class.
+   * @param field the CSS selector for a field, or the test framework's concept
+   *  of an element.
+   * @param cls the CSS class to assert is not there
+   */
+  assertNotCSSClass(field, cls) {
+    (typeof field == 'string' ? cy.get(field) : field).should('not.have.class', cls);
+  }
+
+
+  /**
+   *  Clicks in the given field.  By default, the viewport will be scrolled to move the
+   *  element to the top of the window.
+   * @param field the CSS selector for an element, or a element that can be clicked
+   * @param options {scrollBehavior: false} will disable scrolling.
+   */
+  click(field, options) {
+    (typeof field == 'string' ? cy.get(field) : field).click(options);
+  }
+
+
+  /**
+   *  Executes the given code in the context of the application.
+   * @param code either a string of JavaScript (the body of a function) or a function.  If it is
+   *  function, it is expected to take the window object as its first parameter.
+   * @return the return value of the code
+   */
+  executeScript(code) {
+    // Make the "window" object available.
+    return cy.window().then(win=>{
+      if (typeof code === 'string')
+        code = new Function('window', code);
+      return code(win);
+    });
+  }
+
+  /**
+   *  Clears the given field.
+   * @param field the CSS selector for an element
+   * @return (debugging only) the Cypress promise
+   */
+  clear(field) {
+    //cy.get(field).clear();
+    return cy.get(field).clear();
   }
 
 
@@ -82,8 +157,107 @@ export function TestHelpers() {
    * @param field the CSS selector for a field
    * @param text the text to be typed
    */
-  this.type = function(field, text) {
+  type(field, text) {
     cy.get(field).type(text);
   }
+
+
+  /**
+   *  Sends a down arrow event to the given field
+   * @param field the CSS selector for a field
+   * @param modifiers an optional array of modifier keys to be sent.  Elements
+   * in the array should be members of the KeyModifiers object which is part of this
+   * object.
+   */
+  downArrow(field, modifiers) {
+    cy.get(field).type(modifierString(modifiers) + '{downArrow}');
+  }
+
+
+  /**
+   *  Sends an up arrow event to the given field
+   * @param field the CSS selector for a field
+   */
+  upArrow(field) {
+    cy.get(field).type('{upArrow}');
+  }
+
+
+  /**
+   *  Sends a right arrow event to the given field
+   * @param field the CSS selector for a field
+   */
+  rightArrow(field) {
+    cy.get(field).type('{rightArrow}');
+  }
+
+
+  /**
+   *  Sends a left arrow event to the given field
+   * @param field the CSS selector for a field
+   */
+  leftArrow(field) {
+    cy.get(field).type('{leftArrow}');
+  }
+
+
+  /**
+   *  Sends a backspace key to the given field
+   * @param field the CSS selector for a field
+   */
+  backspace(field) {
+    cy.get(field).type('{backspace}');
+  }
+
+  /**
+   *  Sends a page down key to the given field
+   * @param field the CSS selector for a field
+   */
+  pageDown(field) {
+    cy.get(field).type('{pageDown}');
+  }
+
+  /**
+   *  Sends a page up key to the given field
+   * @param field the CSS selector for a field
+   */
+  pageUp(field) {
+    cy.get(field).type('{pageUp}');
+  }
+
+  /**
+   *  Sends an escape key to the given field
+   * @param field the CSS selector for a field
+   */
+  escapeKey(field) {
+    cy.get(field).type('{esc}');
+  }
+
+  /**
+   *  Sends a shift key to the given field
+   * @param field the CSS selector for a field
+   */
+  shiftKey(field) {
+    cy.get(field).type('{esc}');
+  }
+
+  /**
+   *  Sends a control keypress to the given field
+   * @param field the CSS selector for a field
+   */
+  controlKey(field) {
+    cy.get(field).type('{esc}');
+  }
+
 }
+
+/**
+ *  Constants to indicate key modifiers in use.
+ *  This is defined on the prototype so subclasses can access it.
+ */
+TestHelpers.prototype.KeyModifiers = {
+  CONTROL: 1,
+  SHIFT: 2
+};
+
 
