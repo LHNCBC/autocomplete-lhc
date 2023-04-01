@@ -109,12 +109,13 @@ const ATR = {
     waitForExpression: function(expression, expectedVal) {
       expression = ATR.CommandUtil.prepareExpression(expression);
       expectedVal = ATR.CommandUtil.prepareExpValue(expectedVal);
+/*
       // expectedVal might be a string, in which case we will need to quote it
       // below, and escape any quotes it contains.  The remoteEval function
       // does the same using double quotes, so we will use single quotes here.
       if (typeof expectedVal === 'string')
         expectedVal = '\'' + expectedVal.replace(/\'/g, "\\'") + '\'';
-
+*/
       let promiseFn = function () {
         // Use remoteEval to get the value of the last statement in the
         // expression.
@@ -133,7 +134,7 @@ const ATR = {
         let promiseFn = function() {
           return withWinFn(win);
         }
-        return waitForPromiseVal(promiseFn, expectedVal); // TBD- promiseFn is not returning a promise (and doesn't need to)
+        return waitForPromiseVal(promiseFn, expectedVal);
         //let rtn = expression(win);
         //return rtn === undefined ? null : rtn;
       });
@@ -146,7 +147,7 @@ const ATR = {
      */
     scrollIntoView: (elemID) => {
       // With thanks to the form builder tests for inspiration
-      po.executeScript('$("'+idToSel(elemID)+'").scrollIntoView();');
+      po.executeScript('$("'+idToSel(elemID)+'")[0].scrollIntoView();');
     },
 
     /**

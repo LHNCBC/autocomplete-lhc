@@ -72,7 +72,6 @@
 | keyDown | fe_search_cwe | \40 |
 | keyDown | fe_search_cwe | \9 |
 | waitForExpression | javascript{storedVars['callbackData']['input_method']} | arrows |
-| waitForExpression | javascript{storedVars['callbackData']} | knee |
 | assertExpression | javascript{storedVars['callbackData']['val_typed_in']} | knee |
 | assertExpression | javascript{storedVars['callbackData']['final_val']} | Knee pain |
 | assertExpression | javascript{storedVars['callbackData']['used_list']} | true |
