@@ -2,6 +2,7 @@
 // hide the particular test framework being used (which might very well change
 // yet again).
 
+import {deepEqual} from 'deep-equal';
 
 /**
  *  Creates a Cypress modifier string for the given modifier keys.
@@ -35,6 +36,15 @@ export class TestHelpers {
     cy.get(field).should('have.value', value);
   }
 
+
+  /**
+   *  Asserts that the given field does not have the given value.
+   * @param field the CSS selector for a field
+   * @param value the expected value
+   */
+  assertNotFieldVal(field, value) {
+    cy.get(field).should('not.have.value', value);
+  }
 
   /**
    *  Asserts that the given promise resolves to the given value.
@@ -115,6 +125,24 @@ export class TestHelpers {
 
 
   /**
+   *  Asserts that the given element is visible.
+   * @param elemSel the CSS selector for the element.
+   */
+  assertElemVisible(elemSel) {
+    cy.get(elemSel).should('be.visible');
+  }
+
+
+  /**
+   *  Asserts that the given element is not visible.
+   * @param elemSel the CSS selector for the element.
+   */
+  assertElemNotVisible(elemSel) {
+    cy.get(elemSel).should('not.be.visible');
+  }
+
+
+  /**
    *  Clicks in the given field.  By default, the viewport will be scrolled to move the
    *  element to the top of the window.
    * @param field the CSS selector for an element, or a element that can be clicked
@@ -126,19 +154,54 @@ export class TestHelpers {
 
 
   /**
+   *  Causes the given field to lose its focus.  The field should have focus
+   *  before this is called.
+   * @param elemSel the CSS selector for an element
+   */
+  blur(elemSel) {
+    cy.get(elemSel).blur();
+  }
+
+
+  /**
    *  Executes the given code in the context of the application.
    * @param code either a string of JavaScript (the body of a function) or a function.  If it is
    *  function, it is expected to take the window object as its first parameter.
-   * @return the return value of the code
+   * @return a promise which resolves to the return value of the code
    */
   executeScript(code) {
     // Make the "window" object available.
+console.log("%%% in executeScript, code="+code);
     return cy.window().then(win=>{
-      if (typeof code === 'string')
-        code = new Function('window', code);
-      return code(win);
+console.log("%%% in executeScript, window block, code="+code);
+      if (typeof code === 'string') {
+code = "console.log('%%% running code');"+code;
+        // Use "with" (deprecrated, but currently with wide support) to make the
+        // window object the default object.
+        code = new Function('window', 'with(window) {'+code+'}');
+      }
+      let rtn = code(win);
+
+console.log("%%% executeScript, code, rtn = ");
+console.log(code);
+console.log(rtn);
+      // If we return undefined, then it returns "window", so return null
+      // instead (which is hopefully less confusing).
+      return rtn === undefined ? null : rtn;
     });
   }
+
+
+  /**
+   *  Repeatedly executes the the given code in the context of the application,
+   *  until the script return value equals the given expected value.
+   */
+  waitForScript(code, expectedValue) {
+console.log("%%% in waitForScript");
+console.log(code);
+    return cy.waitForPromiseVal(()=>this.executeScript(code), expectedValue);
+  }
+
 
   /**
    *  Clears the given field.
@@ -156,9 +219,12 @@ export class TestHelpers {
    *  already focused, and does not clear the field before typing.
    * @param field the CSS selector for a field
    * @param text the text to be typed
+   * @param modifiers an optional array of modifier keys to be sent.  Elements
+   * in the array should be members of the KeyModifiers object which is part of this
+   * object.
    */
-  type(field, text) {
-    cy.get(field).type(text);
+  type(field, text, modifiers) {
+    cy.get(field).type(modifierString(modifiers) + text);
   }
 
 
@@ -228,9 +294,12 @@ export class TestHelpers {
   /**
    *  Sends an escape key to the given field
    * @param field the CSS selector for a field
+   * @param modifiers an optional array of modifier keys to be sent.  Elements
+   *  in the array should be members of the KeyModifiers object which is part of this
+   *  object.
    */
-  escapeKey(field) {
-    cy.get(field).type('{esc}');
+  escapeKey(field, modifiers) {
+    cy.get(field).type(modifierString(modifiers) + '{esc}');
   }
 
   /**
@@ -238,7 +307,7 @@ export class TestHelpers {
    * @param field the CSS selector for a field
    */
   shiftKey(field) {
-    cy.get(field).type('{esc}');
+    cy.get(field).type('{shift}');
   }
 
   /**
@@ -246,9 +315,49 @@ export class TestHelpers {
    * @param field the CSS selector for a field
    */
   controlKey(field) {
-    cy.get(field).type('{esc}');
+    cy.get(field).type('{control}');
   }
 
+
+  /**
+   *  Sends an enter keypress to the given field
+   * @param field the CSS selector for a field
+   * @param modifiers an optional array of modifier keys to be sent.  Elements
+   *  in the array should be members of the KeyModifiers object which is part of this
+   *  object.
+   */
+  enterKey(field, modifiers) {
+    cy.get(field).type(modifierString(modifiers) + '{enter}');
+  }
+
+
+  /**
+   *  Reads a file and retuns a promise with its contents.
+   * @param pathName the pathname of the file relative to the project root.
+   * @param encoding the encoding of the file (default: utf-8)
+   */
+  readFile(pathName, encoding) {
+    if (!encoding)
+      encoding = 'utf-8';
+    return cy.readFile(pathName, {encoding});
+  }
+
+  /**
+   *  Opens the given web page.
+   * @param url the URL to open
+   */
+  visit(url) {
+    cy.visit(url);
+  }
+
+
+  /**
+   *  Waits the given number of milliseconds before proceding.
+   * @param waitTime the number milliseconds to wait
+   */
+  wait(waitTime) {
+    cy.wait(waitTime);
+  }
 }
 
 /**
