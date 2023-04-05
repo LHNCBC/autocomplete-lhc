@@ -20,7 +20,6 @@
     "babel-loader": "^8.0.4",
     "bower": "^1.8.8",
     "clean-css-cli": "^4.2.1",
-    "connect": "^3.4.1",
     "cypress": "^10.11.0",
     "cypress-plugin-tab": "^1.0.5",
     "deep-equal": "^2.1.0",
@@ -45,5 +44,8 @@
     "build": "npm run build:clean && npm run build:mkdist && webpack && npm run build:css && npm run build:cp && npm run build:zip"
   },
   "repository": "github:lhncbc/autocomplete-lhc",
-  "license": "See LICENSE.md"
+  "license": "See LICENSE.md",
+  "dependencies": {
+    "connect": "^3.7.0"
+  }
 }
