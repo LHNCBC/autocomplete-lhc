@@ -26,7 +26,6 @@
     "deep-equal": "^2.1.0",
     "grunt": "^1.5.3",
     "grunt-cli": "^1.2.0",
-    "grunt-protractor-runner": "^5.0.0",
     "jasmine-spec-reporter": "^2.4.0",
     "jit-grunt": "^0.10.0",
     "mocha": "^10.0.0",
@@ -36,7 +35,6 @@
     "webpack-cli": "^4.10.0"
   },
   "scripts": {
-    "update-webdriver": "node node_modules/protractor/bin/webdriver-manager update --versions.chrome $(google-chrome --version |awk '{print $NF}')",
     "test": "test/run_tests.sh",
     "test:e2e": "test/run_tests.sh skip_unit_tests",
     "build:clean": "rm -rf dist",

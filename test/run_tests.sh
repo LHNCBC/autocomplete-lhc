@@ -39,6 +39,6 @@ then
 fi
 
 # Now run the e2e tests
-grunt protractor && cypress run
+cypress run
 code=$?
 shutdown_and_exit

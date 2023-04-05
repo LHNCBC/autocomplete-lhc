@@ -87,43 +87,5 @@ Cypress.Commands.add(
   { prevSubject: 'optional' },
   (subject, promiseFn, expectedVal) => {
     return waitForPromiseVal(promiseFn, expectedVal);
-    /*
-    const MAX_WAIT = 4000;
-    const ITER_WAIT = 50;
-    let totalWait = 0;
-    return new Cypress.Promise((resolve, reject) => {
-      function waitForPromiseVal() {
-        var result;
-        try {
-  console.log("%%% calling promiseFn");
-  console.log(""+promiseFn);
-          result = promiseFn();
-  console.log(result);
-        }
-        catch (e) {
-          console.log(e);
-          reject(e);
-        }
-        result.then(actualVal=>{
-  console.log("%%% in result.then");
-          if (!deepEqual(actualVal, expectedVal)) {
-  console.log("%%% totalWait =" +totalWait);
-            if (totalWait < MAX_WAIT) {
-              setTimeout(waitForPromiseVal, ITER_WAIT);
-              totalWait += ITER_WAIT;
-            }
-            else
-              reject('Condition not satisfied after ' +MAX_WAIT+' ms');
-          }
-          else {
-           console.log("%%% resolving to");
-           console.log(actualVal);
-            resolve(actualVal);
-          }
-        });
-      }
-      waitForPromiseVal();
-    });
-  */
   }
 );

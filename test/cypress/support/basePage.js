@@ -97,20 +97,6 @@ export function BasePage() {
         expect(actualT2C).to.deep.equal(t2c);
       });
     });
-    /*
-    return this.getSelected(fieldID).should(function(data) {
-      var codes = data[0];
-      var texts = data[1];
-      var expectedLength = Object.keys(t2c).length;
-      cy.wrap(codes).should('have.length', expectedLength);
-      cy.wrap(texts).should('have.length', expectedLength);
-      var actualT2C = {};
-      for (var i=0; i<expectedLength; ++i) {
-        actualT2C[texts[i]] = codes[i];
-      }
-      cy.wrap(actualT2C).should('deep.equal', t2c);
-    });
-    */
   };
 
 
