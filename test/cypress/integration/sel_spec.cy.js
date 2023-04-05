@@ -109,35 +109,8 @@ const ATR = {
     waitForExpression: function(expression, expectedVal) {
       expression = ATR.CommandUtil.prepareExpression(expression);
       expectedVal = ATR.CommandUtil.prepareExpValue(expectedVal);
-/*
-      // expectedVal might be a string, in which case we will need to quote it
-      // below, and escape any quotes it contains.  The remoteEval function
-      // does the same using double quotes, so we will use single quotes here.
-      if (typeof expectedVal === 'string')
-        expectedVal = '\'' + expectedVal.replace(/\'/g, "\\'") + '\'';
-*/
-      let promiseFn = function () {
-        // Use remoteEval to get the value of the last statement in the
-        // expression.
-        return ATR.CommandUtil.remoteEval(expression);
-      }
-      //return cy.waitForPromiseVal(promiseFn, expectedVal); // does not work ... maybe because of cy.window()
-      // return waitForPromiseVal(promiseFn, expectedVal); -- gets confused
-      // and reports that cy.window() is called inside cy.click();
-        // maybe because cy.window() is called inside a promise
-      return cy.window().then(win=> {
-        let script = expression.replace(/"/g, '\\"')
-        script = 'return eval("'+script+'")';
-        // change to return a promse
-      console.log("%%% inside promiseFn, script="+script);
-        let withWinFn = new Function('window', 'with(window) {'+script+'}');
-        let promiseFn = function() {
-          return withWinFn(win);
-        }
-        return waitForPromiseVal(promiseFn, expectedVal);
-        //let rtn = expression(win);
-        //return rtn === undefined ? null : rtn;
-      });
+
+      return ATR.CommandUtil.waitForRemoteEval(expression, expectedVal);
     },
 
 
@@ -368,7 +341,6 @@ const ATR = {
       // it as an argument to eval, and that means we need to escape any
       // double quotes (though we don't actually have those in the current
       // cases.)
-console.log("%%% remoteEval, expr="+expr);
       var script = expr.replace(/"/g, '\\"')
       return po.executeScript('return eval("'+script+'")');
     },
@@ -380,10 +352,7 @@ console.log("%%% remoteEval, expr="+expr);
      * @param expectedVal the expected result of the last part of expr.
      */
     waitForRemoteEval: function(expr, expectedVal) {
-//po.executeScript(()=>console.log("%%% in waitForRemoteEval"));
-//po.executeScript(()=>console.log(expr));
-      var script = expr.replace(/"/g, '\\"')
-      return po.waitForScript('return eval("'+script+'")', expectedVal);
+      return po.waitForEval(expr, expectedVal);
     }
   }
 };

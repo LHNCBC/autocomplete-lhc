@@ -171,20 +171,13 @@ export class TestHelpers {
    */
   executeScript(code) {
     // Make the "window" object available.
-console.log("%%% in executeScript, code="+code);
     return cy.window().then(win=>{
-console.log("%%% in executeScript, window block, code="+code);
       if (typeof code === 'string') {
-code = "console.log('%%% running code');"+code;
         // Use "with" (deprecrated, but currently with wide support) to make the
         // window object the default object.
         code = new Function('window', 'with(window) {'+code+'}');
       }
       let rtn = code(win);
-
-console.log("%%% executeScript, code, rtn = ");
-console.log(code);
-console.log(rtn);
       // If we return undefined, then it returns "window", so return null
       // instead (which is hopefully less confusing).
       return rtn === undefined ? null : rtn;
@@ -194,12 +187,18 @@ console.log(rtn);
 
   /**
    *  Repeatedly executes the the given code in the context of the application,
-   *  until the script return value equals the given expected value.
+   *  until the script evaluates (via eval) to the given expected value.
+   * @param code A string of JavaScript one which eval will be run.
    */
-  waitForScript(code, expectedValue) {
-console.log("%%% in waitForScript");
-console.log(code);
-    return cy.waitForPromiseVal(()=>this.executeScript(code), expectedValue);
+  waitForEval(code, expectedValue) {
+    var script = code.replace(/"/g, '\\"')
+    return cy.window().then(win=> {
+      let withWinFn = new Function('window', 'with(window) {return eval("'+script+'")}');
+      let promiseFn = function() {
+        return withWinFn(win);
+      }
+      return cy.waitForPromiseVal(promiseFn, expectedValue);
+    });
   }
 
 

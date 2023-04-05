@@ -1,13 +1,4 @@
 | open | /test/pages/autocomp_atr.html |
-
-# Debugging
-| waitForExpression | javascript{2} | 2 |
-| storeExpression | javascript{0} | debugCount |
-| assertExpression | javascript{setTimeout(function(){++storedVars['debugCount']}, 3000); 1} | 1 |
-| waitForExpression | javascript{storedVars['debugCount']} | 1 |
-# End debugging
-
-
 # Tests for callbacks. Start with a test for list expansions
 | storeExpression | javascript{0} | callbackCount |
 # Set up a callback on a search field
