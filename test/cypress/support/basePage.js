@@ -63,7 +63,7 @@ export function BasePage() {
 
   /**
    *  The same as getSelected, but also takes a window object yielded from
-   *  cy.window().  This is needed because Cypress does not let you all
+   *  cy.window().  This is needed because Cypress does not let you call
    *  cy.window() inside a should().
    */
   function getSelectedWithWin(fieldID, win) {
@@ -80,22 +80,19 @@ export function BasePage() {
    * code values, the hash still must be passed, but the code values should be undefined.)
    */
   this.checkSelected = function(fieldID, t2c) {
-    t2c = {...t2c};
-    JSON.parse(JSON.stringify(t2c)); // the checks are done later, so clone
+    t2c = {...t2c}; // the checks are done later, so clone
     return cy.window().then(win=> {
-      return cy.wrap(t2c).should(()=>{
-        const data = getSelectedWithWin(fieldID, win);
-        var codes = data[0];
-        var texts = data[1];
-        var expectedLength = Object.keys(t2c).length;
-        expect(codes).to.have.length(expectedLength);
-        expect(texts).to.have.length(expectedLength);
-        var actualT2C = {};
-        for (var i=0; i<expectedLength; ++i) {
-          actualT2C[texts[i]] = codes[i];
-        }
-        expect(actualT2C).to.deep.equal(t2c);
-      });
+      const data = getSelectedWithWin(fieldID, win);
+      var codes = data[0];
+      var texts = data[1];
+      var expectedLength = Object.keys(t2c).length;
+      expect(codes).to.have.length(expectedLength);
+      expect(texts).to.have.length(expectedLength);
+      var actualT2C = {};
+      for (var i=0; i<expectedLength; ++i) {
+        actualT2C[texts[i]] = codes[i];
+      }
+      expect(actualT2C).to.deep.equal(t2c);
     });
   };
 
