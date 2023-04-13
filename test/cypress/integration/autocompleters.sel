@@ -1,5 +1,4 @@
 | open | /test/pages/autocomp_atr.html |
-
 # Tests for callbacks. Start with a test for list expansions
 | storeExpression | javascript{0} | callbackCount |
 # Set up a callback on a search field

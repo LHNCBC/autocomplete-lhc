@@ -1,7 +1,22 @@
+import { default as po } from '../support/autocompPage.js';
+import { TestHelpers } from '../support/testHelpers';
+import deepEqual from 'deep-equal';
+import {waitForPromiseVal} from '../support/waitForPromiseVal';
+
+/**
+ *  Returns a CSS selector for the given element ID.
+ */
+function idToSel(elemID) {
+  // To be general purpose, we would also need to escape certain characters like
+  // '/', but that is not necessary in these tests.
+  return '#' + elemID;
+}
+
+
 /**
  *  ATR is a namespace for functions that process the selenese test file.
  */
-ATR = {
+const ATR = {
   /**
    *  Time in milliseconds to wait for something to be occur.
    */
@@ -30,9 +45,7 @@ ATR = {
       else {
         switch(cmd) {
           case 'open':
-            var config = require('../../config');
-            browser.ignoreSynchronization = true; // run without AngularJS
-            browser.get('http://localhost:'+config.port+arg1);
+            po.visit(arg1);
             break;
           case 'mouseDown':
             this.Commands.click(arg1);
@@ -66,7 +79,7 @@ ATR = {
         throw 'Missing variable name';
       script = 'if (typeof window.ATR_testVars_ === "undefined") window.ATR_testVars_={}; '+
                'window.ATR_testVars_["' + varName + '"] = ' + script;
-      browser.driver.executeScript(script);
+      po.executeScript(script);
     },
 
 
@@ -78,7 +91,11 @@ ATR = {
     assertExpression: function(expression, expectedVal) {
       expression = ATR.CommandUtil.prepareExpression(expression);
       expectedVal = ATR.CommandUtil.prepareExpValue(expectedVal);
-      expect(ATR.CommandUtil.remoteEval(expression)).toEqual(expectedVal);
+      // Use remoteEval to get the value of the last statement in the
+      // expression.
+      ATR.CommandUtil.remoteEval(expression).then(actualVal=>{
+        expect(actualVal).to.equal(expectedVal);
+      });
     },
 
 
@@ -92,15 +109,10 @@ ATR = {
     waitForExpression: function(expression, expectedVal) {
       expression = ATR.CommandUtil.prepareExpression(expression);
       expectedVal = ATR.CommandUtil.prepareExpValue(expectedVal);
-      // expectedVal might be a string, in which case we will need to quote it
-      // below, and escape any quotes it contains.  The removeEval function
-      // does the same using double quotes, so we will use single quotes here.
-      if (typeof expectedVal === 'string')
-        expectedVal = '\'' + expectedVal.replace(/\'/g, "\\'") + '\'';
-      browser.wait(function() {
-        return ATR.CommandUtil.remoteEval(expression + '==' + expectedVal);
-      }, ATR.TIMEOUT);
+
+      return ATR.CommandUtil.waitForRemoteEval(expression, expectedVal);
     },
+
 
     /**
      *  Handles a "scrollIntoView" command.
@@ -108,8 +120,7 @@ ATR = {
      */
     scrollIntoView: (elemID) => {
       // With thanks to the form builder tests for inspiration
-      browser.executeScript('arguments[0].scrollIntoView();',
-        $('#'+elemID).getWebElement());
+      po.executeScript('$("'+idToSel(elemID)+'")[0].scrollIntoView();');
     },
 
     /**
@@ -121,10 +132,10 @@ ATR = {
     click: function(locator) {
       var cssPrefix = 'css=';
       if (locator.indexOf(cssPrefix) === 0)
-        locator = by.css(locator.substring(cssPrefix.length));
+        locator = locator.substring(cssPrefix.length);
       else
-        locator = by.id(locator)
-      element(locator).click();
+        locator = idToSel(locator);
+      po.click(locator);
     },
 
 
@@ -136,9 +147,9 @@ ATR = {
      */
     fireEvent: function(fieldID, eventType) {
       if (eventType === 'focus')
-        element(by.id(fieldID)).click();
+        po.click(idToSel(fieldID));
       else if (eventType === 'blur')
-        element(by.css('body')).click();
+        po.blur(idToSel(fieldID));
     },
 
 
@@ -148,20 +159,22 @@ ATR = {
      * @param chars the characters to be typed
      */
     typeKeys: function(fieldID, chars) {
-      browser.sleep(150); // see basePage.js sendKeys for explanation
-      var elem = element(by.id(fieldID)).getWebElement();
-      if (chars === '\\13')
-        chars = protractor.Key.ENTER;
-      else if (chars === '\\9')
-        chars = protractor.Key.TAB;
-      else if (chars === '\\40')
-        chars = protractor.Key.ARROW_DOWN;
-      else if (chars === '\\27')
-        chars = protractor.Key.ESCAPE;
+      const fieldSel = idToSel(fieldID);
+      po.wait(150); // see basePage.js sendKeys for explanation
+      let modifierKeys;
       if (this.controlKey_)
-        elem.sendKeys(protractor.Key.CONTROL, chars);
+        modifierKeys = [TestHelpers.prototype.KeyModifiers.CONTROL];
+
+      if (chars === '\\13')
+        po.enterKey(fieldSel, modifierKeys);
+      else if (chars === '\\9')
+        po.blur(fieldSel); // should be tab, Cypress doesn't support it
+      else if (chars === '\\40')
+        po.downArrow(fieldSel, modifierKeys);
+      else if (chars === '\\27')
+        po.escapeKey(fieldSel, modifierKeys);
       else
-        elem.sendKeys(chars);
+        po.type(fieldSel, chars, modifierKeys);
     },
 
 
@@ -188,7 +201,6 @@ ATR = {
       var charsLen = chars.length;
       var oneLess = charsLen - 1;
       var lastChar = chars.substring(oneLess, charsLen);
-      var elem = element(by.id(fieldID)).getWebElement();
       this.type(fieldID, chars.substring(0, oneLess));
       this.typeKeys(fieldID, lastChar);
     },
@@ -199,10 +211,7 @@ ATR = {
      * @param fieldID the ID of the element that should be visible.
      */
     waitForVisible: function(fieldID) {
-      // This implementation does not really wait.  See waitForValue
-      // for an example of that if this needs to change.
-      var elem = element(by.id(fieldID)).getWebElement();
-      expect(elem.isDisplayed()).toBeTruthy();
+      po.assertElemVisible(idToSel(fieldID));
     },
 
 
@@ -211,8 +220,7 @@ ATR = {
      * @param fieldID the ID of the element that should be visible.
      */
     waitForNotVisible: function(fieldID) {
-      var elem = element(by.id(fieldID)).getWebElement();
-      expect(elem.isDisplayed()).toBeFalsy();
+      po.assertElemNotVisible(idToSel(fieldID));
     },
 
 
@@ -222,8 +230,7 @@ ATR = {
      * @param val the value the field should have.
      */
     assertValue: function(fieldID, val) {
-      var elem = element(by.id(fieldID)).getWebElement();
-      expect(elem.getAttribute('value')).toBe(val);
+      po.assertFieldVal(idToSel(fieldID), val);
     },
 
 
@@ -235,20 +242,12 @@ ATR = {
      *  for the field to not have the value.  (This is used by waitForNotValue.)
      */
     waitForValue: function(fieldID, val, not) {
-      if (not === undefined)
-        not = false;
-      var elem = element(by.id(fieldID)).getWebElement();
-      // browser.wait waits for the returned Promise to resolve and be true.
-      browser.wait(function() {
-        return elem.getAttribute('value').then(function(fieldVal) {
-          var rtn;
-          if (not)
-            rtn = fieldVal != val;
-          else
-            rtn = fieldVal == val;
-          return rtn;
-        });
-      }, ATR.TIMEOUT);
+      // In Cypress, assert a value is also waiting for a value.
+      const fieldSel = idToSel(fieldID);
+      if (not)
+        po.assertNotFieldVal(fieldSel, val);
+      else
+        po.assertFieldVal(fieldSel, val);
     },
 
 
@@ -332,8 +331,8 @@ ATR = {
 
 
     /**
-     *  Evaluates a JavaScript expression from the selenese, and returns
-     *  its value.
+     *  Evaluates (using eval) a JavaScript expression from the selenese, and returns
+     *  a promise resolving to its value.
      * @param expr the expression to evaluate in the browser.
      */
     remoteEval: function(expr) {
@@ -343,7 +342,17 @@ ATR = {
       // double quotes (though we don't actually have those in the current
       // cases.)
       var script = expr.replace(/"/g, '\\"')
-      return browser.driver.executeScript('return eval("'+script+'")');
+      return po.executeScript('return eval("'+script+'")');
+    },
+
+
+    /**
+     *  Wait for an eval of the given expression to match the expected value.
+     * @param expr the expression to evaluate in the browser using eval
+     * @param expectedVal the expected result of the last part of expr.
+     */
+    waitForRemoteEval: function(expr, expectedVal) {
+      return po.waitForEval(expr, expectedVal);
     }
   }
 };
@@ -354,17 +363,24 @@ ATR = {
 describe('autocomp selenese (modified) test', function() {
   // Load "selenese" test file.
   // (It is not quite selenese.)
-  var fs = require('fs');
-  var path = require('path');
-  var sel_str = fs.readFileSync(path.join(__dirname, '../autocompleters.sel'),
-                                {'encoding': 'utf-8'});
-  var sel_lines = sel_str.split("\n");
 
-  for (var i=0, len=sel_lines.length; i<len; ++i) {
-    var line = sel_lines[i].trim();
-    if (line !== '' && line.indexOf('#') !== 0) {
-      it('should pass at line '+(i+1)+':  '+line, ATR.selCommandFn(line));
-    }
-  }
+  // For Cypress, I had to put all of these "tests" into one "it".  The reason is
+  // that I can't call readFile outside of a test, and once you are inside a
+  // test you can't define new tests.
+  it('should pass all the selenese test specifications', ()=> {
+    po.readFile('test/cypress/integration/autocompleters.sel').then(selStr=>{
+      var selLines = selStr.split("\n");
+      for (let i=0, len=selLines.length; i<len; ++i) {
+        let line = selLines[i].trim();
+        if (line !== '' && line.indexOf('#') !== 0) {
+          // Put the console.log below in a command so it runs synchronously with the
+          // test tests.
+          po.executeScript(()=>console.log("Running line "+(i+1)+
+            " of autocompleters.sel:  "+line));
+          ATR.selCommandFn(line)();
+        }
+      }
+    });
+  });
 });
 

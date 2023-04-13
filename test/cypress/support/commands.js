@@ -25,6 +25,9 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
 
+import deepEqual from 'deep-equal';
+import {waitForPromiseVal} from '../support/waitForPromiseVal';
+
 // Type in a search box and wait until search queries are finished.
 // (Copied from lforms)
 Cypress.Commands.add(
@@ -73,5 +76,16 @@ Cypress.Commands.add(
       }
       waitForCondition();
     });
+  }
+);
+
+
+// Wait for the given function to return a promise that resolves to the given
+// expected value (compared with deep equal).
+Cypress.Commands.add(
+  'waitForPromiseVal',
+  { prevSubject: 'optional' },
+  (subject, promiseFn, expectedVal) => {
+    return waitForPromiseVal(promiseFn, expectedVal);
   }
 );
