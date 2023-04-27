@@ -859,9 +859,9 @@
 
 
       /**
-       * Tests for not showing list on focus if temporaryHide_ is set to true.
+       * Tests for not showing list on focus if preventListFromShowing is set to true.
        */
-      testTemporaryHide: function () {
+      testPreventListFromShowing: function () {
         with (this) {
           var elem = AutoCompTestUtil.createInputElement();
           var otherAutoComp =
@@ -869,10 +869,11 @@
               ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
               {'addSeqNum': false});
 
-          otherAutoComp.temporaryHide_ = true;
+          otherAutoComp.preventListFromShowing = true;
           otherAutoComp.onFocus();
-          // List should not be shown on focus if temporaryHide_ is set to true.
+          // List should not be shown on focus if preventListFromShowing is set to true.
           assertEqual('false', elem.getAttribute('aria-expanded'));
+          otherAutoComp.preventListFromShowing = false;
           otherAutoComp.onFieldClick();
           // List should be shown if user clicks the control again.
           assertEqual('true', elem.getAttribute('aria-expanded'));

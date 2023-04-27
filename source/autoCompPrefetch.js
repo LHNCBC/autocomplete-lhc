@@ -899,11 +899,9 @@
 
         //show the list based on following rules.
         var blnShowList = false;
-        if (this.temporaryHide_) {
-          // don't show list if temporaryHide_ is set to true from the using app.
+        if (this.preventListFromShowing) {
+          // don't show list if preventListFromShowing is set to true from the using app.
           blnShowList = false;
-          // reset temporaryHide_ flag so the list could be shown when appropriate.
-          this.temporaryHide_ = false;
         }
         else if (this.add_seqnum == false) {
           //show list if number of choices > 0 (when no sequence number was added)
