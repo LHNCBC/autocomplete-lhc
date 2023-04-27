@@ -858,29 +858,6 @@
       }},
 
 
-      /**
-       * Tests for not showing list on focus if preventListFromShowing is set to true.
-       */
-      testPreventListFromShowing: function () {
-        with (this) {
-          var elem = AutoCompTestUtil.createInputElement();
-          var otherAutoComp =
-            new Def.Autocompleter.Prefetch(elem.id,
-              ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'],
-              {'addSeqNum': false});
-
-          otherAutoComp.preventListFromShowing = true;
-          otherAutoComp.onFocus();
-          // List should not be shown on focus if preventListFromShowing is set to true.
-          assertEqual('false', elem.getAttribute('aria-expanded'));
-          otherAutoComp.preventListFromShowing = false;
-          otherAutoComp.onFieldClick();
-          // List should be shown if user clicks the control again.
-          assertEqual('true', elem.getAttribute('aria-expanded'));
-        }
-      },
-
-
     // ---------------- Tests for the Search class ---------------------
       /**
        *  Tests the sorting in the processChoices function.

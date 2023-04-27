@@ -139,5 +139,21 @@ describe('Prefetch lists', function() {
     po.shownItemCount().should('equal', 14);
     po.checkListCountMessage('14 of 25 items total');
   });
+
+  it('should not show list if preventListFromShowing is set to true', function() {
+    po.openTestPage();
+    cy.window().then((win) => {
+      win.Def.PrototypeAPI.$(po.prefetchCWEID).autocomp.preventListFromShowing = true;
+    });
+    cy.get(po.prefetchCWE).click();
+    // List should not be shown on focus if preventListFromShowing is set to true.
+    cy.get(po.searchResSel).should('not.be.visible');
+    cy.window().then((win) => {
+      win.Def.PrototypeAPI.$(po.prefetchCWEID).autocomp.preventListFromShowing = false;
+    });
+    // Now click in the field.  The list should appear
+    cy.get(po.prefetchCWE).click();
+    cy.get(po.searchResSel).should('be.visible');
+  });
 });
 
