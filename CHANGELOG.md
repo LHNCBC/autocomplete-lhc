@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.5.2] - 2023-04-28
+### Changed
+- Don't show list on focus if preventListFromShowing is set to true.
+
 ## [18.5.1] - 2023-02-23
 ### Fixed
 - Reading text to the item remove button.

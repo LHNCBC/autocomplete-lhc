@@ -858,7 +858,7 @@
       }},
 
 
-      // ---------------- Tests for the Search class ---------------------
+    // ---------------- Tests for the Search class ---------------------
       /**
        *  Tests the sorting in the processChoices function.
        */
