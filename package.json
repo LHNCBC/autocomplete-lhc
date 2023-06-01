@@ -26,7 +26,7 @@
   },
   "scripts": {
     "cypress:open": "cypress open",
-    "cypress:run": "grunt test:e2e"
+    "test": "grunt test:e2e"
   },
   "repository": {}
 }
