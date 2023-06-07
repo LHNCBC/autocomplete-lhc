@@ -25,7 +25,8 @@
   },
   "scripts": {
     "cypress:open": "cypress open",
-    "test": "grunt test:e2e"
+    "test": "grunt test:e2e",
+    "build": "node compile.js && grunt"
   },
   "repository": {}
 }
