@@ -2137,7 +2137,7 @@ if (typeof Def === 'undefined')
               if (!this.liIsHeading(li)) {
                 if (elemVal === liVal)
                   caseSensitiveMatchIndex = i;
-                else if (matchIndex < 0 && lcElemVal === liVal.toLowerCase())
+                else if (this.caseInsenstiveSelection_ && matchIndex < 0 && lcElemVal === liVal.toLowerCase())
                   matchIndex = i;
               }
             }
@@ -2145,7 +2145,7 @@ if (typeof Def === 'undefined')
               this.index = caseSensitiveMatchIndex;
               canSelect = true;
             }
-            else if (this.caseInsenstiveSelection_ && matchIndex >= 0) {
+            else if (matchIndex >= 0) {
               this.index = matchIndex
               canSelect = true;
             }

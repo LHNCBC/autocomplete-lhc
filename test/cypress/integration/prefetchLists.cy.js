@@ -20,15 +20,15 @@ describe('Prefetch lists', function() {
     po.openTestPage();
     // If caseInsenstiveSelection is set to false, typing 'pb' should not match
     // the item 'pB' in the list.
-    cy.get(po.csMatchPrefetch_caseInsenstiveSelection).type('pb');
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection).type('pb');
     cy.get(po.nonField).click();
-    cy.get(po.csMatchPrefetch_caseInsenstiveSelection)
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection)
       .should('have.value', 'pb')
       .should('have.class', 'no_match');
-    cy.get(po.csMatchPrefetch_caseInsenstiveSelection).clear();
-    cy.get(po.csMatchPrefetch_caseInsenstiveSelection).type('pB');
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection).clear();
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection).type('pB');
     cy.get(po.nonField).click();
-    cy.get(po.csMatchPrefetch_caseInsenstiveSelection)
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection)
       .should('have.value', 'pB')
       .should('not.have.class', 'no_match');
   });
