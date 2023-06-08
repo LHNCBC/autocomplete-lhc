@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-75410768-6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-75410768-6');
+    </script>
+
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    
+    <meta name="description" content="Autocomplete-lhc: An autocompleter package used by the NLM PHR and LHC-Forms projects">
+
+    <title>Autocomplete-lhc </title>
+    <!-- build:css dist/demo.min.css -->
+      <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/pygment_trac.css">
+      <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+      <link href="bower_components/autocomplete-lhc/source/auto_completion.css" media="screen" rel="stylesheet" />
+      <link href="bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" media="screen" rel="stylesheet" />
+    <!-- endbuild -->
+
+  </head>
+
+  <body ng-app="demoApp">
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/lhncbc/autocomplete-lhc">View on GitHub</a>
+
+          <h1 id="project_title">Autocomplete-lhc</h1>
+          <h2 id="project_tagline">An autocompleter package used by the NLM PHR and LHC-Forms projects</h2>
+            <div id="header_buttons">
+              <a href="index.html#installation">Installation</a>
+              <a href="index.html#demos">Demos</a>
+              <a href="index.html#features">Features</a>
+
+              <a href="docs.html">Documentation</a>
+            </div>
+            <section id="downloads">
+              <a class="zip_download_link"
+               href="https://clin-table-search.lhc.nlm.nih.gov/autocomplete-lhc-versions/"
+              >Download pre-built JavaScript and CSS as a .zip file</a>
+              <!--<a class="zip_download_link" href="https://github.com/lhncbc/autocomplete-lhc/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/lhncbc/autocomplete-lhc/tarball/master">Download this project as a tar.gz file</a>
+              -->
+            </section>
+        </header>
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="autocomplete-lhc" class="anchor" href="#autocomplete-lhc" aria-hidden="true"><span class="octicon octicon-link"></span></a>autocomplete-lhc</h1>
+
+<p>This is a package of JavaScript autocompleters that were developed to meet the requirements of the
+NLM <a href="https://phr-demo.nlm.nih.gov">PHR</a> and <a
+href="https://lhcforms.nlm.nih.gov/">LHC-Forms</a> projects</a>.  The package
+includes an AngularJS directive, but can be used without Angular.</p>
+
+<p>The package supports two basic types of autocompleters.  Autocompleters whose
+lists are small enough to be fully specified at construction time are called
+"<b>Prefetch</b>", and are supported by autoCompPrefetch.js.  Autocompleters whose
+lists are shown in small, AJAX-retrieved chunks that match the user's input are
+called "<b>Search</b>", and are supported by autoCompSearch.js.</p>
+
+<p>Below are a few <a href="#demos">demos</a> of the <a
+href="#features">features</a> and the code to use them.</p>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+  <!-- build:js dist/demo.min.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/polyfill.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/prototype_api.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/jqueryLite.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/effects.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/effectScroll.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/event.simulate.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/observable.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/screenReaderLog.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/recordDataRequester.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/fieldAlarms.js"></script>
+    <script src="bower_components/autocomplete-lhc/soundmanager/bonk.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autoCompBase.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autoCompPrefetch.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autoCompSearch.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autoCompEvents.js"></script>
+    <script src="bower_components/autocomplete-lhc/source/autocomplete-lhc.js"></script>
+    <!-- endbower -->
+  <!-- endbuild -->
+
+
+<h2><a id="demos"></a>A Few Demos</h2>
+
+A prefetch autocompleter that allows entry of off-list items:
+<script
+src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<div class="demo"><input type="text" id="demo1">
+<script>
+var dessertArray = ['Chocoloate bar', 'Chocolate ice cream',
+  'Vanilla ice cream', 'Brownie', 'Fudge Brownie', 'Double Fudge Brownie',
+  'Fudge'].sort();
+new Def.Autocompleter.Prefetch('demo1', dessertArray);
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo1&quot;&gt;
+&lt;script&gt;
+var dessertArray = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
+  &#39;Vanilla ice cream&#39;, &#39;Brownie&#39;, &#39;Fudge Brownie&#39;, &#39;Double Fudge Brownie&#39;,
+  &#39;Fudge&#39;].sort();
+new Def.Autocompleter.Prefetch(&#39;demo1&#39;, dessertArray);
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+Autocompleters can also require the entered value to match:
+<div class="demo"><input type="text" id="demo2">
+<script>
+var opts = {'matchListValue': true}
+new Def.Autocompleter.Prefetch('demo2', dessertArray, opts);
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo2&quot;&gt;
+&lt;script&gt;
+var opts = {&#39;matchListValue&#39;: true}
+new Def.Autocompleter.Prefetch(&#39;demo2&#39;, dessertArray, opts);
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+Sequence numbers can be left out (but are useful for picking by number):
+<div class="demo"><input type="text" id="demo3">
+<script>
+var opts = {addSeqNum: false}
+new Def.Autocompleter.Prefetch('demo3', dessertArray, opts);
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo3&quot;&gt;
+&lt;script&gt;
+var opts = {addSeqNum: false}
+new Def.Autocompleter.Prefetch(&#39;demo3&#39;, dessertArray, opts);
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+When a field is near the bottom of the window, the list will scroll into view
+and flow into two columns:
+<div class="demo"><input type="text" id="demo4">
+<script>
+var moreDesserts = ['Chocoloate bar', 'Chocolate ice cream',
+  'Vanilla ice cream', 'Brownie', 'Fudge brownie', 'Double fudge brownie',
+  'Fudge', 'Chocolate cake', 'Chocolate mousse', 'Watermelon',
+   'Chocolate chip cookies', 'Brownie-stuffed cookie'].sort();
+new Def.Autocompleter.Prefetch('demo4', moreDesserts);
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo4&quot;&gt;
+&lt;script&gt;
+var moreDesserts = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
+  &#39;Vanilla ice cream&#39;, &#39;Brownie&#39;, &#39;Fudge brownie&#39;, &#39;Double fudge brownie&#39;,
+  &#39;Fudge&#39;, &#39;Chocolate cake&#39;, &#39;Chocolate mousse&#39;, &#39;Watermelon&#39;,
+   &#39;Chocolate chip cookies&#39;, &#39;Brownie-stuffed cookie&#39;].sort();
+new Def.Autocompleter.Prefetch(&#39;demo4&#39;, moreDesserts);
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+Larger lists show a subset and have a "see more" link:
+<div class="demo"><input type="text" id="demo5">
+<script>
+var evenMoreDesserts = ['Chocoloate bar', 'Chocolate ice cream',
+  'Vanilla ice cream', 'Brownie', 'Fudge brownie', 'Double fudge brownie',
+  'Fudge', 'Chocolate cake', 'Chocolate mousse', 'Watermelon',
+  'Chocolate chip cookies', 'Brownie-stuffed cookie', 'Cannoli',
+  'Baklava', 'Tiramisu', 'Ice cream cake', 'Pumpkin pie', 'Shortbread',
+  'Samoas', 'Raisin cookies', 'Peanut butter cookies'].sort();
+new Def.Autocompleter.Prefetch('demo5', evenMoreDesserts);
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo5&quot;&gt;
+&lt;script&gt;
+var evenMoreDesserts = [&#39;Chocoloate bar&#39;, &#39;Chocolate ice cream&#39;,
+  &#39;Vanilla ice cream&#39;, &#39;Brownie&#39;, &#39;Fudge brownie&#39;, &#39;Double fudge brownie&#39;,
+  &#39;Fudge&#39;, &#39;Chocolate cake&#39;, &#39;Chocolate mousse&#39;, &#39;Watermelon&#39;,
+  &#39;Chocolate chip cookies&#39;, &#39;Brownie-stuffed cookie&#39;, &#39;Cannoli&#39;,
+  &#39;Baklava&#39;, &#39;Tiramisu&#39;, &#39;Ice cream cake&#39;, &#39;Pumpkin pie&#39;, &#39;Shortbread&#39;,
+  &#39;Samoas&#39;, &#39;Raisin cookies&#39;, &#39;Peanut butter cookies&#39;].sort();
+new Def.Autocompleter.Prefetch(&#39;demo5&#39;, evenMoreDesserts);
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+List items can have associated codes:
+<div class="demo"><input type="text" id="demo6" name="demo6">  Code: <input id=demo6Code readonly>
+<script>
+var opts = {codes: ['R', 'G', 'B']}
+new Def.Autocompleter.Prefetch('demo6', ['Red', 'Green', 'Blue'], opts);
+Def.Autocompleter.Event.observeListSelections('demo6', function(data) {
+  jQuery('#demo6Code')[0].value = data.item_code;
+});
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo6&quot; name=&quot;demo6&quot;&gt;  Code: &lt;input id=demo6Code readonly&gt;
+&lt;script&gt;
+var opts = {codes: [&#39;R&#39;, &#39;G&#39;, &#39;B&#39;]}
+new Def.Autocompleter.Prefetch(&#39;demo6&#39;, [&#39;Red&#39;, &#39;Green&#39;, &#39;Blue&#39;], opts);
+Def.Autocompleter.Event.observeListSelections(&#39;demo6&#39;, function(data) {
+  jQuery(&#39;#demo6Code&#39;)[0].value = data.item_code;
+});
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+List items can have headers (in prefetch lists):
+<div class="demo"><input type="text" id="demo7">
+<script>
+var colors = ['Primary', 'Red', 'Green', 'Blue',
+              'Secondary', 'Magenta', 'Yellow', 'Cyan']
+var opts = {codes: ['P', 'R', 'G', 'B', 'S', 'M', 'Y', 'C'],
+            itemToHeading: {R: 'P', G: 'P', B: 'P',
+                            M: 'S', Y: 'S', C: 'S'}}
+new Def.Autocompleter.Prefetch('demo7', colors, opts);
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo7&quot;&gt;
+&lt;script&gt;
+var colors = [&#39;Primary&#39;, &#39;Red&#39;, &#39;Green&#39;, &#39;Blue&#39;,
+              &#39;Secondary&#39;, &#39;Magenta&#39;, &#39;Yellow&#39;, &#39;Cyan&#39;]
+var opts = {codes: [&#39;P&#39;, &#39;R&#39;, &#39;G&#39;, &#39;B&#39;, &#39;S&#39;, &#39;M&#39;, &#39;Y&#39;, &#39;C&#39;],
+            itemToHeading: {R: &#39;P&#39;, G: &#39;P&#39;, B: &#39;P&#39;,
+                            M: &#39;S&#39;, Y: &#39;S&#39;, C: &#39;S&#39;}}
+new Def.Autocompleter.Prefetch(&#39;demo7&#39;, colors, opts);
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+A search autocompleter searching medical conditions:
+<div class="demo"><input type="text" id="demo8">
+<script>
+new Def.Autocompleter.Search('demo8',
+  'https://clinicaltables.nlm.nih.gov/api/conditions/v3/search');
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo8&quot;&gt;
+&lt;script&gt;
+new Def.Autocompleter.Search(&#39;demo8&#39;,
+  &#39;https://clinicaltables.nlm.nih.gov/api/conditions/v3/search&#39;);
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+A prefetch autocompleter via an AngularJS directive:
+<div class="demo"><script>
+  angular.module('demoApp', ['autocompleteLhcMod']).
+    controller('demoController', ['$scope', function($scope) {
+      // Set up the list items as data on the scope.  Base them
+      // on the dessertArray declared in the first demo.
+      var listItemData = [];
+      for (var i=0, len=dessertArray.length; i<len; ++i) {
+        // Each item's data is an object which will get stored on the
+        // input field's model (demo9Val, in this case) when the item is
+        // selected from the list.
+        listItemData.push({
+          text: dessertArray[i],  // the display string goes under "text"
+          otherItemData:  'anything else you want can be included in the object'
+        });
+      }
+      $scope.demo9ListOpts = {listItems: listItemData};
+    }]);
+</script>
+<div ng-controller="demoController">
+  <input type="text" id="demo9" ng-model="demo9Val"
+   autocomplete-lhc="demo9ListOpts">
+</div>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;script&gt;
+  angular.module(&#39;demoApp&#39;, [&#39;autocompleteLhcMod&#39;]).
+    controller(&#39;demoController&#39;, [&#39;$scope&#39;, function($scope) {
+      // Set up the list items as data on the scope.  Base them
+      // on the dessertArray declared in the first demo.
+      var listItemData = [];
+      for (var i=0, len=dessertArray.length; i&lt;len; ++i) {
+        // Each item&#39;s data is an object which will get stored on the
+        // input field&#39;s model (demo9Val, in this case) when the item is
+        // selected from the list.
+        listItemData.push({
+          text: dessertArray[i],  // the display string goes under &quot;text&quot;
+          otherItemData:  &#39;anything else you want can be included in the object&#39;
+        });
+      }
+      $scope.demo9ListOpts = {listItems: listItemData};
+    }]);
+&lt;/script&gt;
+&lt;div ng-controller=&quot;demoController&quot;&gt;
+  &lt;input type=&quot;text&quot; id=&quot;demo9&quot; ng-model=&quot;demo9Val&quot;
+   autocomplete-lhc=&quot;demo9ListOpts&quot;&gt;
+&lt;/div&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+A multi-select prefetch autocompleter:
+<div class="demo"><input type="text" id="demo10">
+<script>
+new Def.Autocompleter.Prefetch('demo10', dessertArray, {maxSelect: '*'});
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo10&quot;&gt;
+&lt;script&gt;
+new Def.Autocompleter.Prefetch(&#39;demo10&#39;, dessertArray, {maxSelect: &#39;*&#39;});
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+A table-format search autocompleter (having two columns, with only the first
+column being selected for the input field):
+<div class="demo"><input type="text" id="demo11">
+<script>
+new Def.Autocompleter.Search('demo11',
+  'https://clinicaltables.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod',
+  {tableFormat: true, valueCols: [0], colHeaders: ['Symbol', 'Name']});
+</script>
+</div><div>  <a class="showSource">[Show source]</a>  <div style="display:none">    <pre class="prettyprint lang-html"     ><code>&lt;input type=&quot;text&quot; id=&quot;demo11&quot;&gt;
+&lt;script&gt;
+new Def.Autocompleter.Search(&#39;demo11&#39;,
+  &#39;https://clinicaltables.nlm.nih.gov/api/genes/v3/search?df=symbol,name_mod&#39;,
+  {tableFormat: true, valueCols: [0], colHeaders: [&#39;Symbol&#39;, &#39;Name&#39;]});
+&lt;/script&gt;
+    </code></pre>    <a class="hideSource">[Hide source]</a>  </div></div>
+
+<p>
+Some complete HTML page examples hosted on Plunker:
+<ul>
+  <li><a href=
+    "https://embed.plnkr.co/vNrfMHdLRA9zjd0lk5MM?show=index.html,preview&sidebar=false"
+  >Medical condition lookup</a> showing how to obtain the ICD-9 code</li>
+  <li><a href=
+    "https://embed.plnkr.co/ribBnsyc3senibgXrRlg?show=index.html,preview&sidebar=false"
+  >Drug name lookup</a> with a strength list and an RxCUI code field</li>
+</ul>
+
+<script>
+  function showSource(e) {
+    e.target.style.display='none';
+    e.target.nextElementSibling.style.display='block';
+  }
+  jQuery('.showSource').click(showSource);
+  jQuery('.hideSource').click(function(e) {
+    e.target.parentNode.style.display='none';
+    e.target.parentNode.previousElementSibling.style.display = '';
+  });
+</script>
+
+
+<h2><a id="features"></a>Features:</h2>
+
+<ol>
+  <li>Section 508-compliant (i.e., accessible to screen readers)</li>
+  <li>Supports coded-value lists</li>
+  <li>Supports headings for groups of items in lists</li>
+  <li>Two-column lists when there is not enough space on the page to show the list
+  in a single column.</li>
+  <li>Numbered list items (optional).</li>
+  <li>Can require that an entry in the field match the list.</li>
+  <li>Multi-select lists</li>
+  <li>Table-format for list items with multiple fields</li>
+  <li>Event listeners for various things like "list selection".</li>
+  <li>Provides a way to get extra information about the record associated with a
+  list item.  (See recordDataRequester.js.)</li>
+  <li>Support for list suggestions in the search (AJAX) autocompleter, when the user does
+  not pick an item in the list.  (Currently this is for single-select lists only.)</li>
+  <li>"autofill" option, which fills in the field automatically if there is just one
+  list item</li>
+  <li>Default value (optional), which gets placed in the field when the field gets
+  focus (along with showing the list).</li>
+  <li>A "see more" link on the search autocompleter which provides an expanded list
+  of items.</li>
+  <li>Search buttons (optional) for search autocompleters to make them show an expanded
+  results list.  (Without a button, the user can click on the "see more" link.)</li>
+  <li>A results cache for the search autocompleter, so that repeats of AJAX calls
+  for the same list items are not necessary.</li>
+</ol>
+
+<h2><a id="installation"></a>Installation:</h2>
+<p>There are four ways to install and use autocomplete-lhc code:
+<ul>
+  <li>Linking directly to the browser-ready release files hosted on the Clinical Table
+  Search Service website.  (See "<a href="#prebuiltFiles">Using the Hosted
+  Browser-Ready Releases"</a> below).</li>
+  <li>Downloading the <a
+  href="https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/">latest
+  release</a> from the release zip files
+  hosted the Clinical Table Search Service website.</li>
+  <li>Using <a href="https://www.npmjs.com/">npm</a>:  <code>npm install
+  autocomplete-lhc</code>.  To use this, you would need to run the code through
+  something <a href="https://webpack.js.org/">webpack</a> to build a version
+  usable in a web browser.</li>
+  <li>Using <a href="http://bower.io">bower</a>: <code>bower install
+  autocomplete-lhc</code>.  These files are ready to use in a web browser.
+  However, note that bower itself is now deprecated, so you would not want to
+  start a new project using it.</li>
+</ul>
+
+<h3><a id="prebuiltFiles"></a>Using the Hosted Browser-Ready Releases</h3>
+<p>Starting with version 17, this package does not bundle its jQuery depenendency,
+so you will need to include that separately, but that can be obtained from one
+of several CDNs (an example of which is below).
+
+<p>For the Javascript, include:</p>
+<code>&lt;script
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"&gt;&lt;/script&gt;
+&lt;!-- example CDN-- you may choose another source --&gt;
+<br>
+&lt;script
+src=https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/17.0.3/autocomplete-lhc.min.js&gt;&lt;/script&gt;</code>
+
+<p>(Note that you can substitute for "17.0.3" one of the other prebuilt versions
+available at https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions).</p>
+
+<p>For the CSS, include:</p>
+<code>&lt;link
+href="https://clinicaltables.nlm.nih.gov/autocomplete-lhc-versions/17.0.3/autocomplete-lhc.min.css"
+rel="stylesheet" /&gt;</code>
+
+
+<h2>License, etc.</h2>
+<p>This software, autocomplete-lhc, was developed by the National Library of Medicine (NLM) Lister Hill National Center for Biomedical Communications (LHNCBC), part of the National Institutes of Health (NIH).</p>
+
+<p>Please cite as:</p>
+<p>
+Lister Hill National Center for Biomedical Communications<br>
+National Library of Medicine<br>
+Bethesda, MD
+</p>
+
+<p>This software is distributed under a BSD-style open-source license.  See <a
+href="https://github.com/lhncbc/autocomplete-lhc/blob/master/LICENSE.md">LICENSE.md</a>.</p>
+
+<p>No warranty or indemnification for damages resulting from claims brought by third parties whose proprietary rights may be infringed by your usage of this software are provided by any of the owners.
+</p>
+      </section>
+    </div>
+
+        <div id="footer_wrap" class="outer">
+
+      <footer class="inner">
+        <p class="copyright">Autocomplete-lhc is maintained by <a
+        href="http://lhncbc.nlm.nih.gov/">Lister Hill National Center for Biomedical
+        Communications</A>, <a href="http://www.nlm.nih.gov">National Library of Medicine</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
+
+
+  </body>
+</html>
