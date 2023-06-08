@@ -3,8 +3,7 @@ module.exports = function(grunt) {
 
   // Load grunt tasks automatically, when needed
   require('jit-grunt')(grunt, {
-    express: 'grunt-express-server',
-    protractor: 'grunt-protractor-runner'
+    express: 'grunt-express-server'
   });
 
   grunt.initConfig({
@@ -57,19 +56,6 @@ module.exports = function(grunt) {
     },
 
 
-    protractor: {
-      options: {
-        configFile: 'test/protractor/protractor.conf.js'
-      },
-      chrome: {
-        options: {
-          args: {
-            browser: 'firefox'
-          }
-        }
-      }
-    },
-
     // Automatically inject Bower components into the app
     wiredep: {
       target: {
@@ -87,6 +73,13 @@ module.exports = function(grunt) {
 
     usemin: {
       html: ['index.html', 'docs.html']
+    },
+
+
+    shell: {
+      cypress: {
+        command: 'cypress run --config baseUrl=http://localhost:' + serverConf.port
+      }
     }
   });
 
@@ -113,7 +106,7 @@ module.exports = function(grunt) {
     'concat', 'uglify', 'cssmin', 'usemin']);
 
   grunt.registerTask('test:e2e', ['express:test', 'wait',
-    'protractor']);
+    'shell:cypress']);
 
   grunt.registerTask('test', ['build', 'test:e2e']);
 

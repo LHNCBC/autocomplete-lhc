@@ -4,6 +4,8 @@
 //
 // Based on http://stackoverflow.com/a/12019645/360782
 var connect = require('connect'),
+    serveStatic = require('serve-static'),
+    serveIndex = require('serve-index'),
     http = require('http'),
     path = require('path');
 var config = require('./config');
@@ -29,6 +31,6 @@ connect()
        if (pathOkay)
          next();
      })
-    .use(connect.static(docRoot))
-    .use(connect.directory(docRoot))
+    .use(serveStatic(docRoot))
+    .use(serveIndex(docRoot))
     .listen(config.port);
