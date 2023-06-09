@@ -3,7 +3,7 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
-## [18.5.3] - 2023-06-02
+## [18.6.0] - 2023-06-02
 ### Added
 - New option caseInsenstiveSelection (defaults to true). If set to false,
   the autocomplete control will only do a case-sensitive match when user
