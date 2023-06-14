@@ -312,6 +312,11 @@ new Def.Autocompleter.Prefetch('cs_match_prefetch',
     ["aa", "pA", "Pa", "pB"],
     {suggestionMode: Def.Autocompleter.NO_COMPLETION_SUGGESTIONS});
 
+// A prefetch list to test for case-sensitive matching with caseInsenstiveSelection=false
+new Def.Autocompleter.Prefetch('cs_match_prefetch_caseSenstiveSelection',
+  ["aa", "pA", "Pa", "pB"],
+  {suggestionMode: Def.Autocompleter.NO_COMPLETION_SUGGESTIONS, caseInsenstiveSelection: false});
+
 
 
 // Lists to test passing an element instead of an ID.

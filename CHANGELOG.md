@@ -3,6 +3,12 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.6.0] - 2023-06-02
+### Added
+- New option caseInsenstiveSelection (defaults to true). If set to false,
+  the autocomplete control will only do a case-sensitive match when user
+  changes the field but leaves without picking an item.
+
 ## [18.5.2] - 2023-04-28
 ### Changed
 - Don't show list on focus if preventListFromShowing is set to true.

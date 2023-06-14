@@ -618,6 +618,10 @@ if (typeof Def === 'undefined')
        *     bar.</li>
        *    <li>twoColumnFlow - (default: true) Whether to allow long lists to
        *     flow into two columns to show more of the list on the page.</li>
+       *    <li>caseInsenstiveSelection: - (default: true) If the user changes the field
+       *     but leaves without picking an item, the list will check if what the field
+       *     contains matches an item in the list and if so, will select it. This
+       *     controls whether that matching is case-insensitive.</li>
        *  </ul>
        */
       defAutocompleterBaseInit: function(field, options) {
@@ -637,6 +641,10 @@ if (typeof Def === 'undefined')
         this.twoColumnFlow_ = options.twoColumnFlow;
         if (this.twoColumnFlow_ === undefined)
           this.twoColumnFlow_ = true;
+
+        this.caseInsenstiveSelection_ = options.caseInsenstiveSelection;
+        if (this.caseInsenstiveSelection_ === undefined)
+          this.caseInsenstiveSelection_ = true;
 
         if (options.tokens || options.maxSelect === undefined)
           options.maxSelect = 1;
@@ -2129,7 +2137,7 @@ if (typeof Def === 'undefined')
               if (!this.liIsHeading(li)) {
                 if (elemVal === liVal)
                   caseSensitiveMatchIndex = i;
-                else if (matchIndex < 0 && lcElemVal === liVal.toLowerCase())
+                else if (this.caseInsenstiveSelection_ && matchIndex < 0 && lcElemVal === liVal.toLowerCase())
                   matchIndex = i;
               }
             }

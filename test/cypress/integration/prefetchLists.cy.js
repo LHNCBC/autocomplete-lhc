@@ -16,6 +16,23 @@ describe('Prefetch lists', function() {
       .should('not.have.class', 'no_match');
   });
 
+  it('should not match case-insensitive items if caseInsenstiveSelection is false', function () {
+    po.openTestPage();
+    // If caseInsenstiveSelection is set to false, typing 'pb' should not match
+    // the item 'pB' in the list.
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection).type('pb');
+    cy.get(po.nonField).click();
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection)
+      .should('have.value', 'pb')
+      .should('have.class', 'no_match');
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection).clear();
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection).type('pB');
+    cy.get(po.nonField).click();
+    cy.get(po.csMatchPrefetch_caseSenstiveSelection)
+      .should('have.value', 'pB')
+      .should('not.have.class', 'no_match');
+  });
+
   it('should show the list when clicked even if focused', function() {
     po.openTestPage();
     cy.get(po.prefetchCWE).click();
