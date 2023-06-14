@@ -83,6 +83,10 @@
            case the list element might be unusually short.
            Note:  At present the only tested cases of this parameter are the
            default value and null.</li>
+          <li>caseInsenstiveSelection - (default: true) If the user changes the field
+           but leaves without picking an item, the list will check if what the field
+           contains matches an item in the list and if so, will select it. This
+           controls whether that matching is case-insensitive.</li>
         </ul>
 
         <h3 id="prefetch">Constructing a "prefetch" (non-AJAX) autocompleter</h3>
