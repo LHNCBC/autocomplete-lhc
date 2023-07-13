@@ -1707,7 +1707,19 @@ if (typeof Def === 'undefined')
         var elemPos = this.domCache.get('elemPos');
         positionedElement.style.display = '';
 
-        positionedElement.style.top = elemPos.top + element.offsetHeight + 'px';
+        // documentElementOffset is here to address an issue with the top position
+        // on a scrolled dialog (LF-2681). Angular mat-dialog puts "position: fixed;"
+        // "top: -{number}px;" styles on the top level "html" tag, if you scroll down
+        // the page and then open the dialog. In this case the document element itself
+        // is positioned. We have to adjust accordingly here since we want to set the
+        // positionedElement.style.top according to the document.
+        var documentElementOffset = 0;
+        var documentElementStyle = document.documentElement.style;
+        if (/^-(\d+\.?\d{0,2})px$/.test(documentElementStyle.top)) {
+          // Get the number of offset pixels applied to the document element.
+          documentElementOffset = Number(RegExp.$1);
+        }
+        positionedElement.style.top = elemPos.top + documentElementOffset + element.offsetHeight + 'px';
         var scrolledContainer = this.scrolledContainer_;
         var viewPortHeight = document.documentElement.clientHeight;
         var maxListContainerBottom = viewPortHeight; // bottom edge of viewport
