@@ -3,6 +3,13 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.6.1] - 2023-07-14
+### Fixed
+- Wrong position of the result list if the page is scrolled and a modal
+  dialog is opened with an autocomplete-lhc control on it.
+- Wrong height calculation of the result list on a modal dialog which
+  caused the list to go out of the bottom of the viewport.
+
 ## [18.6.0] - 2023-06-02
 ### Added
 - New option caseInsenstiveSelection (defaults to true). If set to false,
