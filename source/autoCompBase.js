@@ -1749,7 +1749,14 @@ if (typeof Def === 'undefined')
             // page down (making the list go up).
             var elementBoundingRect = element.getBoundingClientRect();
             var heightConstraint = undefined;
-            if (!scrolledContainer) {
+            if (!scrolledContainer ||
+              // If the element is a child of some fixed positioned parent (most likely
+              // it's inside a modal dialog), don't try to scroll the page because you can't.
+              // Ideally the using app can pass "scrolledContainer" option as null when
+              // it creates an autocomplete-lhc control inside a modal, but I think it's
+              // helpful to still check it here, in case this option is left as default or
+              // some other edge case where you can't scroll the page. See LF-2681.
+              (scrolledContainer === document.documentElement && this.getFixedPositionedParent(element))) {
               heightConstraint = window.innerHeight - elementBoundingRect.bottom;
             }
             else {
@@ -1827,6 +1834,24 @@ if (typeof Def === 'undefined')
 
             this.setListLeft();
           }
+        }
+      },
+
+
+      /**
+       * Returns the closest parent element that has "position: fixed" style.
+       * Returns null if there is no fixed positioned parent.
+       * @param element HTML element
+       * @return {Element|null}
+       */
+      getFixedPositionedParent: function(element) {
+        const parent = element.offsetParent;
+        if (!parent) {
+          return null;
+        } else if (window.getComputedStyle(parent).position === 'fixed') {
+          return parent;
+        } else {
+          return this.getFixedPositionedParent(parent);
         }
       },
 
