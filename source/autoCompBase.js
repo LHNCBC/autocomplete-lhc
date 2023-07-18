@@ -1715,7 +1715,7 @@ if (typeof Def === 'undefined')
         // positionedElement.style.top according to the document.
         var documentElementOffset = 0;
         var documentElementStyle = document.documentElement.style;
-        if (/^-(\d+\.?\d{0,2})px$/.test(documentElementStyle.top)) {
+        if (/^-(\d+\.?\d*)px$/.test(documentElementStyle.top)) {
           // Get the number of offset pixels applied to the document element.
           documentElementOffset = Number(RegExp.$1);
         }
