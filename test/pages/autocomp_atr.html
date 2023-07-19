@@ -5,10 +5,14 @@
    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
    <title>Test Form for Autocompleters</title>
    <link href="/source/auto_completion.css" rel="stylesheet" />
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
    <style type="text/css">
      input[type="text"] { width: 20em }
      body {margin: 0; font-family: Verdana, Geneva, sans-serif}
      #content {margin: 8px}
+     #searchResults {
+         z-index: 9999 !important;
+     }
    </style>
  </head>
 
@@ -266,6 +270,28 @@
 
 
    <button class="rounded" id="fe_save" name="fe[save]" type="submit" value="1"><span>Save</span></button>
+   <button type="button" class="btn btn-info btn-lg" id="myBtn">Open Modal</button>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="field">
+                        <label for="race_or_ethnicity" id="race_or_ethnicity_on_modal_lbl">
+                            A Prefetch CNE autocompleter:&nbsp;&nbsp;</label><input autocomplete="off" id="race_or_ethnicity_on_modal" type="text" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </form>
     <br>
@@ -292,6 +318,7 @@
   <script src="/source/autoCompEvents.js"></script>
   <script src="/source/effectScroll.js"></script>
   <script src="/source/event.simulate.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
  <!-- need to reload generated js file when its content changed -->
   <!-- include both generated and form-specific javascript files if they exist -->

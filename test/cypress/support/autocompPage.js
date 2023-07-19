@@ -73,6 +73,12 @@ var AutocompPage = function() {
   this.multiSelectTableSearch = '#'+this.multiSelectTableSearchID;
   this.multiFieldSearchHeaders = '#multi_field_search_headers';
 
+  // Button to open a modal dialog
+  this.myButton = '#myBtn';
+  // A simple Prefetch control on a modal dialog
+  this.prefetchCNEOnModalFieldName = 'race_or_ethnicity_on_modal';
+  this.prefetchCNEOnModal = '#' + this.prefetchCNEOnModalFieldName;
+
 
   this.openTestPage = function() {
     // For some reason, reopening the same page leaves the window's scroll

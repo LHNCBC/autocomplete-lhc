@@ -1707,7 +1707,19 @@ if (typeof Def === 'undefined')
         var elemPos = this.domCache.get('elemPos');
         positionedElement.style.display = '';
 
-        positionedElement.style.top = elemPos.top + element.offsetHeight + 'px';
+        // documentElementOffset is here to address an issue with the top position
+        // on a scrolled dialog (LF-2681). Angular mat-dialog puts "position: fixed;"
+        // "top: -{number}px;" styles on the top level "html" tag, if you scroll down
+        // the page and then open the dialog. In this case the document element itself
+        // is positioned. We have to adjust accordingly here since we want to set the
+        // positionedElement.style.top according to the document.
+        var documentElementOffset = 0;
+        var documentElementStyle = document.documentElement.style;
+        if (/^-(\d+\.?\d*)px$/.test(documentElementStyle.top)) {
+          // Get the number of offset pixels applied to the document element.
+          documentElementOffset = Number(RegExp.$1);
+        }
+        positionedElement.style.top = elemPos.top + documentElementOffset + element.offsetHeight + 'px';
         var scrolledContainer = this.scrolledContainer_;
         var viewPortHeight = document.documentElement.clientHeight;
         var maxListContainerBottom = viewPortHeight; // bottom edge of viewport
@@ -1737,7 +1749,14 @@ if (typeof Def === 'undefined')
             // page down (making the list go up).
             var elementBoundingRect = element.getBoundingClientRect();
             var heightConstraint = undefined;
-            if (!scrolledContainer) {
+            if (!scrolledContainer ||
+              // If the element is a child of some fixed positioned parent (most likely
+              // it's inside a modal dialog), don't try to scroll the page because you can't.
+              // Ideally the using app can pass "scrolledContainer" option as null when
+              // it creates an autocomplete-lhc control inside a modal, but I think it's
+              // helpful to still check it here, in case this option is left as default or
+              // some other edge case where you can't scroll the page. See LF-2681.
+              (scrolledContainer === document.documentElement && this.getFixedPositionedParent(element))) {
               heightConstraint = window.innerHeight - elementBoundingRect.bottom;
             }
             else {
@@ -1815,6 +1834,24 @@ if (typeof Def === 'undefined')
 
             this.setListLeft();
           }
+        }
+      },
+
+
+      /**
+       * Returns the closest parent element that has "position: fixed" style.
+       * Returns null if there is no fixed positioned parent.
+       * @param element HTML element
+       * @return {Element|null}
+       */
+      getFixedPositionedParent: function(element) {
+        const parent = element.offsetParent;
+        if (!parent) {
+          return null;
+        } else if (window.getComputedStyle(parent).position === 'fixed') {
+          return parent;
+        } else {
+          return this.getFixedPositionedParent(parent);
         }
       },
 
