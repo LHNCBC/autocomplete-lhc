@@ -845,10 +845,6 @@
        *  A method that gets called when the field gains the focus.
        */
       onFocus: function() {
-        // setTimeout is here to make sure this onFocus() method is invoked after
-        // the onMouseDown() event handler of a list item, when user clicks back
-        // on the page after switching to another window. See LF2685.
-        setTimeout(() => {
           // Ignore blur events on the completionOptionsScroller.
           if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
             Def.Autocompleter.completionOptionsScrollerClicked_ = false;
@@ -872,6 +868,9 @@
               this.element.shakeCanceled = false;
 
               this.maybeShowList();
+              setTimeout(() => {
+                this._disableListItemClick = false;
+              });
 
               this.index = this.getInitialSelectionIndex(); // for field defaults
               // Also put the value at "index" in the field
@@ -889,7 +888,6 @@
               this.focusInProgress_ = false;
             } // if enabled
           }
-        });
       },
 
 

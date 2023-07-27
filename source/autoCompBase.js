@@ -2368,6 +2368,9 @@ if (typeof Def === 'undefined')
               // this.onKeyPress().
               setTimeout(() => {
                 document.getElementById('completionOptions').firstChild?.remove();
+                // A flag to disable this.onMouseDown() event handler on a list item
+                // when user clicks back on the page where the list item was.
+                this._disableListItemClick = true;
               });
             }
             this.hasFocus = false;
@@ -2459,6 +2462,9 @@ if (typeof Def === 'undefined')
        * @param event the DOM event object for the mouse event
        */
       onMouseDown: function(event) {
+        if (this._disableListItemClick) {
+          return;
+        }
         // Only process the event if the item is not a heading, but in all cases
         // stop the event so that the list stays open and the field retains focus.
         Def.Autocompleter.stopEvent(event);
