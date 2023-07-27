@@ -2359,19 +2359,11 @@ if (typeof Def === 'undefined')
             this.hide();
             // See LF2685. This describes the scenario where this onBlur event is caused
             // by switching windows, instead of other elements on the page receives the
-            // focus. On switching windows, we remove the autocomplete list items to
-            // prevent an invisible list item from being clicked when the user clicks
-            // back on this page.
+            // focus. On switching windows, we set a flag to disable this.onMouseDown()
+            // event handler on a list item when user clicks back on the page where the
+            // list item was.
             if (document.activeElement === this.element) {
-              // Set a timeout here because some keyboard combinations for switching
-              // windows (e.g. ALT + TAB) might cause the list to show again through
-              // this.onKeyPress().
-              setTimeout(() => {
-                document.getElementById('completionOptions').firstChild?.remove();
-                // A flag to disable this.onMouseDown() event handler on a list item
-                // when user clicks back on the page where the list item was.
-                this._disableListItemClick = true;
-              });
+              this._disableListItemClick = true;
             }
             this.hasFocus = false;
             this.active = false;

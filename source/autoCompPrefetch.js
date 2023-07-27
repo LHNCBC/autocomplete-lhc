@@ -868,6 +868,11 @@
               this.element.shakeCanceled = false;
 
               this.maybeShowList();
+              // Set the _disableListItemClick flag back to false with a timeout,
+              // so that it effectively prevent the onMouseDown() callback when
+              // user clicks back on the page from another window. See LF2685.
+              // Setting a timeout on this whole onFocus() would cause focused status
+              // confusion resulting in the list could not be closed unless refocused.
               setTimeout(() => {
                 this._disableListItemClick = false;
               });
