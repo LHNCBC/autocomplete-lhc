@@ -2357,6 +2357,19 @@ if (typeof Def === 'undefined')
             // reason, we don't call the base nBlur.
             // Autocompleter.Base.prototype.onBlur.apply(this, [event]);
             this.hide();
+            // See LF2685. This describes the scenario where this onBlur event is caused
+            // by switching windows, instead of other elements on the page receives the
+            // focus. On switching windows, we remove the autocomplete list items to
+            // prevent an invisible list item from being clicked when the user clicks
+            // back on this page.
+            if (document.activeElement === this.element) {
+              // Set a timeout here because some keyboard combinations for switching
+              // windows (e.g. ALT + TAB) might cause the list to show again through
+              // this.onKeyPress().
+              setTimeout(() => {
+                document.getElementById('completionOptions').firstChild?.remove();
+              });
+            }
             this.hasFocus = false;
             this.active = false;
 
