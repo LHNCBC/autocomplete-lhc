@@ -875,7 +875,7 @@
               // confusion resulting in the list could not be closed unless refocused.
               setTimeout(() => {
                 this._disableListItemClick = false;
-              });
+              }, 10);
 
               this.index = this.getInitialSelectionIndex(); // for field defaults
               // Also put the value at "index" in the field
