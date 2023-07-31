@@ -845,47 +845,54 @@
        *  A method that gets called when the field gains the focus.
        */
       onFocus: function() {
-        // Ignore blur events on the completionOptionsScroller.
-        if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
-          Def.Autocompleter.completionOptionsScrollerClicked_ = false;
-        }
-        else {
-          this.matchListItemsToField_ = false;
-          // See if we should try to load the list.  Do not try if this is a combo
-          // field, because in that case the field does not get its list from a
-          // record data requester (it gets its type changed by it).
-          if (!this.listLoadAttempted_ && this.listIsEmpty() &&
-                  !this.element.comboField) {
-            this.loadList();
-          }
-
-          // The base onFocus needs to be called even if this is not "enabled"
-          // (i.e., no list) so processFieldVal_ is set.
-          Def.Autocompleter.Base.prototype.onFocus.apply(this);
-          if (this.enabled_) {
-            this.listBelowField_ = true;
-            this.focusInProgress_ = true;
-            this.hideList(); // while we reposition
-            this.element.shakeCanceled = false;
-
-            this.maybeShowList();
-
-            this.index = this.getInitialSelectionIndex(); // for field defaults
-            // Also put the value at "index" in the field
-            if (this.index >= 0) {
-              this.setFieldToListValue(this.listItemValue(this.getCurrentEntry()));
-  //            this.selectEntry();
-              this.element.select(); // select the text
-              // selectEntry above will send a list selection event, so there is
-              // no need to do that here.
-              // selectEntry hides the list.  Call render to highlight the default
-              // item and show the list.
-              this.render(); // to highlight the entered item
+          // Ignore blur events on the completionOptionsScroller.
+          if (Def.Autocompleter.completionOptionsScrollerClicked_ === true) {
+            Def.Autocompleter.completionOptionsScrollerClicked_ = false;
+          } else {
+            this.matchListItemsToField_ = false;
+            // See if we should try to load the list.  Do not try if this is a combo
+            // field, because in that case the field does not get its list from a
+            // record data requester (it gets its type changed by it).
+            if (!this.listLoadAttempted_ && this.listIsEmpty() &&
+              !this.element.comboField) {
+              this.loadList();
             }
 
-            this.focusInProgress_ = false;
-          } // if enabled
-        }
+            // The base onFocus needs to be called even if this is not "enabled"
+            // (i.e., no list) so processFieldVal_ is set.
+            Def.Autocompleter.Base.prototype.onFocus.apply(this);
+            if (this.enabled_) {
+              this.listBelowField_ = true;
+              this.focusInProgress_ = true;
+              this.hideList(); // while we reposition
+              this.element.shakeCanceled = false;
+
+              this.maybeShowList();
+              // Set the _disableListItemClick flag back to false with a timeout,
+              // so that it effectively prevent the onMouseDown() callback when
+              // user clicks back on the page from another window. See LF2685.
+              // Setting a timeout on this whole onFocus() would cause focused status
+              // confusion resulting in the list could not be closed unless refocused.
+              setTimeout(() => {
+                this._disableListItemClick = false;
+              }, 10);
+
+              this.index = this.getInitialSelectionIndex(); // for field defaults
+              // Also put the value at "index" in the field
+              if (this.index >= 0) {
+                this.setFieldToListValue(this.listItemValue(this.getCurrentEntry()));
+                //            this.selectEntry();
+                this.element.select(); // select the text
+                // selectEntry above will send a list selection event, so there is
+                // no need to do that here.
+                // selectEntry hides the list.  Call render to highlight the default
+                // item and show the list.
+                this.render(); // to highlight the entered item
+              }
+
+              this.focusInProgress_ = false;
+            } // if enabled
+          }
       },
 
 

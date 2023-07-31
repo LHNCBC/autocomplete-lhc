@@ -2357,6 +2357,14 @@ if (typeof Def === 'undefined')
             // reason, we don't call the base nBlur.
             // Autocompleter.Base.prototype.onBlur.apply(this, [event]);
             this.hide();
+            // See LF2685. This describes the scenario where this onBlur event is caused
+            // by switching windows, instead of other elements on the page receives the
+            // focus. On switching windows, we set a flag to disable this.onMouseDown()
+            // event handler on a list item when user clicks back on the page where the
+            // list item was.
+            if (document.activeElement === this.element) {
+              this._disableListItemClick = true;
+            }
             this.hasFocus = false;
             this.active = false;
 
@@ -2446,6 +2454,9 @@ if (typeof Def === 'undefined')
        * @param event the DOM event object for the mouse event
        */
       onMouseDown: function(event) {
+        if (this._disableListItemClick) {
+          return;
+        }
         // Only process the event if the item is not a heading, but in all cases
         // stop the event so that the list stays open and the field retains focus.
         Def.Autocompleter.stopEvent(event);

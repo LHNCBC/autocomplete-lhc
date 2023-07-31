@@ -3,6 +3,12 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.6.2] - 2023-07-27
+### Fixed
+- If user switches to another window and clicks back on the page where there
+  was an autocomplete list, it could select the item without user seeing
+  the list.
+
 ## [18.6.1] - 2023-07-14
 ### Fixed
 - Wrong position of the result list if the page is scrolled and a modal
