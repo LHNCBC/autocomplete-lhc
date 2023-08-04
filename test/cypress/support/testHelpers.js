@@ -369,3 +369,24 @@ TestHelpers.prototype.KeyModifiers = {
 };
 
 
+/**
+ *  Creates an input element with a unique ID.  The new element will be
+ *  added to the page.
+ *  @param win the window object
+ *  @return the element
+ */
+export function createInputElement(win) {
+  var $ = win.Def.PrototypeAPI.$;
+  var rtnEle = win.document.createElement('input');
+  rtnEle.setAttribute('type', 'text');
+  var idBase = 'fe_e';
+  var idVal = idBase;
+  var idCtr = 0;
+  while ($(idVal) != null)
+    idVal = idBase + ++idCtr;
+  rtnEle.setAttribute('id', idVal);
+  win.document.forms[0].appendChild(rtnEle);
+  return rtnEle;
+}
+
+
