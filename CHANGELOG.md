@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.6.3] - 2023-08-08
+### Changed
+- Port scriptaculous unit tests into Cypress.
+
 ## [18.6.2] - 2023-07-27
 ### Fixed
 - If user switches to another window and clicks back on the page where there
