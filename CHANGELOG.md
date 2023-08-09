@@ -3,6 +3,12 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.6.3] - 2023-08-09
+### Fixed
+- We were setting a variable on the external jQuery object.
+- If jQuery were redefined after autocomplete-lhc intialized, some parts of the
+  code would start using the new jQuery object.
+
 ## [18.6.2] - 2023-07-27
 ### Fixed
 - If user switches to another window and clicks back on the page where there
