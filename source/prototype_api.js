@@ -7,7 +7,7 @@
 if (typeof Def === 'undefined')
   var Def = {};
 
-Def.PrototypeAPI = function() {
+Def.PrototypeAPI = function(jQuery) {
   "use strict";
 
   var $break = { };
@@ -597,7 +597,7 @@ Def.PrototypeAPI = function() {
     undoPositioned: Styles.undoPositioned,
     $A: $A
   }
-}();
+}(jQuery);
 
 if (typeof module !== 'undefined')
   module.exports = Def.PrototypeAPI;

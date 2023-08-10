@@ -12,7 +12,7 @@
  *
  **/
 (function() {
-  function initSimulate($, Def) {
+  function initSimulate($, jQuery, Def) {
     "use strict";
 
     var eventMatchers = {
@@ -71,5 +71,5 @@
   if (typeof module !== 'undefined')
     module.exports = initSimulate;
   else
-    initSimulate(Def.PrototypeAPI.$, Def)
+    initSimulate(Def.PrototypeAPI.$, jQuery, Def)
 })();

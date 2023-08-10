@@ -39,6 +39,7 @@ if (typeof Def === 'undefined')
     var Browser = Def.PrototypeAPI.Browser;
     var isIE = !!window.attachEvent && !Browser.isOpera ||
        (typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Trident') >= 0);
+    var keyCodes = Def.jqueryLite.ui.keyCode;
 
     Def.Autocompleter = { // Namespace for DEF autocompletion stuff
       // Variables related to autocompleters but independent of any particular
@@ -1301,7 +1302,7 @@ if (typeof Def === 'undefined')
        *  Returns true if the given key event is a search request.
        */
       isSearchKey: function (event) {
-        return event.ctrlKey && event.keyCode === jQuery.ui.keyCode.ENTER;
+        return event.ctrlKey && event.keyCode === keyCodes.ENTER;
       },
 
 
@@ -1334,7 +1335,7 @@ if (typeof Def === 'undefined')
               {list_expansion_method: 'CtrlRet'});
           }
           else {
-            var keys = jQuery.ui.keyCode;
+            var keys = keyCodes;
             switch(charCode) {
               case keys.ENTER:
                 // Step the event for multiselect lists so the focus stays in the

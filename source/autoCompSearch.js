@@ -8,6 +8,7 @@
     "use strict";
 
     var Class = Def.PrototypeAPI.Class;
+    var keyCodes = Def.jqueryLite.ui.keyCode;
 
     /**
      *  An autocompleter that retrieves list options via AJAX calls.
@@ -566,7 +567,7 @@
        * @param event the key event
        */
       fieldEventIsBigList: function(event) {
-         return event.keyCode===jQuery.ui.keyCode.ENTER && (event.ctrlKey ||
+         return event.keyCode===keyCodes.ENTER && (event.ctrlKey ||
              (!this.autocomp &&
               this.domCache.get('elemVal') !== this.processedFieldVal_ &&
               this.domCache.get('elemVal').trim() !== ''));
@@ -578,7 +579,7 @@
        * @param event the key event
        */
       buttonKeyPress: function(event) {
-        if (event.keyCode === jQuery.ui.keyCode.ENTER) {
+        if (event.keyCode === keyCodes.ENTER) {
           this.runSearch();
         }
       },
