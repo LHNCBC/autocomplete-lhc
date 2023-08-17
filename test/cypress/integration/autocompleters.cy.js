@@ -27,7 +27,8 @@ describe('autocompleters', function () {
     // For an unlabeled field (which is the default case), the field
     // label should just be "field".
     cy.window().then(function (win) {
-      var otherAutoComp = new win.Def.Autocompleter.Prefetch(createInputElement(win).id, ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
+      var otherAutoComp = new win.Def.Autocompleter.Prefetch(createInputElement(win).id,
+        ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
       expect(otherAutoComp.getFieldName()).to.equal('field');
     });
   });
@@ -44,14 +45,15 @@ describe('autocompleters', function () {
       assert(log.logElement_.textContent.indexOf('two') >= 0, 'current test');
       // Neither log should have the other's input
       assert(-1 === $('reader_log').textContent.indexOf('two'), 'old reader_log has output it should not');
-      assert(-1 === log.logElement_.textContent.indexOf('one', 'new log has output it should not'));
+      assert(-1 === log.logElement_.textContent.indexOf('one'), 'new log has output it should not');
     });
   });
 
   it('tests ARIA markup', function () {
     cy.window().then(function (win) {
       var elem = createInputElement(win);
-      var otherAutoComp = new win.Def.Autocompleter.Prefetch(elem.id, ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
+      var otherAutoComp = new win.Def.Autocompleter.Prefetch(elem.id,
+        ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
       expect(elem.getAttribute('role')).to.equal('combobox');
       otherAutoComp.onFocus();
       otherAutoComp.showList();
@@ -63,15 +65,18 @@ describe('autocompleters', function () {
 
   it('tests dupItemToDataIndex', function () {
     cy.window().then(function (win) {
-      var otherAutoComp = new win.Def.Autocompleter.Prefetch(createInputElement(win).id, ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
+      var otherAutoComp = new win.Def.Autocompleter.Prefetch(createInputElement(win).id,
+        ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
       var fe_other_list_field2_autoComp = win.document.getElementById('fe_other_list_field2').autocomp;
       fe_other_list_field2_autoComp.dupItemToDataIndex(otherAutoComp);
       expect(otherAutoComp.itemToDataIndex_).not.to.be.null;
 
       // If a list isn't the original one, itemToCode should not get copied.
-      otherAutoComp = new win.Def.Autocompleter.Prefetch(createInputElement(win).id, ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
+      otherAutoComp = new win.Def.Autocompleter.Prefetch(createInputElement(win).id,
+        ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
       otherAutoComp.setList(['one', 'two'], ['1', '2']);
-      var anotherAC = new win.Def.Autocompleter.Prefetch(createInputElement(win).id, ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
+      var anotherAC = new win.Def.Autocompleter.Prefetch(createInputElement(win).id,
+        ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {'addSeqNum': false});
       otherAutoComp.dupItemToDataIndex(anotherAC);
       expect(anotherAC.itemToDataIndex_).to.be.null;
     });
@@ -183,9 +188,11 @@ describe('autocompleters', function () {
       // clear selected item data.
       var fe_other_list_field2_autoComp = win.document.getElementById('fe_other_list_field2').autocomp;
       fe_other_list_field2_autoComp.storeSelectedItem("apples");
-      assert(fe_other_list_field2_autoComp.getSelectedItemData().length === 1, "fe_other_list_field2 should have one item stored");
+      assert(fe_other_list_field2_autoComp.getSelectedItemData().length === 1,
+        "fe_other_list_field2 should have one item stored");
       fe_other_list_field2_autoComp.handleNonListEntry();
-      assert(fe_other_list_field2_autoComp.getSelectedItemData() === null, "fe_other_list_field2 should clear selected item data");
+      assert(fe_other_list_field2_autoComp.getSelectedItemData() === null,
+        "fe_other_list_field2 should clear selected item data");
       // For this field, the invalid value indicator should be set.
       fe_other_list_field2_autoComp.setFieldVal('carrot', false);
       fe_other_list_field2_autoComp.handleNonListEntry();
@@ -241,7 +248,8 @@ describe('autocompleters', function () {
       // Confirm that the list contains the correct values.  There should be 3.
       var vals = extractListVals(htmlList);
       assert(3 === vals.length, 'first vals list size not as expected');
-      var expectedList = ['<strong>apple</strong>s', 'oranges and <strong>apple</strong>s', 'pears and (<strong>apple</strong>s)'];
+      var expectedList = ['<strong>apple</strong>s',
+        'oranges and <strong>apple</strong>s', 'pears and (<strong>apple</strong>s)'];
       expect(vals, 'first vals list values not as expected').to.deep.equal(expectedList);
 
       // Confirm that we don't match things like span tags we've inserted
@@ -286,7 +294,8 @@ describe('autocompleters', function () {
       fe_big_list_autoComp.seeMoreItemsClicked_ = true;
       htmlList = testAC.selector(testAC);
       vals = extractListVals(htmlList);
-      assert(fe_big_list_autoComp.options.array.length === vals.length, 'big list should now show all items');
+      assert(fe_big_list_autoComp.options.array.length === vals.length,
+        'big list should now show all items');
       // Now type something in the field
       testAC.setFieldVal(testAC.trimmedElemVal = 'a', false);
       fe_big_list_autoComp.matchListItemsToField_ = true;
@@ -389,8 +398,10 @@ describe('autocompleters', function () {
       fe_other_list_field2_autoComp.setInvalidValIndicator(true);
       listSelectionItemData_ = {item_code: 'Hi'};  // just putting something there
       var jqElem = win.jQuery(fe_other_list_field2_autoComp.element);
-      assert(jqElem.hasClass('no_match'), "Precondition for fe_other_list_field2 (multiple values): should have " + "class no_match");
-      assert(jqElem.hasClass('invalid'), "Precondition for fe_other_list_field2 (multiple values): should have " + "class invalid");
+      assert(jqElem.hasClass('no_match'),
+        "Precondition for fe_other_list_field2 (multiple values): should have " + "class no_match");
+      assert(jqElem.hasClass('invalid'),
+        "Precondition for fe_other_list_field2 (multiple values): should have " + "class invalid");
       $('fe_other_list_field2').autocomp.setFieldVal('hello', false);
       fe_other_list_field2_autoComp.setListAndField(['one', 'two'], ['1', '2']);
       expect(fe_other_list_field2_autoComp.rawList_).to.deep.equal(['one', 'two']);
@@ -398,8 +409,10 @@ describe('autocompleters', function () {
       assert('' === $('fe_other_list_field2').value, 'fe_other_list_field2 should have been cleared');
       $('fe_strength_and_form_2').autocomp.setFieldVal('hello', false);
       // Match sure the no_match and invalid status has been cleared
-      assert(!jqElem.hasClass('no_match'), "fe_other_list_field2 (multiple values): should NOT have " + "class no_match");
-      assert(!jqElem.hasClass('invalid'), "fe_other_list_field2 (multiple values): should NOT have " + "class invalid");
+      assert(!jqElem.hasClass('no_match'),
+        "fe_other_list_field2 (multiple values): should NOT have " + "class no_match");
+      assert(!jqElem.hasClass('invalid'),
+        "fe_other_list_field2 (multiple values): should NOT have " + "class invalid");
     });
     cy.wait(1);
     cy.window().then(function (win) {
@@ -413,15 +426,19 @@ describe('autocompleters', function () {
       fe_other_list_field2_autoComp.setInvalidValIndicator(true);
       listSelectionItemData_.item_code = '';
       var jqElem = win.jQuery(fe_other_list_field2_autoComp.element);
-      assert(jqElem.hasClass('no_match'), "Precondition for fe_other_list_field2 (one value): should have " + "class no_match");
-      assert(jqElem.hasClass('invalid'), "Precondition for fe_other_list_field2 (one value): should have " + "class invalid");
+      assert(jqElem.hasClass('no_match'),
+        "Precondition for fe_other_list_field2 (one value): should have " + "class no_match");
+      assert(jqElem.hasClass('invalid'),
+        "Precondition for fe_other_list_field2 (one value): should have " + "class invalid");
       $('fe_other_list_field2').autocomp.setFieldVal('abc - 123', false);
       fe_other_list_field2_autoComp.setListAndField(['one'], ['1']);
       expect(fe_other_list_field2_autoComp.rawList_).to.deep.equal(['one']);
       expect(fe_other_list_field2_autoComp.itemCodes_).to.deep.equal(['1']);
       assert('one' === $('fe_other_list_field2').value);
-      assert(!jqElem.hasClass('no_match'), "fe_other_list_field2 (one value): should NOT have " + "class no_match");
-      assert(!jqElem.hasClass('invalid'), "fe_other_list_field2 (one value): should NOT have " + "class invalid");
+      assert(!jqElem.hasClass('no_match'),
+        "fe_other_list_field2 (one value): should NOT have " + "class no_match");
+      assert(!jqElem.hasClass('invalid'),
+        "fe_other_list_field2 (one value): should NOT have " + "class invalid");
     });
     cy.wait(1);
     cy.window().then(function (win) {
@@ -566,10 +583,12 @@ describe('autocompleters', function () {
       listItems = listTag.childNodes;
       assert(2 === listItems.length);
       var foundItem = false;
-      for (var i = 0; i < listItems.length && !foundItem; ++i) foundItem = ('oranges and apples' === listItems[i].textContent);
+      for (var i = 0; i < listItems.length && !foundItem; ++i)
+        foundItem = ('oranges and apples' === listItems[i].textContent);
       assert(!foundItem, 'found item in list after selection, 2');
       // The list should still be visible (so the user can pick more items)
-      assert(win.jQuery('#searchResults')[0].style.visibility !== 'hidden', 'after click, list is hidden');
+      assert(win.jQuery('#searchResults')[0].style.visibility !== 'hidden',
+        'after click, list is hidden');
 
       // Unselect the first item
       var selectedItem = fieldWrapper.childNodes[0].childNodes[0];

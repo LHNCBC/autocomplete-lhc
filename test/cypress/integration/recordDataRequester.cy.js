@@ -137,7 +137,8 @@ describe('recordDataRequester', function () {
 
   it('tests listIsEmpty', function () {
     cy.window().then(function (win) {
-      var auto = new win.Def.Autocompleter.Prefetch('fe_trigger_field_1', ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {
+      var auto = new win.Def.Autocompleter.Prefetch('fe_trigger_field_1',
+        ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {
         'matchListValue': false, 'addSeqNum': false, 'codes': ['a', 'oa', 'pa', 'b']
       });
       assert(!auto.listIsEmpty(), "list should not be empty");
