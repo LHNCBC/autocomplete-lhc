@@ -24,12 +24,6 @@ shutdown_and_exit () {
 
 if [ "$1" != "skip_unit_tests" ]
 then
-  echo 'Running unit tests.  Check the result in the browser, and quit'
-  echo 'the browser when finished.'
-
-  firefox test/scriptaculous_unit/autoComp_test.html \
-          test/scriptaculous_unit/recordDataRequester_test.html
-
   mocha -R spec test/mocha/*.js
   code=$?
   if [ $code != "0" ]

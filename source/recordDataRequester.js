@@ -584,7 +584,10 @@ if (typeof Def === 'undefined')
               var field = fields[i];
               // We found the field.
               var val = dataHash[key];
-              if (val instanceof Array) {
+              // "val instanceof Array" gives unexpected results if our code
+              // is inside its own frame, as is the case in Cypress tests.
+              // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof#instanceof_and_multiple_realms.
+              if (Array.isArray(val)) {
                 // Look for an autocompleter for the field.  For now,
                 // we assume a prefetched list autocompleter.
                 if (field.autocomp !== null) {
@@ -599,7 +602,7 @@ if (typeof Def === 'undefined')
                   // Note:  Calling setListAndField takes care of propagating the
                   // change to the field, so we don't need to add it to the
                   // updatedFields array.
-                  if (val.length > 0 && val[0] instanceof Array) {
+                  if (val.length > 0 && Array.isArray(val[0])) {
                     // if there's an option
                     if (val[2]) {
                       field.autocomp.initHeadings(val[2]);

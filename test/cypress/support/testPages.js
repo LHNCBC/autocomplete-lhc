@@ -3,5 +3,7 @@
  */
 export const TestPages = {
   autocomp_atr: 'test/pages/autocomp_atr.html',
-  directiveTest: 'test/pages/directiveTest.html'
+  directiveTest: 'test/pages/directiveTest.html',
+  autocomp_test: 'test/pages/autoComp_test.html',
+  recordDataRequester_test: 'test/pages/recordDataRequester_test.html'
 }

@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.6.4] - 2023-08-25
+### Changed
+- Port scriptaculous unit tests into Cypress.
+
 ## [18.6.3] - 2023-08-09
 ### Fixed
 - We were setting a variable on the external jQuery object.
