@@ -7,7 +7,7 @@
 
 // Wrap the definitions in a function to protect our version of global variables
 (function() {
-  function initEffectScroll(PrototypeAPI, Effect) {
+  function initEffectScroll(PrototypeAPI, jQuery, Effect) {
     "use strict";
 
     var Class = PrototypeAPI.Class;
@@ -88,5 +88,5 @@
   if (typeof module !== 'undefined')
     module.exports = initEffectScroll;
   else
-    initEffectScroll(Def.PrototypeAPI, Def.Effect);
+    initEffectScroll(Def.PrototypeAPI, jQuery, Def.Effect);
 })();

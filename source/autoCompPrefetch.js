@@ -9,6 +9,7 @@
 
     var Class = Def.PrototypeAPI.Class;
     var Browser = Def.PrototypeAPI.Browser;
+    var keyCodes = Def.jqueryLite.ui.keyCode;
 
     /**
      *  A prefetched list autocompleter.  This is extended from the Scriptaculous
@@ -984,7 +985,7 @@
        *  function name).
        */
       fieldEventIsBigList: function(event) {
-        return event.ctrlKey && event.keyCode===jQuery.ui.keyCode.ENTER;
+        return event.ctrlKey && event.keyCode===keyCodes.ENTER;
       },
 
 

@@ -31,9 +31,6 @@
         }
       }
     }();
-
-    // Eventually, but not yet, we'll try to replace jQuery entirely.  For now, just copy in the above.
-    Object.assign(jQuery, Def.jqueryLite);
   }
 
   if (typeof module !== 'undefined')
