@@ -1,5 +1,4 @@
-// Contains the subset of PrototypeJS APIs needed by this package, reimplemented
-// using jQuery.
+// Contains the subset of PrototypeJS APIs needed by this package.
 
 // Mostly copied (and modified) from the original PrototypeJS at
 // http://prototypejs.org/
@@ -7,7 +6,7 @@
 if (typeof Def === 'undefined')
   var Def = {};
 
-Def.PrototypeAPI = function(jQuery) {
+Def.PrototypeAPI = function() {
   "use strict";
 
   var $break = { };
@@ -553,7 +552,7 @@ Def.PrototypeAPI = function(jQuery) {
           styles.left = 0;
         }
         Def.PrototypeAPI.setStyle(element, styles);
-        jQuery(element).data('prototype_made_positioned', true);
+        element.dataset.prototypeMadePositioned = true;
       }
       return element;
     },
@@ -562,11 +561,10 @@ Def.PrototypeAPI = function(jQuery) {
     /* See PrototypeJS API */
     undoPositioned: function(element) {
       element = $(element);
-      var jqElem = jQuery(element);
-      var madePositioned = jqElem.data('prototype_made_positioned');
+      var madePositioned = "prototypeMadePositioned" in element.dataset;
 
       if (madePositioned) {
-        jqElem.removeData('prototype_made_positioned');
+        delete element.dataset.prototypeMadePositioned;
         Def.PrototypeAPI.setStyle(element, {
           position: '',
           top:      '',
@@ -597,7 +595,7 @@ Def.PrototypeAPI = function(jQuery) {
     undoPositioned: Styles.undoPositioned,
     $A: $A
   }
-}(jQuery);
+}();
 
 if (typeof module !== 'undefined')
   module.exports = Def.PrototypeAPI;

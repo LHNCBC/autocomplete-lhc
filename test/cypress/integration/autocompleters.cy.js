@@ -10,7 +10,19 @@ describe('autocompleters', function () {
       win.Def.Autocompleter.Event.observeListSelections(null, function (data) {
         listSelectionItemData_ = data;
       });
-    })
+    });
+  });
+
+  it('tests makePositioned/undoPositioned', function () {
+    cy.window().then(function (win) {
+      const element = createInputElement(win);
+      win.Def.PrototypeAPI.makePositioned(element);
+      console.log(element);
+      expect(element.hasAttribute('data-prototype-made-positioned')).to.be.true;
+      win.Def.PrototypeAPI.undoPositioned(element);
+      expect(element.hasAttribute('data-prototype-made-positioned')).to.be.false;
+      expect(element.dataset.prototypeMadePositioned).to.be.undefined;
+    });
   });
 
   it('tests escape/unescapeAttribute', function () {
