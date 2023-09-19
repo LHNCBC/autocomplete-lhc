@@ -222,9 +222,9 @@ if (typeof Def === 'undefined')
         // We can no longer cache the assignment of onComplete, which now
         // depends on the input parameter.  (We could cache the bound versions
         // of the functions, but I am not sure if it is worth it.)
-        this.dataRequestOptions_.complete = jQuery.proxy(listDataOnly ?
-          this.onDataReqCompleteForListData :
-          this.onDataReqComplete, this);
+        this.dataRequestOptions_.complete = listDataOnly ?
+          this.onDataReqCompleteForListData.bind(this) :
+          this.onDataReqComplete.bind(this);
 
         this.dataRequestOptions_.data = this.buildParameters();
         this.latestPendingAjaxRequest_ =

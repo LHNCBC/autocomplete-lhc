@@ -346,7 +346,7 @@ if (typeof Def === 'undefined')
             {list_expansion_method: 'clicked'});
           });
 
-          jQuery('#completionOptionsScroller').mousedown(jQuery.proxy(function(event) {
+          jQuery('#completionOptionsScroller').mousedown(function(event) {
             // Here is a work-around for an IE-only issue in which if you use the scrollbar
             // on the list, the field gets a blur event (and maybe a change event
             // as well.)  For IE, we set things to refocus the field and to ignore
@@ -359,7 +359,7 @@ if (typeof Def === 'undefined')
                 setTimeout(function(){field.focus()});
               }
             }
-          }, this));
+          }.bind(this));
           this.classInit_ = true;
         }
       },
@@ -695,8 +695,8 @@ if (typeof Def === 'undefined')
         // --- end of section copied from controls.js baseInitialize ---
         jQuery(this.update).hide();
         var jqElem = jQuery(this.element);
-        jqElem.blur(jQuery.proxy(this.onBlur, this));
-        jqElem.keydown(jQuery.proxy(this.onKeyPress, this));
+        jqElem.blur(this.onBlur.bind(this));
+        jqElem.keydown(this.onKeyPress.bind(this));
 
         // On clicks, reset the token bounds relative to the point of the click
         if (this.options.tokens) {
@@ -725,11 +725,11 @@ if (typeof Def === 'undefined')
         this.element.setAttribute('aria-expanded', 'false');
 
         // Set up event handler functions.
-        this.onMouseDownListener = jQuery.proxy(this.onMouseDown, this);
-        jQuery(this.element).change(jQuery.proxy(this.onChange, this));
-        jQuery(this.element).keypress(jQuery.proxy(this.changeToFieldByKeys, this));
+        this.onMouseDownListener = this.onMouseDown.bind(this);
+        jQuery(this.element).change(this.onChange.bind(this));
+        jQuery(this.element).keypress(this.changeToFieldByKeys.bind(this));
         var fieldChanged =
-          jQuery.proxy(function() {this.typedSinceLastFocus_ = true;}, this);
+          function() {this.typedSinceLastFocus_ = true;}.bind(this);
         jQuery(this.element).bind('paste cut', fieldChanged);
 
         // Store a reference to the element that should be positioned in order
@@ -737,9 +737,9 @@ if (typeof Def === 'undefined')
         this.listContainer = Def.Autocompleter.sharedDOMCache.get('listContainer');
 
         // Make the this.showList and this.hideList available to onShow and onHide
-        this.options.showList = jQuery.proxy(this.showList, this);
-        this.options.hideList = jQuery.proxy(this.hideList, this);
-        this.options.posAnsList = jQuery.proxy(this.posAnsList, this);
+        this.options.showList = this.showList.bind(this);
+        this.options.hideList = this.hideList.bind(this);
+        this.options.posAnsList = this.posAnsList.bind(this);
 
         // Undo the base class' hiding of the update element.  (We're hiding
         // the listContainer instead.)
@@ -939,7 +939,7 @@ if (typeof Def === 'undefined')
                         +escapedVal+'</li>')[0];
         this.selectedList.appendChild(li);
         var span = li.childNodes[0];
-        jQuery(span).click(jQuery.proxy(this.removeSelection, this));
+        jQuery(span).click(this.removeSelection.bind(this));
         return escapedVal;
       },
 
@@ -1429,7 +1429,7 @@ if (typeof Def === 'undefined')
 
               if (this.observer)
                 clearTimeout(this.observer);
-              this.observer = setTimeout(jQuery.proxy(this.onObserverEvent, this),
+              this.observer = setTimeout(this.onObserverEvent.bind(this),
                 this.options.frequency*1000);
             }
           }
@@ -2276,7 +2276,7 @@ if (typeof Def === 'undefined')
             // to push this after the pending events.
             this.refocusInProgress_ = true;
             this.processedFieldVal_ = fieldVal;
-            setTimeout(jQuery.proxy(function() {
+            setTimeout(function() {
               this.element.focus();
               this.element.select(); // select the text
               // Clear refocusInProgress_, which onFocus also clears, because
@@ -2284,7 +2284,7 @@ if (typeof Def === 'undefined')
               // is called above.  That happens when you hit return to select an
               // invalid value.
               this.refocusInProgress_ = false;
-            }, this));
+            }.bind(this));
           }
           else {
             this.storeSelectedItem();
@@ -2307,7 +2307,7 @@ if (typeof Def === 'undefined')
               // the status field, and then when focus() was called the dialog
               // somehow called blur() on the field (perhaps using event capturing)
               // before the autocompleter's focus event handler ran.)
-              setTimeout(jQuery.proxy(function() {this.findSuggestions();}, this));
+              setTimeout(function() {this.findSuggestions();}.bind(this));
             }
           }
         }
@@ -2731,7 +2731,7 @@ if (typeof Def === 'undefined')
            'src="javascript:false;" frameborder="0" scrolling="no"></iframe>');
           this.iefix = $(this.update.id+'_iefix');
         }
-        if(this.iefix) setTimeout(jQuery.proxy(this.fixIEOverlapping, this), 50);
+        if(this.iefix) setTimeout(this.fixIEOverlapping.bind(this), 50);
       },
 
 

@@ -254,21 +254,21 @@
 
         options = Object.assign({
           partialChars: 2,
-          onHide: jQuery.proxy(function(element, update) {
+          onHide: function(element, update) {
             $('searchCount').style.display = 'none';
             $('moreResults').style.display = 'none';
             Def.Autocompleter.Base.prototype.hideList.apply(this);
-          }, this),
+          }.bind(this),
 
-          onShow: jQuery.proxy(function(element, update) {
+          onShow: function(element, update) {
             // Make the search count display before adjusting the list position.
             $('searchCount').style.display='block';
             $('moreResults').style.display = 'block';
 
             Def.Autocompleter.Base.prototype.showList.apply(this);
-          }, this),
+          }.bind(this),
 
-          onComplete: jQuery.proxy(this.onComplete, this)
+          onComplete: this.onComplete.bind(this)
         }, options || {});
 
         if (!Def.Autocompleter.Base.classInit_)
@@ -307,7 +307,7 @@
         //   this.options.asynchronous = false;
 
         // Set up event observers.
-        jQuery(this.element).focus(jQuery.proxy(this.onFocus, this));
+        jQuery(this.element).focus(this.onFocus.bind(this));
         // The base class sets up one for a "blur" event.
 
         var buttonID = options['buttonID'];
@@ -323,8 +323,8 @@
           // Ajax.Request, the blur event occurs, but if I uncomment that and
           // comment out the onComplete code, it does not.)
           var button = jQuery(document.getElementById(buttonID));
-          button.mousedown(jQuery.proxy(this.buttonClick, this));
-          button.keypress(jQuery.proxy(this.buttonKeyPress, this));
+          button.mousedown(this.buttonClick.bind(this));
+          button.keypress(this.buttonKeyPress.bind(this));
         }
         jQuery(this.element).addClass('search_field');
 
@@ -1147,7 +1147,7 @@
             params.authenticity_token = window._token;
           var options = {
             data: paramData,
-            complete: jQuery.proxy(this.onFindSuggestionComplete, this)
+            complete: this.onFindSuggestionComplete.bind(this)
           };
 
           jQuery.ajax(this.url, options);

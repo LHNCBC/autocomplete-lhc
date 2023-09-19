@@ -2,7 +2,7 @@ var Def = {};
 Def.PrototypeAPI = require('./prototype_api');
 require('./polyfill');
 require('./jqueryLite')(Def);
-require('./effects')(Def.PrototypeAPI.$, jQuery, Def);
+require('./effects')(Def.PrototypeAPI.$, Def);
 require('./effectScroll')(Def.PrototypeAPI, jQuery, Def.Effect)
 require('./event.simulate')(Def.PrototypeAPI.$, jQuery, Def)
 require('./observable')(Def);

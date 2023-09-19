@@ -170,8 +170,8 @@
         this.initHeadings(options);
         this.defAutocompleterBaseInit(id, options);
         // Set up event observers.
-        jQuery(this.element).focus(jQuery.proxy(this.onFocus, this));
-        jQuery(this.element).click(jQuery.proxy(this.onFieldClick, this));
+        jQuery(this.element).focus(this.onFocus.bind(this));
+        jQuery(this.element).click(this.onFieldClick.bind(this));
         // The base class sets up one for a "blur" event.
 
         var codes = options['codes'];

@@ -28,7 +28,7 @@ if (typeof Def === 'undefined')
   var Def = {};
 
 (function() {
-  function initEffects($, jQuery, Def) {
+  function initEffects($, Def) {
     "use strict";
 
     var Class = Def.PrototypeAPI.Class;
@@ -120,7 +120,7 @@ if (typeof Def === 'undefined')
           this.effects.push(effect);
 
         if (!this.interval)
-          this.interval = setInterval(jQuery.proxy(this.loop, this), 15);
+          this.interval = setInterval(this.loop.bind(this), 15);
       },
       remove: function(effect) {
         var i;
@@ -295,5 +295,5 @@ if (typeof Def === 'undefined')
   if (typeof module !== 'undefined')
     module.exports = initEffects;
   else
-    initEffects(Def.PrototypeAPI.$, jQuery, Def);
+    initEffects(Def.PrototypeAPI.$, Def);
 })();
