@@ -155,7 +155,7 @@ if (typeof Def === 'undefined')
       position: null,
       start: function(options) {
         if (options && options.transition === false) options.transition = Effect.Transitions.linear;
-        this.options      = jQuery.extend(jQuery.extend({ },Effect.DefaultOptions), options || { });
+        this.options      = Object.assign(Object.assign({ },Effect.DefaultOptions), options || { });
         this.currentFrame = 0;
         this.state        = 'idle';
         this.startOn      = this.options.delay*1000;
@@ -235,7 +235,7 @@ if (typeof Def === 'undefined')
       initialize: function(element) {
         this.element = $(element);
         if (!this.element) throw(Effect._elementDoesNotExistError);
-        var options = jQuery.extend({
+        var options = Object.assign({
           x:    0,
           y:    0,
           mode: 'relative'
@@ -262,13 +262,13 @@ if (typeof Def === 'undefined')
 
     Effect.Shake = function(element) {
       element = $(element);
-      var options = jQuery.extend({
+      var options = Object.assign({
         distance: 20,
         duration: 0.5
       }, arguments[1] || {});
       var distance = parseFloat(options.distance);
       var split = parseFloat(options.duration) / 10.0;
-      var offset = jQuery(element).offset();
+      var offset = Def.jqueryLite.getElementOffset(element);
       var dpapi = Def.PrototypeAPI;
       var oldStyle = {
         top: offset.top,

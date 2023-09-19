@@ -684,12 +684,12 @@ if (typeof Def === 'undefined')
     };
 
 
-    jQuery.extend(Def.RecordDataRequester.prototype, tmp);
+    Object.assign(Def.RecordDataRequester.prototype, tmp);
     tmp = null;
 
 
     // Additional class-level data members and methods.
-    jQuery.extend(Def.RecordDataRequester, {
+    Object.assign(Def.RecordDataRequester, {
 
       /**
        *  A hash map from data request output field target field names to the

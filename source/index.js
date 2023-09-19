@@ -8,7 +8,7 @@ require('./event.simulate')(Def.PrototypeAPI.$, jQuery, Def)
 require('./observable')(Def);
 require('./screenReaderLog')(Def)
 require('./recordDataRequester')(Def.PrototypeAPI.$, jQuery, Def)
-require('./fieldAlarms')(Def.PrototypeAPI.$, jQuery, Def);
+require('./fieldAlarms')(Def.PrototypeAPI.$, Def);
 require('../soundmanager/bonk')(Def);
 require('./autoCompBase')(Def.PrototypeAPI.$, jQuery, Def);
 require('./autoCompPrefetch')(Def.PrototypeAPI.$, jQuery, Def);

@@ -98,7 +98,7 @@ if (typeof Def === 'undefined')
        *  to a replacement function.
        */
       setOptions: function(options) {
-        jQuery.extend(this, options);
+        Object.assign(this, options);
       },
 
 
@@ -310,7 +310,7 @@ if (typeof Def === 'undefined')
     /**
      *  Class-level stuff for Def.Autocompleter.Base.
      */
-    jQuery.extend(Def.Autocompleter.Base, {
+    Object.assign(Def.Autocompleter.Base, {
 
       /**
        *  The maximum number of items to show below a field if the user has not
@@ -1870,7 +1870,7 @@ if (typeof Def === 'undefined')
           element: acInstance.listPositioningElem()}, {
           // elemPos is the offset of "element" as defined above.
           elemPos: function() {
-            return jQuery(this.element).offset();
+            return Def.jqueryLite.getElementOffset(this.element);
           },
           // The field value
           elemVal: function() {
@@ -2736,9 +2736,9 @@ if (typeof Def === 'undefined')
 
 
       // This originally came from controls.js in Scriptaculous.  It seems to be working
-      // around some IE bug.  (Rewritten to use jQuery.)
+      // around some IE bug.
       fixIEOverlapping: function() {
-        var updatePos = this.update.offset();
+        var updatePos = Def.jqueryLite.getElementOffset(this.update);
         this.iefix.style.left = updatePos.left;
         if (!this.update.style.height)
           this.update.style.top = updatePos.top;
@@ -2808,7 +2808,7 @@ if (typeof Def === 'undefined')
 
     };  // end Def.Autocompleter.Base class
 
-    jQuery.extend(Def.Autocompleter.Base.prototype, tmp);
+    Object.assign(Def.Autocompleter.Base.prototype, tmp);
     tmp = null;
   }
 

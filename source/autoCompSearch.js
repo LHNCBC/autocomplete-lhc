@@ -49,10 +49,10 @@
        */
       superclass: Def.Autocompleter.Base.prototype
     };
-    jQuery.extend(Def.Autocompleter.Search, ctmp);
+    Object.assign(Def.Autocompleter.Search, ctmp);
     ctmp = null;
 
-    jQuery.extend(Def.Autocompleter.Search.prototype,
+    Object.assign(Def.Autocompleter.Search.prototype,
       Def.Autocompleter.Base.prototype);
     Def.Autocompleter.Search.prototype.className = 'Def.Autocompleter.Search' ;
 
@@ -252,7 +252,7 @@
        */
       initialize: function(fieldID, url, options) {
 
-        options = jQuery.extend({
+        options = Object.assign({
           partialChars: 2,
           onHide: jQuery.proxy(function(element, update) {
             $('searchCount').style.display = 'none';
@@ -1238,7 +1238,7 @@
         this.element.focus();
       }
     };
-    jQuery.extend(Def.Autocompleter.Search.prototype, tmp);
+    Object.assign(Def.Autocompleter.Search.prototype, tmp);
     tmp = null;
   }
 

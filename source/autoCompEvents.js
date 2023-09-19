@@ -174,7 +174,7 @@
       }
     };
 
-    jQuery.extend(Def.Autocompleter.Event, Def.Observable);
+    Object.assign(Def.Autocompleter.Event, Def.Observable);
   }
 
   if (typeof module !== 'undefined')

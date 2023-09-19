@@ -28,6 +28,20 @@
             TAB: 9,
             UP: 38
           }
+        },
+        /**
+         * equivalent of jQuery offset().
+         * @param elem HTML element
+         * @return {{top: *, left: *}}
+         */
+        getElementOffset: function(elem) {
+          // Get document-relative position by adding viewport scroll to viewport-relative gBCR
+          const rect = elem.getBoundingClientRect();
+          const win = elem.ownerDocument.defaultView;
+          return {
+            top: rect.top + win.pageYOffset,
+            left: rect.left + win.pageXOffset
+          };
         }
       }
     }();

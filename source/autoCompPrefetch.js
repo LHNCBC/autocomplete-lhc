@@ -18,7 +18,7 @@
      */
     Def.Autocompleter.Prefetch = Class.create();
     Def.Autocompleter.Prefetch.constructor = Def.Autocompleter.Prefetch;
-    jQuery.extend(Def.Autocompleter.Prefetch.prototype,
+    Object.assign(Def.Autocompleter.Prefetch.prototype,
       Def.Autocompleter.Base.prototype);
     Def.Autocompleter.Prefetch.prototype.className = 'Def.Autocompleter.Prefetch' ;
     // Define a temporary object for extending the Prefetch.prototype, which we
@@ -145,7 +145,7 @@
       initialize: function(id, listItems, options) {
 
         // Add Scriptaculous defaults, modified
-        options = jQuery.extend({
+        options = Object.assign({
           ignoreCase: true,
           fullSearch: false,
           selector: this.selector,
@@ -223,7 +223,7 @@
       dupForField: function(fieldID) {
         var dataReq = this.dupDataReqForField(fieldID);
         var opts = {};
-        jQuery.extend(true, opts, this.constructorOpts_);
+        Object.assign(true, opts, this.constructorOpts_);
         opts['dataRequester'] = dataReq;
         var rtn = new Def.Autocompleter.Prefetch(fieldID, this.rawList_, opts);
         this.dupItemToDataIndex(rtn);
@@ -1058,7 +1058,7 @@
 
     };  // end Def.Autocompleter.Prefetch class
 
-    jQuery.extend(Def.Autocompleter.Prefetch.prototype, tmp);
+    Object.assign(Def.Autocompleter.Prefetch.prototype, tmp);
     tmp = null; // prevent other code here from accidentally using it
   }
 

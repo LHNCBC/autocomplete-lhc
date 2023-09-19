@@ -33,7 +33,7 @@
 
     Def.Event = {};
     Def.Event.simulate = function(element, eventName) {
-      var options = jQuery.extend(defaultOptions, arguments[2] || { });
+      var options = Object.assign(defaultOptions, arguments[2] || { });
       var oEvent, eventType = null;
 
       element = $(element);
@@ -60,7 +60,7 @@
       else {
         options.clientX = options.pointerX;
         options.clientY = options.pointerY;
-        oEvent = jQuery.extend(document.createEventObject(), options);
+        oEvent = Object.assign(document.createEventObject(), options);
         element.fireEvent('on' + eventName, oEvent);
       }
       return element;
