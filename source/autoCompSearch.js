@@ -486,7 +486,7 @@
           dataType: 'json',
           complete: this.options.onComplete
         }
-        this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
+        this.lastAjaxRequest_ = Def.jqueryLite.ajax(this.url, options);
         this.lastAjaxRequest_.requestParamData_ = paramData;
         this.lastAjaxRequest_.requestedCount = requestedCount;
       },
@@ -801,6 +801,7 @@
        * @param resultData A jQuery-extended XMLHttpRequest object, or an object
        *  containing fields "results", "searchStr", and "requestedCount" that is
        *  produced by useSearchFn.
+       *  // TODO: not used?
        * @param textStatus A jQuery text version of the status of the request
        *  (e.g. "success")
        * @param fromCache whether "response" is from the cache (optional).
@@ -1150,7 +1151,7 @@
             complete: this.onFindSuggestionComplete.bind(this)
           };
 
-          jQuery.ajax(this.url, options);
+          Def.jqueryLite.ajax(this.url, options);
         }
       },
 

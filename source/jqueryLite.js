@@ -42,6 +42,30 @@
             top: rect.top + win.pageYOffset,
             left: rect.left + win.pageXOffset
           };
+        },
+        /**
+         * equivalent of jQuery ajax().
+         * @param url
+         * @param options
+         * @param options.data an object containing query params for the request
+         * @param options.complete a callback function to be executed after the request is finished
+         * @return {XMLHttpRequest}
+         */
+        ajax: function(url, options) {
+          if (options.data) {
+            const urlParams = Object.entries(options.data).map(([key, value]) => `${key}=${value}`).join('&');
+            url += `?${urlParams}`;
+          }
+          const r = new XMLHttpRequest();
+          // r.responseType = options.dataType || '';
+          r.open("GET", encodeURI(url), true);
+          r.onreadystatechange = function() {
+            if (r.readyState === 4) {
+              options.complete(r, r.statusText);
+            }
+          };
+          r.send();
+          return r;
         }
       }
     }();

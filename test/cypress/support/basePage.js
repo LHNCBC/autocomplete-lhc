@@ -254,7 +254,7 @@ export function BasePage() {
    *  Returns the number of times an AJAX call has been made.
    */
   this.getAjaxCallCount = function() {
-    return cy.window().then(win=>win.jQuery.ajax.ajaxCtr);
+    return cy.window().then(win=>win.Def.jqueryLite.ajax.ajaxCtr);
   };
 
 

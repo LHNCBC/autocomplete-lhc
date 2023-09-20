@@ -3,7 +3,7 @@ if (typeof Def === 'undefined')
 
 (function() {
   // Wrap the definitions in a function to protect our version of global variables
-  function defineRDR($, jQuery, Def) {
+  function defineRDR($, Def) {
     "use strict";
 
     var Class = Def.PrototypeAPI.Class;
@@ -228,7 +228,7 @@ if (typeof Def === 'undefined')
 
         this.dataRequestOptions_.data = this.buildParameters();
         this.latestPendingAjaxRequest_ =
-          jQuery.ajax(this.dataURL_, this.dataRequestOptions_);
+          Def.jqueryLite.ajax(this.dataURL_, this.dataRequestOptions_);
         this.lastFieldVal_ = Def.Autocompleter.getFieldVal(this.formField_);
 
       }, // end requestData
@@ -730,5 +730,5 @@ if (typeof Def === 'undefined')
   if (typeof module !== 'undefined')
     module.exports = defineRDR;
   else
-    defineRDR(Def.PrototypeAPI.$, jQuery, Def);
+    defineRDR(Def.PrototypeAPI.$, Def);
 })();

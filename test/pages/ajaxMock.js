@@ -154,10 +154,10 @@ const fhirMockData = { // url to count to response (any filter value)
 };
 
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.
-jQuery.ajax = function(url, options) {
+Def.jqueryLite.ajax = function(url, options) {
   // Keep track of the number of calls to this method, so we can detect in
   // tests whether an AJAX request was sent or whether the cache was used.
-  ++jQuery.ajax.ajaxCtr;
+  ++Def.jqueryLite.ajax.ajaxCtr;
 
   let params = options.data;
   let responseJSON;
@@ -206,9 +206,8 @@ jQuery.ajax = function(url, options) {
   this.options = options;
   response.status = 200;
   response.responseText = JSON.stringify(responseJSON);
-  response.responseJSON = responseJSON;
   setTimeout(function() {options.complete(response);}, 1);
   return response;
 };
-jQuery.ajax.ajaxCtr = 0; // number of calls
+Def.jqueryLite.ajax.ajaxCtr = 0; // number of calls
 // end of mock for Ajax.Request
