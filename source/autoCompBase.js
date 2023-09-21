@@ -694,12 +694,15 @@ if (typeof Def === 'undefined')
         this.element.setAttribute('autocomplete','off');
         // --- end of section copied from controls.js baseInitialize ---
         this.update.style.display = 'none;'
-        this.element.addEventListener('blur', this.onBlur.bind(this));
-        this.element.addEventListener('keydown', this.onKeyPress.bind(this));
+        // A map of event listeners on this.element. Callback references have to
+        // be stored so that the listeners can be removed later.
+        this.elementEventListeners = new Map();
+        this.addEventListenerToElement('blur', this.onBlur.bind(this));
+        this.addEventListenerToElement('keydown', this.onKeyPress.bind(this));
 
         // On clicks, reset the token bounds relative to the point of the click
         if (this.options.tokens) {
-          this.element.addEventListener('click', function () {
+          this.addEventListenerToElement('click', function () {
             this.tokenBounds = null;
             this.getTokenBounds(this.element.selectionStart);
           }.bind(this));
@@ -727,12 +730,12 @@ if (typeof Def === 'undefined')
 
         // Set up event handler functions.
         this.onMouseDownListener = this.onMouseDown.bind(this);
-        this.element.addEventListener('change', this.onChange.bind(this));
-        this.element.addEventListener('keypress', this.changeToFieldByKeys.bind(this));
+        this.addEventListenerToElement('change', this.onChange.bind(this));
+        this.addEventListenerToElement('keypress', this.changeToFieldByKeys.bind(this));
         var fieldChanged =
           function() {this.typedSinceLastFocus_ = true;}.bind(this);
-        this.element.addEventListener('paste', fieldChanged);
-        this.element.addEventListener('cut', fieldChanged);
+        this.addEventListenerToElement('paste', fieldChanged);
+        this.addEventListenerToElement('cut', fieldChanged);
 
         // Store a reference to the element that should be positioned in order
         // to align the list with the field.
@@ -2664,10 +2667,24 @@ if (typeof Def === 'undefined')
 
 
       /**
+       * Adds an event listener to this.element and keep references of the callbacks
+       * so that it can be removed in stopObservingEvents()
+       */
+      addEventListenerToElement: function(event, callback) {
+        this.element.addEventListener(event, callback);
+        this.elementEventListeners.set(event, callback);
+      },
+
+
+      /**
        *  This can be called to detach an autocompleter's event listeners.
        */
       stopObservingEvents: function() {
-        jQuery(this.element).unbind();
+        this.elementEventListeners.forEach(function(value, key) {
+          this.element.removeEventListener(key, value);
+        }, this);
+        this.elementEventListeners.clear();
+        jQuery(this.element).unbind();  // TODO: remove
       },
 
 
