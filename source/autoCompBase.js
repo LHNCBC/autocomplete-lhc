@@ -199,7 +199,7 @@ if (typeof Def === 'undefined')
        *  If there is no list, the return value may be null.
        */
       listItemElementContainer: function() {
-        var rtn = jQuery("#completionOptions")[0].firstChild;
+        var rtn = document.querySelector("#completionOptions").firstChild;
         if (rtn && rtn.tagName === "TABLE")
           rtn = rtn.tBodies[0]; // tbody
         return rtn;
@@ -328,7 +328,7 @@ if (typeof Def === 'undefined')
        */
       classInit: function() {
         if (!this.classInit_) {
-          jQuery(document.body).append(
+          document.body.insertAdjacentHTML('beforeend',
              '<div id="searchResults" class="form_auto_complete"> \
              <div id="completionOptionsScroller">\
              <span class="auto_complete" id="completionOptions"></span> \
@@ -339,14 +339,14 @@ if (typeof Def === 'undefined')
              <div id="searchHint">Search Hint<!--place holder--></div> \
              </div>');
 
-          jQuery('#moreResults').mousedown(function(event) {
+          document.querySelector('#moreResults').addEventListener('mousedown', function(event) {
             var field = $(Def.Autocompleter.currentAutoCompField_);
             field.autocomp.handleSeeMoreItems(event);
             Def.Autocompleter.Event.notifyObservers(field, 'LIST_EXP',
             {list_expansion_method: 'clicked'});
           });
 
-          jQuery('#completionOptionsScroller').mousedown(function(event) {
+          document.querySelector('#completionOptionsScroller').addEventListener('mousedown', function(event) {
             // Here is a work-around for an IE-only issue in which if you use the scrollbar
             // on the list, the field gets a blur event (and maybe a change event
             // as well.)  For IE, we set things to refocus the field and to ignore
@@ -693,14 +693,13 @@ if (typeof Def === 'undefined')
         this.observer = null;
         this.element.setAttribute('autocomplete','off');
         // --- end of section copied from controls.js baseInitialize ---
-        jQuery(this.update).hide();
-        var jqElem = jQuery(this.element);
-        jqElem.blur(this.onBlur.bind(this));
-        jqElem.keydown(this.onKeyPress.bind(this));
+        this.update.style.display = 'none;'
+        this.element.addEventListener('blur', this.onBlur.bind(this));
+        this.element.addEventListener('keydown', this.onKeyPress.bind(this));
 
         // On clicks, reset the token bounds relative to the point of the click
         if (this.options.tokens) {
-          jqElem.click(function () {
+          this.element.addEventListener('click', function () {
             this.tokenBounds = null;
             this.getTokenBounds(this.element.selectionStart);
           }.bind(this));
@@ -708,9 +707,11 @@ if (typeof Def === 'undefined')
 
         // If this is a multiselect list, put the field into a span.
         if (options.maxSelect > 1) {
-          var fieldDiv = jQuery('<span class="autocomp_selected"><ul></ul></span>')[0];
+          var fieldDiv = document.createElement('span');
+          fieldDiv.classList.add('autocomp_selected');
           var fieldParent = this.element.parentNode;
           fieldParent.replaceChild(fieldDiv, this.element);
+          fieldDiv.appendChild(document.createElement('ul'));
           fieldDiv.appendChild(this.element);
           this.selectedList = fieldDiv.firstChild;
         }
@@ -726,11 +727,12 @@ if (typeof Def === 'undefined')
 
         // Set up event handler functions.
         this.onMouseDownListener = this.onMouseDown.bind(this);
-        jQuery(this.element).change(this.onChange.bind(this));
-        jQuery(this.element).keypress(this.changeToFieldByKeys.bind(this));
+        this.element.addEventListener('change', this.onChange.bind(this));
+        this.element.addEventListener('keypress', this.changeToFieldByKeys.bind(this));
         var fieldChanged =
           function() {this.typedSinceLastFocus_ = true;}.bind(this);
-        jQuery(this.element).bind('paste cut', fieldChanged);
+        this.element.addEventListener('paste', fieldChanged);
+        this.element.addEventListener('cut', fieldChanged);
 
         // Store a reference to the element that should be positioned in order
         // to align the list with the field.
@@ -934,12 +936,12 @@ if (typeof Def === 'undefined')
        */
       addToSelectedArea:  function(text) {
         var escapedVal = Def.Autocompleter.Base.escapeAttribute(text);
-        var li = jQuery('<li><button type="button" aria-label="&quot;'+escapedVal+
+        var li = '<li><button type="button" aria-label="&quot;'+escapedVal+
                         '&quot; item remove"><span aria-hidden="true">&times;</span></button>'
-                        +escapedVal+'</li>')[0];
-        this.selectedList.appendChild(li);
-        var span = li.childNodes[0];
-        jQuery(span).click(this.removeSelection.bind(this));
+                        +escapedVal+'</li>';
+        this.selectedList.insertAdjacentHTML('beforeend', li);
+        var span = this.selectedList.lastChild.childNodes[0];
+        span.addEventListener('click', this.removeSelection.bind(this));
         return escapedVal;
       },
 
@@ -1065,7 +1067,7 @@ if (typeof Def === 'undefined')
         // Listen for mousedown events (which arrive more quickly than
         // click events, presumably because click events probably have
         // to be distinguished from double-clicks.)
-        jQuery(element).mousedown(this.onMouseDownListener);
+        element.addEventListener('mousedown', this.onMouseDownListener);
       },
 
 
@@ -1179,7 +1181,7 @@ if (typeof Def === 'undefined')
         // autocompleter, we need to read the row.
         if (this.options.tableFormat) {
           var logEntry = [];
-          var cells = jQuery(listElement).children('td');
+          var cells = listElement.querySelectorAll('td');
           // Only read the row if there is more than one cell, because the screen
           // reader will read what gets put in the field.
           if (cells.length > 1) {
@@ -1271,7 +1273,7 @@ if (typeof Def === 'undefined')
       pageOptionsUpOrDown: function(pageUp) {
         // Get the height of the search results, which might be constrained by
         // span tag (id completionOptions).
-        var compOpts = jQuery('#completionOptionsScroller')[0];
+        var compOpts = document.querySelector('#completionOptionsScroller');
         var compOptHeight = compOpts.clientHeight; // the inner height, minus border
         var newScrollTop;
         if (pageUp) {
@@ -1284,7 +1286,7 @@ if (typeof Def === 'undefined')
         }
         else {
           // PAGE DOWN
-          var fullListHeight = jQuery('#completionOptions')[0].clientHeight;
+          var fullListHeight = document.querySelector('#completionOptions').clientHeight;
           var maxScrollTop = fullListHeight - compOptHeight;
           if (maxScrollTop < 0)
             maxScrollTop = 0;
@@ -1392,7 +1394,7 @@ if (typeof Def === 'undefined')
                               this.getTokenBounds(); // selection point may have moved
                             }
                             if (!event.ctrlKey && this.index>=0 &&
-                                jQuery(this.update).hasClass('multi_col')) {
+                                this.update.classList.contains('multi_col')) {
                               this.moveToOtherColumn(event);
                             }
                             break;
@@ -1446,14 +1448,14 @@ if (typeof Def === 'undefined')
       setMatchStatusIndicator: function(matchStatus) {
         if (matchStatus !== this.matchStatus_) {
           if (matchStatus) {
-            if (jQuery(this.element).hasClass('no_match')) {
-              jQuery(this.element).removeClass('no_match');
+            if (this.element.classList.contains('no_match')) {
+              this.element.classList.remove('no_match');
               Def.Autocompleter.screenReaderLog(
                 'The field no longer contains a non-matching value.');
             }
           }
           else {
-            jQuery(this.element).addClass('no_match');
+            this.element.classList.add('no_match');
             Def.Autocompleter.screenReaderLog(
               'The field\'s value does not match any items in the list.');
           }
@@ -1476,13 +1478,13 @@ if (typeof Def === 'undefined')
         if (invalid) {
           Def.Autocompleter.setOffAlarm(this.element);
           if (!this.invalidStatus_){
-            jQuery(this.element).addClass('invalid');
+            this.element.classList.add('invalid');
             this.element.setAttribute('invalid', true);
           }
         }
         else {
           if (this.invalidStatus_){
-            jQuery(this.element).removeClass('invalid');
+            this.element.classList.remove('invalid');
             this.element.setAttribute('invalid', false);
           }
         }
@@ -1517,7 +1519,7 @@ if (typeof Def === 'undefined')
           // If the HTML has a header row, disable clicks on that row
           var fc = this.update.firstChild;
           if (fc && fc.tHead) {
-            jQuery(fc.tHead).mousedown(function (e) {
+            fc.tHead.addEventListener('mousedown', function (e) {
               Def.Autocompleter.stopEvent(e)});
           }
 
@@ -1916,12 +1918,12 @@ if (typeof Def === 'undefined')
             var viewPortWidth = sharedDOMCache.get('viewPortWidth');
             if (newListWidth <= viewPortWidth) {
               this.listContainer.style.width = newListWidth + 'px';
-              jQuery(this.update).addClass('multi_col');
+              this.update.classList.add('multi_col');
               sharedDOMCache.listWrap = true;
             }
           }
           else {
-            jQuery(this.update).removeClass('multi_col');
+            this.update.classList.remove('multi_col');
             this.listContainer.style.width = ''; // reset it
             sharedDOMCache.listWrap = false;
             // There could now be a vertical scrollbar on the window, reducing
@@ -2722,9 +2724,9 @@ if (typeof Def === 'undefined')
        *  Shows the list.
        */
       show: function() {
-        if(jQuery(this.update).css('display')=='none') this.options.onShow(this.element, this.update);
+        if(getComputedStyle(this.update)['display']=='none') this.options.onShow(this.element, this.update);
         if(!this.iefix && Browser.IE &&
-          (jQuery(this.update).css('position')=='absolute')) {
+          (getComputedStyle(this.update)['position']=='absolute')) {
           new Insertion.After(this.update,
            '<iframe id="' + this.update.id + '_iefix" '+
            'style="display:none;position:absolute;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);" ' +
@@ -2744,7 +2746,7 @@ if (typeof Def === 'undefined')
           this.update.style.top = updatePos.top;
         this.iefix.style.zIndex = 1;
         this.update.style.zIndex = 2;
-        jQuery(this.iefix).show();
+        this.iefix.style.display = '';
       },
 
 
@@ -2752,8 +2754,8 @@ if (typeof Def === 'undefined')
        *  Hides the list.
        */
       hide: function() {
-        if(jQuery(this.update).css('display')!='none') this.options.onHide(this.element, this.update);
-        if(this.iefix) jQuery(this.iefix).hide();
+        if(getComputedStyle(this.update)['display']!='none') this.options.onHide(this.element, this.update);
+        if(this.iefix) this.iefix.style.display = 'none';
       },
 
 
@@ -2765,8 +2767,8 @@ if (typeof Def === 'undefined')
         if(this.entryCount > 0) {
           for (var i = 0; i < this.entryCount; i++)
             this.index==i ?
-              jQuery(this.getEntry(i)).addClass("selected") :
-              jQuery(this.getEntry(i)).removeClass("selected");
+              this.getEntry(i).classList.add("selected") :
+              this.getEntry(i).classList.remove("selected");
           if(this.hasFocus) {
             this.show();
             this.active = true;
