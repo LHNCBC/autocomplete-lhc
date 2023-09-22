@@ -10,9 +10,6 @@
     "test": "test"
   },
   "commentsOnDeps": {},
-  "peerDependencies": {
-    "jquery": "^3.0.0"
-  },
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
