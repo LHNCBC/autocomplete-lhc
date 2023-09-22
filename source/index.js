@@ -10,10 +10,10 @@ require('./screenReaderLog')(Def)
 require('./recordDataRequester')(Def.PrototypeAPI.$, Def)
 require('./fieldAlarms')(Def.PrototypeAPI.$, Def);
 require('../soundmanager/bonk')(Def);
-require('./autoCompBase')(Def.PrototypeAPI.$, jQuery, Def);
-require('./autoCompPrefetch')(Def.PrototypeAPI.$, jQuery, Def);
-require('./autoCompSearch')(Def.PrototypeAPI.$, jQuery, Def);
-require('./autoCompEvents')(Def.PrototypeAPI.$, jQuery, Def);
+require('./autoCompBase')(Def.PrototypeAPI.$, Def);
+require('./autoCompPrefetch')(Def.PrototypeAPI.$, Def);
+require('./autoCompSearch')(Def.PrototypeAPI.$, Def);
+require('./autoCompEvents')(Def.PrototypeAPI.$, Def);
 require('./autocomplete-lhc')(Def);
 
 module.exports = Def;

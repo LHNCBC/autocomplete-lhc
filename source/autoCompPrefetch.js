@@ -4,7 +4,7 @@
 // in the Script.aculo.us controls.js file.
 
 (function() {
-  function definePrefetch($, jQuery, Def) {
+  function definePrefetch($, Def) {
     "use strict";
 
     var Class = Def.PrototypeAPI.Class;
@@ -170,8 +170,8 @@
         this.initHeadings(options);
         this.defAutocompleterBaseInit(id, options);
         // Set up event observers.
-        jQuery(this.element).focus(this.onFocus.bind(this));
-        jQuery(this.element).click(this.onFieldClick.bind(this));
+        this.addEventListenerToElement('focus', this.onFocus.bind(this));
+        this.addEventListenerToElement('click', this.onFieldClick.bind(this));
         // The base class sets up one for a "blur" event.
 
         var codes = options['codes'];
@@ -180,7 +180,7 @@
         this.originalCodes_ = codes;
         this.options.minChars = 0; // do autocompletion even if the field is blank
         this.splitAutocomp_ = false;
-        jQuery(this.element).addClass('ansList');
+        this.element.classList.add('ansList');
       },
 
 
@@ -583,9 +583,9 @@
         // We don't add the class when autofill is enabled because the user
         // won't see a list if the value is already chosen.
         if (listItems.length > 1 || !this.autoFill_)
-          jQuery(this.element).addClass('ac_multiple');
+          this.element.classList.add('ac_multiple');
         else
-          jQuery(this.element).removeClass('ac_multiple')
+          this.element.classList.remove('ac_multiple')
 
         // If the field has focus, call onFocus to re-render and decide what
         // to do about displaying the list.
@@ -1065,5 +1065,5 @@
   if (typeof module !== 'undefined')
     module.exports = definePrefetch;
   else
-    definePrefetch(Def.PrototypeAPI.$, jQuery, Def);
+    definePrefetch(Def.PrototypeAPI.$, Def);
 })();

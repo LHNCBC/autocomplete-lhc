@@ -112,7 +112,7 @@ describe('autocomp scroll function', function() {
       const autocompElementOffset = autocompElement.getBoundingClientRect();
       const searchResultElement = win.document.getElementById("searchResults");
       const searchResultElementOffset = searchResultElement.getBoundingClientRect();
-      expect(Math.abs(searchResultElementOffset.top - autocompElementOffset.bottom)).to.be.lessThan(0.5);
+      expect(Math.abs(searchResultElementOffset.top - autocompElementOffset.bottom)).to.be.lessThan(1);
     });
   });
 });

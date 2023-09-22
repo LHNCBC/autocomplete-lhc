@@ -4,7 +4,7 @@
 // in the Script.aculo.us controls.js file.
 
 (function() {
-  function defineSearch($, jQuery, Def) {
+  function defineSearch($, Def) {
     "use strict";
 
     var Class = Def.PrototypeAPI.Class;
@@ -307,7 +307,7 @@
         //   this.options.asynchronous = false;
 
         // Set up event observers.
-        jQuery(this.element).focus(this.onFocus.bind(this));
+        this.addEventListenerToElement('focus', this.onFocus.bind(this));
         // The base class sets up one for a "blur" event.
 
         var buttonID = options['buttonID'];
@@ -322,11 +322,11 @@
           // occuring -- though I don't understand why.  (If I comment out the
           // Ajax.Request, the blur event occurs, but if I uncomment that and
           // comment out the onComplete code, it does not.)
-          var button = jQuery(document.getElementById(buttonID));
-          button.mousedown(this.buttonClick.bind(this));
-          button.keypress(this.buttonKeyPress.bind(this));
+          var button = document.getElementById(buttonID);
+          button.addEventListener('mousedown', this.buttonClick.bind(this));
+          button.addEventListener('keypress', this.buttonKeyPress.bind(this));
         }
-        jQuery(this.element).addClass('search_field');
+        this.element.classList.add('search_field');
 
         if (options.colHeaders) {
           this.colHeaderHTML = '<table><thead><th>'+
@@ -1246,5 +1246,5 @@
   if (typeof module !== 'undefined')
     module.exports = defineSearch;
   else
-    defineSearch(Def.PrototypeAPI.$, jQuery, Def);
+    defineSearch(Def.PrototypeAPI.$, Def);
 })();

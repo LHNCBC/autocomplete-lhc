@@ -32,7 +32,7 @@ if (typeof Def === 'undefined')
 
 (function() {
   // Wrap the definitions in a function to protect our version of global variables
-  function initializeBase($, jQuery, Def) {
+  function initializeBase($, Def) {
     "use strict";
 
     // A test for IE, borrowed from PrototypeJS -- and modified.
@@ -2684,7 +2684,6 @@ if (typeof Def === 'undefined')
           this.element.removeEventListener(key, value);
         }, this);
         this.elementEventListeners.clear();
-        jQuery(this.element).unbind();  // TODO: remove
       },
 
 
@@ -2834,5 +2833,5 @@ if (typeof Def === 'undefined')
   if (typeof module !== 'undefined')
     module.exports = initializeBase;
   else
-    initializeBase(Def.PrototypeAPI.$, jQuery, Def);
+    initializeBase(Def.PrototypeAPI.$, Def);
 })();
