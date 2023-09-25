@@ -338,21 +338,3 @@ autoFillAC.setListAndField(['Blue']);
 autoFillAC = new Def.Autocompleter.Prefetch('list_wo_autofill', [],
   {autoFill: false});
 autoFillAC.setListAndField(['Blue']);
-
-// To test the LF-2681 issue, open a modal dialog with an autocomplete control on it.
-  document.querySelector("#myModal").addEventListener('shown.bs.modal', function() {
-    // Manually produce the LF-2681 issue that is caused by Angular mat-dialog.
-    document.documentElement.style.position = 'fixed';
-    document.documentElement.style.top = '-1000.2px';
-
-    var opts = {};
-    opts['matchListValue']=true
-    opts['codes']=["LA6155-1","LA6156-9","LA6162-7","LA6214-6","LA6266-6","LA4457-3","LA4489-6"]
-    opts['autoFill']=true
-    var raceList = ["American Indian or Alaska Native","Asian","Black or African-American",
-      "Hispanic or Latino","Native Hawaiian or Pacific Islander","White",
-      "Unknown"];
-    var fe_race_or_ethnicity_autoComp_on_modal = new
-    Def.Autocompleter.Prefetch('race_or_ethnicity_on_modal', raceList, opts);
-  });
-

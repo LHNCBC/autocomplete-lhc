@@ -729,4 +729,26 @@ describe('autocompleters', function () {
     });
   });
 
+  // To test the LF-2681 issue, open a modal dialog with an autocomplete control on it.
+  it('should place list under the autocomplete control on a dialog', function() {
+    // Button to open a modal dialog
+    const myButton = '#myBtn';
+    // A simple Prefetch control on a modal dialog
+    const prefetchCNEOnModalFieldName = 'race_or_ethnicity_on_modal';
+    const prefetchCNEOnModal = '#' + prefetchCNEOnModalFieldName;
+
+    cy.get(myButton).click();
+    cy.get(prefetchCNEOnModal).should('be.visible');
+    cy.get(prefetchCNEOnModal).click();
+    cy.get('#searchResults').should('be.visible');
+    cy.window().then(win => {
+      // Verify that the search result list is placed right under the autocommpleter-lhc control.
+      const autocompElement = win.document.getElementById(prefetchCNEOnModalFieldName);
+      const autocompElementOffset = autocompElement.getBoundingClientRect();
+      const searchResultElement = win.document.getElementById("searchResults");
+      const searchResultElementOffset = searchResultElement.getBoundingClientRect();
+      expect(Math.abs(searchResultElementOffset.top - autocompElementOffset.bottom)).to.be.lessThan(1);
+    });
+  });
+
 });

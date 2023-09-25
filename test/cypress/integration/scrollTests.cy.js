@@ -100,19 +100,4 @@ describe('autocomp scroll function', function() {
       cy.wrap(win.document.querySelector('#'+po.multiHeadingCWEID).autocomp.lastScrollEffect_.state).should('equal', 'finished');
     });
   });
-
-  it('should place list under the autocomplete control on a dialog', function() {
-    cy.get(po.myButton).click();
-    cy.get(po.prefetchCNEOnModal).should('be.visible');
-    cy.get(po.prefetchCNEOnModal).click();
-    po.waitForSearchResults();
-    cy.window().then(win => {
-      // Verify that the search result list is placed right under the autocommpleter-lhc control.
-      const autocompElement = win.document.getElementById(po.prefetchCNEOnModalFieldName);
-      const autocompElementOffset = autocompElement.getBoundingClientRect();
-      const searchResultElement = win.document.getElementById("searchResults");
-      const searchResultElementOffset = searchResultElement.getBoundingClientRect();
-      expect(Math.abs(searchResultElementOffset.top - autocompElementOffset.bottom)).to.be.lessThan(1);
-    });
-  });
 });
