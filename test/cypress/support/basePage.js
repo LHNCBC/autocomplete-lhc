@@ -67,7 +67,7 @@ export function BasePage() {
    *  cy.window() inside a should().
    */
   function getSelectedWithWin(fieldID, win) {
-    var ac = win.jQuery('#'+fieldID.replace(/\//g, '\\\\/'))[0].autocomp;
+    var ac = win.document.querySelector('#'+fieldID.replace(/\//g, '\\\\/')).autocomp;
     return [ac.getSelectedCodes(), ac.getSelectedItems()];
   }
 
@@ -209,20 +209,21 @@ export function BasePage() {
     // Add a div to the top of the page whose height is just bit enough to
     // push the element below the bottom, and then scroll it into view.
     return cy.window().then(win=>{
-      var elem = win.jQuery("#"+elemID);
-      var elemTop = elem.offset().top;
+      var elem = win.document.querySelector("#"+elemID);
+      var elemTop = win.Def.jqueryLite.getElementOffset(elem).top;
       var winHeight = win.innerHeight;
       if (winHeight > elemTop) {
         var div = win.document.getElementById('scrollTestDiv');
         if (!div) {
-          div = win.$('<div style="background-color: green" id=scrollTestDiv></div>')[0];
+          div = win.document.createElement('div');
+          div.style.backgroundColor = 'green';
+          div.id = 'scrollTestDiv';
           win.document.body.insertBefore(div, win.document.body.firstChild);
         }
         div.style.height = (winHeight-elemTop)+'px';
         div.style.width = '100px'; // to make it visible
       }
-      console.log(elem[0]);
-      elem[0].scrollIntoView(false);
+      elem.scrollIntoView(false);
     });
   };
 
@@ -263,7 +264,7 @@ export function BasePage() {
    */
   this.listScrollPos = function() {
     return this.executeScript(
-      'return window.jQuery("'+this.completionOptionsScrollerCSS+'")[0].scrollTop;'
+      'return window.document.querySelector("'+this.completionOptionsScrollerCSS+'").scrollTop;'
     );
   };
 
@@ -276,7 +277,7 @@ if (false) {
    */
   this.listIsVisible = function() {
     return browser.driver.executeScript(
-      'return jQuery("#'+searchResID+'")[0].style.visibility === "visible"'
+      'return document.querySelector("#'+searchResID+'").style.visibility === "visible"'
     );
   };
 
@@ -346,7 +347,7 @@ if (false) {
     // An issue was filed at:  https://github.com/angular/protractor/issues/4798
     // Rather than wait for a fix, we are switching to using a new function,
     // "putFieldAtBottomOfWindow".
-    return browser.driver.executeScript('return jQuery("#'+elemID+'").offset().top'
+    return browser.driver.executeScript('return Def.jqueryLite.getElementOffset(document.querySelector("#'+elemID+'")).top'
       ).then(function(top) {
         // The returned offset top value is not completely right, it seems,
         // so I am adding adding extra height pixels in the setSize call below.

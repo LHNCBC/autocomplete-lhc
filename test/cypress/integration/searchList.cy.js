@@ -105,7 +105,7 @@ describe('search lists', function() {
     cy.window().then(win=>{
       for (var i=0, len=ids.length; i<len; ++i) {
         var recID = ids[i];
-        var extraData = win.jQuery("#allele_search")[0].autocomp.getItemExtraData(recID);
+        var extraData = win.document.querySelector("#allele_search").autocomp.getItemExtraData(recID);
         expect(extraData).to.deep.equal(expected[recID]);
       }
     });
@@ -148,8 +148,8 @@ describe('search lists', function() {
       // Now change the URL and reset the cache
       cy.get(po.nonField).click(); // hide the list
       cy.window().then(win=>{
-        win.jQuery(po.searchCNESel)[0].autocomp.url = "/form/get_search_res_list?fd_id=2163";
-        win.jQuery(po.searchCNESel)[0].autocomp.clearCachedResults();
+        win.document.querySelector(po.searchCNESel).autocomp.url = "/form/get_search_res_list?fd_id=2163";
+        win.document.querySelector(po.searchCNESel).autocomp.clearCachedResults();
         // Try the search again-- it should be different
         cy.get(po.searchCNESel).clear().click().type('ar');
         po.waitForSearchResults();
@@ -173,7 +173,7 @@ describe('search lists', function() {
       // Now change the URL and reset the cache
       cy.get(po.nonField).click(); // hide the list
       cy.window().then(win=>{
-        win.jQuery(po.searchCNESel)[0].autocomp.setURL("/form/get_search_res_list?fd_id=2163");
+        win.document.querySelector(po.searchCNESel).autocomp.setURL("/form/get_search_res_list?fd_id=2163");
         // Try the search again-- it should be different
         cy.get(po.searchCNESel).clear().click().type('ar');
         po.waitForSearchResults();
@@ -205,7 +205,7 @@ describe('search lists', function() {
       po.getAjaxCallCount().should('equal', 4);
       // Now change searchCNE to have the same URL as search CWE
       cy.window().then(win=>{
-        win.jQuery(po.searchCNESel)[0].autocomp.setURL("/form/get_search_res_list?fd_id=2163");
+        win.document.querySelector(po.searchCNESel).autocomp.setURL("/form/get_search_res_list?fd_id=2163");
         // Confirm that with the new URL, no new AJAX call is made for the same
         // search string.
         po.autocompPickFirst(po.searchCNESel, 'ar');
@@ -224,7 +224,7 @@ describe('search lists', function() {
         po.waitForSearchResults();
         po.searchResult(1).click();
         cy.window().then(win=>{
-          expect(win.jQuery('#'+po.searchCWEID)[0].autocomp.getItemData())
+          expect(win.document.querySelector('#'+po.searchCWEID).autocomp.getItemData())
             .to.deep.equal({code: "2958", text: "Arm pain",
               data: {term_icd9_code: "729.5"},  code_system: "gopher"});
         });
@@ -235,7 +235,7 @@ describe('search lists', function() {
         po.waitForSearchResults();
         po.searchResult(1).click();
         cy.window().then(win=>{
-          expect(win.jQuery(po.searchCNESel)[0].autocomp.getItemData())
+          expect(win.document.querySelector(po.searchCNESel).autocomp.getItemData())
             .to.deep.equal({code: "5529", text: "Arachnoiditis",
           data: {term_icd9_code: "322.9"}});
         });
@@ -246,7 +246,7 @@ describe('search lists', function() {
         po.waitForSearchResults();
         po.searchResult(1).click();
         cy.window().then(win=>{
-          expect(win.jQuery(po.searchCNESel)[0].autocomp.getItemData().data)
+          expect(win.document.querySelector(po.searchCNESel).autocomp.getItemData().data)
           .to.equal(undefined);
         });
       });
@@ -310,7 +310,7 @@ describe('search lists', function() {
 
     it('should be possible to accept a suggestion', function() {
       cy.window().then(win=>{
-        win.$(po.searchCWESel)[0].autocomp.acceptSuggestion(0);
+        win.document.querySelector(po.searchCWESel).autocomp.acceptSuggestion(0);
         cy.get(po.searchCWESel).should('have.value', 'Aortic insufficiency');
       });
     });
