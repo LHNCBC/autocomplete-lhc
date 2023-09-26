@@ -129,9 +129,7 @@ export function BasePage() {
     return cy.window().then(win=> {
       return new Cypress.Promise((resolve, reject) => {
         function getScope() {
-          var tmp = 'var testField = $("'+elemCSSSel+'"); testField.'+
-            (isolatedScope ? 'isolateScope()' : 'scope()');
-          return win.eval('var testField = $("'+elemCSSSel+'"); testField.'+
+          return win.eval('var testField = angular.element(document.querySelector("'+elemCSSSel+'")); testField.'+
             (isolatedScope ? 'isolateScope()' : 'scope()'));
         }
         function waitForScope() {
