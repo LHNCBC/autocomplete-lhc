@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [18.6.6] - 2023-09-28
+### Fixed
+- autocomplete-lhc search field should cancel the previous ajax request on
+  next keystroke.
+
 ## [18.6.5] - 2023-09-18
 ### Removed
 - JQuery dependency.
