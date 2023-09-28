@@ -322,4 +322,26 @@ describe('search lists', function() {
       });
     });
   });
+
+  describe('delayed ajax', function(){
+    beforeEach(function() {
+      po.openTestPage();
+      cy.window().then(function(win) {
+        win.Def.jqueryLite.ajaxFactory(500);
+      });
+    });
+
+    it('should cancel previous request on new key stroke', function() {
+      po.getAjaxAbortCount().should('equal', 0);
+      cy.get(po.searchCNESel).click().type('a');
+      cy.get(po.searchCNESel).click().type('a');
+      po.getAjaxAbortCount().should('equal', 1);
+      cy.wait(600);
+      cy.get(po.searchCNESel).click().type('a');
+      // Abort count should not increase since the previous request is completed after the wait.
+      po.getAjaxAbortCount().should('equal', 1);
+      cy.get(po.searchCNESel).click().type('a');
+      po.getAjaxAbortCount().should('equal', 2);
+    });
+  });
 });

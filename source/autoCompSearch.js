@@ -390,7 +390,7 @@
         // Cancel the previous search/AJAX request, if there is one pending.
         // This might free up a thread for the browser, but it does not help
         // the server any.
-        if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
+        if (this.lastAjaxRequest_)
           this.lastAjaxRequest_.abort();
 
         var searchFn = this.search;
@@ -798,7 +798,7 @@
       /**
        *  This gets called when an Ajax request returns.  (See Prototype's
        *  Ajax.Request and callback sections.)
-       * @param resultData A jQuery-extended XMLHttpRequest object, or an object
+       * @param resultData An XMLHttpRequest object, or an object
        *  containing fields "results", "searchStr", and "requestedCount" that is
        *  produced by useSearchFn.
        *  // TODO: not used?
@@ -1102,7 +1102,7 @@
        *  parameters that are posted.
        */
       getUpdatedChoices: function() {
-        if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
+        if (this.lastAjaxRequest_)
           this.lastAjaxRequest_.abort();
 
         if (this.url || this.search) { // url can be initially undefined and set later
