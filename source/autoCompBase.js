@@ -2662,6 +2662,7 @@ if (typeof Def === 'undefined')
         //Def.Logger.logMessage(['in autoCompBase.destroy, this.element.id = ',
         //                       this.element.id]) ;
         this.stopObservingEvents();
+        this.removeAutocompleteLhcClasses();
         this.detachFromDOM();
       },
 
@@ -2684,6 +2685,18 @@ if (typeof Def === 'undefined')
           this.element.removeEventListener(key, value);
         }, this);
         this.elementEventListeners.clear();
+      },
+
+
+      /**
+       * Removes classes added to the element by autocomplete-lhc.
+       */
+      removeAutocompleteLhcClasses: function() {
+        ['no_match', 'invalid', 'ansList', 'ac_multiple', 'search_field'].forEach(item => {
+          if (this.element.classList.contains(item)) {
+            this.element.classList.remove(item);
+          }
+        }, this);
       },
 
 
