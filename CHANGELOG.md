@@ -3,9 +3,9 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
-## [18.6.5] - 2023-09-18
+## [19.0.0] - 2023-10-05
 ### Removed
-- JQuery dependency.
+- Removed jQuery dependency. Some changes use APIs that are not supported by IE.
 
 ## [18.6.4] - 2023-08-25
 ### Changed
