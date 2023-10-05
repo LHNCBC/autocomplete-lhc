@@ -334,11 +334,11 @@ describe('search lists', function() {
     it('should cancel previous request on new key stroke', function() {
       po.getAjaxAbortCount().should('equal', 0);
       cy.get(po.searchCNESel).click().type('a');
-      cy.get(po.searchCNESel).click().type('a');
+      cy.get(po.searchCNESel).click().type('r');
       po.getAjaxAbortCount().should('equal', 1);
-      cy.wait(600);
+      po.waitForSearchResults();
       cy.get(po.searchCNESel).click().type('a');
-      // Abort count should not increase since the previous request is completed after the wait.
+      // Abort count should not increase since the previous request is completed.
       po.getAjaxAbortCount().should('equal', 1);
       cy.get(po.searchCNESel).click().type('a');
       po.getAjaxAbortCount().should('equal', 2);
