@@ -798,7 +798,7 @@
       /**
        *  This gets called when an Ajax request returns.  (See Prototype's
        *  Ajax.Request and callback sections.)
-       * @param resultData A jQuery-extended XMLHttpRequest object, or an object
+       * @param resultData An XMLHttpRequest object, or an object
        *  containing fields "results", "searchStr", and "requestedCount" that is
        *  produced by useSearchFn.
        * @param fromCache whether "response" is from the cache (optional).
@@ -1157,7 +1157,7 @@
        *  Handles the return of the AJAX call started in findSuggestions.
        *  (See Prototype's Ajax.Request and callback sections for a description
        *  of the parameter and how this works.)
-       * @param response the jQuery-extended XMLHttpRequest object
+       * @param response the XMLHttpRequest object
        */
       onFindSuggestionComplete: function(response) {
         if (response.status === 200) { // 200 is the "OK" status
