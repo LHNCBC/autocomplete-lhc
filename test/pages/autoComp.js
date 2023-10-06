@@ -13,7 +13,7 @@
      {'matchListValue': false, 'addSeqNum': false,
       'codes': ['oa', 'a', 'pa', 'b', 's'],
       'dataRequester': new Def.RecordDataRequester($('fe_other_list_field'),
-           '/someurl', ['fe_record_id'], ['fe_code', 'fe_pseudonym'])});
+           'http://abc.com', ['fe_record_id'], ['fe_code', 'fe_pseudonym'])});
 
   // A list where a match is required
   var fe_other_list_field2_autoComp =
@@ -38,7 +38,7 @@
 
   // A Search autocompleter
   var fe_search_test_autoComp = new Def.Autocompleter.Search('fe_search_test',
-     {'matchListValue': true, 'url': '/someURL'});
+     {'matchListValue': true, 'url': 'http://abc.com'});
 
   var aspirin_table = [['Caps', '325 MG'].join(' - '),
                          ['Chewable Tabs',' 65 MG'].join(' - '),
