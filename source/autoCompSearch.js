@@ -405,7 +405,7 @@
             results = this.getCachedResults(searchStr,
                                 this.getLoadCount(Def.Autocompleter.Search.EXPANDED_COUNT));
             if (results)
-              this.onComplete(results, null, true);
+              this.onComplete(results, true);
           }
           if (!results) { // i.e. if it wasn't cached
             // Run the search
@@ -801,12 +801,9 @@
        * @param resultData An XMLHttpRequest object, or an object
        *  containing fields "results", "searchStr", and "requestedCount" that is
        *  produced by useSearchFn.
-       *  // TODO: not used?
-       * @param textStatus A jQuery text version of the status of the request
-       *  (e.g. "success")
        * @param fromCache whether "response" is from the cache (optional).
        */
-      onComplete: function(resultData, textStatus, fromCache) {
+      onComplete: function(resultData, fromCache) {
         const requestedCount = resultData.requestedCount || this.lastAjaxRequest_.requestedCount;
         var untrimmedFieldVal = this.getToken();
         this.trimmedElemVal = untrimmedFieldVal.trim(); // used in autoCompBase
@@ -1121,7 +1118,7 @@
             // See if the search has been run before.
             results = this.getCachedResults(fieldVal, this.getLoadCount(Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD));
             if (results)
-              this.onComplete(results, null, true);
+              this.onComplete(results, true);
           }
           if (!results) {
             if (this.search)
@@ -1160,7 +1157,7 @@
        *  Handles the return of the AJAX call started in findSuggestions.
        *  (See Prototype's Ajax.Request and callback sections for a description
        *  of the parameter and how this works.)
-       * @param response the jQuery-extended XMLHttpRequest object
+       * @param response the XMLHttpRequest object
        */
       onFindSuggestionComplete: function(response) {
         if (response.status === 200) { // 200 is the "OK" status
