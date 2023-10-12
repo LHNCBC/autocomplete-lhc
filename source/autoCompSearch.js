@@ -4,7 +4,7 @@
 // in the Script.aculo.us controls.js file.
 
 (function() {
-  function defineSearch($, jQuery, Def) {
+  function defineSearch($, Def) {
     "use strict";
 
     var Class = Def.PrototypeAPI.Class;
@@ -49,10 +49,10 @@
        */
       superclass: Def.Autocompleter.Base.prototype
     };
-    jQuery.extend(Def.Autocompleter.Search, ctmp);
+    Object.assign(Def.Autocompleter.Search, ctmp);
     ctmp = null;
 
-    jQuery.extend(Def.Autocompleter.Search.prototype,
+    Object.assign(Def.Autocompleter.Search.prototype,
       Def.Autocompleter.Base.prototype);
     Def.Autocompleter.Search.prototype.className = 'Def.Autocompleter.Search' ;
 
@@ -252,23 +252,23 @@
        */
       initialize: function(fieldID, url, options) {
 
-        options = jQuery.extend({
+        options = Object.assign({
           partialChars: 2,
-          onHide: jQuery.proxy(function(element, update) {
+          onHide: function(element, update) {
             $('searchCount').style.display = 'none';
             $('moreResults').style.display = 'none';
             Def.Autocompleter.Base.prototype.hideList.apply(this);
-          }, this),
+          }.bind(this),
 
-          onShow: jQuery.proxy(function(element, update) {
+          onShow: function(element, update) {
             // Make the search count display before adjusting the list position.
             $('searchCount').style.display='block';
             $('moreResults').style.display = 'block';
 
             Def.Autocompleter.Base.prototype.showList.apply(this);
-          }, this),
+          }.bind(this),
 
-          onComplete: jQuery.proxy(this.onComplete, this)
+          onComplete: this.onComplete.bind(this)
         }, options || {});
 
         if (!Def.Autocompleter.Base.classInit_)
@@ -307,7 +307,7 @@
         //   this.options.asynchronous = false;
 
         // Set up event observers.
-        jQuery(this.element).focus(jQuery.proxy(this.onFocus, this));
+        this.addEventListenerToElement('focus', this.onFocus.bind(this));
         // The base class sets up one for a "blur" event.
 
         var buttonID = options['buttonID'];
@@ -322,11 +322,11 @@
           // occuring -- though I don't understand why.  (If I comment out the
           // Ajax.Request, the blur event occurs, but if I uncomment that and
           // comment out the onComplete code, it does not.)
-          var button = jQuery(document.getElementById(buttonID));
-          button.mousedown(jQuery.proxy(this.buttonClick, this));
-          button.keypress(jQuery.proxy(this.buttonKeyPress, this));
+          var button = document.getElementById(buttonID);
+          button.addEventListener('mousedown', this.buttonClick.bind(this));
+          button.addEventListener('keypress', this.buttonKeyPress.bind(this));
         }
-        jQuery(this.element).addClass('search_field');
+        this.element.classList.add('search_field');
 
         if (options.colHeaders) {
           this.colHeaderHTML = '<table><thead><th>'+
@@ -390,7 +390,7 @@
         // Cancel the previous search/AJAX request, if there is one pending.
         // This might free up a thread for the browser, but it does not help
         // the server any.
-        if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
+        if (this.lastAjaxRequest_)
           this.lastAjaxRequest_.abort();
 
         var searchFn = this.search;
@@ -405,7 +405,7 @@
             results = this.getCachedResults(searchStr,
                                 this.getLoadCount(Def.Autocompleter.Search.EXPANDED_COUNT));
             if (results)
-              this.onComplete(results, null, true);
+              this.onComplete(results, true);
           }
           if (!results) { // i.e. if it wasn't cached
             // Run the search
@@ -486,7 +486,7 @@
           dataType: 'json',
           complete: this.options.onComplete
         }
-        this.lastAjaxRequest_ = jQuery.ajax(this.url, options);
+        this.lastAjaxRequest_ = Def.jqueryLite.ajax(this.url, options);
         this.lastAjaxRequest_.requestParamData_ = paramData;
         this.lastAjaxRequest_.requestedCount = requestedCount;
       },
@@ -798,14 +798,12 @@
       /**
        *  This gets called when an Ajax request returns.  (See Prototype's
        *  Ajax.Request and callback sections.)
-       * @param resultData A jQuery-extended XMLHttpRequest object, or an object
+       * @param resultData An XMLHttpRequest object, or an object
        *  containing fields "results", "searchStr", and "requestedCount" that is
        *  produced by useSearchFn.
-       * @param textStatus A jQuery text version of the status of the request
-       *  (e.g. "success")
        * @param fromCache whether "response" is from the cache (optional).
        */
-      onComplete: function(resultData, textStatus, fromCache) {
+      onComplete: function(resultData, fromCache) {
         const requestedCount = resultData.requestedCount || this.lastAjaxRequest_.requestedCount;
         var untrimmedFieldVal = this.getToken();
         this.trimmedElemVal = untrimmedFieldVal.trim(); // used in autoCompBase
@@ -1101,7 +1099,7 @@
        *  parameters that are posted.
        */
       getUpdatedChoices: function() {
-        if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
+        if (this.lastAjaxRequest_)
           this.lastAjaxRequest_.abort();
 
         if (this.url || this.search) { // url can be initially undefined and set later
@@ -1120,7 +1118,7 @@
             // See if the search has been run before.
             results = this.getCachedResults(fieldVal, this.getLoadCount(Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD));
             if (results)
-              this.onComplete(results, null, true);
+              this.onComplete(results, true);
           }
           if (!results) {
             if (this.search)
@@ -1147,10 +1145,10 @@
             params.authenticity_token = window._token;
           var options = {
             data: paramData,
-            complete: jQuery.proxy(this.onFindSuggestionComplete, this)
+            complete: this.onFindSuggestionComplete.bind(this)
           };
 
-          jQuery.ajax(this.url, options);
+          Def.jqueryLite.ajax(this.url, options);
         }
       },
 
@@ -1159,7 +1157,7 @@
        *  Handles the return of the AJAX call started in findSuggestions.
        *  (See Prototype's Ajax.Request and callback sections for a description
        *  of the parameter and how this works.)
-       * @param response the jQuery-extended XMLHttpRequest object
+       * @param response the XMLHttpRequest object
        */
       onFindSuggestionComplete: function(response) {
         if (response.status === 200) { // 200 is the "OK" status
@@ -1238,12 +1236,12 @@
         this.element.focus();
       }
     };
-    jQuery.extend(Def.Autocompleter.Search.prototype, tmp);
+    Object.assign(Def.Autocompleter.Search.prototype, tmp);
     tmp = null;
   }
 
   if (typeof module !== 'undefined')
     module.exports = defineSearch;
   else
-    defineSearch(Def.PrototypeAPI.$, jQuery, Def);
+    defineSearch(Def.PrototypeAPI.$, Def);
 })();

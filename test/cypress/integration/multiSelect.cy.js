@@ -108,7 +108,7 @@ describe('multi-select lists', function() {
     // selecting it.  Note that we cannot normally move to that item, unless
     // there is another bug, so we have to force the index there.
     cy.window().then(win=>{
-      win.jQuery(po.multiHeadingCWE)[0].autocomp.index = 3;
+      win.document.querySelector(po.multiHeadingCWE).autocomp.index = 3;
       cy.get(po.multiHeadingCWE).type('{enter}');
       // It should not have been added to the selction area.
       cy.get(po.multiHeadingCWESelected).should('have.length', 1);

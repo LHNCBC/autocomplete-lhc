@@ -153,62 +153,74 @@ const fhirMockData = { // url to count to response (any filter value)
   }
 };
 
+// Factory function for Def.jqueryLite.ajax where you can set the delay of
+// completing the ajax request. Used to mock delayed ajax calls in tests.
+Def.jqueryLite.ajaxFactory = function (delay) {
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.
-jQuery.ajax = function(url, options) {
-  // Keep track of the number of calls to this method, so we can detect in
-  // tests whether an AJAX request was sent or whether the cache was used.
-  ++jQuery.ajax.ajaxCtr;
+  Def.jqueryLite.ajax = function (url, options) {
+    // Keep track of the number of calls to this method, so we can detect in
+    // tests whether an AJAX request was sent or whether the cache was used.
+    ++Def.jqueryLite.ajax.ajaxCtr;
 
-  let params = options.data;
-  let responseJSON;
+    let params = options.data;
+    let responseJSON;
 
-  if (!params.filter) { // assume filter is present for FHIR requests (for testing)
-    const resultType = params.suggest
-      ? 'suggest'
-      : params.maxList === undefined || params.maxList < 100
-        ? 'partial'
-        : 'full';
+    if (!params.filter) { // assume filter is present for FHIR requests (for testing)
+      const resultType = params.suggest
+        ? 'suggest'
+        : params.maxList === undefined || params.maxList < 100
+          ? 'partial'
+          : 'full';
 
 
-    // This is just for testing, so assume the right parameters.
-    const fd_id = url.match(/fd_id=(\w+)/)[1];
-    const terms = params.terms || params.field_val; // suggest uses field_val
-    const responseText = mockData_[fd_id][resultType][terms];
-    if (!responseText) {
-      if (params.suggest === '1')
-        responseJSON = [[],[]];
-      else
-        responseJSON = [0,[],null,[],false];
-    } else {
-      responseJSON = JSON.parse(responseText);
-      // Add items from full data if the length of partial data is less than maxList
-      if (resultType === 'partial' && mockData_[fd_id].full && responseJSON[1].length < params.maxList) {
-        const fullData = JSON.parse(mockData_[fd_id].full[terms]);
-        const partialDataLength = responseJSON[1].length;
-        responseJSON[1] = responseJSON[1].concat(fullData[1].slice(partialDataLength, params.maxList));
-        responseJSON[3] = responseJSON[3].concat(fullData[3].slice(partialDataLength, params.maxList));
+      // This is just for testing, so assume the right parameters.
+      const fd_id = url.match(/fd_id=(\w+)/)[1];
+      const terms = params.terms || params.field_val; // suggest uses field_val
+      const responseText = mockData_[fd_id][resultType][terms];
+      if (!responseText) {
+        if (params.suggest === '1')
+          responseJSON = [[], []];
+        else
+          responseJSON = [0, [], null, [], false];
+      } else {
+        responseJSON = JSON.parse(responseText);
+        // Add items from full data if the length of partial data is less than maxList
+        if (resultType === 'partial' && mockData_[fd_id].full && responseJSON[1].length < params.maxList) {
+          const fullData = JSON.parse(mockData_[fd_id].full[terms]);
+          const partialDataLength = responseJSON[1].length;
+          responseJSON[1] = responseJSON[1].concat(fullData[1].slice(partialDataLength, params.maxList));
+          responseJSON[3] = responseJSON[3].concat(fullData[3].slice(partialDataLength, params.maxList));
+        }
       }
+    } else {
+      const count = params.count;
+      responseJSON = fhirMockData[url] ? {
+        ...fhirMockData[url],
+        expansion: {
+          ...fhirMockData[url].expansion,
+          contains: fhirMockData[url].expansion.contains.slice(0, count)
+        },
+      } : '';
     }
-  }
-  else {
-    const count = params.count;
-    responseJSON = fhirMockData[url] ? {
-      ...fhirMockData[url],
-      expansion: {
-        ...fhirMockData[url].expansion,
-        contains: fhirMockData[url].expansion.contains.slice(0, count)
-      },
-    } : '';
-  }
 
-  let response = {};
-  response.request = this;
-  this.options = options;
-  response.status = 200;
-  response.responseText = JSON.stringify(responseJSON);
-  response.responseJSON = responseJSON;
-  setTimeout(function() {options.complete(response);}, 1);
-  return response;
-};
-jQuery.ajax.ajaxCtr = 0; // number of calls
+    let response = {};
+    response.request = this;
+    this.options = options;
+    response.status = 200;
+    response.responseText = JSON.stringify(responseJSON);
+    const requestTimeout = setTimeout(function () {
+      options.complete(response);
+    }, delay);
+    response.abort = function () {
+      clearTimeout(requestTimeout);
+      // Keep track of the abort call count for test purposes.
+      ++Def.jqueryLite.ajax.abortCount;
+    }
+    return response;
+  };
+  Def.jqueryLite.ajax.ajaxCtr = 0; // number of calls
+  Def.jqueryLite.ajax.abortCount = 0; // number of abort calls
 // end of mock for Ajax.Request
+}
+// Construct Def.jqueryLite.ajax with default delay of 1ms.
+Def.jqueryLite.ajaxFactory(1);

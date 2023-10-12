@@ -74,7 +74,7 @@ var DirectivePage = function() {
         const waitPeriod = 50, maxWaits = 80;
         let numWaits = 0;
         function getScope() {
-          return win.eval('var testField = $("'+fieldCSS+'"); testField.scope()');
+          return win.eval('var testField = angular.element(document.querySelector("'+fieldCSS+'")); testField.scope()');
         }
         function waitForScope() {
           ++numWaits;

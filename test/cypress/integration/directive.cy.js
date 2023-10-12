@@ -81,8 +81,8 @@ describe('directive', function() {
     // model value (undefined) for CNE fields, but switched to null for CWE
     // fields (which doesn't trigger the invalid status).
     cy.window().then(win=> {
-      win.eval('angular.element("'+dp.prefetchCNEBlank+
-        '").isolateScope().modelData = undefined;');
+      win.eval('angular.element(document.querySelector("'+dp.prefetchCNEBlank+
+        '")).isolateScope().modelData = undefined;');
       cy.get(dp.prefetchCNEBlank).click();
       cy.get(dp.prefetchCNEBlank).type('{downArrow}');
       cy.get(dp.prefetchCNEBlank).blur();
@@ -113,7 +113,7 @@ describe('directive', function() {
       var modelString = model === undefined ? 'undefined' :
         JSON.stringify(model);
       cy.window().then(win=> {
-        win.eval('var testField = $("'+testFieldCSS+'");'+
+        win.eval('var testField = angular.element(document.querySelector("'+testFieldCSS+'"));'+
           'testField.scope().'+list4bModelAttrName+' = '+modelString+';'+
           'testField.scope().$digest();');
       });
@@ -143,7 +143,7 @@ describe('directive', function() {
     setModel({text: null, code: null});
     cy.get(testFieldCSS).should('have.value', '');
     cy.window().then(win=> {
-      var elemVal = win.eval('$("'+testFieldCSS+'")[0].autocomp.domCache.get("elemVal")');
+      var elemVal = win.eval('document.querySelector("'+testFieldCSS+'").autocomp.domCache.get("elemVal")');
       expect(elemVal).to.equal('');
     });
     // Try this for a field whose model was initially this invalid assignment
@@ -151,7 +151,7 @@ describe('directive', function() {
     getModel('listfieldval11').then(m=>expect(m).to.deep.equal({text: null, code: null}));
     cy.get('#list11').should('have.value', '');
     cy.window().then(win=> {
-      var elemVal = win.eval('$("#list11")[0].autocomp.domCache.get("elemVal")');
+      var elemVal = win.eval('document.querySelector("#list11").autocomp.domCache.get("elemVal")');
       expect(elemVal).to.equal('');
     });
   });

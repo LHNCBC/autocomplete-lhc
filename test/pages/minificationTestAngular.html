@@ -9,8 +9,6 @@
       <input id="field1" ng-model="field1Val" autocomplete-lhc="list1Opts"><br>
       <input id="field2" ng-model="field2Val" autocomplete-lhc="list2Opts">
     </div>
-    <script
-     src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="/bower_components/angular/angular.js"></script>
     <script src="/dist/latest/autocomplete-lhc.min.js"></script>
     <script>
@@ -32,7 +30,7 @@
         };
 
         $scope.list2Opts = {
-          url: '/search'
+          url: window.location.origin + '/search'
         };
      }]);
     </script>

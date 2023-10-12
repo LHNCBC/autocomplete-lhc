@@ -324,11 +324,11 @@ opts = {};
 opts['matchListValue']=true;
 opts['codes']=["LA44-3","LA45-0","LA46-8"];
 opts['defaultValue']="LA45-0";
-new Def.Autocompleter.Prefetch(jQuery('#prefetch_for_el')[0], ["Spanish","French","Other"], opts);
+new Def.Autocompleter.Prefetch(document.querySelector('#prefetch_for_el'), ["Spanish","French","Other"], opts);
 
 var opts = {};
 opts.matchListValue = true;
-new Def.Autocompleter.Search(jQuery('#search_for_el')[0],
+new Def.Autocompleter.Search(document.querySelector('#search_for_el'),
   '/form/get_search_res_list?fd_id=1284', opts);
 
 // Autofill test fields.  To test autoFill_, setListAndField must be called.
@@ -338,24 +338,3 @@ autoFillAC.setListAndField(['Blue']);
 autoFillAC = new Def.Autocompleter.Prefetch('list_wo_autofill', [],
   {autoFill: false});
 autoFillAC.setListAndField(['Blue']);
-
-// To test the LF-2681 issue, open a modal dialog with an autocomplete control on it.
-jQuery("#myBtn").click(function(){
-  jQuery("#myModal").modal();
-  jQuery("#myModal").on('shown.bs.modal', function() {
-    // Manually produce the LF-2681 issue that is caused by Angular mat-dialog.
-    document.documentElement.style.position = 'fixed';
-    document.documentElement.style.top = '-1000.2px';
-
-    var opts = {};
-    opts['matchListValue']=true
-    opts['codes']=["LA6155-1","LA6156-9","LA6162-7","LA6214-6","LA6266-6","LA4457-3","LA4489-6"]
-    opts['autoFill']=true
-    var raceList = ["American Indian or Alaska Native","Asian","Black or African-American",
-      "Hispanic or Latino","Native Hawaiian or Pacific Islander","White",
-      "Unknown"];
-    var fe_race_or_ethnicity_autoComp_on_modal = new
-    Def.Autocompleter.Prefetch('race_or_ethnicity_on_modal', raceList, opts);
-  });
-});
-

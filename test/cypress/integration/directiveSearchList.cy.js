@@ -57,12 +57,12 @@ describe('directive', function() {
       cy.window().then(win=>{
         win.multiSearchCWEOpts.originalUrl = win.multiSearchCWEOpts.url;
         win.multiSearchCWEOpts.url = '/form/get_search_res_list?fd_id=2163';
-        win.angular.element(dp.multiSearchCWE).scope().$digest();
+        win.angular.element(win.document.querySelector(dp.multiSearchCWE)).scope().$digest();
         cy.get(dp.multiSearchCWE).clear().type('ar');
         dp.searchResult(1).should('have.text', 'Arm pain').then(()=>{
           // Restore the url
           win.multiSearchCWEOpts.url = win.multiSearchCWEOpts.originalUrl;
-          win.angular.element(dp.multiSearchCWE).scope().$digest();
+          win.angular.element(win.document.querySelector(dp.multiSearchCWE)).scope().$digest();
         });
       });
     });
@@ -74,7 +74,7 @@ describe('directive', function() {
       // Set the URL to something and confirm the autocompleter starts working
       cy.window().then(win=>{
         win.searchList9Opts.url = '/form/get_search_res_list?fd_id=2163';
-        win.angular.element(dp.noURLTest).scope().$digest();
+        win.angular.element(win.document.querySelector(dp.noURLTest)).scope().$digest();
       });
       cy.get(dp.noURLTest).clear().type('ar');
       cy.get(dp.searchResSel).should('be.visible');

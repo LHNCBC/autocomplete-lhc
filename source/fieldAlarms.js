@@ -3,7 +3,7 @@ if (typeof Def === 'undefined')
 
 (function() {
   // Wrap the definitions in a function to protect our version of global variables
-  function defineAlarms($, jQuery, Def) {
+  function defineAlarms($, Def) {
     "use strict";
 
     Def.FieldAlarms = {
@@ -47,5 +47,5 @@ if (typeof Def === 'undefined')
   if (typeof module !== 'undefined')
     module.exports = defineAlarms;
   else
-    defineAlarms(Def.PrototypeAPI.$, jQuery, Def);
+    defineAlarms(Def.PrototypeAPI.$, Def);
 })();

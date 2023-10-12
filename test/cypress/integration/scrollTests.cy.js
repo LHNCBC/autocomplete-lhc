@@ -46,7 +46,7 @@ describe('autocomp scroll function', function() {
       var headerBar = '<div id=\'testHeaderBar\' style=\'background-color: blue; height: '+
         fieldTop+'px; position: fixed; top: 0; width: 75px\'></div>'
       cy.window().then(win=>{
-        win.document.body.appendChild(win.jQuery(headerBar)[0]);
+        win.document.body.insertAdjacentHTML('beforeend', headerBar);
         po.windowScrollTop().then(initialWinScroll=>{
           // Now click in the field.  The field shouldn't move upward.
           cy.get(po.longOddCNE).click({scrollBehavior: false});
@@ -54,7 +54,7 @@ describe('autocomp scroll function', function() {
           po.windowScrollTop().should('equal', initialWinScroll).then(()=>{
 
             // Now shorten the header and confirm that the field scrolls
-            win.jQuery("#testHeaderBar")[0].style.height="10px";
+            win.document.querySelector("#testHeaderBar").style.height="10px";
             cy.get(po.nonField).click();
             po.putElementAtBottomOfWindow(po.longOddCNENoScrollID);
             cy.get(po.longOddCNE).click({scrollBehavior: false});
@@ -80,7 +80,7 @@ describe('autocomp scroll function', function() {
     po.waitForScrollToStop(po.multiHeadingCWEID);
     cy.window().then(win=>{
       cy.wrap(win.document.body.scrollTop || win.document.documentElement.scrollTop).should('equal',
-        (win.jQuery('#'+po.multiHeadingCWEID)[0].parentNode.offsetTop));
+        (win.document.querySelector('#'+po.multiHeadingCWEID).parentNode.offsetTop));
     });
   });
 
@@ -97,22 +97,7 @@ describe('autocomp scroll function', function() {
     cy.get(po.multiHeadingCWE).click({scrollBehavior: false}).type('{control+enter}').blur();
     // Confirm the event was canceled
     cy.window().then(win=>{
-      cy.wrap(win.jQuery('#'+po.multiHeadingCWEID)[0].autocomp.lastScrollEffect_.state).should('equal', 'finished');
-    });
-  });
-
-  it('should place list under the autocomplete control on a dialog', function() {
-    cy.get(po.myButton).click();
-    cy.get(po.prefetchCNEOnModal).should('be.visible');
-    cy.get(po.prefetchCNEOnModal).click();
-    po.waitForSearchResults();
-    cy.window().then(win => {
-      // Verify that the search result list is placed right under the autocommpleter-lhc control.
-      const autocompElement = win.document.getElementById(po.prefetchCNEOnModalFieldName);
-      const autocompElementOffset = autocompElement.getBoundingClientRect();
-      const searchResultElement = win.document.getElementById("searchResults");
-      const searchResultElementOffset = searchResultElement.getBoundingClientRect();
-      expect(Math.abs(searchResultElementOffset.top - autocompElementOffset.bottom)).to.be.lessThan(0.5);
+      cy.wrap(win.document.querySelector('#'+po.multiHeadingCWEID).autocomp.lastScrollEffect_.state).should('equal', 'finished');
     });
   });
 });

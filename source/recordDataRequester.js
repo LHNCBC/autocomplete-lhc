@@ -3,7 +3,7 @@ if (typeof Def === 'undefined')
 
 (function() {
   // Wrap the definitions in a function to protect our version of global variables
-  function defineRDR($, jQuery, Def) {
+  function defineRDR($, Def) {
     "use strict";
 
     var Class = Def.PrototypeAPI.Class;
@@ -222,13 +222,13 @@ if (typeof Def === 'undefined')
         // We can no longer cache the assignment of onComplete, which now
         // depends on the input parameter.  (We could cache the bound versions
         // of the functions, but I am not sure if it is worth it.)
-        this.dataRequestOptions_.complete = jQuery.proxy(listDataOnly ?
-          this.onDataReqCompleteForListData :
-          this.onDataReqComplete, this);
+        this.dataRequestOptions_.complete = listDataOnly ?
+          this.onDataReqCompleteForListData.bind(this) :
+          this.onDataReqComplete.bind(this);
 
         this.dataRequestOptions_.data = this.buildParameters();
         this.latestPendingAjaxRequest_ =
-          jQuery.ajax(this.dataURL_, this.dataRequestOptions_);
+          Def.jqueryLite.ajax(this.dataURL_, this.dataRequestOptions_);
         this.lastFieldVal_ = Def.Autocompleter.getFieldVal(this.formField_);
 
       }, // end requestData
@@ -684,12 +684,12 @@ if (typeof Def === 'undefined')
     };
 
 
-    jQuery.extend(Def.RecordDataRequester.prototype, tmp);
+    Object.assign(Def.RecordDataRequester.prototype, tmp);
     tmp = null;
 
 
     // Additional class-level data members and methods.
-    jQuery.extend(Def.RecordDataRequester, {
+    Object.assign(Def.RecordDataRequester, {
 
       /**
        *  A hash map from data request output field target field names to the
@@ -730,5 +730,5 @@ if (typeof Def === 'undefined')
   if (typeof module !== 'undefined')
     module.exports = defineRDR;
   else
-    defineRDR(Def.PrototypeAPI.$, jQuery, Def);
+    defineRDR(Def.PrototypeAPI.$, Def);
 })();

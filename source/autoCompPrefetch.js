@@ -4,7 +4,7 @@
 // in the Script.aculo.us controls.js file.
 
 (function() {
-  function definePrefetch($, jQuery, Def) {
+  function definePrefetch($, Def) {
     "use strict";
 
     var Class = Def.PrototypeAPI.Class;
@@ -18,7 +18,7 @@
      */
     Def.Autocompleter.Prefetch = Class.create();
     Def.Autocompleter.Prefetch.constructor = Def.Autocompleter.Prefetch;
-    jQuery.extend(Def.Autocompleter.Prefetch.prototype,
+    Object.assign(Def.Autocompleter.Prefetch.prototype,
       Def.Autocompleter.Base.prototype);
     Def.Autocompleter.Prefetch.prototype.className = 'Def.Autocompleter.Prefetch' ;
     // Define a temporary object for extending the Prefetch.prototype, which we
@@ -145,7 +145,7 @@
       initialize: function(id, listItems, options) {
 
         // Add Scriptaculous defaults, modified
-        options = jQuery.extend({
+        options = Object.assign({
           ignoreCase: true,
           fullSearch: false,
           selector: this.selector,
@@ -170,8 +170,8 @@
         this.initHeadings(options);
         this.defAutocompleterBaseInit(id, options);
         // Set up event observers.
-        jQuery(this.element).focus(jQuery.proxy(this.onFocus, this));
-        jQuery(this.element).click(jQuery.proxy(this.onFieldClick, this));
+        this.addEventListenerToElement('focus', this.onFocus.bind(this));
+        this.addEventListenerToElement('click', this.onFieldClick.bind(this));
         // The base class sets up one for a "blur" event.
 
         var codes = options['codes'];
@@ -180,7 +180,7 @@
         this.originalCodes_ = codes;
         this.options.minChars = 0; // do autocompletion even if the field is blank
         this.splitAutocomp_ = false;
-        jQuery(this.element).addClass('ansList');
+        this.element.classList.add('ansList');
       },
 
 
@@ -223,7 +223,7 @@
       dupForField: function(fieldID) {
         var dataReq = this.dupDataReqForField(fieldID);
         var opts = {};
-        jQuery.extend(true, opts, this.constructorOpts_);
+        Object.assign(true, opts, this.constructorOpts_);
         opts['dataRequester'] = dataReq;
         var rtn = new Def.Autocompleter.Prefetch(fieldID, this.rawList_, opts);
         this.dupItemToDataIndex(rtn);
@@ -583,9 +583,9 @@
         // We don't add the class when autofill is enabled because the user
         // won't see a list if the value is already chosen.
         if (listItems.length > 1 || !this.autoFill_)
-          jQuery(this.element).addClass('ac_multiple');
+          this.element.classList.add('ac_multiple');
         else
-          jQuery(this.element).removeClass('ac_multiple')
+          this.element.classList.remove('ac_multiple')
 
         // If the field has focus, call onFocus to re-render and decide what
         // to do about displaying the list.
@@ -1058,12 +1058,12 @@
 
     };  // end Def.Autocompleter.Prefetch class
 
-    jQuery.extend(Def.Autocompleter.Prefetch.prototype, tmp);
+    Object.assign(Def.Autocompleter.Prefetch.prototype, tmp);
     tmp = null; // prevent other code here from accidentally using it
   }
 
   if (typeof module !== 'undefined')
     module.exports = definePrefetch;
   else
-    definePrefetch(Def.PrototypeAPI.$, jQuery, Def);
+    definePrefetch(Def.PrototypeAPI.$, Def);
 })();

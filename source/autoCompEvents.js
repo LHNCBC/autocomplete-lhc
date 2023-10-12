@@ -1,6 +1,6 @@
 (function() {
   // Wrap the definitions in a function to protect our version of global variables
-  function defineEvent($, jQuery, Def) {
+  function defineEvent($, Def) {
     "use strict";
 
     /*
@@ -174,11 +174,11 @@
       }
     };
 
-    jQuery.extend(Def.Autocompleter.Event, Def.Observable);
+    Object.assign(Def.Autocompleter.Event, Def.Observable);
   }
 
   if (typeof module !== 'undefined')
     module.exports = defineEvent;
   else
-    defineEvent(Def.PrototypeAPI.$, jQuery, Def);
+    defineEvent(Def.PrototypeAPI.$, Def);
 })();

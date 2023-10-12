@@ -7,7 +7,7 @@
 
 // Wrap the definitions in a function to protect our version of global variables
 (function() {
-  function initEffectScroll(PrototypeAPI, jQuery, Effect) {
+  function initEffectScroll(PrototypeAPI, Effect) {
     "use strict";
 
     var Class = PrototypeAPI.Class;
@@ -33,7 +33,7 @@
 
 
     Effect.Scroll = Class.create();
-    jQuery.extend(jQuery.extend(Effect.Scroll.prototype, Effect.Base.prototype), {
+    Object.assign(Object.assign(Effect.Scroll.prototype, Effect.Base.prototype), {
       /**
        *  Returns the current scroll position of element.
        */
@@ -60,7 +60,7 @@
         if(!this.element) throw(Effect._elementDoesNotExistError);
         // Capture the target location.
         var originalScrollPos = this.currentScrollPos(element);
-        var shift = jQuery.extend({x: 0, y: 0}, arguments[1] || {});
+        var shift = Object.assign({x: 0, y: 0}, arguments[1] || {});
         var targetPos = {x: originalScrollPos.left + shift.x, y: originalScrollPos.top + shift.y}
         this.start(targetPos);
       },
@@ -88,5 +88,5 @@
   if (typeof module !== 'undefined')
     module.exports = initEffectScroll;
   else
-    initEffectScroll(Def.PrototypeAPI, jQuery, Def.Effect);
+    initEffectScroll(Def.PrototypeAPI, Def.Effect);
 })();

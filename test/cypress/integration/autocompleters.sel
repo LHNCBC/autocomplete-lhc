@@ -144,9 +144,9 @@
 # Test of a Prefetch CNE autocompleter
 | fireEvent | race_or_ethnicity | focus |
 | waitForVisible | completionOptions | |
-| waitForExpression | javascript{jQuery('#completionOptions')[0].firstChild.childNodes.length} | 7 |
+| waitForExpression | javascript{document.querySelector('#completionOptions').firstChild.childNodes.length} | 7 |
 | typeKeys | race_or_ethnicity | a |
-| waitForExpression | javascript{jQuery('#completionOptions')[0].firstChild.childNodes.length} | 3 |
+| waitForExpression | javascript{document.querySelector('#completionOptions').firstChild.childNodes.length} | 3 |
 # (40 = down arrow)
 | keyDown | race_or_ethnicity | \40 |
 | keyDown | race_or_ethnicity | \9 |
@@ -159,99 +159,99 @@
 
 # Test an invalid value
 | typeKeys | race_or_ethnicity | z |
-| waitForExpression | javascript{jQuery('#race_or_ethnicity').hasClass('no_match')} | true |
-| assertExpression | javascript{jQuery('#race_or_ethnicity').hasClass('invalid')} | false |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').classList.contains('no_match')} | true |
+| assertExpression | javascript{document.querySelector('#race_or_ethnicity').classList.contains('invalid')} | false |
 
 # Try to leave the field with an invalid value
 | keyDown | race_or_ethnicity | \9 |
 | fireEvent | race_or_ethnicity | change |
-| waitForExpression | javascript{jQuery('#race_or_ethnicity').hasClass('invalid')} | true |
-| assertExpression | javascript{jQuery('#race_or_ethnicity').hasClass('no_match')} | true |
-| waitForExpression | javascript{jQuery('#race_or_ethnicity')[0].autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').classList.contains('invalid')} | true |
+| assertExpression | javascript{document.querySelector('#race_or_ethnicity').classList.contains('no_match')} | true |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').autocomp.hasFocus} | true |
 | assertValue | race_or_ethnicity | American Indian or Alaska Nativez |
 
 # Make a second attempt to leave the field.  It should be successful, but the
 # field value should be cleared.
 | keyDown | race_or_ethnicity | \9 |
 | waitForValue | race_or_ethnicity | |
-| waitForExpression | javascript{jQuery('#race_or_ethnicity')[0].autocomp.hasFocus} | false |
-| waitForExpression | javascript{jQuery('#race_or_ethnicity').hasClass('invalid')} | false |
-| assertExpression | javascript{jQuery('#race_or_ethnicity').hasClass('no_match')} | false |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').autocomp.hasFocus} | false |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').classList.contains('invalid')} | false |
+| assertExpression | javascript{document.querySelector('#race_or_ethnicity').classList.contains('no_match')} | false |
 
 # Now pick a valid value and make sure the match/invalid indicators clear.
 | fireEvent | race_or_ethnicity | focus |
-| waitForExpression | javascript{jQuery('#race_or_ethnicity')[0].autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').autocomp.hasFocus} | true |
 | type | race_or_ethnicity | Asia |
 | typeKeys | race_or_ethnicity | n |
 # (Test that if you type in the full value of a list item, the no_match
 # indicator does not get set.)
-| waitForExpression | javascript{jQuery('#race_or_ethnicity').hasClass('no_match')} | false |
-| waitForExpression | javascript{jQuery('#completionOptions')[0].firstChild.childNodes.length} | 1 |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').classList.contains('no_match')} | false |
+| waitForExpression | javascript{document.querySelector('#completionOptions').firstChild.childNodes.length} | 1 |
 # For some reason, tab (\9) no longer causes change & blur events (as of Firefox 19), and manually
 # firing a change event here causes the focus to return to the field.
 #| keyDown | race_or_ethnicity | \9 |
 | fireEvent | race_or_ethnicity | change |
 | fireEvent | race_or_ethnicity | blur |
 | waitForValue | race_or_ethnicity | Asian |
-| waitForExpression | javascript{jQuery('#race_or_ethnicity')[0].autocomp.hasFocus} | false |
-| waitForExpression | javascript{jQuery('#race_or_ethnicity').hasClass('invalid')} | false |
-| waitForExpression | javascript{jQuery('#race_or_ethnicity').hasClass('no_match')} | false |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').autocomp.hasFocus} | false |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').classList.contains('invalid')} | false |
+| waitForExpression | javascript{document.querySelector('#race_or_ethnicity').classList.contains('no_match')} | false |
 # Test of a Prefetch CWE autocompleter
 | click | prefetch_cwe |
 
 # Type an invalid value
 | typeKeys | prefetch_cwe | Aardvark |
-| waitForExpression | javascript{jQuery('#prefetch_cwe').hasClass('no_match')} | true |
+| waitForExpression | javascript{document.querySelector('#prefetch_cwe').classList.contains('no_match')} | true |
 | keyDown | prefetch_cwe | \9 |
-| waitForExpression | javascript{jQuery('#prefetch_cwe').hasClass('invalid')} | false |
+| waitForExpression | javascript{document.querySelector('#prefetch_cwe').classList.contains('invalid')} | false |
 | assertValue | prefetch_cwe | Aardvark |
 
 # Confirm that the no_match indicator is still present
-| assertExpression | javascript{jQuery('#prefetch_cwe').hasClass('no_match')} | true |
-| waitForExpression | javascript{jQuery('#prefetch_cwe')[0].autocomp.hasFocus} | false |
+| assertExpression | javascript{document.querySelector('#prefetch_cwe').classList.contains('no_match')} | true |
+| waitForExpression | javascript{document.querySelector('#prefetch_cwe').autocomp.hasFocus} | false |
 
 # Close existing list
 | click | main_title |
 
 # Tests for a search CNE field
 | fireEvent | fe_search_cne | focus |
-| waitForExpression | javascript{jQuery('#fe_search_cne')[0].autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_cne').autocomp.hasFocus} | true |
 
 # Test an invalid value
 | typeKeys | fe_search_cne | asdf |
-| waitForExpression | javascript{jQuery('#completionOptions')[0].firstChild.childNodes.length} | 0 |
-| waitForExpression | javascript{jQuery('#fe_search_cne').hasClass('no_match')} | true |
-| assertExpression | javascript{jQuery('#fe_search_cne').hasClass('invalid')} | false |
+| waitForExpression | javascript{document.querySelector('#completionOptions').firstChild.childNodes.length} | 0 |
+| waitForExpression | javascript{document.querySelector('#fe_search_cne').classList.contains('no_match')} | true |
+| assertExpression | javascript{document.querySelector('#fe_search_cne').classList.contains('invalid')} | false |
 
 # Try to leave the field with an invalid value
 | keyDown | fe_search_cne | \9 |
-| waitForExpression | javascript{jQuery('#fe_search_cne').hasClass('invalid')} | true |
-| assertExpression | javascript{jQuery('#fe_search_cne').hasClass('no_match')} | true |
-| waitForExpression | javascript{jQuery('#fe_search_cne')[0].autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_cne').classList.contains('invalid')} | true |
+| assertExpression | javascript{document.querySelector('#fe_search_cne').classList.contains('no_match')} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_cne').autocomp.hasFocus} | true |
 | assertValue | fe_search_cne | asdf |
 
 # Make a second attempt to leave the field.  It should be successful, but the
 #field value should be cleared.
 | keyDown | fe_search_cne | \9 |
 | waitForValue | fe_search_cne | |
-| waitForExpression | javascript{jQuery('#fe_search_cne').hasClass('invalid')} | false |
-| waitForExpression | javascript{jQuery('#fe_search_cne')[0].autocomp.hasFocus} | false |
+| waitForExpression | javascript{document.querySelector('#fe_search_cne').classList.contains('invalid')} | false |
+| waitForExpression | javascript{document.querySelector('#fe_search_cne').autocomp.hasFocus} | false |
 
 # Now pick a valid value
 | fireEvent | fe_search_cne | focus |
-| waitForExpression | javascript{jQuery('#fe_search_cne')[0].autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_cne').autocomp.hasFocus} | true |
 | typeKeys | fe_search_cne | pickw |
-| waitForExpression | javascript{jQuery('#completionOptions')[0].firstChild.childNodes.length} | 1 |
+| waitForExpression | javascript{document.querySelector('#completionOptions').firstChild.childNodes.length} | 1 |
 | keyDown | fe_search_cne | \40 |
 | keyDown | fe_search_cne | \9 |
 | waitForValue | fe_search_cne | Pickwickian syndrome |
-| waitForExpression | javascript{jQuery('#fe_search_cne').hasClass('invalid')} | false |
-| assertExpression | javascript{jQuery('#fe_search_cne').hasClass('no_match')} | false |
-| waitForExpression | javascript{jQuery('#fe_search_cne')[0].autocomp.hasFocus} | false |
+| waitForExpression | javascript{document.querySelector('#fe_search_cne').classList.contains('invalid')} | false |
+| assertExpression | javascript{document.querySelector('#fe_search_cne').classList.contains('no_match')} | false |
+| waitForExpression | javascript{document.querySelector('#fe_search_cne').autocomp.hasFocus} | false |
 
 # Tests for a CNE Search autocompleter with a button
 | fireEvent | fe_search_button_cne | focus |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne')[0].autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').autocomp.hasFocus} | true |
 | typeKeys | fe_search_button_cne | car |
 | waitForVisible | completionOptions | |
 | keyDown | fe_search_button_cne | \40 |
@@ -260,40 +260,40 @@
 | fireEvent | fe_search_button_cne | focus |
 | type | fe_search_button_cne |
 | typeKeys | fe_search_button_cne | asdfghijk |
-| waitForExpression | javascript{jQuery('#completionOptions')[0].firstChild.childNodes.length} | 0 |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne').hasClass('no_match')} | true |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne').hasClass('invalid')} | false |
+| waitForExpression | javascript{document.querySelector('#completionOptions').firstChild.childNodes.length} | 0 |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').classList.contains('no_match')} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').classList.contains('invalid')} | false |
 
 # Try to leave the field with an invalid value
 | keyDown | fe_search_button_cne | \9 |
 | fireEvent | fe_search_button_cne | change |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne').hasClass('invalid')} | true |
-| assertExpression | javascript{jQuery('#fe_search_button_cne').hasClass('no_match')} | true |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne')[0].autocomp.hasFocus} | true |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne')[0].autocomp.refocusInProgress_} | false |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').classList.contains('invalid')} | true |
+| assertExpression | javascript{document.querySelector('#fe_search_button_cne').classList.contains('no_match')} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').autocomp.refocusInProgress_} | false |
 | assertValue | fe_search_button_cne | asdfghijk |
 
 # Make a second attempt to leave the field.  It should be successful, but the
 #field value should be cleared.
 | keyDown | fe_search_button_cne | \9 |
 | waitForValue | fe_search_button_cne | |
-| assertExpression | javascript{jQuery('#fe_search_button_cne').hasClass('invalid')} | false |
+| assertExpression | javascript{document.querySelector('#fe_search_button_cne').classList.contains('invalid')} | false |
 
 # Now pick a valid value
 | click | fe_search_button_cne |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne')[0].autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').autocomp.hasFocus} | true |
 | typeKeys | fe_search_button_cne | pickw |
-| waitForExpression | javascript{jQuery('#completionOptions')[0].firstChild.childNodes.length} | 1 |
+| waitForExpression | javascript{document.querySelector('#completionOptions').firstChild.childNodes.length} | 1 |
 | keyDown | fe_search_button_cne | \40 |
 | keyDown | fe_search_button_cne | \9 |
 | waitForValue | fe_search_button_cne | Pickwickian syndrome |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne').hasClass('invalid')} | false |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne').hasClass('no_match')} | false |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne')[0].autocomp.hasFocus} | false |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').classList.contains('invalid')} | false |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').classList.contains('no_match')} | false |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').autocomp.hasFocus} | false |
 
 # Try clicking on the button to do a search
 | click | fe_search_button_cne |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne')[0].autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').autocomp.hasFocus} | true |
 | type | fe_search_button_cne |
 | typeKeys | fe_search_button_cne | ab |
 # The list should be showing at this point.
@@ -301,8 +301,8 @@
 # Check to see that we got results, but don't be picky about how many.  This
 # table gets updated often.  We should have more than 7 items (the non-expanded
 # list size).
-| waitForExpression | javascript{jQuery('#fe_search_button_cne')[0].autocomp.entryCount>20} | true |
-| waitForExpression | javascript{jQuery('#fe_search_button_cne')[0].autocomp.hasFocus} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').autocomp.entryCount>20} | true |
+| waitForExpression | javascript{document.querySelector('#fe_search_button_cne').autocomp.hasFocus} | true |
 | keyDown | fe_search_button_cne | \40 |
 | keyDown | fe_search_button_cne | \9 |
 | waitForValue | fe_search_button_cne | Abscess |
@@ -315,9 +315,9 @@
 | typeKeys | prefetch_cwe | 1 |
 | keyDown | prefetch_cwe | \40 |
 | keyDown | prefetch_cwe | \9 |
-| waitForExpression | javascript{jQuery('#prefetch_cwe').hasClass('no_match')} | false |
-| assertExpression | javascript{jQuery('#prefetch_cwe')[0].autocomp.setList([],[]); 1} | 1 |
+| waitForExpression | javascript{document.querySelector('#prefetch_cwe').classList.contains('no_match')} | false |
+| assertExpression | javascript{document.querySelector('#prefetch_cwe').autocomp.setList([],[]); 1} | 1 |
 | click | prefetch_cwe |
 | typeKeys | prefetch_cwe | zzzz |
 | keyDown | prefetch_cwe | \9 |
-| waitForExpression | javascript{jQuery('#prefetch_cwe').hasClass('no_match')} | false |
+| waitForExpression | javascript{document.querySelector('#prefetch_cwe').classList.contains('no_match')} | false |

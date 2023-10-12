@@ -120,7 +120,7 @@ const ATR = {
      */
     scrollIntoView: (elemID) => {
       // With thanks to the form builder tests for inspiration
-      po.executeScript('$("'+idToSel(elemID)+'")[0].scrollIntoView();');
+      po.executeScript('document.querySelector("'+idToSel(elemID)+'").scrollIntoView();');
     },
 
     /**
@@ -187,7 +187,7 @@ const ATR = {
       // var elem = element(by.id(fieldID)).getWebElement();
       // There is probably some way to set a value on the element, but the API
       // docs are down.
-      ATR.CommandUtil.remoteEval('jQuery("#'+fieldID+'")[0].value = "'+chars+'"');
+      ATR.CommandUtil.remoteEval('document.querySelector("#'+fieldID+'").value = "'+chars+'"');
     },
 
 

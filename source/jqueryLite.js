@@ -28,6 +28,50 @@
             TAB: 9,
             UP: 38
           }
+        },
+
+
+        /**
+         * equivalent of jQuery offset().
+         * @param elem HTML element
+         * @return {{top: *, left: *}}
+         */
+        getElementOffset: function(elem) {
+          // Get document-relative position by adding viewport scroll to viewport-relative gBCR
+          const rect = elem.getBoundingClientRect();
+          const win = elem.ownerDocument.defaultView;
+          return {
+            top: rect.top + win.pageYOffset,
+            left: rect.left + win.pageXOffset
+          };
+        },
+
+
+        /**
+         * equivalent of jQuery ajax().
+         * @param url
+         * @param options
+         * @param options.data an object containing query params for the request
+         * @param options.complete a callback function to be executed after the request is finished
+         * @return {XMLHttpRequest}
+         */
+        ajax: function(url, options) {
+          const urlObject = new URL(url);
+          if (options.data) {
+            for (const [key, value] of Object.entries(options.data)) {
+              urlObject.searchParams.set(encodeURIComponent(key), encodeURIComponent(value));
+            }
+          }
+          const r = new XMLHttpRequest();
+          // r.responseType = options.dataType || '';
+          r.open("GET", urlObject.toString(), true);
+          r.onreadystatechange = function() {
+            if (r.readyState === 4) {
+              options.complete(r);
+            }
+          };
+          r.send();
+          return r;
         }
       }
     }();
