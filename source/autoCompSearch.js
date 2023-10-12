@@ -390,7 +390,7 @@
         // Cancel the previous search/AJAX request, if there is one pending.
         // This might free up a thread for the browser, but it does not help
         // the server any.
-        if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
+        if (this.lastAjaxRequest_)
           this.lastAjaxRequest_.abort();
 
         var searchFn = this.search;
@@ -1099,7 +1099,7 @@
        *  parameters that are posted.
        */
       getUpdatedChoices: function() {
-        if (this.lastAjaxRequest_ && this.lastAjaxRequest_.transport)
+        if (this.lastAjaxRequest_)
           this.lastAjaxRequest_.abort();
 
         if (this.url || this.search) { // url can be initially undefined and set later

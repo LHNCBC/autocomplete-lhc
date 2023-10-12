@@ -7,6 +7,11 @@ This log documents significant changes for each release.  This project follows
 ### Removed
 - Removed jQuery dependency. Some changes use APIs that are not supported by IE.
 
+## [18.6.5] - 2023-10-10
+### Fixed
+- autocomplete-lhc search field should cancel the previous ajax request on
+  next keystroke.
+
 ## [18.6.4] - 2023-08-25
 ### Changed
 - Port scriptaculous unit tests into Cypress.

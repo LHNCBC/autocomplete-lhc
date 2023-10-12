@@ -258,6 +258,14 @@ export function BasePage() {
 
 
   /**
+   *  Returns the number of times an AJAX call has been aborted.
+   */
+  this.getAjaxAbortCount = function() {
+    return cy.window().then(win=>win.Def.jqueryLite.ajax.abortCount);
+  };
+
+
+  /**
    *  Returns the scroll position of the list's scrollbar.
    */
   this.listScrollPos = function() {
