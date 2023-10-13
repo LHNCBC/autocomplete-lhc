@@ -2692,11 +2692,7 @@ if (typeof Def === 'undefined')
        * Removes classes added to the element by autocomplete-lhc.
        */
       removeAutocompleteLhcClasses: function() {
-        ['no_match', 'invalid', 'ansList', 'ac_multiple', 'search_field'].forEach(item => {
-          if (this.element.classList.contains(item)) {
-            this.element.classList.remove(item);
-          }
-        }, this);
+        this.element.classList.remove('no_match', 'invalid', 'ansList', 'ac_multiple', 'search_field');
       },
 
 
