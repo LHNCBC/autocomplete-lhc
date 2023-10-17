@@ -552,7 +552,7 @@ Def.PrototypeAPI = function() {
           styles.left = 0;
         }
         Def.PrototypeAPI.setStyle(element, styles);
-        element.dataset.prototypeMadePositioned = true;
+        element.dataset.prototypeMadePositioned = '';
       }
       return element;
     },

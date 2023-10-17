@@ -29,6 +29,8 @@
             UP: 38
           }
         },
+
+
         /**
          * equivalent of jQuery offset().
          * @param elem HTML element
@@ -43,6 +45,8 @@
             left: rect.left + win.pageXOffset
           };
         },
+
+
         /**
          * equivalent of jQuery ajax().
          * @param url
@@ -52,16 +56,18 @@
          * @return {XMLHttpRequest}
          */
         ajax: function(url, options) {
+          const urlObject = new URL(url);
           if (options.data) {
-            const urlParams = Object.entries(options.data).map(([key, value]) => `${key}=${value}`).join('&');
-            url += `?${urlParams}`;
+            for (const [key, value] of Object.entries(options.data)) {
+              urlObject.searchParams.set(encodeURIComponent(key), encodeURIComponent(value));
+            }
           }
           const r = new XMLHttpRequest();
           // r.responseType = options.dataType || '';
-          r.open("GET", encodeURI(url), true);
+          r.open("GET", urlObject.toString(), true);
           r.onreadystatechange = function() {
             if (r.readyState === 4) {
-              options.complete(r, r.statusText);
+              options.complete(r);
             }
           };
           r.send();

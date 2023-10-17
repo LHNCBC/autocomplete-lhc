@@ -10,7 +10,7 @@
     <script src="/dist/latest/autocomplete-lhc.min.js"></script>
     <script>
       new Def.Autocompleter.Prefetch('field1', ['Red', 'Green', 'Blue']);
-      new Def.Autocompleter.Search('field2', '/search');
+      new Def.Autocompleter.Search('field2', window.location.origin + '/search');
     </script>
   </body>
 </html>

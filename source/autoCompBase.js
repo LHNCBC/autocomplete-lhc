@@ -694,9 +694,9 @@ if (typeof Def === 'undefined')
         this.element.setAttribute('autocomplete','off');
         // --- end of section copied from controls.js baseInitialize ---
         this.update.style.display = 'none;'
-        // A map of event listeners on this.element. Callback references have to
+        // An object that stores a mapping of event listeners on this.element. Callback references have to
         // be stored so that the listeners can be removed later.
-        this.elementEventListeners = new Map();
+        this.elementEventListeners = {};
         this.addEventListenerToElement('blur', this.onBlur.bind(this));
         this.addEventListenerToElement('keydown', this.onKeyPress.bind(this));
 
@@ -2669,11 +2669,14 @@ if (typeof Def === 'undefined')
 
       /**
        * Adds an event listener to this.element and keep references of the callbacks
-       * so that it can be removed in stopObservingEvents()
+       * so that it can be removed in stopObservingEvents().
+       * The event name is stored as property key in this.elementEventListeners, and
+       * callbacks on that event is stored in an array as value for that property.
        */
       addEventListenerToElement: function(event, callback) {
         this.element.addEventListener(event, callback);
-        this.elementEventListeners.set(event, callback);
+        this.elementEventListeners[event] ||= [];
+        this.elementEventListeners[event].push(callback);
       },
 
 
@@ -2681,10 +2684,12 @@ if (typeof Def === 'undefined')
        *  This can be called to detach an autocompleter's event listeners.
        */
       stopObservingEvents: function() {
-        this.elementEventListeners.forEach(function(value, key) {
-          this.element.removeEventListener(key, value);
-        }, this);
-        this.elementEventListeners.clear();
+        for (const [key, value] of Object.entries(this.elementEventListeners)) {
+          value.forEach(callback => {
+            this.element.removeEventListener(key, callback);
+          }, this);
+        }
+        this.elementEventListeners = {};
       },
 
 
