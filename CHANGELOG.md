@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.0.1] - 2023-10-17
+### Changed
+- Remove classes added by autocomplete-lhc when destroying the autocomplete instance.
+
 ## [19.0.0] - 2023-10-05
 ### Removed
 - Removed jQuery dependency. Some changes use APIs that are not supported by IE.
