@@ -249,5 +249,13 @@ describe('multi-select lists', function() {
     cy.get('#dest_multi_sel_cwe').click();
     cy.get(po.multiPrefetchCWESelected).should('have.length', 0);
   });
+
+  it('should remove autocomplete-lhc classes when destroyed', function () {
+    po.openTestPage();
+    cy.get(po.multiPrefetchCWE).should('have.class', 'ansList');
+    cy.get('#dest_multi_sel_cwe').click();
+    cy.get(po.multiPrefetchCWE).should('not.have.class', 'ansList');
+    cy.get(po.multiPrefetchCWE).should('have.class', 'test-class');
+  });
 });
 
