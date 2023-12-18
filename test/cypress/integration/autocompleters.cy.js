@@ -14,6 +14,7 @@ describe('autocompleters', function () {
   });
 
   it('should encode url only once in ajax call', function () {
+    cy.intercept('GET', '/?_format=application%2Fjson').as('ajaxCall');
     cy.window().then(function (win) {
       const r = win.Def.jqueryLite.ajax(Cypress.config().baseUrl, {
         data: {
@@ -21,9 +22,8 @@ describe('autocompleters', function () {
         },
         complete: () => {}
       });
-      cy.intercept('GET', '/?_format=application%2Fjson').as('ajaxCall');
-      cy.wait('@ajaxCall');
     });
+    cy.wait('@ajaxCall');
   });
 
   it('tests makePositioned/undoPositioned', function () {
