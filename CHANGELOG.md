@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.0.2] - 2023-12-18
+### Fixed
+- Issue of double encoding in URLs.
+
 ## [19.0.1] - 2023-10-17
 ### Changed
 - Remove classes added by autocomplete-lhc when destroying the autocomplete instance.

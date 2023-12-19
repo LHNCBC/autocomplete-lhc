@@ -59,7 +59,7 @@
           const urlObject = new URL(url);
           if (options.data) {
             for (const [key, value] of Object.entries(options.data)) {
-              urlObject.searchParams.set(encodeURIComponent(key), encodeURIComponent(value));
+              urlObject.searchParams.set(key, value);
             }
           }
           const r = new XMLHttpRequest();
