@@ -23,9 +23,11 @@
        *  {list_expansion_method: 'CtrlRet'} if it was expanded with the keyboard,
        *  and {list_expansion_method: 'clicked'} if it was expanded with
        *  the mouse.
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       observeListExpansions: function(fieldKey, callback) {
-        this.storeCallback(fieldKey, 'LIST_EXP', callback);
+        return this.storeCallback(fieldKey, 'LIST_EXP', callback);
       },
 
 
@@ -58,9 +60,11 @@
        *  8) list - the items that were in the list (which is the full list for a
        *     prefetched list, or the portion shown to the user for a search list).
        *  9) field_id - the ID of the list field
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       observeListSelections: function(fieldKey, callback) {
-        this.storeCallback(fieldKey, 'LIST_SEL', callback);
+        return this.storeCallback(fieldKey, 'LIST_SEL', callback);
       },
 
 
@@ -74,9 +78,11 @@
        * @param callback the function to be called when the event occurs.
        *  The function will be called with an the following argument:
        *  - start_val (the value already in the field)
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       observeFocusEvents: function(fieldKey, callback) {
-        this.storeCallback(fieldKey, 'FOCUS', callback);
+        return this.storeCallback(fieldKey, 'FOCUS', callback);
       },
 
 
@@ -91,9 +97,11 @@
        * @param callback the function to be called when the event occurs.
        *  The function will be called with an the following argument:
        *  - restored_value (the value that was restored to the field)
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       observeCancelList: function(fieldKey, callback) {
-        this.storeCallback(fieldKey, 'CANCEL', callback);
+        return this.storeCallback(fieldKey, 'CANCEL', callback);
       },
 
 
@@ -110,9 +118,11 @@
        *  The function will be called with an the following argument:
        *  - suggestion_list (an array of the values in the list to be shown to the user.
        *    or an empty array if no suggestions were found)
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       observeSuggestions: function(fieldKey, callback) {
-        this.storeCallback(fieldKey, 'SUGGESTIONS', callback);
+        return this.storeCallback(fieldKey, 'SUGGESTIONS', callback);
       },
 
 
@@ -124,9 +134,11 @@
        *  idea is that there might be multiple fields (perhaps of an unknown number)
        *  that are related for which the callback should receive notifications.
        * @param callback the function to be called when the event occurs.
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       observeSuggestionUsed: function(fieldKey, callback) {
-        this.storeCallback(fieldKey, 'SUGGESTION_USED', callback);
+        return this.storeCallback(fieldKey, 'SUGGESTION_USED', callback);
       },
 
 
@@ -140,9 +152,11 @@
        *  idea is that there might be multiple fields (perhaps of an unknown number)
        *  that are related for which the callback should receive notifications.
        * @param callback the function to be called when the event occurs.
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       observeListAssignments: function(fieldKey, callback) {
-        this.storeCallback(fieldKey, 'LIST_ASSIGNMENT', callback);
+        return this.storeCallback(fieldKey, 'LIST_ASSIGNMENT', callback);
       },
 
 
@@ -153,9 +167,11 @@
        *  argument:
        *  - updatedFields: an array of DOM field elements for the fields that
        *    were cleared
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       observeRDRClearing: function(callback) {
-        this.storeCallback(null, 'RDR_CLEARING', callback);
+        return this.storeCallback(null, 'RDR_CLEARING', callback);
       },
 
 
@@ -168,9 +184,11 @@
        *    were cleared
        *  - updatedFieldIDToVal: a hash of field IDs to the updated values
        *  - listField - the field whose list had the record data requester.
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       observeRDRAssignment: function(callback) {
-        this.storeCallback(null, 'RDR_ASSIGNMENT', callback);
+        return this.storeCallback(null, 'RDR_ASSIGNMENT', callback);
       }
     };
 
