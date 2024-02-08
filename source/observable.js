@@ -81,6 +81,8 @@ if (typeof Def === 'undefined')
        *  field.
        * @param eventType The type of event for which the callback is to be called
        * @param callback the callback function
+       * @return function - Returns a function which can be called to remove the callback from the event handlers
+       * list.
        */
       storeCallback: function(fieldLookupKey, eventType, callback) {
         if (this.callbacks_ === null)
@@ -96,6 +98,10 @@ if (typeof Def === 'undefined')
           listExpCallbacks[fieldLookupKey] = fieldListExpCallbacks;
         }
         fieldListExpCallbacks.push(callback);
+
+        return () => {
+          this.removeCallback(fieldLookupKey, eventType, callback);
+        }
       },
 
 
