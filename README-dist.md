@@ -1,11 +1,8 @@
-Zip file distributions of this package come with three versions of the
-minified JavaScript file.  The smallest file contains just this package, without
-the jQuery and jQuery UI dependencies.
+Zip file distributions of this package come with two versions of the JavaScript
+file, one minimized and one not.  There is also a minimized CSS file and some
+small images used by that file.
 
-Use:
-  * autocomplete-lhc.min.js if your website already has jQuery and jQuery UI
-  * autocomplete-lhc_jQueryUI.min.js if you also need the jQuery UI components
-  * autocomplete-lhc_jQuery.min.js if you need jQuery as well as jQuery UI
+Note that the package can also be installed with the npm package manager, via
+"npm install autocomplete-lhc".
 
-Note that the package can also be installed with the [bower](http://bower.io)
-package manager, via "bower install autocomplete-lhc".
+For documentation, see https://lhncbc.github.io/autocomplete-lhc/.
