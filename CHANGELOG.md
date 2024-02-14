@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.1.0] - 2024-02-08
+### Changed
+- Changed event handlers in Def.Autocompleter.Event to return a function whose invocation
+  removes the handler from the list of registered handlers.
+
 ## [19.0.2] - 2023-12-18
 ### Fixed
 - Issue of double encoding in URLs.

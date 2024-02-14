@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "19.0.2",
+  "version": "19.1.0",
   "description": "",
   "main": "source/index.js",
   "config": {
@@ -28,6 +28,7 @@
     "mocha": "^10.0.0",
     "serve-index": "^1.7.3",
     "serve-static": "^1.10.2",
+    "sinon": "^17.0.1",
     "webpack": "^5.73.0",
     "webpack-cli": "^4.10.0"
   },

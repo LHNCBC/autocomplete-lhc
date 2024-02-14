@@ -19,5 +19,16 @@ import './commands'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // One of the test pages includes a RecordDataRequester configured to send requests to example.com,
+  // which results in a error that sometimes fails a test.
+  if (err.message.includes('Unexpected end of JSON input')) {
+    return false
+  }
+  // we still want to ensure there are no other unexpected
+  // errors, so we let them fail the test
+})
+
+
 require('@cypress/xpath');
 require('cypress-plugin-tab');
