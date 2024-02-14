@@ -241,8 +241,10 @@
        *    <li>colHeaders - Used when tableFormat is true, this is an array of
        *     column headers for the columns in the table.  If this is not supplied, no header
        *     row will be created.</li>
-       *     <li>showListOnFocusIfEmpty - (default: false) Whether to show a list when the
+       *    <li>showListOnFocusIfEmpty - (default: false) Whether to show a list when the
        *     empty field receives focus.</li>
+       *    <li>showLoadingIndicator - (default: true) Whether to show a loading indicator
+       *     during search.</li>
        *    <ul>Somewhat obsolete, but not yet deprecated, parameters:
        *      <li>buttonID - the ID of the button (if there is one) which activates
        *       a search.  If you use this option, do not set matchListValue.</li>
