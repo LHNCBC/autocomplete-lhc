@@ -343,5 +343,11 @@ describe('search lists', function() {
       cy.get(po.searchCNESel).click().type('a');
       po.getAjaxAbortCount().should('equal', 2);
     });
+
+    it('should show loading indicator', function() {
+      cy.get(po.alleleSearch).click().type('rs');
+      cy.get(po.alleleSearch).should('have.class', 'loading');
+      cy.get(po.alleleSearch).should('not.have.class', 'loading');
+    });
   });
 });

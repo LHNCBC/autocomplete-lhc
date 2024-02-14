@@ -97,6 +97,11 @@
        */
       showListOnFocusIfEmpty_: false,
 
+      /**
+       * Whether to show a loading indicator when search is taking place.
+       */
+      showLoadingIndicator_: true,
+
 
       /**
        *  The constructor.  (See Prototype's Class.create method.)
@@ -298,6 +303,9 @@
 
         this.showListOnFocusIfEmpty_ = options['showListOnFocusIfEmpty'] || false;
 
+        if (options['showLoadingIndicator'] !== null && options['showLoadingIndicator'] === false)
+          this.showLoadingIndicator_ = false;
+
         // Do not use the synchronous request option.  On Windows and Firefox,
         // if you use synchronous, and hit control+enter to run a search, the
         // Firefox Downloads window opens.  I don't know why.  See my post
@@ -396,6 +404,8 @@
         var searchFn = this.search;
         if (this.url || searchFn) {
           this.searchInProgress = true;
+          if (this.showLoadingIndicator_)
+            this.element.classList.add('loading');
           this.searchStartTime = new Date().getTime();
 
           // See if the search has been run before.
@@ -900,6 +910,8 @@
             }
 
             this.searchInProgress = false;
+            if (this.showLoadingIndicator_)
+              this.element.classList.remove('loading');
 
             // If the number of list items is too large, use the split area, otherwise
             // put the list below the field.
@@ -1121,6 +1133,8 @@
               this.onComplete(results, true);
           }
           if (!results) {
+            if (this.showLoadingIndicator_)
+              this.element.classList.add('loading');
             if (this.search)
               this.useSearchFn(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
             else
