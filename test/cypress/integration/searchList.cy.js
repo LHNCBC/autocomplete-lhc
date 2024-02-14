@@ -344,10 +344,21 @@ describe('search lists', function() {
       po.getAjaxAbortCount().should('equal', 2);
     });
 
+    it('should disable loading indicator', function() {
+      cy.get(po.searchCNESel).click().type('ar');
+      // A shorter timeout than the ajax delay to make sure the 'loading' class never showed.
+      cy.get(po.searchCNESel, {timeout: 300}).should('not.have.class', 'loading');
+    });
+
     it('should show loading indicator', function() {
       cy.get(po.alleleSearch).click().type('rs');
       cy.get(po.alleleSearch).should('have.class', 'loading');
       cy.get(po.alleleSearch).should('not.have.class', 'loading');
+      // field with a search button
+      cy.get('#fe_search_button_cne').click().type('ab');
+      cy.get('#fe_search_button_cne_button').click();
+      cy.get('#fe_search_button_cne').should('have.class', 'loading');
+      cy.get('#fe_search_button_cne').should('not.have.class', 'loading');
     });
   });
 });

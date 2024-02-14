@@ -22,6 +22,7 @@ var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe',
 var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true
+opts['showLoadingIndicator']=false
 new Def.Autocompleter.Search('fe_search_cne',
   '/form/get_search_res_list?fd_id=1284', opts);
 
