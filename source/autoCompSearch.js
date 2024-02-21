@@ -822,6 +822,8 @@
         if (this.lastAjaxRequest_ === resultData) {
           this.lastAjaxRequest_ = null;
         }
+        if (this.showLoadingIndicator_)
+          this.element.classList.remove('loading');
         const usedSearchFn = !!resultData.results;
         if (resultData.status === 200 || usedSearchFn) { // 200 is the "OK" status
           if (usedSearchFn) {
@@ -912,8 +914,6 @@
             }
 
             this.searchInProgress = false;
-            if (this.showLoadingIndicator_)
-              this.element.classList.remove('loading');
 
             // If the number of list items is too large, use the split area, otherwise
             // put the list below the field.

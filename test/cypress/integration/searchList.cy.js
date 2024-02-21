@@ -343,6 +343,15 @@ describe('search lists', function() {
       cy.get(po.searchCNESel).click().type('a');
       po.getAjaxAbortCount().should('equal', 2);
     });
+  });
+
+  describe('loading indicator', function() {
+    beforeEach(function() {
+      po.openTestPage();
+      cy.window().then(function(win) {
+        win.Def.jqueryLite.ajaxFactory(2000);
+      });
+    });
 
     it('should disable loading indicator', function() {
       cy.get(po.searchCNESel).click().type('ar');
