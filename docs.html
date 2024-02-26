@@ -270,6 +270,11 @@
                 <li>minChars - (default 1, as of version 11) The minimum number
                  of characters that must be in the field before autocompletion
                  will start.</li>
+                <li>sort - Whether or not display values should be sorted after being
+                 retrieved from the server.  (Default: true).  Note that if you do not
+                 want sorting, you might also want set the suggestionMode parameter to
+                 Def.Autocompleter.NO_COMPLETION_SUGGESTIONS so that a suggestion is
+                 not moved to the top of the list.</li>
                 <li>matchListValue - Whether the field value is required to be one from
                  the list (default: false).</li>
                 <li>tableFormat - If true, then if the list's items contain
