@@ -305,7 +305,7 @@
 
         this.showListOnFocusIfEmpty_ = options['showListOnFocusIfEmpty'] || false;
 
-        if (options['showLoadingIndicator'] !== null && options['showLoadingIndicator'] === false)
+        if (options['showLoadingIndicator'] === false)
           this.showLoadingIndicator_ = false;
 
         // Do not use the synchronous request option.  On Windows and Firefox,
