@@ -311,7 +311,8 @@
         // If loading indicator is enabled, put the field into a span and add a <progress> element.
         if (this.showLoadingIndicator_) {
           var fieldParent = this.element.parentElement;
-          // If it's already wrapped in a <span> because it's multi-select, reuse the same <span>.
+          // If it's already wrapped in a <span> because it's multi-select (see this.defAutocompleterBaseInit()),
+          // reuse the same <span>.
           if (fieldParent.tagName.toLowerCase() === 'span' && fieldParent.classList.contains('autocomp_selected')) {
             fieldParent.classList.add('loading-indicator-container');
             this.progressElement = document.createElement('progress');
@@ -841,7 +842,7 @@
           this.lastAjaxRequest_ = null;
         }
         if (this.showLoadingIndicator_)
-          this.progressElement.classList.remove('show');
+          this.progressElement?.classList.remove('show');
         const usedSearchFn = !!resultData.results;
         if (resultData.status === 200 || usedSearchFn) { // 200 is the "OK" status
           if (usedSearchFn) {
@@ -1154,7 +1155,7 @@
           }
           if (!results) {
             if (this.showLoadingIndicator_)
-              this.progressElement.classList.add('show');
+              this.progressElement?.classList.add('show');
             if (this.search)
               this.useSearchFn(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
             else
