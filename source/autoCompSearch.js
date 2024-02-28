@@ -308,6 +308,24 @@
         if (options['showLoadingIndicator'] === false)
           this.showLoadingIndicator_ = false;
 
+        // If loading indicator is enabled, put the field into a span and add a <progress> element.
+        if (this.showLoadingIndicator_) {
+          var fieldParent = this.element.parentElement;
+          // If it's already wrapped in a <span> because it's multi-select, reuse the same <span>.
+          if (fieldParent.tagName.toLowerCase() === 'span' && fieldParent.classList.contains('autocomp_selected')) {
+            fieldParent.classList.add('loading-indicator-container');
+            this.progressElement = document.createElement('progress');
+            fieldParent.appendChild(this.progressElement);
+          } else {
+            var fieldDiv = document.createElement('span');
+            fieldDiv.classList.add('loading-indicator-container');
+            fieldParent.replaceChild(fieldDiv, this.element);
+            fieldDiv.appendChild(this.element);
+            this.progressElement = document.createElement('progress');
+            fieldDiv.appendChild(this.progressElement);
+          }
+        }
+
         // Do not use the synchronous request option.  On Windows and Firefox,
         // if you use synchronous, and hit control+enter to run a search, the
         // Firefox Downloads window opens.  I don't know why.  See my post
@@ -407,7 +425,7 @@
         if (this.url || searchFn) {
           this.searchInProgress = true;
           if (this.showLoadingIndicator_)
-            this.element.classList.add('loading');
+            this.progressElement?.classList.add('show');
           this.searchStartTime = new Date().getTime();
 
           // See if the search has been run before.
@@ -823,7 +841,7 @@
           this.lastAjaxRequest_ = null;
         }
         if (this.showLoadingIndicator_)
-          this.element.classList.remove('loading');
+          this.progressElement.classList.remove('show');
         const usedSearchFn = !!resultData.results;
         if (resultData.status === 200 || usedSearchFn) { // 200 is the "OK" status
           if (usedSearchFn) {
@@ -1136,7 +1154,7 @@
           }
           if (!results) {
             if (this.showLoadingIndicator_)
-              this.element.classList.add('loading');
+              this.progressElement.classList.add('show');
             if (this.search)
               this.useSearchFn(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
             else

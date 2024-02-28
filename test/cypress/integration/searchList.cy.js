@@ -355,19 +355,23 @@ describe('search lists', function() {
 
     it('should disable loading indicator', function() {
       cy.get(po.searchCNESel).click().type('ar');
-      // A shorter timeout than the ajax delay to make sure the 'loading' class never showed.
-      cy.get(po.searchCNESel, {timeout: 300}).should('not.have.class', 'loading');
+      // A shorter timeout than the ajax delay to make sure the <progress> element never showed.
+      cy.get(po.searchCNESel + ' + progress', {timeout: 300}).should('not.exist');
     });
 
     it('should show loading indicator', function() {
       cy.get(po.alleleSearch).click().type('rs');
-      cy.get(po.alleleSearch).should('have.class', 'loading');
-      cy.get(po.alleleSearch).should('not.have.class', 'loading');
+      cy.get(po.alleleSearch + ' + progress').should('have.class', 'show');
+      cy.get(po.alleleSearch + ' + progress').should('not.have.class', 'show');
+      // multi-select search field
+      cy.get(po.multiSearchCWE).click().type('rs');
+      cy.get(po.multiSearchCWE + ' + progress').should('have.class', 'show');
+      cy.get(po.multiSearchCWE + ' + progress').should('not.have.class', 'show');
       // field with a search button
       cy.get('#fe_search_button_cne').click().type('ab');
       cy.get('#fe_search_button_cne_button').click();
-      cy.get('#fe_search_button_cne').should('have.class', 'loading');
-      cy.get('#fe_search_button_cne').should('not.have.class', 'loading');
+      cy.get('#fe_search_button_cne + progress').should('have.class', 'show');
+      cy.get('#fe_search_button_cne + progress').should('not.have.class', 'show');
     });
   });
 });
