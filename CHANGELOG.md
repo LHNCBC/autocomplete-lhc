@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.1.2] - 2024-02-29
+### Removed
+- Cypress/xpath dependency.
+
 ## [19.1.1] - 2024-02-15
 ### Fixed
 - An issue where the search list items are not clickable after switching out
