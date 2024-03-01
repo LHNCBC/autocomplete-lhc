@@ -425,8 +425,6 @@
         var searchFn = this.search;
         if (this.url || searchFn) {
           this.searchInProgress = true;
-          if (this.showLoadingIndicator_)
-            this.progressElement?.classList.add('show');
           this.searchStartTime = new Date().getTime();
 
           // See if the search has been run before.
@@ -439,6 +437,8 @@
               this.onComplete(results, true);
           }
           if (!results) { // i.e. if it wasn't cached
+            if (this.showLoadingIndicator_)
+              this.progressElement?.classList.add('show');
             // Run the search
             if (searchFn)
               this.useSearchFn(searchStr, Def.Autocompleter.Search.EXPANDED_COUNT);

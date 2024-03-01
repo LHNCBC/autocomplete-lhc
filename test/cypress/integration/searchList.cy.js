@@ -373,5 +373,13 @@ describe('search lists', function() {
       cy.get('#fe_search_button_cne + progress').should('have.class', 'show');
       cy.get('#fe_search_button_cne + progress').should('not.have.class', 'show');
     });
+
+    it('should hide loading indicator when the field is cleared', function() {
+      cy.get(po.alleleSearch).clear().type('a');
+      cy.get(po.alleleSearch + ' + progress', {timeout: 300}).should('have.class', 'show');
+      cy.get(po.alleleSearch).clear();
+      // A shorter timeout than the ajax delay to make sure the <progress> element goes away before the ajax request finishes.
+      cy.get(po.alleleSearch + ' + progress', {timeout: 300}).should('not.have.class', 'show');
+    });
   });
 });
