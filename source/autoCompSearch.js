@@ -318,12 +318,12 @@
             this.progressElement = document.createElement('progress');
             fieldParent.appendChild(this.progressElement);
           } else {
-            var fieldDiv = document.createElement('span');
-            fieldDiv.classList.add('loading-indicator-container');
-            fieldParent.replaceChild(fieldDiv, this.element);
-            fieldDiv.appendChild(this.element);
+            var fieldContainer = document.createElement('span');
+            fieldContainer.classList.add('loading-indicator-container');
+            fieldParent.replaceChild(fieldContainer, this.element);
+            fieldContainer.appendChild(this.element);
             this.progressElement = document.createElement('progress');
-            fieldDiv.appendChild(this.progressElement);
+            fieldContainer.appendChild(this.progressElement);
           }
         }
 
@@ -360,6 +360,22 @@
         if (options.colHeaders) {
           this.colHeaderHTML = '<table><thead><th>'+
             options.colHeaders.join('</th><th>') + '</th></thead><tbody>';
+        }
+      },
+
+
+      /**
+       * Frees any references this autocompleter has to DOM objects.
+       * Overrides detachFromDOM() in autoCompBase.js.
+       */
+      detachFromDOM: function() {
+        Def.Autocompleter.Search.superclass.detachFromDOM.apply(this);
+        // Remove the containing element with class 'loading-indicator-container',
+        // if any.
+        var fieldParent = this.element.parentElement;
+        if (fieldParent.classList.contains('loading-indicator-container')) {
+          var originalParent = fieldParent.parentElement;
+          originalParent.replaceChild(this.element, fieldParent);
         }
       },
 

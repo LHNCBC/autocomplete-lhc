@@ -60,6 +60,7 @@
 
 .loading-indicator-container {
   position: relative;
+  display: inline-block;
 }
 
 .loading-indicator-container progress {
