@@ -381,5 +381,11 @@ describe('search lists', function() {
       // A shorter timeout than the ajax delay to make sure the <progress> element goes away before the ajax request finishes.
       cy.get(po.alleleSearch + ' + progress', {timeout: 300}).should('not.have.class', 'show');
     });
+
+    it('should remove wrapper element when the destroyed', function() {
+      cy.get('.loading-indicator-container ' + po.alleleSearch).should('exist');
+      cy.get('#dest_allele_search').click();
+      cy.get('.loading-indicator-container ' + po.alleleSearch).should('not.exist');
+    });
   });
 });

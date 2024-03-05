@@ -300,8 +300,11 @@ new Def.Autocompleter.Prefetch('item_num_match_test', longList, opts);
 
 // A list to test for correct sorting of results.
 var opts = {valueCols: [0], tableFormat: true};
+var fe_allele_search_autoComp =
 new Def.Autocompleter.Search('allele_search',
     '/form/get_search_res_list?fd_id=alleles', opts);
+document.querySelector('#dest_allele_search').addEventListener('click', (event)=>{
+  fe_allele_search_autoComp.destroy()});
 
 // A search list to test for case-sensitive matching
 new Def.Autocompleter.Search('cs_match_search',

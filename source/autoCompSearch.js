@@ -369,7 +369,6 @@
        * Overrides detachFromDOM() in autoCompBase.js.
        */
       detachFromDOM: function() {
-        Def.Autocompleter.Search.superclass.detachFromDOM.apply(this);
         // Remove the containing element with class 'loading-indicator-container',
         // if any.
         var fieldParent = this.element.parentElement;
@@ -377,6 +376,7 @@
           var originalParent = fieldParent.parentElement;
           originalParent.replaceChild(this.element, fieldParent);
         }
+        Def.Autocompleter.Search.superclass.detachFromDOM.apply(this);
       },
 
 

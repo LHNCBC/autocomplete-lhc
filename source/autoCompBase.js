@@ -2707,8 +2707,8 @@ if (typeof Def === 'undefined')
       detachFromDOM: function() {
         // If this is a multiselect list, remove the div we put around the
         // field, which also has the selected item list.
-        if (this.multiSelect_) {
-          var fieldDiv = this.element.parentNode;
+        var fieldDiv = this.element.parentNode;
+        if (this.multiSelect_ && fieldDiv.classList.contains('autocomp_selected')) {
           var originalParent = fieldDiv.parentNode;
           originalParent.replaceChild(this.element, fieldDiv);
           this.selectedList = null;
