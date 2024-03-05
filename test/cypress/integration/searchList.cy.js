@@ -386,6 +386,10 @@ describe('search lists', function() {
       cy.get('.loading-indicator-container ' + po.alleleSearch).should('exist');
       cy.get('#dest_allele_search').click();
       cy.get('.loading-indicator-container ' + po.alleleSearch).should('not.exist');
+      // multi-select search field
+      cy.get('.loading-indicator-container ' + po.multiSearchCWE).should('exist');
+      cy.get('#dest_multi_sel_search_cwe').click();
+      cy.get('.loading-indicator-container ' + po.multiSearchCWE).should('not.exist');
     });
   });
 });

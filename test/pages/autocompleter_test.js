@@ -209,8 +209,11 @@ opts = {
   'suggestionMode': Def.Autocompleter.USE_STATISTICS,
   'autocomp': true
 };
+var fe_multi_sel_search_cwe_autoComp =
 new Def.Autocompleter.Search('multi_sel_search_cwe',
   '/form/get_search_res_list?fd_id=2163', opts);
+document.querySelector('#dest_multi_sel_search_cwe').addEventListener('click', (event)=>{
+  fe_multi_sel_search_cwe_autoComp.destroy()});
 
 
 // Long prefetched list autocompleter with an odd number of items (for checking
