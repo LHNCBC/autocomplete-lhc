@@ -311,20 +311,12 @@
         // If loading indicator is enabled, put the field into a span and add a <progress> element.
         if (this.showLoadingIndicator_) {
           var fieldParent = this.element.parentElement;
-          // If it's already wrapped in a <span> because it's multi-select (see this.defAutocompleterBaseInit()),
-          // reuse the same <span>.
-          if (fieldParent.tagName.toLowerCase() === 'span' && fieldParent.classList.contains('autocomp_selected')) {
-            fieldParent.classList.add('loading-indicator-container');
-            this.progressElement = document.createElement('progress');
-            fieldParent.appendChild(this.progressElement);
-          } else {
-            var fieldContainer = document.createElement('span');
-            fieldContainer.classList.add('loading-indicator-container');
-            fieldParent.replaceChild(fieldContainer, this.element);
-            fieldContainer.appendChild(this.element);
-            this.progressElement = document.createElement('progress');
-            fieldContainer.appendChild(this.progressElement);
-          }
+          var fieldContainer = document.createElement('span');
+          fieldContainer.classList.add('loading-indicator-container');
+          fieldParent.replaceChild(fieldContainer, this.element);
+          fieldContainer.appendChild(this.element);
+          this.progressElement = document.createElement('progress');
+          fieldContainer.appendChild(this.progressElement);
         }
 
         // Do not use the synchronous request option.  On Windows and Firefox,
