@@ -97,6 +97,11 @@
        */
       showListOnFocusIfEmpty_: false,
 
+      /**
+       * Whether to show a loading indicator when search is taking place.
+       */
+      showLoadingIndicator_: true,
+
 
       /**
        *  The constructor.  (See Prototype's Class.create method.)
@@ -236,8 +241,10 @@
        *    <li>colHeaders - Used when tableFormat is true, this is an array of
        *     column headers for the columns in the table.  If this is not supplied, no header
        *     row will be created.</li>
-       *     <li>showListOnFocusIfEmpty - (default: false) Whether to show a list when the
+       *    <li>showListOnFocusIfEmpty - (default: false) Whether to show a list when the
        *     empty field receives focus.</li>
+       *    <li>showLoadingIndicator - (default: true) Whether to show a loading indicator
+       *     during search.</li>
        *    <ul>Somewhat obsolete, but not yet deprecated, parameters:
        *      <li>buttonID - the ID of the button (if there is one) which activates
        *       a search.  If you use this option, do not set matchListValue.</li>
@@ -298,6 +305,20 @@
 
         this.showListOnFocusIfEmpty_ = options['showListOnFocusIfEmpty'] || false;
 
+        if (options['showLoadingIndicator'] === false)
+          this.showLoadingIndicator_ = false;
+
+        // If loading indicator is enabled, put the field into a span and add a <progress> element.
+        if (this.showLoadingIndicator_) {
+          var fieldParent = this.element.parentElement;
+          var fieldContainer = document.createElement('span');
+          fieldContainer.classList.add('loading-indicator-container');
+          fieldParent.replaceChild(fieldContainer, this.element);
+          fieldContainer.appendChild(this.element);
+          this.progressElement = document.createElement('progress');
+          fieldContainer.appendChild(this.progressElement);
+        }
+
         // Do not use the synchronous request option.  On Windows and Firefox,
         // if you use synchronous, and hit control+enter to run a search, the
         // Firefox Downloads window opens.  I don't know why.  See my post
@@ -332,6 +353,22 @@
           this.colHeaderHTML = '<table><thead><th>'+
             options.colHeaders.join('</th><th>') + '</th></thead><tbody>';
         }
+      },
+
+
+      /**
+       * Frees any references this autocompleter has to DOM objects.
+       * Overrides detachFromDOM() in autoCompBase.js.
+       */
+      detachFromDOM: function() {
+        // Remove the containing element with class 'loading-indicator-container',
+        // if any.
+        var fieldParent = this.element.parentElement;
+        if (fieldParent.classList.contains('loading-indicator-container')) {
+          var originalParent = fieldParent.parentElement;
+          originalParent.replaceChild(this.element, fieldParent);
+        }
+        Def.Autocompleter.Search.superclass.detachFromDOM.apply(this);
       },
 
 
@@ -408,6 +445,8 @@
               this.onComplete(results, true);
           }
           if (!results) { // i.e. if it wasn't cached
+            if (this.showLoadingIndicator_)
+              this.progressElement?.classList.add('show');
             // Run the search
             if (searchFn)
               this.useSearchFn(searchStr, Def.Autocompleter.Search.EXPANDED_COUNT);
@@ -810,6 +849,8 @@
         if (this.lastAjaxRequest_ === resultData) {
           this.lastAjaxRequest_ = null;
         }
+        if (this.showLoadingIndicator_)
+          this.progressElement?.classList.remove('show');
         const usedSearchFn = !!resultData.results;
         if (resultData.status === 200 || usedSearchFn) { // 200 is the "OK" status
           if (usedSearchFn) {
@@ -1127,6 +1168,8 @@
               this.onComplete(results, true);
           }
           if (!results) {
+            if (this.showLoadingIndicator_)
+              this.progressElement?.classList.add('show');
             if (this.search)
               this.useSearchFn(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
             else

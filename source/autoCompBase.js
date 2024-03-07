@@ -2840,6 +2840,9 @@ if (typeof Def === 'undefined')
         } else {
           this.active = false;
           this.hide();
+          // Hide the loading indicator for Search autocomplete, if it is still shown due to
+          // previous query not finished yet.
+          this.progressElement?.classList.remove('show');
         }
         this.oldElementValue = this.domCache.get('elemVal');
       }
