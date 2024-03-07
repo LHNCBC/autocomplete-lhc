@@ -3,10 +3,15 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
-## [19.2.0] - 2024-02-14
+## [19.2.0] - 2024-03-07
 ### Added
 - "showLoadingIndicator" option to show loading indicator on a Search autocomplete,
   defaults to true.
+
+## [19.1.1] - 2024-02-15
+### Fixed
+- An issue where the search list items are not clickable after switching out
+  browser tab/window and coming back.
 
 ## [19.1.0] - 2024-02-08
 ### Changed

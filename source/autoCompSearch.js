@@ -1116,6 +1116,12 @@
           if (this.showListOnFocusIfEmpty_) {
             this.getUpdatedChoices();
           }
+          // Set the _disableListItemClick flag back to false with a timeout,
+          // so that the search list is clickable after the window/tab regain
+          // focus after being switched out.
+          setTimeout(() => {
+            this._disableListItemClick = false;
+          }, 10);
         }
       },
 
