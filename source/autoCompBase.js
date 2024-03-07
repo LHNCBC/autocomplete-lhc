@@ -1658,7 +1658,6 @@ if (typeof Def === 'undefined')
        *  Positions the answer list.
        */
       posAnsList: function() {
-        console.log('heihei');
         this.posListBelowFieldInMultiCol();
         // If the list was already showing, made sure the currently selected item
         // is still in view after the repositioning (which sets the scrollTop
