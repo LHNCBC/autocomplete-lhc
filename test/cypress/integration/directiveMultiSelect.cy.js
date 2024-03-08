@@ -11,8 +11,9 @@ describe('directive', function() {
        function() {
       dp.openDirectiveTestPage();
       cy.get(dp.multiField).should('exist');
-      cy.get(dp.multiField).xpath('../ul').should('exist');
-      cy.get(dp.multiField).xpath('../ul').xpath('li').should('not.exist');
+      // Finds the <ul> element immediately followed by the input control dp.multiField.
+      cy.get(`ul:has(+ ${dp.multiField})`).should('exist');
+      cy.get(`ul:has(+ ${dp.multiField}) li`).should('not.exist');
     });
 
     it('should be blank (without a default setting)', function() {
