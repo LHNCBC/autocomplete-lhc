@@ -3,9 +3,14 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
-## [19.1.2] - 2024-02-29
+## [19.2.1] - 2024-03-08
 ### Removed
 - Cypress/xpath dependency.
+
+## [19.2.0] - 2024-03-07
+### Added
+- "showLoadingIndicator" option to show loading indicator on a Search autocomplete,
+  defaults to true.
 
 ## [19.1.1] - 2024-02-15
 ### Fixed
