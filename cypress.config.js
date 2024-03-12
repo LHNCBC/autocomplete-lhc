@@ -1,5 +1,5 @@
-const { defineConfig } = require('cypress');
-const { config } = require('./package.json');
+const {defineConfig} = require('cypress');
+const {config} = require('./package.json');
 
 module.exports = defineConfig({
   videosFolder: 'test/cypress/videos',
@@ -14,6 +14,7 @@ module.exports = defineConfig({
     },
     specPattern: 'test/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'test/cypress/support/index.js',
-    baseUrl: 'http://localhost:'+config.testPort
+    baseUrl: 'http://localhost:' + config.testPort,
+    testIsolation: false
   },
 });
