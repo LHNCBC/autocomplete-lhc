@@ -30,5 +30,4 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 })
 
 
-require('@cypress/xpath');
 require('cypress-plugin-tab');
