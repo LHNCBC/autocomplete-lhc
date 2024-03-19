@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.2.2] - 2024-03-12
+### Fixed
+- Reposition the answer list under the autocomplete-lhc control when the window
+  is resized.
+
 ## [19.2.1] - 2024-03-08
 ### Removed
 - Cypress/xpath dependency.

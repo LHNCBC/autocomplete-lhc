@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "19.2.1",
+  "version": "19.2.2",
   "description": "",
   "main": "source/index.js",
   "config": {
@@ -17,7 +17,7 @@
     "bower": "^1.8.8",
     "clean-css-cli": "^4.2.1",
     "connect": "^3.7.0",
-    "cypress": "^10.11.0",
+    "cypress": "^13.6.6",
     "cypress-plugin-tab": "^1.0.5",
     "deep-equal": "^2.1.0",
     "grunt": "^1.5.3",

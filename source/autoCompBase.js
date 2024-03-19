@@ -1209,6 +1209,8 @@ if (typeof Def === 'undefined')
             this.listShowing = false;
             this.listContainer.setAttribute('aria-hidden', 'true');
             this.element.setAttribute('aria-expanded', 'false');
+            // No need to listen to window resize event to repostion the list after the list is hidden.
+            window.removeEventListener('resize', this.windowResizeEventHandler);
           }
         }
       },
@@ -1231,6 +1233,10 @@ if (typeof Def === 'undefined')
              'multi-column list are ' + this.options.colHeaders.join('; '));
           }
         }
+        // See LF2925. Listen to window resize event to repostion the list when the window
+        // is resized.
+        this.windowResizeEventHandler = this.posAnsList.bind(this);
+        window.addEventListener('resize', this.windowResizeEventHandler);
       },
 
 
