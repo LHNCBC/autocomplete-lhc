@@ -8,7 +8,7 @@ describe('recordDataRequester', function () {
   it('tests the initialization of the input/outputFieldsHash_', function () {
     cy.window().then(function (win) {
       var $ = win.Def.PrototypeAPI.$;
-      var dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), 'http://example.com', ['record_id'], ['code', 'pseudonym'], true);
+      var dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), '/someurl', ['record_id'], ['code', 'pseudonym'], true);
       // Check that the fields hash has not been initialized yet.
       expect(dataReq.inputFieldsHash_).to.be.null;
       expect(dataReq.outputFieldsHash_).to.be.null;
@@ -21,7 +21,7 @@ describe('recordDataRequester', function () {
       expect(dataReq.outputFieldsHash_['pseudonym']).not.to.be.null;
 
       // Check that the dataReqInput parameter can be null.
-      dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), 'http://example.com', null, ['code', 'pseudonym'], true);
+      dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), '/someurl', null, ['code', 'pseudonym'], true);
       dataReq.initFieldsHash();
       // Check that it has been initialized
       assert(0 === Object.keys(dataReq.inputFieldsHash_).length);
@@ -32,7 +32,7 @@ describe('recordDataRequester', function () {
   it('tests the assignment of return data to the fields on the form', function () {
     cy.window().then(function (win) {
       var $ = win.Def.PrototypeAPI.$;
-      var dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), 'http://example.com', null, ['code', 'pseudonym'], true);
+      var dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), '/someurl', null, ['code', 'pseudonym'], true);
       dataReq.assignDataToFields({code: 45, pseudonym: ['one', 'two']});
       assert('45' === $('fe_code_1').value);
       var fe_pseudonym_1_autoComp = win.document.getElementById('fe_pseudonym_1').autocomp;
@@ -63,7 +63,7 @@ describe('recordDataRequester', function () {
     cy.window().then(function (win) {
       var $ = win.Def.PrototypeAPI.$;
       // Set the fields' values first.
-      var dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), 'http://example.com', null, ['code', 'pseudonym'], true);
+      var dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), '/someurl', null, ['code', 'pseudonym'], true);
       dataReq.assignDataToFields({code: 45, pseudonym: ['one', 'two']});
 
       // Now try clearing the fields
@@ -78,7 +78,7 @@ describe('recordDataRequester', function () {
     cy.window().then(function (win) {
       var $ = win.Def.PrototypeAPI.$;
       // Test a field that does not have a code.
-      var dataReq = new win.Def.RecordDataRequester($('fe_pseudonym_1'), 'http://example.com', ['record_id', 'trigger_field'], ['code'], true);
+      var dataReq = new win.Def.RecordDataRequester($('fe_pseudonym_1'), '/someurl', ['record_id', 'trigger_field'], ['code'], true);
       // Set the field values
       $('fe_trigger_field_1').value = 'tf val';
       $('fe_record_id_1').value = '45';
@@ -91,7 +91,7 @@ describe('recordDataRequester', function () {
       assert('' === params['authenticity_token']);
 
       // Test a field that has a code.
-      dataReq = new win.Def.RecordDataRequester($('fe_gender_1'), 'http://example.com', ['record_id', 'trigger_field'], ['code'], true);
+      dataReq = new win.Def.RecordDataRequester($('fe_gender_1'), '/someurl', ['record_id', 'trigger_field'], ['code'], true);
       $('fe_gender_1').autocomp.setFieldVal('Male', false);
       $('fe_gender_C_1').value = 'M';
       $('fe_gender_1').autocomp.storeSelectedItem()
@@ -119,11 +119,11 @@ describe('recordDataRequester', function () {
       // The current implementation of getOutputFieldRDR relies on the
       // autocompleter being set up as well, so we'll create two autocompleters
       // and two RDRs.
-      var dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), 'http://example.com', null, ['name', 'pseudonym'], true);
+      var dataReq = new win.Def.RecordDataRequester($('fe_trigger_field_1'), '/someurl', null, ['name', 'pseudonym'], true);
       new win.Def.Autocompleter.Prefetch('fe_trigger_field_1', ['apples', 'oranges and apples', 'pears and (apples)', 'bananas'], {
         'matchListValue': false, 'addSeqNum': false, 'codes': ['a', 'oa', 'pa', 'b'], 'dataRequester': dataReq
       });
-      var dataReq2 = new win.Def.RecordDataRequester($('fe_gender_1'), 'http://example.com', ['record_id', 'trigger_field'], ['code'], true);
+      var dataReq2 = new win.Def.RecordDataRequester($('fe_gender_1'), '/someurl', ['record_id', 'trigger_field'], ['code'], true);
       new win.Def.Autocompleter.Prefetch('fe_gender_1', ['Male', 'Female'], {
         'matchListValue': false, 'addSeqNum': false, 'codes': ['M', 'F'], 'dataRequester': dataReq2
       });
