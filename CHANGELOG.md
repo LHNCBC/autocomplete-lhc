@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.2.3] - 2024-04-11
+### Added
+- Announce that the search is in progress if it takes more than 1.5 seconds.
+
 ## [19.2.2] - 2024-03-12
 ### Fixed
 - Reposition the answer list under the autocomplete-lhc control when the window

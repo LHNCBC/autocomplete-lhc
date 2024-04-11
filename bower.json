@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "19.2.2",
+  "version": "19.2.3",
   "main": [
     "source/auto_completion.css",
     "source/polyfill.js",
