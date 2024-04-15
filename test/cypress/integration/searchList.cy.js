@@ -359,10 +359,25 @@ describe('search lists', function() {
       cy.get(po.searchCNESel + ' + progress', {timeout: 300}).should('not.exist');
     });
 
+    it('should remove wrapper element when the destroyed', function() {
+      cy.get('.loading-indicator-container ' + po.alleleSearch).should('exist');
+      cy.get('#dest_allele_search').click();
+      cy.get('.loading-indicator-container ' + po.alleleSearch).should('not.exist');
+      // multi-select search field
+      cy.get('.loading-indicator-container ' + po.multiSearchCWE).should('exist');
+      cy.get('#dest_multi_sel_search_cwe').click();
+      cy.get('.loading-indicator-container ' + po.multiSearchCWE).should('not.exist');
+    });
+
     it('should show loading indicator', function() {
       cy.get(po.alleleSearch).click().type('rs');
       cy.get(po.alleleSearch + ' + progress').should('have.class', 'show');
       cy.get(po.alleleSearch + ' + progress').should('not.have.class', 'show');
+      cy.window().then(win => {
+        const log = win.Def.Autocompleter.screenReaderLog_;
+        assert(log.logElement_.textContent.indexOf('A list is being loaded for the field') >= 0, 'announcing loading in progress');
+        assert(log.logElement_.textContent.indexOf('The list is loaded') >= 0, 'announcing loading is complete');
+      });
       // multi-select search field
       cy.get(po.multiSearchCWE).click().type('rs');
       cy.get(po.multiSearchCWE + ' + progress').should('have.class', 'show');
@@ -380,16 +395,6 @@ describe('search lists', function() {
       cy.get(po.alleleSearch).clear();
       // A shorter timeout than the ajax delay to make sure the <progress> element goes away before the ajax request finishes.
       cy.get(po.alleleSearch + ' + progress', {timeout: 300}).should('not.have.class', 'show');
-    });
-
-    it('should remove wrapper element when the destroyed', function() {
-      cy.get('.loading-indicator-container ' + po.alleleSearch).should('exist');
-      cy.get('#dest_allele_search').click();
-      cy.get('.loading-indicator-container ' + po.alleleSearch).should('not.exist');
-      // multi-select search field
-      cy.get('.loading-indicator-container ' + po.multiSearchCWE).should('exist');
-      cy.get('#dest_multi_sel_search_cwe').click();
-      cy.get('.loading-indicator-container ' + po.multiSearchCWE).should('not.exist');
     });
   });
 });

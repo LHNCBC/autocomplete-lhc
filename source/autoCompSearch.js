@@ -1193,7 +1193,7 @@
         clearTimeout(this.loadingAnnouncerTimeout);
         this.loadingAnnounced = false;
         this.loadingAnnouncerTimeout = setTimeout(() => {
-          Def.Autocompleter.screenReaderLog('A list is being loaded for the field');
+          Def.Autocompleter.screenReaderLog('A list is being loaded for the field.');
           this.loadingAnnounced = true;
         }, 1500);
       },
