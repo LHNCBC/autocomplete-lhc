@@ -445,15 +445,8 @@
               this.onComplete(results, true);
           }
           if (!results) { // i.e. if it wasn't cached
-            if (this.showLoadingIndicator_) {
-              this.progressElement?.classList.add('show');
-              clearTimeout(this.loadingAnnouncerTimeout);
-              this.loadingAnnounced = false;
-              this.loadingAnnouncerTimeout = setTimeout(() => {
-                Def.Autocompleter.screenReaderLog('A list is being loaded for the field');
-                this.loadingAnnounced = true;
-              }, 1500);
-            }
+            if (this.showLoadingIndicator_)
+              this.showProgressBar();
             // Run the search
             if (searchFn)
               this.useSearchFn(searchStr, Def.Autocompleter.Search.EXPANDED_COUNT);
@@ -1180,21 +1173,29 @@
               this.onComplete(results, true);
           }
           if (!results) {
-            if (this.showLoadingIndicator_) {
-              this.progressElement?.classList.add('show');
-              clearTimeout(this.loadingAnnouncerTimeout);
-              this.loadingAnnounced = false;
-              this.loadingAnnouncerTimeout = setTimeout(() => {
-                Def.Autocompleter.screenReaderLog('A list is being loaded for the field');
-                this.loadingAnnounced = true;
-              }, 1500);
-            }
+            if (this.showLoadingIndicator_)
+              this.showProgressBar();
             if (this.search)
               this.useSearchFn(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
             else
               this.urlSearch(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
           }
         }
+      },
+
+
+      /**
+       * Shows the loading indicator.
+       * Creates a timeout to announce the loading if the search doesn't finish in 1.5 seconds.
+       */
+      showProgressBar: function() {
+        this.progressElement?.classList.add('show');
+        clearTimeout(this.loadingAnnouncerTimeout);
+        this.loadingAnnounced = false;
+        this.loadingAnnouncerTimeout = setTimeout(() => {
+          Def.Autocompleter.screenReaderLog('A list is being loaded for the field');
+          this.loadingAnnounced = true;
+        }, 1500);
       },
 
 
