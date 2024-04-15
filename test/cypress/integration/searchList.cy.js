@@ -376,7 +376,6 @@ describe('search lists', function() {
       cy.window().then(win => {
         const log = win.Def.Autocompleter.screenReaderLog_;
         assert(log.logElement_.textContent.indexOf('A list is being loaded for the field') >= 0, 'announcing loading in progress');
-        assert(log.logElement_.textContent.indexOf('The list is loaded') >= 0, 'announcing loading is complete');
       });
       // multi-select search field
       cy.get(po.multiSearchCWE).click().type('rs');

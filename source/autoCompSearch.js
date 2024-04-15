@@ -849,13 +849,6 @@
         if (this.lastAjaxRequest_ === resultData) {
           this.lastAjaxRequest_ = null;
         }
-        if (this.showLoadingIndicator_) {
-          this.progressElement?.classList.remove('show');
-          clearTimeout(this.loadingAnnouncerTimeout);
-          if (this.loadingAnnounced) {
-            Def.Autocompleter.screenReaderLog('The list is loaded.');
-          }
-        }
         const usedSearchFn = !!resultData.results;
         if (resultData.status === 200 || usedSearchFn) { // 200 is the "OK" status
           if (usedSearchFn) {
@@ -943,6 +936,14 @@
               $('moreResults').style.display ='block';
             else {
               $('moreResults').style.display ='none';
+            }
+
+            if (this.showLoadingIndicator_) {
+              this.progressElement?.classList.remove('show');
+              clearTimeout(this.loadingAnnouncerTimeout);
+              if (this.loadingAnnounced && totalCount === 0) {
+                Def.Autocompleter.screenReaderLog("No list items matched the field's value.");
+              }
             }
 
             this.searchInProgress = false;
