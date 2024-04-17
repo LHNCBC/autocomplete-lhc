@@ -49,13 +49,17 @@
 
         /**
          * equivalent of jQuery ajax().
-         * @param url
+         * @param url could be absolute url, or relative url path that starts with '/'
          * @param options
          * @param options.data an object containing query params for the request
          * @param options.complete a callback function to be executed after the request is finished
          * @return {XMLHttpRequest}
          */
         ajax: function(url, options) {
+          // Make full URL if a relative url path is passed in.
+          if (url.startsWith('/')) {
+            url = window.location.origin + url;
+          }
           const urlObject = new URL(url);
           if (options.data) {
             for (const [key, value] of Object.entries(options.data)) {

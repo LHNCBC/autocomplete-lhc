@@ -550,7 +550,7 @@ describe('autocompleters', function () {
 
       // Create a search autocompleter without a matchListValue setting.
       var field2 = createInputElement(win);
-      var autoComp2 = new win.Def.Autocompleter.Search(field2.id, {'url': 'http://example.com'});
+      var autoComp2 = new win.Def.Autocompleter.Search(field2.id, {'url': '/someurl'});
       assert(expectedDefaultVal === autoComp2.matchListValue_);
     });
   });
