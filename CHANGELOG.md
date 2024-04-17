@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.2.4] - 2024-04-17
+### Added
+- Announce that the search is in progress if it takes more than 1.5 seconds.
+
 ## [19.2.3] - 2024-04-04
 ### Changed
 - ajax() takes relative url path, mimicking jQuery ajax().

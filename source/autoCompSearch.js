@@ -446,7 +446,7 @@
           }
           if (!results) { // i.e. if it wasn't cached
             if (this.showLoadingIndicator_)
-              this.progressElement?.classList.add('show');
+              this.showProgressBar();
             // Run the search
             if (searchFn)
               this.useSearchFn(searchStr, Def.Autocompleter.Search.EXPANDED_COUNT);
@@ -849,8 +849,10 @@
         if (this.lastAjaxRequest_ === resultData) {
           this.lastAjaxRequest_ = null;
         }
-        if (this.showLoadingIndicator_)
+        if (this.showLoadingIndicator_) {
           this.progressElement?.classList.remove('show');
+          clearTimeout(this.loadingAnnouncerTimeout);
+        }
         const usedSearchFn = !!resultData.results;
         if (resultData.status === 200 || usedSearchFn) { // 200 is the "OK" status
           if (usedSearchFn) {
@@ -938,6 +940,10 @@
               $('moreResults').style.display ='block';
             else {
               $('moreResults').style.display ='none';
+            }
+
+            if (this.showLoadingIndicator_ && this.loadingAnnounced && totalCount === 0) {
+              Def.Autocompleter.screenReaderLog("No list items matched the field's value.");
             }
 
             this.searchInProgress = false;
@@ -1169,13 +1175,28 @@
           }
           if (!results) {
             if (this.showLoadingIndicator_)
-              this.progressElement?.classList.add('show');
+              this.showProgressBar();
             if (this.search)
               this.useSearchFn(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
             else
               this.urlSearch(fieldVal, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD);
           }
         }
+      },
+
+
+      /**
+       * Shows the loading indicator.
+       * Creates a timeout to announce the loading if the search doesn't finish in 1.5 seconds.
+       */
+      showProgressBar: function() {
+        this.progressElement?.classList.add('show');
+        clearTimeout(this.loadingAnnouncerTimeout);
+        this.loadingAnnounced = false;
+        this.loadingAnnouncerTimeout = setTimeout(() => {
+          Def.Autocompleter.screenReaderLog('A list is being loaded for the field.');
+          this.loadingAnnounced = true;
+        }, 1500);
       },
 
 
