@@ -2,7 +2,7 @@ demos/*.html-plusSource
 test/cypress/videos
 indexPreMin.html
 bonk.mp3
-cypress/
+./cypress/
 dist
 node_modules/
 bower_components
