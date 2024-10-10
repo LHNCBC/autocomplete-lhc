@@ -140,6 +140,8 @@
        *    <li>formattedListItems - an optional HTML formatted list of descriptions.
        *     When provided, the descriptions will be appended to corresponding items
        *     for display. Filtering does not cover content in this formatted list.</li>
+       *    <li>isListHTML - Defaults to false. When set to true, display the list
+       *     as HTML. This should only be used when you know the list is safe.</li>
        *  </ul>
        */
       initialize: function(id, listItems, options) {
@@ -331,7 +333,26 @@
         var headerCount = 0;
         var headingsShown = 0;
         var skippedSelected = 0; // items already selected that are left out of the list
-        var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
+        var isListHTML = instance.options.isListHTML === true;
+        var escapeHTML = isListHTML ? x => x : Def.Autocompleter.Base.escapeAttribute;
+        /**
+         * Checks whether an HTML string has equal number of '<' and'>', so the end of the string
+         * is not inside an HTML tag.
+         * @param value an HTML string.
+         * @returns true if there are an equal number of '<' and '>', false otherwise.
+         */
+        var isHtmlTagsClosed_ = function(value) {
+          const openTagCount = (value.match(/</g) || []).length;
+          const closeTagCount = (value.match(/>/g) || []).length;
+          if (openTagCount === closeTagCount) {
+            return true;
+          } else if (openTagCount - closeTagCount === 1) {
+            return false;
+          } else {
+            console.error("The numbers of opening and closing tags might not be right: " + value);
+            return false;
+          }
+        };
         if (instance.options.ignoreCase)
           entry = entry.toLowerCase();
         var formattedListItems = instance.options.formattedListItems;
@@ -402,8 +423,10 @@
                 }
                 else { // foundPos > 0
                   // See if the match is at a word boundary
-                  if (instance.options.fullSearch ||
-                      /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) {
+                  if ((instance.options.fullSearch ||
+                      /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) &&
+                    // See if the match is inside an HTML tag, when isListHTML is true
+                    (!isListHTML || isHtmlTagsClosed_(elemComp.substr(0, foundPos)))) {
                     ++totalCount;
                     foundMatch = true;
                     if (totalCount <= maxReturn) {

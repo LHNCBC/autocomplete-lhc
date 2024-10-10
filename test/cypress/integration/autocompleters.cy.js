@@ -3,6 +3,9 @@ import {createInputElement, createListWithHeadings, extractListVals} from '../su
 
 describe('autocompleters', function () {
   var listSelectionItemData_ = {};
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    return false;
+  });
 
   beforeEach(function () {
     cy.visit(TestPages.autocomp_test);

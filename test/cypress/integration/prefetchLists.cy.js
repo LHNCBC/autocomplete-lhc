@@ -1,4 +1,5 @@
 import { default as po } from '../support/autocompPage.js';
+import {createInputElement, extractListVals} from "../support/testHelpers";
 
 describe('Prefetch lists', function() {
   it('should prefer a case-sensitive match when attempting a selection', function() {
@@ -171,6 +172,34 @@ describe('Prefetch lists', function() {
     // Now click in the field.  The list should appear
     cy.get(po.prefetchCWE).click();
     cy.get(po.searchResSel).should('be.visible');
+  });
+
+  it('should filter and highlight correctly when isListHTML is true', function() {
+    po.openTestPage();
+    cy.window().then((win) => {
+      var elem = createInputElement(win);
+      var otherAutoComp = new win.Def.Autocompleter.Prefetch(elem.id,
+        [
+          '<strong>bla</strong>',
+          '<span title="I am strong.">bla</span>',
+          '<i title="I am strong.">I am strong</i>'
+        ], {
+          'addSeqNum': false,
+          'isListHTML': true
+      });
+
+      otherAutoComp.onFocus();
+      var listItems = win.document.querySelectorAll('#completionOptions li');
+      assert(3 === listItems.length);
+
+      // Should only match and highlight the text outside an HTML tag.
+      otherAutoComp.setFieldVal('strong');
+      otherAutoComp.matchListItemsToField_ = true;
+      var htmlList = otherAutoComp.selector(otherAutoComp);
+      var vals = extractListVals(htmlList);
+      assert(1 === vals.length);
+      assert('<i title="I am strong.">I am <strong>strong</strong></i>' === vals[0]);
+    });
   });
 });
 
