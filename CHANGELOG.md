@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.3.0] - 2024-10-10
+### Added
+- new Prefetch option: isListHTML. Defaults to false. When set to true, display
+  the list as HTML.
+
 ## [19.2.4] - 2024-04-17
 ### Added
 - Announce that the search is in progress if it takes more than 1.5 seconds.
