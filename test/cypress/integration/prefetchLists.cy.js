@@ -174,32 +174,42 @@ describe('Prefetch lists', function() {
     cy.get(po.searchResSel).should('be.visible');
   });
 
+  it('should display HTML when isListHTML is true', function() {
+    po.openTestPage();
+    cy.get('#prefetch_html')
+      .focus();
+    cy.get('#completionOptions li')
+      .as('listOptions');
+    cy.get('@listOptions')
+      .should('be.visible')
+      .should('have.length', 3);
+    cy.get('@listOptions').eq(0).should('have.html', '<strong>bla</strong>');
+    cy.get('@listOptions').eq(1).should('have.html', '<span title="I am strong.">bla</span>');
+    cy.get('@listOptions').eq(2).should('have.html', '<i title="I am strong.">I am strong</i>');
+    // Check the value in the field after the user selects something.
+    cy.get('@listOptions').eq(2).click();
+    cy.get('#prefetch_html').should('have.value', '<i title="I am strong.">I am strong</i>');
+  });
+
   it('should filter and highlight correctly when isListHTML is true', function() {
     po.openTestPage();
-    cy.window().then((win) => {
-      var elem = createInputElement(win);
-      var otherAutoComp = new win.Def.Autocompleter.Prefetch(elem.id,
-        [
-          '<strong>bla</strong>',
-          '<span title="I am strong.">bla</span>',
-          '<i title="I am strong.">I am strong</i>'
-        ], {
-          'addSeqNum': false,
-          'isListHTML': true
-      });
-
-      otherAutoComp.onFocus();
-      var listItems = win.document.querySelectorAll('#completionOptions li');
-      assert(3 === listItems.length);
-
-      // Should only match and highlight the text outside an HTML tag.
-      otherAutoComp.setFieldVal('strong');
-      otherAutoComp.matchListItemsToField_ = true;
-      var htmlList = otherAutoComp.selector(otherAutoComp);
-      var vals = extractListVals(htmlList);
-      assert(1 === vals.length);
-      assert('<i title="I am strong.">I am <strong>strong</strong></i>' === vals[0]);
-    });
+    cy.get('#prefetch_html')
+      .focus();
+    cy.get('#completionOptions li')
+      .should('have.length', 3);
+    // Should only match and highlight the text outside an HTML tag.
+    cy.get('#prefetch_html')
+      .type('strong');
+    cy.get('#completionOptions li')
+      .should('have.length', 1);
+    cy.get('#completionOptions li')
+      .eq(0)
+      .should('have.html', '<i title="I am strong.">I am <strong>strong</strong></i>');
+    // The value in the field should be the original HTML option after the user selects the highlighted option.
+    cy.get('#completionOptions li')
+      .eq(0)
+      .click();
+    cy.get('#prefetch_html').should('have.value', '<i title="I am strong.">I am strong</i>');
   });
 });
 

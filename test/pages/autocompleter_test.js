@@ -20,6 +20,15 @@ opts['autoFill']=true
 var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe',
   ["Spanish","French","Other", "escape<test>&"], opts);
 var opts = {};
+opts['addSeqNum'] = false;
+opts['isListHTML'] = true;
+var fe_prefetch_html_autoComp = new Def.Autocompleter.Prefetch('prefetch_html',
+  [
+    '<strong>bla</strong>',
+    '<span title="I am strong.">bla</span>',
+    '<i title="I am strong.">I am strong</i>'
+  ], opts);
+var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true
 opts['showLoadingIndicator']=false

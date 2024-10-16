@@ -141,7 +141,8 @@
        *     When provided, the descriptions will be appended to corresponding items
        *     for display. Filtering does not cover content in this formatted list.</li>
        *    <li>isListHTML - Defaults to false. When set to true, display the list
-       *     as HTML. This should only be used when you know the list is safe.</li>
+       *     as HTML. This should only be used when you know the list content can be
+       *     safely displayed as HTML.</li>
        *  </ul>
        */
       initialize: function(id, listItems, options) {
