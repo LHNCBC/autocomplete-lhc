@@ -212,6 +212,22 @@ describe('Prefetch lists', function() {
     cy.get('#prefetch_html').should('have.value', 'I am strong');
   });
 
+  it('should not return a match for "bla<" when isListHTML is true', function() {
+    po.openTestPage();
+    cy.get('#prefetch_html')
+      .focus();
+    cy.get('#completionOptions li')
+      .should('have.length', 3);
+    cy.get('#prefetch_html')
+      .type('bla');
+    cy.get('#completionOptions li')
+      .should('have.length', 2);
+    cy.get('#prefetch_html')
+      .type('<');
+    cy.get('#completionOptions li')
+      .should('have.length', 0);
+  });
+
   it('should display images in drop-down when isListHTML is true', function() {
     po.openTestPage();
     cy.get('#prefetch_html_image')

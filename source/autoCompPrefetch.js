@@ -438,7 +438,7 @@
                   if ((instance.options.fullSearch ||
                       /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) &&
                     // See if the match is inside an HTML tag, when isListHTML is true
-                    (!isListHTML || instance.isHtmlTagsClosed_(elemComp.substr(0, foundPos)))) {
+                    (!isListHTML || (instance.isHtmlTagsClosed_(elemComp.substr(0, foundPos)) && instance.isHtmlTagsClosed_(elemComp.substr(foundPos + entry.length))))) {
                     ++totalCount;
                     foundMatch = true;
                     if (totalCount <= maxReturn) {
