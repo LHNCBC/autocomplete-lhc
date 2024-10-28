@@ -29,6 +29,14 @@ var fe_prefetch_html_autoComp = new Def.Autocompleter.Prefetch('prefetch_html',
     '<i title="I am strong.">I am strong</i>'
   ], opts);
 var opts = {};
+opts['isListHTML'] = true;
+var fe_prefetch_html_image_autoComp = new Def.Autocompleter.Prefetch('prefetch_html_image',
+  [
+    'Happy <img src="happy-face.png">',
+    'Neutral <img src="neutral-face.png">',
+    'Sad <img src="sad-face.png">',
+  ], opts);
+var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true
 opts['showLoadingIndicator']=false

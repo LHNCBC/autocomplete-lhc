@@ -188,7 +188,7 @@ describe('Prefetch lists', function() {
     cy.get('@listOptions').eq(2).should('have.html', '<i title="I am strong.">I am strong</i>');
     // Check the value in the field after the user selects something.
     cy.get('@listOptions').eq(2).click();
-    cy.get('#prefetch_html').should('have.value', '<i title="I am strong.">I am strong</i>');
+    cy.get('#prefetch_html').should('have.value', 'I am strong');
   });
 
   it('should filter and highlight correctly when isListHTML is true', function() {
@@ -209,7 +209,15 @@ describe('Prefetch lists', function() {
     cy.get('#completionOptions li')
       .eq(0)
       .click();
-    cy.get('#prefetch_html').should('have.value', '<i title="I am strong.">I am strong</i>');
+    cy.get('#prefetch_html').should('have.value', 'I am strong');
+  });
+
+  it('should display images in drop-down when isListHTML is true', function() {
+    po.openTestPage();
+    cy.get('#prefetch_html_image')
+      .focus();
+    cy.get('#completionOptions img')
+      .should('have.length', 3);
   });
 });
 
