@@ -219,6 +219,16 @@ var fe_multi_sel_cne_autoComp =
 document.querySelector('#dest_multi_sel_cwe').addEventListener('click', (event)=>{
   fe_multi_sel_cne_autoComp.destroy()});
 
+var opts = {};
+opts['addSeqNum'] = false;
+opts['isListHTML'] = true;
+opts['maxSelect'] = '*';
+opts['codes'] = ["bla1", "bla2", "strong"];
+var fe_prefetch_html_multi_autoComp = new Def.Autocompleter.Prefetch('prefetch_html_multi',
+  [
+    '<strong>foo</strong>',
+    '<span title="I am strong.">bar</span>'
+  ], opts);
 // multi-select search list without match required
 opts = {
   'matchListValue': false,

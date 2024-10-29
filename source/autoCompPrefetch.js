@@ -147,7 +147,8 @@
        *     for display. Filtering does not cover content in this formatted list.</li>
        *    <li>isListHTML - Defaults to false. When set to true, display the list
        *     as HTML. This should only be used when you know the list content can be
-       *     safely displayed as HTML.</li>
+       *     safely displayed as HTML. With multi-select, make sure the list values,
+       *     which are texts with HTML tags removed, are unique in the list.</li>
        *  </ul>
        */
       initialize: function(id, listItems, options) {
@@ -459,7 +460,7 @@
 
             var alreadySelected = false;
             if (instance.multiSelect_) {
-              alreadySelected = instance.isSelected(rawItemText)
+              alreadySelected = instance.isSelected(instance.isListHTML_ ? rawItemText.replace(/(<([^>]+)>)/gi, "") : rawItemText);
               if (alreadySelected)
                 ++skippedSelected;
             }

@@ -43,6 +43,15 @@ var AutocompPage = function() {
   this.multiPrefetchCWESelected =
     multiPrefetchCWESectionCSS + ' button';
 
+  // Multi-select HTML prefetch list
+  var multiPrefetchHtmlSectionCSS = '#multiPrefetchHtmlSection';
+  this.multiPrefetchHtmlID = 'prefetch_html_multi';
+  this.multiPrefetchHtml = '#' + this.multiPrefetchHtmlID;
+  this.multiPrefetchHtmlFirstSelected =
+    multiPrefetchHtmlSectionCSS + ' li:first-child button';
+  this.multiPrefetchHtmlSelected =
+    multiPrefetchHtmlSectionCSS + ' button';
+
   // Multi-select CWE search list
   var multiSearchCWESectionCSS = '#multiSearchCWESection';
   this.multiSearchCWEID = 'multi_sel_search_cwe';
