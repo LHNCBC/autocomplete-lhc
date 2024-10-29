@@ -218,12 +218,11 @@ var fe_multi_sel_cne_autoComp =
  new Def.Autocompleter.Prefetch('multi_sel_cwe', ["Spanish","French","Other"], opts);
 document.querySelector('#dest_multi_sel_cwe').addEventListener('click', (event)=>{
   fe_multi_sel_cne_autoComp.destroy()});
-
+// multi-select prefetch list with HTML
 var opts = {};
 opts['addSeqNum'] = false;
 opts['isListHTML'] = true;
 opts['maxSelect'] = '*';
-opts['codes'] = ["bla1", "bla2", "strong"];
 var fe_prefetch_html_multi_autoComp = new Def.Autocompleter.Prefetch('prefetch_html_multi',
   [
     '<strong>foo</strong>',

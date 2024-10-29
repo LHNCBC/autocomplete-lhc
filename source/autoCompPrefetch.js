@@ -368,6 +368,8 @@
 
         if (instance.options.ignoreCase)
           entry = entry.toLowerCase();
+        if (isListHTML)
+          entry = Def.Autocompleter.Base.escapeAttribute(entry);
         var formattedListItems = instance.options.formattedListItems;
         for (var i=0, max=instance.rawList_.length; i<max; ++i) {
           var tmp = instance.indexToHeadingLevel_[i];
@@ -439,7 +441,7 @@
                   if ((instance.options.fullSearch ||
                       /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) &&
                     // See if the match is inside an HTML tag, when isListHTML is true
-                    (!isListHTML || (instance.isHtmlTagsClosed_(elemComp.substr(0, foundPos)) && instance.isHtmlTagsClosed_(elemComp.substr(foundPos + entry.length))))) {
+                    (!isListHTML || instance.isHtmlTagsClosed_(elemComp.substr(0, foundPos)))) {
                     ++totalCount;
                     foundMatch = true;
                     if (totalCount <= maxReturn) {
@@ -460,7 +462,7 @@
 
             var alreadySelected = false;
             if (instance.multiSelect_) {
-              alreadySelected = instance.isSelected(instance.isListHTML_ ? rawItemText.replace(/(<([^>]+)>)/gi, "") : rawItemText);
+              alreadySelected = instance.isSelected(instance.isListHTML_ ? rawItemText.replace(/(<([^>]+)>)/gi, "").trim() : rawItemText);
               if (alreadySelected)
                 ++skippedSelected;
             }
@@ -1013,7 +1015,7 @@
         if (this.isListHTML_) {
           // If list is displayed as HTML, remove tags and just keep text for
           // list value to display in input.
-          value = value.replace(/(<([^>]+)>)/gi, "");
+          value = value.replace(/(<([^>]+)>)/gi, "").trim();
         }
         return value;
       },
