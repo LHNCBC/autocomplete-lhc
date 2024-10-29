@@ -234,6 +234,9 @@ describe('Prefetch lists', function() {
       .focus();
     cy.get('#completionOptions img')
       .should('have.length', 3);
+    // Check the value in the field after the user selects something.
+    cy.get('#completionOptions li').eq(2).click();
+    cy.get('#prefetch_html_image').should('have.value', 'Sad');
   });
 });
 

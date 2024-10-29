@@ -35,6 +35,7 @@ var fe_prefetch_html_image_autoComp = new Def.Autocompleter.Prefetch('prefetch_h
     'Happy <img src="happy-face.png">',
     'Neutral <img src="neutral-face.png">',
     'Sad <img src="sad-face.png">',
+    'one < two'
   ], opts);
 var opts = {};
 opts['matchListValue']=true
