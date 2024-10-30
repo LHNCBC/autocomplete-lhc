@@ -56,6 +56,11 @@
       rawList_: null,
 
       /**
+       * The raw list stripped of HTML tags. Used only when isListHTML is true.
+       */
+      rawListWithoutTags_: null,
+
+      /**
        *  An array of the codes for the items in the list.
        */
       itemCodes_: null,
@@ -462,7 +467,7 @@
 
             var alreadySelected = false;
             if (instance.multiSelect_) {
-              alreadySelected = instance.isSelected(instance.isListHTML_ ? rawItemText.replace(/(<([^>]+)>)/gi, "").trim() : rawItemText);
+              alreadySelected = instance.isSelected(instance.isListHTML_ ? instance.rawListWithoutTags_[i] : rawItemText);
               if (alreadySelected)
                 ++skippedSelected;
             }
@@ -593,8 +598,16 @@
         this.listIsOriginal_ = false;
         var numItems = listItems.length;
         this.rawList_ = new Array(numItems);
+        if (this.isListHTML_) {
+          this.rawListWithoutTags_ = new Array(numItems);
+        }
         for (var r=0, max=listItems.length; r<max; ++r) {
           this.rawList_[r] = listItems[r].trim();
+          if (this.isListHTML_) {
+            // If list is displayed as HTML, remove tags and just keep text for
+            // list value to display in input.
+            this.rawListWithoutTags_[r] = listItems[r].replace(/(<([^>]+)>)/gi, "").trim();
+          }
         }
 
         var displayList = new Array(numItems);
@@ -1011,12 +1024,7 @@
         // looked up from the raw list, according to the autocompRawListIndex
         // attribute assigned earlier.
         const autocompleteIndex = li.getAttribute('autocompRawListIndex');
-        let value = this.rawList_[autocompleteIndex];
-        if (this.isListHTML_) {
-          // If list is displayed as HTML, remove tags and just keep text for
-          // list value to display in input.
-          value = value.replace(/(<([^>]+)>)/gi, "").trim();
-        }
+        const value = this.isListHTML_ ? this.rawListWithoutTags_[autocompleteIndex] : this.rawList_[autocompleteIndex];
         return value;
       },
 
