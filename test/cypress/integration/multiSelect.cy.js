@@ -262,18 +262,18 @@ describe('multi-select lists', function() {
     po.openTestPage();
     // Add a list value
     cy.get(po.multiPrefetchHtml).click();
-    cy.get(po.allSearchRes).should('have.length', 2);
+    cy.get(po.allSearchRes).should('have.length', 3);
     po.searchResult(1).click();
     cy.get(po.multiPrefetchHtmlSelected).should('have.length', 1);
     // Should see the selected item removed from list when focus comes back to the field.
     cy.get(po.nonField).click(); // shift focus from field
     cy.get(po.multiPrefetchHtml).click();
-    cy.get(po.allSearchRes).should('have.length', 1);
+    cy.get(po.allSearchRes).should('have.length', 2);
     // Remove a list value
     cy.get(po.multiPrefetchHtmlFirstSelected).click();
     cy.get(po.multiPrefetchHtmlSelected).should('have.length', 0);
     cy.get(po.multiPrefetchHtml).click();
-    cy.get(po.allSearchRes).should('have.length', 2);
+    cy.get(po.allSearchRes).should('have.length', 3);
   });
 });
 

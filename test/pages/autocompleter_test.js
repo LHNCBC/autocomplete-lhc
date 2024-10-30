@@ -227,7 +227,8 @@ opts['maxSelect'] = '*';
 var fe_prefetch_html_multi_autoComp = new Def.Autocompleter.Prefetch('prefetch_html_multi',
   [
     '<strong>foo</strong>',
-    '<span title="I am strong.">bar</span>'
+    '<span title="I am strong.">bar</span>',
+    'Happy <img src="happy-face.png">'
   ], opts);
 // multi-select search list without match required
 opts = {
