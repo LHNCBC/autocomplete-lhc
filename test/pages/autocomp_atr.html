@@ -9,6 +9,7 @@
      input[type="text"] { width: 20em }
      body {margin: 0; font-family: Verdana, Geneva, sans-serif}
      #content {margin: 8px}
+     #searchResults img {vertical-align: text-bottom;}
    </style>
  </head>
 
@@ -43,6 +44,19 @@
     <div class="field">
       <label for="race_or_ethnicity" id="prefetch_default_cne_lbl">
       A Prefetch CNE autocompleter with a default:&nbsp;&nbsp;</label><input autocomplete="off" id="prefetch_default_cne" name="prefetch_default_cne" type="text" />
+    </div>
+
+    <div class="field">
+        <label for="prefetch_html" id="prefetch_html_lbl">
+            A Prefetch autocompleter showing HTML items:&nbsp;&nbsp;</label><input autocomplete="off" id="prefetch_html" type="text" />
+    </div>
+    <div class="field">
+        <label for="prefetch_html_image" id="prefetch_html_image_lbl">
+            A Prefetch autocompleter showing HTML items with images:&nbsp;&nbsp;</label><input autocomplete="off" id="prefetch_html_image" type="text" />
+    </div>
+    <div class="field">
+        <label for="prefetch_non_html_image" id="prefetch_non_html_image_lbl">
+            A Prefetch autocompleter showing HTML image tags with HTML disabled:&nbsp;&nbsp;</label><input autocomplete="off" id="prefetch_non_html_image" type="text" />
     </div>
 
     <div class="field">
@@ -175,6 +189,12 @@
       <input autocomplete="off" id="multi_sel_cwe" class="test-class" type="text" />
     </div>
     <button id="dest_multi_sel_cwe" type="button">Destroy autocompleter</button>
+
+    <div class="field" id="multiPrefetchHtmlSection">
+        <label for="prefetch_html_multi" id="prefetch_html_multi_lbl">
+            A Prefetch multi-select autocompleter showing HTML items:&nbsp;&nbsp;</label>
+        <input autocomplete="off" id="prefetch_html_multi" class="test-class" type="text" />
+    </div>
 
     <div class="field" id="multiSearchCWESection">
       <label for="multi_sel_search_cwe" id="multi_sel_search_cwe_lbl">

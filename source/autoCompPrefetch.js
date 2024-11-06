@@ -56,6 +56,11 @@
       rawList_: null,
 
       /**
+       * The raw list stripped of HTML tags. Used only when isListHTML is true.
+       */
+      rawListWithoutTags_: null,
+
+      /**
        *  An array of the codes for the items in the list.
        */
       itemCodes_: null,
@@ -88,6 +93,11 @@
        *  the list's value if there is just one item in the list.
        */
       autoFill_: true,
+
+      /**
+       *  If true, the list is displayed as HTML.
+       */
+      isListHTML_: false,
 
       /**
        *  The constructor.  (See Prototype's Class.create method.)
@@ -140,6 +150,12 @@
        *    <li>formattedListItems - an optional HTML formatted list of descriptions.
        *     When provided, the descriptions will be appended to corresponding items
        *     for display. Filtering does not cover content in this formatted list.</li>
+       *    <li>isListHTML - Defaults to false. When set to true, display the list
+       *     as HTML. This should only be used when you know the list content can be
+       *     safely displayed as HTML. There should not be "<" or ">" in the text
+       *     content as filtering might not work as expected. With multi-select, make
+       *     sure the list values, which are texts with HTML tags removed, are unique
+       *     in the list.</li>
        *  </ul>
        */
       initialize: function(id, listItems, options) {
@@ -160,6 +176,9 @@
         var autoFill = options['autoFill'];
         if (autoFill !== undefined)
           this.autoFill_ = autoFill;
+        var isListHTML = options['isListHTML'];
+        if (isListHTML !== undefined)
+          this.isListHTML_ = isListHTML;
 
         // Call the base class' initialize method.  We do this via the "apply"
         // function, which lets us specify the "this" object plus an array of
@@ -293,6 +312,26 @@
 
 
       /**
+       * Checks whether an HTML string has equal number of '<' and'>', so the end of the string
+       * is not inside an HTML tag.
+       * @param value an HTML string.
+       * @returns true if there are an equal number of '<' and '>', false otherwise.
+       */
+      isHtmlTagsClosed_: function(value) {
+        const openTagCount = (value.match(/</g) || []).length;
+        const closeTagCount = (value.match(/>/g) || []).length;
+        if (openTagCount === closeTagCount) {
+          return true;
+        } else if (openTagCount - closeTagCount === 1) {
+          return false;
+        } else {
+          console.error("The numbers of opening and closing tags might not be right: " + value);
+          return false;
+        }
+      },
+
+
+      /**
        *  Generates the list of items that match the user's input.  This was
        *  copied from the Scriptaculous controls.js Autocompleter.Local.prototype
        *  and modified (initially to allow matches at word boundaries).
@@ -331,9 +370,13 @@
         var headerCount = 0;
         var headingsShown = 0;
         var skippedSelected = 0; // items already selected that are left out of the list
-        var escapeHTML = Def.Autocompleter.Base.escapeAttribute;
+        var isListHTML = instance.options.isListHTML === true;
+        var escapeHTML = isListHTML ? x => x : Def.Autocompleter.Base.escapeAttribute;
+
         if (instance.options.ignoreCase)
           entry = entry.toLowerCase();
+        if (isListHTML)
+          entry = Def.Autocompleter.Base.escapeAttribute(entry);
         var formattedListItems = instance.options.formattedListItems;
         for (var i=0, max=instance.rawList_.length; i<max; ++i) {
           var tmp = instance.indexToHeadingLevel_[i];
@@ -402,8 +445,10 @@
                 }
                 else { // foundPos > 0
                   // See if the match is at a word boundary
-                  if (instance.options.fullSearch ||
-                      /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) {
+                  if ((instance.options.fullSearch ||
+                      /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) &&
+                    // See if the match is inside an HTML tag, when isListHTML is true
+                    (!isListHTML || instance.isHtmlTagsClosed_(elemComp.substr(0, foundPos)))) {
                     ++totalCount;
                     foundMatch = true;
                     if (totalCount <= maxReturn) {
@@ -424,7 +469,7 @@
 
             var alreadySelected = false;
             if (instance.multiSelect_) {
-              alreadySelected = instance.isSelected(rawItemText)
+              alreadySelected = instance.isSelected(instance.isListHTML_ ? instance.rawListWithoutTags_[i] : rawItemText);
               if (alreadySelected)
                 ++skippedSelected;
             }
@@ -555,8 +600,16 @@
         this.listIsOriginal_ = false;
         var numItems = listItems.length;
         this.rawList_ = new Array(numItems);
+        if (this.isListHTML_) {
+          this.rawListWithoutTags_ = new Array(numItems);
+        }
         for (var r=0, max=listItems.length; r<max; ++r) {
           this.rawList_[r] = listItems[r].trim();
+          if (this.isListHTML_) {
+            // If list is displayed as HTML, remove tags and just keep text for
+            // list value to display in input.
+            this.rawListWithoutTags_[r] = listItems[r].replace(/(<([^>]+)>)/gi, "").trim();
+          }
         }
 
         var displayList = new Array(numItems);
@@ -973,7 +1026,7 @@
         // looked up from the raw list, according to the autocompRawListIndex
         // attribute assigned earlier.
         const autocompleteIndex = li.getAttribute('autocompRawListIndex');
-        const value = this.rawList_[autocompleteIndex];
+        const value = this.isListHTML_ ? this.rawListWithoutTags_[autocompleteIndex] : this.rawList_[autocompleteIndex];
         return value;
       },
 

@@ -172,5 +172,87 @@ describe('Prefetch lists', function() {
     cy.get(po.prefetchCWE).click();
     cy.get(po.searchResSel).should('be.visible');
   });
+
+  it('should display HTML when isListHTML is true', function() {
+    po.openTestPage();
+    cy.get('#prefetch_html')
+      .focus();
+    cy.get('#completionOptions li')
+      .as('listOptions');
+    cy.get('@listOptions')
+      .should('be.visible')
+      .should('have.length', 3);
+    cy.get('@listOptions').eq(0).should('have.html', '<strong>bla</strong>');
+    cy.get('@listOptions').eq(1).should('have.html', '<span title="I am strong.">bla</span>');
+    cy.get('@listOptions').eq(2).should('have.html', '<i title="I am strong.">I am strong</i>');
+    // Check the value in the field after the user selects something.
+    cy.get('@listOptions').eq(2).click();
+    cy.get('#prefetch_html').should('have.value', 'I am strong');
+  });
+
+  it('should filter and highlight correctly when isListHTML is true', function() {
+    po.openTestPage();
+    cy.get('#prefetch_html')
+      .focus();
+    cy.get('#completionOptions li')
+      .should('have.length', 3);
+    // Should only match and highlight the text outside an HTML tag.
+    cy.get('#prefetch_html')
+      .type('strong');
+    cy.get('#completionOptions li')
+      .should('have.length', 1);
+    cy.get('#completionOptions li')
+      .eq(0)
+      .should('have.html', '<i title="I am strong.">I am <strong>strong</strong></i>');
+    // The value in the field should be the original HTML option after the user selects the highlighted option.
+    cy.get('#completionOptions li')
+      .eq(0)
+      .click();
+    cy.get('#prefetch_html').should('have.value', 'I am strong');
+  });
+
+  it('should not return a match for "bla<" when isListHTML is true', function() {
+    po.openTestPage();
+    cy.get('#prefetch_html')
+      .focus();
+    cy.get('#completionOptions li')
+      .should('have.length', 3);
+    cy.get('#prefetch_html')
+      .type('bla');
+    cy.get('#completionOptions li')
+      .should('have.length', 2);
+    cy.get('#prefetch_html')
+      .type('<');
+    cy.get('#completionOptions li')
+      .should('have.length', 0);
+  });
+
+  it('should display images in drop-down when isListHTML is true', function() {
+    po.openTestPage();
+    cy.get('#prefetch_html_image')
+      .focus();
+    cy.get('#completionOptions img')
+      .should('have.length', 3);
+    // Check the value in the field after the user selects something.
+    cy.get('#completionOptions li').eq(2).click();
+    cy.get('#prefetch_html_image').should('have.value', 'Sad');
+  });
+
+  it('should display text in drop-down when isListHTML is false', function() {
+    po.openTestPage();
+    cy.get('#prefetch_non_html_image')
+      .focus();
+    // Autocomplete should display the options as plain text, no <img> tags.
+    cy.get('#completionOptions img')
+      .should('have.length', 0);
+    cy.get('#completionOptions li')
+      .should('have.length', 4);
+    cy.get('#completionOptions li')
+      .eq(0)
+      .should('have.text', 'Happy <img src="happy-face.png">');
+    // Check the value in the field after the user selects something.
+    cy.get('#completionOptions li').eq(0).click();
+    cy.get('#prefetch_non_html_image').should('have.value', 'Happy <img src="happy-face.png">');
+  });
 });
 

@@ -20,6 +20,34 @@ opts['autoFill']=true
 var fe_prefetch_cwe_autoComp = new Def.Autocompleter.Prefetch('prefetch_cwe',
   ["Spanish","French","Other", "escape<test>&"], opts);
 var opts = {};
+opts['addSeqNum'] = false;
+opts['isListHTML'] = true;
+var fe_prefetch_html_autoComp = new Def.Autocompleter.Prefetch('prefetch_html',
+  [
+    '<strong>bla</strong>',
+    '<span title="I am strong.">bla</span>',
+    '<i title="I am strong.">I am strong</i>'
+  ], opts);
+var opts = {};
+opts['isListHTML'] = true;
+var fe_prefetch_html_image_autoComp = new Def.Autocompleter.Prefetch('prefetch_html_image',
+  [
+    'Happy <img src="happy-face.png">',
+    'Neutral <img src="neutral-face.png">',
+    'Sad <img src="sad-face.png">',
+    'one < two'
+  ], opts);
+var opts = {};
+opts['isListHTML'] = false;
+opts['addSeqNum'] = false;
+var fe_prefetch_non_html_image_autoComp = new Def.Autocompleter.Prefetch('prefetch_non_html_image',
+  [
+    'Happy <img src="happy-face.png">',
+    'Neutral <img src="neutral-face.png">',
+    'Sad <img src="sad-face.png">',
+    'one < two'
+  ], opts);
+var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true
 opts['showLoadingIndicator']=false
@@ -201,7 +229,17 @@ var fe_multi_sel_cne_autoComp =
  new Def.Autocompleter.Prefetch('multi_sel_cwe', ["Spanish","French","Other"], opts);
 document.querySelector('#dest_multi_sel_cwe').addEventListener('click', (event)=>{
   fe_multi_sel_cne_autoComp.destroy()});
-
+// multi-select prefetch list with HTML
+var opts = {};
+opts['addSeqNum'] = false;
+opts['isListHTML'] = true;
+opts['maxSelect'] = '*';
+var fe_prefetch_html_multi_autoComp = new Def.Autocompleter.Prefetch('prefetch_html_multi',
+  [
+    '<strong>foo</strong>',
+    '<span title="I am strong.">bar</span>',
+    'Happy <img src="happy-face.png">'
+  ], opts);
 // multi-select search list without match required
 opts = {
   'matchListValue': false,
