@@ -152,8 +152,10 @@
        *     for display. Filtering does not cover content in this formatted list.</li>
        *    <li>isListHTML - Defaults to false. When set to true, display the list
        *     as HTML. This should only be used when you know the list content can be
-       *     safely displayed as HTML. With multi-select, make sure the list values,
-       *     which are texts with HTML tags removed, are unique in the list.</li>
+       *     safely displayed as HTML. There should not be "<" or ">" in the text
+       *     content as filtering might not work as expected. With multi-select, make
+       *     sure the list values, which are texts with HTML tags removed, are unique
+       *     in the list.</li>
        *  </ul>
        */
       initialize: function(id, listItems, options) {
