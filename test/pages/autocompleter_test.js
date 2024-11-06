@@ -38,6 +38,16 @@ var fe_prefetch_html_image_autoComp = new Def.Autocompleter.Prefetch('prefetch_h
     'one < two'
   ], opts);
 var opts = {};
+opts['isListHTML'] = false;
+opts['addSeqNum'] = false;
+var fe_prefetch_non_html_image_autoComp = new Def.Autocompleter.Prefetch('prefetch_non_html_image',
+  [
+    'Happy <img src="happy-face.png">',
+    'Neutral <img src="neutral-face.png">',
+    'Sad <img src="sad-face.png">',
+    'one < two'
+  ], opts);
+var opts = {};
 opts['matchListValue']=true
 opts['autocomp']=true
 opts['showLoadingIndicator']=false

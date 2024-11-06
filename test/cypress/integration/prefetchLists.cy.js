@@ -1,5 +1,4 @@
 import { default as po } from '../support/autocompPage.js';
-import {createInputElement, extractListVals} from "../support/testHelpers";
 
 describe('Prefetch lists', function() {
   it('should prefer a case-sensitive match when attempting a selection', function() {
@@ -237,6 +236,23 @@ describe('Prefetch lists', function() {
     // Check the value in the field after the user selects something.
     cy.get('#completionOptions li').eq(2).click();
     cy.get('#prefetch_html_image').should('have.value', 'Sad');
+  });
+
+  it('should display text in drop-down when isListHTML is false', function() {
+    po.openTestPage();
+    cy.get('#prefetch_non_html_image')
+      .focus();
+    // Autocomplete should display the options as plain text, no <img> tags.
+    cy.get('#completionOptions img')
+      .should('have.length', 0);
+    cy.get('#completionOptions li')
+      .should('have.length', 4);
+    cy.get('#completionOptions li')
+      .eq(0)
+      .should('have.text', 'Happy <img src="happy-face.png">');
+    // Check the value in the field after the user selects something.
+    cy.get('#completionOptions li').eq(0).click();
+    cy.get('#prefetch_non_html_image').should('have.value', 'Happy <img src="happy-face.png">');
   });
 });
 
