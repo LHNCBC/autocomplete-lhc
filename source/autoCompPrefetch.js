@@ -152,10 +152,8 @@
        *     for display. Filtering does not cover content in this formatted list.</li>
        *    <li>isListHTML - Defaults to false. When set to true, display the list
        *     as HTML. This should only be used when you know the list content can be
-       *     safely displayed as HTML. There should not be "<" or ">" in the text
-       *     content as filtering might not work as expected. With multi-select, make
-       *     sure the list values, which are texts with HTML tags removed, are unique
-       *     in the list.</li>
+       *     safely displayed as HTML. With multi-select, make sure the list values,
+       *     which are texts with HTML tags removed, are unique in the list.</li>
        *  </ul>
        */
       initialize: function(id, listItems, options) {
@@ -312,26 +310,6 @@
 
 
       /**
-       * Checks whether an HTML string has equal number of '<' and'>', so the end of the string
-       * is not inside an HTML tag.
-       * @param value an HTML string.
-       * @returns true if there are an equal number of '<' and '>', false otherwise.
-       */
-      isHtmlTagsClosed_: function(value) {
-        const openTagCount = (value.match(/</g) || []).length;
-        const closeTagCount = (value.match(/>/g) || []).length;
-        if (openTagCount === closeTagCount) {
-          return true;
-        } else if (openTagCount - closeTagCount === 1) {
-          return false;
-        } else {
-          console.error("The numbers of opening and closing tags might not be right: " + value);
-          return false;
-        }
-      },
-
-
-      /**
        *  Generates the list of items that match the user's input.  This was
        *  copied from the Scriptaculous controls.js Autocompleter.Local.prototype
        *  and modified (initially to allow matches at word boundaries).
@@ -427,16 +405,16 @@
             if (!matchInItemNum && !useFullList) {
               // See if it matches the item at the beginning
               var foundMatch = false;
-              var elemComp = rawItemText;
+              var elemComp = isListHTML ? instance.rawListWithoutTags_[i] : rawItemText;
               if (instance.options.ignoreCase)
-                elemComp = rawItemText.toLowerCase();
+                elemComp = elemComp.toLowerCase();
               var foundPos = elemComp.indexOf(entry);
               while (!foundMatch && foundPos !== -1) {
                 if (foundPos === 0) {
                   ++totalCount;
                   foundMatch = true;
                   if (totalCount <= maxReturn) {
-                      itemText = '<strong>' +
+                      itemText = isListHTML ? rawItemText : '<strong>' +
                           escapeHTML(rawItemText.substr(0, entry.length)) + '</strong>' +
                           escapeHTML(rawItemText.substr(entry.length));
                     if (formattedListItems)
@@ -445,15 +423,13 @@
                 }
                 else { // foundPos > 0
                   // See if the match is at a word boundary
-                  if ((instance.options.fullSearch ||
-                      /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) &&
-                    // See if the match is inside an HTML tag, when isListHTML is true
-                    (!isListHTML || instance.isHtmlTagsClosed_(elemComp.substr(0, foundPos)))) {
+                  if (instance.options.fullSearch ||
+                      /(.\b|_)./.test(elemComp.substr(foundPos-1,2))) {
                     ++totalCount;
                     foundMatch = true;
                     if (totalCount <= maxReturn) {
                         var prefix = escapeHTML(rawItemText.substr(0, foundPos));
-                        itemText = prefix + '<strong>' +
+                        itemText = isListHTML ? rawItemText : prefix + '<strong>' +
                             escapeHTML(rawItemText.substr(foundPos, entry.length)) +
                             '</strong>' +
                             escapeHTML(rawItemText.substr(foundPos + entry.length));
