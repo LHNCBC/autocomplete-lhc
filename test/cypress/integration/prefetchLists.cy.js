@@ -190,20 +190,21 @@ describe('Prefetch lists', function() {
     cy.get('#prefetch_html').should('have.value', 'I am strong');
   });
 
-  it('should filter and highlight correctly when isListHTML is true', function() {
+  it('should filter without highlighting when isListHTML is true', function() {
     po.openTestPage();
     cy.get('#prefetch_html')
       .focus();
     cy.get('#completionOptions li')
       .should('have.length', 3);
-    // Should only match and highlight the text outside an HTML tag.
+    // Should only match the text outside an HTML tag,
+    // showing the original HTML item without highlighting the match.
     cy.get('#prefetch_html')
       .type('strong');
     cy.get('#completionOptions li')
       .should('have.length', 1);
     cy.get('#completionOptions li')
       .eq(0)
-      .should('have.html', '<i title="I am strong.">I am <strong>strong</strong></i>');
+      .should('have.html', '<i title="I am strong.">I am strong</i>');
     // The value in the field should be the original HTML option after the user selects the highlighted option.
     cy.get('#completionOptions li')
       .eq(0)

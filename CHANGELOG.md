@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.3.1] - 2024-11-13
+### Changed
+- Filter without highlighting for Prefetch autocomplete with isListHTML true.
+
 ## [19.3.0] - 2024-10-10
 ### Added
 - new Prefetch option: isListHTML. Defaults to false. When set to true, display

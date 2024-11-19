@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-lhc",
-  "version": "19.3.0",
+  "version": "19.3.1",
   "description": "",
   "main": "source/index.js",
   "config": {
