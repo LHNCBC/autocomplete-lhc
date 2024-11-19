@@ -353,8 +353,6 @@
 
         if (instance.options.ignoreCase)
           entry = entry.toLowerCase();
-        if (isListHTML)
-          entry = Def.Autocompleter.Base.escapeAttribute(entry);
         var formattedListItems = instance.options.formattedListItems;
         for (var i=0, max=instance.rawList_.length; i<max; ++i) {
           var tmp = instance.indexToHeadingLevel_[i];
