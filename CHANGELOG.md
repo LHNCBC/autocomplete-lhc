@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.3.2] - 2024-12-19
+### Changed
+- Upgraded to nodejs version 22.
+
 ## [19.3.1] - 2024-11-13
 ### Changed
 - Filter without highlighting for Prefetch autocomplete with isListHTML true.
