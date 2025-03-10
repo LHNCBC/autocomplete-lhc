@@ -160,7 +160,31 @@ describe('Prefetch list with tokens', function() {
       po.downArrow(field);
       po.assertFieldVal(field, 'Asian,Asian');
     });
-  })
+  });
+
+  describe('type and match', function() {
+    it('should be able to match list after token character', function() {
+      po.openTestPage();
+      cy.get(field).click().type('as');
+      po.waitForSearchResults();
+      cy.get(field).type('{downArrow}');
+      cy.get(field).should('have.value', 'Asian');
+      // After a down arrow, the field's text is selected, so hit right arrow
+      // before typing more text.
+      cy.get(field).type('{rightArrow},Wh');
+      po.waitForSearchResults();
+      cy.get(field).blur();
+      cy.get(field)
+        .should('have.value', 'Asian,Wh')
+        .should('have.class', 'no_match');
+      cy.get(field).type('ite');
+      po.waitForSearchResults();
+      cy.get(field).blur();
+      cy.get(field)
+        .should('have.value', 'Asian,White')
+        .should('not.have.class', 'no_match');
+    });
+  });
 });
 
 
