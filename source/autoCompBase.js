@@ -2174,7 +2174,7 @@ if (typeof Def === 'undefined')
 
         if (this.active) {
           if (this.index === -1) {
-            var elemVal = this.domCache.get('elemVal').trim();
+            var elemVal = this.getToken();
             var lcElemVal = elemVal.toLowerCase();
             var caseSensitiveMatchIndex = -1;
             var matchIndex = -1;

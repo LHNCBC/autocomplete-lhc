@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.3.3] - 2025-03-10
+### Changed
+- Set the list-matching status based on the token instead of the whole input,
+  when the field has a token-separated value.
+
 ## [19.3.2] - 2024-12-19
 ### Changed
 - Upgraded to nodejs version 22.
