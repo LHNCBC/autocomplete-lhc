@@ -2750,13 +2750,24 @@ if (typeof Def === 'undefined')
        * @param bounds the token boundaries returned from this.getTokenBounds()
        */
       updateItemCodeWithTokens: function(currentVal, selectedVal, bounds) {
-        const beginningToken = currentVal[bounds[0] - 1];
-        const beginningTokenCount = currentVal.substr(0, bounds[0]).split(beginningToken).length - 1;
+        let newCodeWithTokens;
+        if (bounds[0] === 0) { // User goes back to the beginning portion of the input.
+          newCodeWithTokens = this.getItemCode(selectedVal);
+        } else {
+          // The token before the edited portion.
+          const beginningToken = currentVal[bounds[0] - 1];
+          // How many of the beginning token there are before the edited portion.
+          const beginningTokenCount = currentVal.substr(0, bounds[0]).split(beginningToken).length - 1;
+          // The index of the beginning token on this.itemCodeWithTokens_.
+          const codingBound0 = this.itemCodeWithTokens_.split(beginningToken, beginningTokenCount).join(beginningToken).length;
+          newCodeWithTokens = this.itemCodeWithTokens_.substr(0, codingBound0) + beginningToken + this.getItemCode(selectedVal);
+        }
+        // The token after the edited portion.
         const endingToken = currentVal[bounds[1]];
-        const codingBound0 = this.itemCodeWithTokens_.split(beginningToken, beginningTokenCount).join(beginningToken).length;
-        let newCodeWithTokens = this.itemCodeWithTokens_.substr(0, codingBound0) + beginningToken + this.getItemCode(selectedVal);
         if (endingToken) {
+          // How many of the ending token there are before the end of the edited portion.
           const endingTokenCount = currentVal.substr(0, bounds[1]).split(endingToken).length;
+          // The index of the ending token on this.itemCodeWithTokens_.
           const codingBound1 = this.itemCodeWithTokens_.split(endingToken, endingTokenCount).join(endingToken).length;
           newCodeWithTokens += this.itemCodeWithTokens_.substr(codingBound1);
         }
