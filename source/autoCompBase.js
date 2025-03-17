@@ -572,6 +572,12 @@ if (typeof Def === 'undefined')
        */
       processedFieldVal_: null,
 
+      /**
+       * A variable to store the composed code with tokens.
+       * Used only when options.tokens is set.
+       */
+      itemCodeWithTokens_: null,
+
 
       /**
        *  An initialization method for the base Def.Autocompleter class.
@@ -900,8 +906,12 @@ if (typeof Def === 'undefined')
         }
         if (itemText) {
           var hasCode = code !== null && code !== undefined;
-          if (hasCode)
+          if (hasCode) {
             this.selectedCodes_[itemText] = code;
+            if (this.options.tokens) {
+              this.itemCodeWithTokens_ = code;
+            }
+          }
           this.selectedItems_[itemText] = 1;
           var itemData;
           if (this.getItemData)
@@ -2153,7 +2163,7 @@ if (typeof Def === 'undefined')
           this.preFieldFillVal_ === null ? 'typed' : 'arrows';
 
         var usedList = inputMethod !== 'typed' && onList;
-        var newCode = this.getItemCode(finalVal);
+        var newCode = this.options.tokens ? this.itemCodeWithTokens_ : this.getItemCode(finalVal);
 
         Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
           {input_method: inputMethod, val_typed_in: valTyped,
@@ -2206,7 +2216,12 @@ if (typeof Def === 'undefined')
           if (canSelect) {
             this.active = false;
             this.updateElement(this.getCurrentEntry());
-            this.storeSelectedItem();
+            if (this.options.tokens && this.itemCodeWithTokens_) {
+              // Store the code as token separated value, together with the whole input value.
+              this.storeSelectedItem(this.domCache.get('elemVal'), this.itemCodeWithTokens_);
+            } else {
+              this.storeSelectedItem();
+            }
 
             // Queue the list selection event before doing further processing,
             // which might trigger other events (i.e. the duplication warning event.)
@@ -2729,6 +2744,27 @@ if (typeof Def === 'undefined')
 
 
       /**
+       * Updates composed item code, when tokens are used.
+       * @param currentVal current value of the whole input, before being updated
+       * @param selectedVal selected item from the list
+       * @param bounds the token boundaries returned from this.getTokenBounds()
+       */
+      updateItemCodeWithTokens: function(currentVal, selectedVal, bounds) {
+        const beginningToken = currentVal[bounds[0] - 1];
+        const beginningTokenCount = currentVal.substr(0, bounds[0]).split(beginningToken).length - 1;
+        const endingToken = currentVal[bounds[1]];
+        const codingBound0 = this.itemCodeWithTokens_.split(beginningToken, beginningTokenCount).join(beginningToken).length;
+        let newCodeWithTokens = this.itemCodeWithTokens_.substr(0, codingBound0) + beginningToken + this.getItemCode(selectedVal);
+        if (endingToken) {
+          const endingTokenCount = currentVal.substr(0, bounds[1]).split(endingToken).length;
+          const codingBound1 = this.itemCodeWithTokens_.split(endingToken, endingTokenCount).join(endingToken).length;
+          newCodeWithTokens += this.itemCodeWithTokens_.substr(codingBound1);
+        }
+        this.itemCodeWithTokens_ = newCodeWithTokens;
+      },
+
+
+      /**
        *  Updates the field with the selected list item value.
        * @param selectedElement the DOM list element (LI or TR) the user selected.
        */
@@ -2744,6 +2780,10 @@ if (typeof Def === 'undefined')
             if (whitespace)
               newValue += whitespace[0];
             newFieldVal = newValue + selectedVal + currentVal.substr(bounds[1]);
+            // Update item code as token separated value.
+            if (this.itemCodeWithTokens_) {
+              this.updateItemCodeWithTokens(currentVal, selectedVal, bounds);
+            }
           }
         }
         this.setFieldVal(newFieldVal, false);
