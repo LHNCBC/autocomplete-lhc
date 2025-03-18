@@ -2744,15 +2744,28 @@ if (typeof Def === 'undefined')
 
 
       /**
-       * Updates composed item code, when tokens are used.
+       * Updates combined item code, when tokens are used.
+       * Note that while this works if you add one valid code after another separated
+       * by a token, and it works if you change a previous section to another code,
+       * it won't work if you remove large sections of the input (containing tokens).
        * @param currentVal current value of the whole input, before being updated
        * @param selectedVal selected item from the list
        * @param bounds the token boundaries returned from this.getTokenBounds()
        */
       updateItemCodeWithTokens: function(currentVal, selectedVal, bounds) {
+        if (!this.itemCodeWithTokens_) {
+          return;
+        }
+        const newCode = this.getItemCode(selectedVal);
+        if (!newCode) {
+          // If no code is found for selectedVal, set the combined code to null.
+          // No point returning a combined code like "123/null".
+          this.itemCodeWithTokens_ = null;
+          return;
+        }
         let newCodeWithTokens;
         if (bounds[0] === 0) { // User goes back to the beginning portion of the input.
-          newCodeWithTokens = this.getItemCode(selectedVal);
+          newCodeWithTokens = newCode;
         } else {
           // The token before the edited portion.
           const beginningToken = currentVal[bounds[0] - 1];
@@ -2760,7 +2773,7 @@ if (typeof Def === 'undefined')
           const beginningTokenCount = currentVal.substr(0, bounds[0]).split(beginningToken).length - 1;
           // The index of the beginning token on this.itemCodeWithTokens_.
           const codingBound0 = this.itemCodeWithTokens_.split(beginningToken, beginningTokenCount).join(beginningToken).length;
-          newCodeWithTokens = this.itemCodeWithTokens_.substr(0, codingBound0) + beginningToken + this.getItemCode(selectedVal);
+          newCodeWithTokens = this.itemCodeWithTokens_.substr(0, codingBound0) + beginningToken + newCode;
         }
         // The token after the edited portion.
         const endingToken = currentVal[bounds[1]];
@@ -2792,9 +2805,7 @@ if (typeof Def === 'undefined')
               newValue += whitespace[0];
             newFieldVal = newValue + selectedVal + currentVal.substr(bounds[1]);
             // Update item code as token separated value.
-            if (this.itemCodeWithTokens_) {
-              this.updateItemCodeWithTokens(currentVal, selectedVal, bounds);
-            }
+            this.updateItemCodeWithTokens(currentVal, selectedVal, bounds);
           }
         }
         this.setFieldVal(newFieldVal, false);
