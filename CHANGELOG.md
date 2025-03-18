@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.3.4] - 2025-03-18
+### Changed
+- Return token separated item_code for token separated input.
+
 ## [19.3.3] - 2025-03-10
 ### Changed
 - Set the list-matching status based on the token instead of the whole input,
