@@ -573,10 +573,10 @@ if (typeof Def === 'undefined')
       processedFieldVal_: null,
 
       /**
-       * A variable to store the composed code with tokens.
+       * An array to store segment codes and tokens.
        * Used only when options.tokens is set.
        */
-      itemCodeWithTokens_: null,
+      itemCodeWithTokens_: [],
 
 
       /**
@@ -908,9 +908,6 @@ if (typeof Def === 'undefined')
           var hasCode = code !== null && code !== undefined;
           if (hasCode) {
             this.selectedCodes_[itemText] = code;
-            if (this.options.tokens) {
-              this.itemCodeWithTokens_ = code;
-            }
           }
           this.selectedItems_[itemText] = 1;
           var itemData;
@@ -2163,7 +2160,9 @@ if (typeof Def === 'undefined')
           this.preFieldFillVal_ === null ? 'typed' : 'arrows';
 
         var usedList = inputMethod !== 'typed' && onList;
-        var newCode = this.options.tokens ? this.itemCodeWithTokens_ : this.getItemCode(finalVal);
+        var newCode = this.options.tokens && this.itemCodeWithTokens_.length ?
+          this.itemCodeWithTokens_.join('') :
+          this.getItemCode(finalVal);
 
         Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
           {input_method: inputMethod, val_typed_in: valTyped,
@@ -2216,9 +2215,9 @@ if (typeof Def === 'undefined')
           if (canSelect) {
             this.active = false;
             this.updateElement(this.getCurrentEntry());
-            if (this.options.tokens && this.itemCodeWithTokens_) {
+            if (this.options.tokens && this.itemCodeWithTokens_.length) {
               // Store the code as token separated value, together with the whole input value.
-              this.storeSelectedItem(this.domCache.get('elemVal'), this.itemCodeWithTokens_);
+              this.storeSelectedItem(this.domCache.get('elemVal'), this.itemCodeWithTokens_.join(''));
             } else {
               this.storeSelectedItem();
             }
@@ -2277,6 +2276,8 @@ if (typeof Def === 'undefined')
           this.setMatchStatusIndicator(true);
           this.setInvalidValIndicator(false);
           this.storeSelectedItem('');
+          if (this.options.tokens)
+            this.itemCodeWithTokens_ = [];
           // Send a list selection event for this case.
           if (Def.Autocompleter.Event.callbacks_ !== null)
             this.listSelectionNotification('', false);
@@ -2744,6 +2745,23 @@ if (typeof Def === 'undefined')
 
 
       /**
+       *
+       */
+      findIndexOfNthOccurrence: function (arr, item, n) {
+        let count = 0;
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i] === item) {
+            count++;
+            if (count === n) {
+              return i;
+            }
+          }
+        }
+        return arr.length; // Not found
+      },
+
+
+      /**
        * Updates combined item code, when tokens are used.
        * Note that while this works if you add one valid code after another separated
        * by a token, and it works if you change a previous section to another code,
@@ -2753,38 +2771,26 @@ if (typeof Def === 'undefined')
        * @param bounds the token boundaries returned from this.getTokenBounds()
        */
       updateItemCodeWithTokens: function(currentVal, selectedVal, bounds) {
-        if (!this.itemCodeWithTokens_) {
-          return;
-        }
         const newCode = this.getItemCode(selectedVal);
         if (!newCode) {
           // If no code is found for selectedVal, set the combined code to null.
           // No point returning a combined code like "123/null".
-          this.itemCodeWithTokens_ = null;
+          this.itemCodeWithTokens_ = [];
           return;
         }
-        let newCodeWithTokens;
-        if (bounds[0] === 0) { // User goes back to the beginning portion of the input.
-          newCodeWithTokens = newCode;
+        if (bounds[0] === -1 && !this.itemCodeWithTokens_.length) {
+          this.itemCodeWithTokens_ = [newCode];
+        } else if (bounds[0] === 0) { // User goes back to the beginning portion of the input.
+          this.itemCodeWithTokens_.splice(0, 1, newCode);
         } else {
           // The token before the edited portion.
           const beginningToken = currentVal[bounds[0] - 1];
           // How many of the beginning token there are before the edited portion.
           const beginningTokenCount = currentVal.substr(0, bounds[0]).split(beginningToken).length - 1;
           // The index of the beginning token on this.itemCodeWithTokens_.
-          const codingBound0 = this.itemCodeWithTokens_.split(beginningToken, beginningTokenCount).join(beginningToken).length;
-          newCodeWithTokens = this.itemCodeWithTokens_.substr(0, codingBound0) + beginningToken + newCode;
+          const codingBound0 = this.findIndexOfNthOccurrence(this.itemCodeWithTokens_, beginningToken, beginningTokenCount);
+          this.itemCodeWithTokens_.splice(codingBound0, bounds[0] === bounds[1] ? 0 : 2, beginningToken, newCode);
         }
-        // The token after the edited portion.
-        const endingToken = currentVal[bounds[1]];
-        if (endingToken) {
-          // How many of the ending token there are before the end of the edited portion.
-          const endingTokenCount = currentVal.substr(0, bounds[1]).split(endingToken).length;
-          // The index of the ending token on this.itemCodeWithTokens_.
-          const codingBound1 = this.itemCodeWithTokens_.split(endingToken, endingTokenCount).join(endingToken).length;
-          newCodeWithTokens += this.itemCodeWithTokens_.substr(codingBound1);
-        }
-        this.itemCodeWithTokens_ = newCodeWithTokens;
       },
 
 
@@ -2804,9 +2810,9 @@ if (typeof Def === 'undefined')
             if (whitespace)
               newValue += whitespace[0];
             newFieldVal = newValue + selectedVal + currentVal.substr(bounds[1]);
-            // Update item code as token separated value.
-            this.updateItemCodeWithTokens(currentVal, selectedVal, bounds);
           }
+          // Update item code as token separated value.
+          this.updateItemCodeWithTokens(currentVal, selectedVal, bounds);
         }
         this.setFieldVal(newFieldVal, false);
         // The "false" argument above means do not run change observers.  After
