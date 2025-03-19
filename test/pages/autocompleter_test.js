@@ -14,6 +14,24 @@ opts.wordBoundaryChars = [','];
 new Def.Autocompleter.Prefetch('prefetch_cwe_tokens', raceList, opts);
 
 var opts = {};
+opts['codes']=["K", "K/W", "kat", "kat/kg", "kat/L", "A", "A/m", "a_g", "a_j", "a_t", "a"];
+opts['autoFill']=true;
+opts.matchListValue = false;
+opts['suggestionMode']=Def.Autocompleter.USE_STATISTICS;
+opts.maxSelect = 1;
+opts['autocomp']=true;
+var unitList = ["degree Kelvin", "degree Kelvin per Watt", "katal", "katal per kilogram", "katal per liter", "Ampere", "ampere per meter", "mean Gregorian year", "mean Julian year", "tropical year", "year"];
+opts.matchListValue = false;
+opts.wordBoundaryChars = ['/', '.'];
+var unit_prefetch_autoComp = new Def.Autocompleter.Prefetch('prefetch_unit_tokens', unitList, opts);
+// Show the item_code next to the field for easier testing.
+setTimeout(() => {
+  Def.Autocompleter.Event.observeListSelections(null, function (data) {
+    document.getElementById('item_code').textContent = data?.item_code;
+  });
+}, 0);
+
+var opts = {};
 opts['codes']=["LA44-3","LA45-0","LA46-8", "ZZZ"]
 opts['suggestionMode']=Def.Autocompleter.SUGGEST_SHORTEST;
 opts['autoFill']=true
