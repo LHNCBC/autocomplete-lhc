@@ -781,7 +781,7 @@ describe('combined item code with tokens', function () {
     });
   });
 
-  it('tests composed item code on attemptSelection', function () {
+  it('tests combined item code on attemptSelection', function () {
     cy.window().then(function (win) {
       var fe_other_list_field = win.document.getElementById('prefetch_cwe_tokens');
       var fe_other_list_field_autoComp = fe_other_list_field.autocomp;
@@ -835,6 +835,102 @@ describe('combined item code with tokens', function () {
     cy.wait(1);
     cy.window().then(function (win) {
       assert('LA6156-9,LA4457-3,LA4489-6' === listSelectionItemData_.item_code, "item_code should be set for 3 codes combined");
+    });
+  });
+
+  it('tests combined item code with multiple tokens on attemptSelection', function () {
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = '', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 2;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat' === listSelectionItemData_.item_code, "item_code should be set for single code");
+    });
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = 'katal/', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 5;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal/Ampere');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat/A' === listSelectionItemData_.item_code, "item_code should be set for 2 codes combined");
+    });
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = 'katal/Ampere.', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 9;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal/Ampere.tropical year');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat/A.a_t' === listSelectionItemData_.item_code, "item_code should be set for 3 codes combined");
+    });
+  });
+
+  it('tests combined item code with codes containing tokens on attemptSelection', function () {
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = '', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 4;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal per liter');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat/L' === listSelectionItemData_.item_code, "item_code should be set for single code");
+    });
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = 'katal per liter/', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 5;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal per liter/Ampere');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat/L/A' === listSelectionItemData_.item_code, "item_code should be set even if the code 'kat/L' contains the token '/'");
     });
   });
 });
