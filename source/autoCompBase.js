@@ -1415,7 +1415,12 @@ if (typeof Def === 'undefined')
                             }
                             break;
                           default:
-                            keyHandled = false;
+                            if (this.options.tokens && this.options.tokens.includes(event.key)) {
+                              // Attempt selecting an item and save the code, when user types a token character.
+                              this.handleDataEntry(event);
+                            }
+                            else
+                              keyHandled = false;
                         }
                       }
                       else
@@ -2745,7 +2750,10 @@ if (typeof Def === 'undefined')
 
 
       /**
-       *
+       * Finds the index of nth occurrence of a specific item in an array.
+       * @param arr the array to search on
+       * @param item the item to look for
+       * @param n finding the nth occurrence of item
        */
       findIndexOfNthOccurrence: function (arr, item, n) {
         let count = 0;
@@ -2780,8 +2788,13 @@ if (typeof Def === 'undefined')
         }
         if (bounds[0] === -1 && !this.itemCodeWithTokens_.length) {
           this.itemCodeWithTokens_ = [newCode];
-        } else if (bounds[0] === 0) { // User goes back to the beginning portion of the input.
-          this.itemCodeWithTokens_.splice(0, 1, newCode);
+        } else if (bounds[0] === 0) {
+          if (currentVal === selectedVal) { // Input is reduced to one segment without tokens.
+            this.itemCodeWithTokens_ = [newCode];
+          }
+          else { // User goes back to the beginning portion of the input.
+            this.itemCodeWithTokens_.splice(0, 1, newCode);
+          }
         } else {
           // The token before the edited portion.
           const beginningToken = currentVal[bounds[0] - 1];
