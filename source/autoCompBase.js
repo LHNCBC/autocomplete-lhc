@@ -1418,6 +1418,7 @@ if (typeof Def === 'undefined')
                             if (this.options.tokens && this.options.tokens.includes(event.key)) {
                               // Attempt selecting an item and save the code, when user types a token character.
                               this.handleDataEntry(event);
+                              keyHandled = false;
                             }
                             else
                               keyHandled = false;
