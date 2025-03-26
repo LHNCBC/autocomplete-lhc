@@ -572,12 +572,6 @@ if (typeof Def === 'undefined')
        */
       processedFieldVal_: null,
 
-      /**
-       * An array to store segment codes and tokens.
-       * Used only when options.tokens is set.
-       */
-      itemCodeWithTokens_: [],
-
 
       /**
        *  An initialization method for the base Def.Autocompleter class.
@@ -1415,13 +1409,7 @@ if (typeof Def === 'undefined')
                             }
                             break;
                           default:
-                            if (this.options.tokens && this.options.tokens.includes(event.key)) {
-                              // Attempt selecting an item and save the code, when user types a token character.
-                              this.handleDataEntry(event);
-                              keyHandled = false;
-                            }
-                            else
-                              keyHandled = false;
+                            keyHandled = false;
                         }
                       }
                       else
@@ -2166,14 +2154,53 @@ if (typeof Def === 'undefined')
           this.preFieldFillVal_ === null ? 'typed' : 'arrows';
 
         var usedList = inputMethod !== 'typed' && onList;
-        var newCode = this.options.tokens && this.itemCodeWithTokens_.length ?
-          this.itemCodeWithTokens_.join('') :
+        var newCode = this.options.tokens ?
+          this.getTokenSeparatedCode_(finalVal) :
           this.getItemCode(finalVal);
 
         Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
           {input_method: inputMethod, val_typed_in: valTyped,
            final_val: finalVal, used_list: usedList,
            list: this.rawList_, on_list: onList, item_code: newCode, removed: removed});
+      },
+
+
+      /**
+       * Constructs the code for the token-separated input.
+       * The result consists of codes for each item, combined by the same tokens as
+       * in the input text.
+       * @params str the token-separated input string
+       */
+      getTokenSeparatedCode_: function(str) {
+        // Construct a regular expression that matches any of the tokens.
+        // Special characters in tokens are escaped to be treated literally.
+        const regex = new RegExp(`(${this.options.tokens.map(token => token.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')})`, 'g');
+        // The result variable will hold an array of codes and tokens in order.
+        const result = [];
+        let lastIndex = 0;
+        let match;
+        while ((match = regex.exec(str)) !== null) {
+          const item = str.slice(lastIndex, match.index);
+          const code = this.getCodeForSingleItem_(item);
+          result.push(code);
+          result.push(match[0]);
+          lastIndex = regex.lastIndex;
+        }
+        result.push(this.getCodeForSingleItem_(str.slice(lastIndex)));
+        return result.join('');
+      },
+
+
+      /**
+       * Gets the code for a single item (no tokens).
+       * @param item text of an item which does not contain tokens
+       */
+      getCodeForSingleItem_: function(item) {
+        if (this.codesForSelectedItems_ !== undefined) { // Search
+          return this.codesForSelectedItems_[item];
+        } else { // Prefetch
+          return this.getItemCode(item);
+        }
       },
 
 
@@ -2221,12 +2248,7 @@ if (typeof Def === 'undefined')
           if (canSelect) {
             this.active = false;
             this.updateElement(this.getCurrentEntry());
-            if (this.options.tokens && this.itemCodeWithTokens_.length) {
-              // Store the code as token separated value, together with the whole input value.
-              this.storeSelectedItem(this.domCache.get('elemVal'), this.itemCodeWithTokens_.join(''));
-            } else {
-              this.storeSelectedItem();
-            }
+            this.storeSelectedItem();
 
             // Queue the list selection event before doing further processing,
             // which might trigger other events (i.e. the duplication warning event.)
@@ -2282,8 +2304,6 @@ if (typeof Def === 'undefined')
           this.setMatchStatusIndicator(true);
           this.setInvalidValIndicator(false);
           this.storeSelectedItem('');
-          if (this.options.tokens)
-            this.itemCodeWithTokens_ = [];
           // Send a list selection event for this case.
           if (Def.Autocompleter.Event.callbacks_ !== null)
             this.listSelectionNotification('', false);
@@ -2751,64 +2771,6 @@ if (typeof Def === 'undefined')
 
 
       /**
-       * Finds the index of nth occurrence of a specific item in an array.
-       * @param arr the array to search on
-       * @param item the item to look for
-       * @param n finding the nth occurrence of item
-       */
-      findIndexOfNthOccurrence: function (arr, item, n) {
-        let count = 0;
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i] === item) {
-            count++;
-            if (count === n) {
-              return i;
-            }
-          }
-        }
-        return arr.length; // Not found
-      },
-
-
-      /**
-       * Updates combined item code, when tokens are used.
-       * Note that while this works if you add one valid code after another separated
-       * by a token, and it works if you change a previous section to another code,
-       * it won't work if you remove large sections of the input (containing tokens).
-       * @param currentVal current value of the whole input, before being updated
-       * @param selectedVal selected item from the list
-       * @param bounds the token boundaries returned from this.getTokenBounds()
-       */
-      updateItemCodeWithTokens: function(currentVal, selectedVal, bounds) {
-        const newCode = this.getItemCode(selectedVal);
-        if (!newCode) {
-          // If no code is found for selectedVal, set the combined code to null.
-          // No point returning a combined code like "123/null".
-          this.itemCodeWithTokens_ = [];
-          return;
-        }
-        if (bounds[0] === -1 && !this.itemCodeWithTokens_.length) {
-          this.itemCodeWithTokens_ = [newCode];
-        } else if (bounds[0] === 0) {
-          if (currentVal === selectedVal) { // Input is reduced to one segment without tokens.
-            this.itemCodeWithTokens_ = [newCode];
-          }
-          else { // User goes back to the beginning portion of the input.
-            this.itemCodeWithTokens_.splice(0, 1, newCode);
-          }
-        } else {
-          // The token before the edited portion.
-          const beginningToken = currentVal[bounds[0] - 1];
-          // How many of the beginning token there are before the edited portion.
-          const beginningTokenCount = currentVal.substr(0, bounds[0]).split(beginningToken).length - 1;
-          // The index of the beginning token on this.itemCodeWithTokens_.
-          const codingBound0 = this.findIndexOfNthOccurrence(this.itemCodeWithTokens_, beginningToken, beginningTokenCount);
-          this.itemCodeWithTokens_.splice(codingBound0, bounds[0] === bounds[1] ? 0 : 2, beginningToken, newCode);
-        }
-      },
-
-
-      /**
        *  Updates the field with the selected list item value.
        * @param selectedElement the DOM list element (LI or TR) the user selected.
        */
@@ -2825,8 +2787,11 @@ if (typeof Def === 'undefined')
               newValue += whitespace[0];
             newFieldVal = newValue + selectedVal + currentVal.substr(bounds[1]);
           }
-          // Update item code as token separated value.
-          this.updateItemCodeWithTokens(currentVal, selectedVal, bounds);
+          if (this.codesForSelectedItems_ !== undefined) {
+            // For Search autocompleter, save the code for selected value, which will
+            // later be used to construct the code for the token-separated value.
+            this.codesForSelectedItems_[selectedVal] = this.getItemCode(selectedVal);
+          }
         }
         this.setFieldVal(newFieldVal, false);
         // The "false" argument above means do not run change observers.  After

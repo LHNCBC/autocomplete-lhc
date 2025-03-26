@@ -102,6 +102,12 @@
        */
       showLoadingIndicator_: true,
 
+      /**
+       * Stores the codes for items user has selected in a token-separated
+       * input. Used only when options.tokens is used.
+       */
+      codesForSelectedItems_: {},
+
 
       /**
        *  The constructor.  (See Prototype's Class.create method.)
