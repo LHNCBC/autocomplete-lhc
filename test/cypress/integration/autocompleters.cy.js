@@ -1,5 +1,6 @@
 import {TestPages} from '../support/testPages';
 import {createInputElement, createListWithHeadings, extractListVals} from '../support/testHelpers';
+import { default as po } from '../support/autocompPage.js';
 
 describe('autocompleters', function () {
   var listSelectionItemData_ = {};
@@ -931,6 +932,30 @@ describe('combined item code with tokens', function () {
     cy.wait(1);
     cy.window().then(function (win) {
       assert('kat/L/A' === listSelectionItemData_.item_code, "item_code should be set even if the code 'kat/L' contains the token '/'");
+    });
+  });
+
+  it('tests combined item code on attemptSelection, Search autocomplete', function () {
+    cy.get('#search_cne_tokens').type('ar');
+    cy.wait(1);
+    po.searchResult(1).click();
+    cy.get('#search_cne_tokens').should('have.value', 'Arachnoiditis');
+    cy.window().then(function (win) {
+      assert('5529' === listSelectionItemData_.item_code, "item_code should be set for single code");
+    });
+    cy.get('#search_cne_tokens').type(',ar');
+    cy.wait(1);
+    po.searchResult(2).click();
+    cy.get('#search_cne_tokens').should('have.value', 'Arachnoiditis,Adult respiratory distress syndrome (ARDS)');
+    cy.window().then(function (win) {
+      assert('5529,2910' === listSelectionItemData_.item_code, "item_code should be set for 2 codes combined");
+    });
+    cy.get('#search_cne_tokens').type(',ar');
+    cy.wait(1);
+    po.searchResult(3).click();
+    cy.get('#search_cne_tokens').should('have.value', 'Arachnoiditis,Adult respiratory distress syndrome (ARDS),AIDS-related complex');
+    cy.window().then(function (win) {
+      assert('5529,2910,5398' === listSelectionItemData_.item_code, "item_code should be set for 3 codes combined");
     });
   });
 });
