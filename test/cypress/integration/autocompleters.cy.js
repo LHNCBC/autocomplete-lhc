@@ -935,6 +935,16 @@ describe('combined item code with tokens', function () {
     });
   });
 
+  it('should return null for code if a segment of token-separated input has no code', function () {
+    cy.get('#prefetch_unit_tokens')
+      .type('bla/Ampere')
+      .blur();
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert(null === listSelectionItemData_.item_code, "item_code should be null");
+    });
+  });
+
   it('tests combined item code on attemptSelection, Search autocomplete', function () {
     cy.get('#search_cne_tokens').type('ar');
     cy.wait(1);
@@ -956,6 +966,16 @@ describe('combined item code with tokens', function () {
     cy.get('#search_cne_tokens').should('have.value', 'Arachnoiditis,Adult respiratory distress syndrome (ARDS),AIDS-related complex');
     cy.window().then(function (win) {
       assert('5529,2910,5398' === listSelectionItemData_.item_code, "item_code should be set for 3 codes combined");
+    });
+  });
+
+  it('tests pasting token-separated input, Search autocomplete', function () {
+    cy.get('#search_cne_tokens')
+      .invoke('val', 'Arachnoiditis,Androblastoma')
+      .trigger('blur');
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('5529,4077' === listSelectionItemData_.item_code, "item_code should be set for pasted token-separated input");
     });
   });
 });

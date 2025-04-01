@@ -76,6 +76,39 @@
           };
           r.send();
           return r;
+        },
+
+
+        /**
+         * Same as ajax() above except it's wrapped in a Promise.
+         * It doesn't take options.complete as it returns a Promise.
+         * @param url could be absolute url, or relative url path that starts with '/'
+         * @param options
+         * @param options.data an object containing query params for the request
+         * @return a Promise that resolves when the XMLHttpRequest is finished
+         */
+        ajaxAsPromise: function(url, options) {
+          return new Promise((resolve, reject) => {
+            // Make full URL if a relative url path is passed in.
+            if (url.startsWith('/')) {
+              url = window.location.origin + url;
+            }
+            const urlObject = new URL(url);
+            if (options.data) {
+              for (const [key, value] of Object.entries(options.data)) {
+                urlObject.searchParams.set(key, value);
+              }
+            }
+            const r = new XMLHttpRequest();
+            r.open("GET", urlObject.toString(), true);
+            r.onreadystatechange = function() {
+              if (r.readyState === 4) {
+                resolve(r);
+              }
+            };
+            r.onerror = () => reject('Network Error');
+            r.send();
+          });
         }
       }
     }();

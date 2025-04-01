@@ -2152,16 +2152,27 @@ if (typeof Def === 'undefined')
           finalVal = this.domCache.get('elemVal');
         var inputMethod = this.clickSelectionInProgress_ ? 'clicked' :
           this.preFieldFillVal_ === null ? 'typed' : 'arrows';
-
         var usedList = inputMethod !== 'typed' && onList;
+
         var newCode = this.options.tokens ?
           this.getTokenSeparatedCode_(finalVal) :
           this.getItemCode(finalVal);
-
-        Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
-          {input_method: inputMethod, val_typed_in: valTyped,
-           final_val: finalVal, used_list: usedList,
-           list: this.rawList_, on_list: onList, item_code: newCode, removed: removed});
+        if (this.options.tokens && this.pendingQueriesForCode_ !== undefined && this.pendingQueriesForCode_.length) {
+          Promise.allSettled(this.pendingQueriesForCode_).then(() => {
+            var newCode = this.getTokenSeparatedCode_(finalVal);
+            Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
+              {input_method: inputMethod, val_typed_in: valTyped,
+                final_val: finalVal, used_list: usedList,
+                list: this.rawList_, on_list: onList, item_code: newCode, removed: removed});
+          });
+        } else {
+          Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
+            {
+              input_method: inputMethod, val_typed_in: valTyped,
+              final_val: finalVal, used_list: usedList,
+              list: this.rawList_, on_list: onList, item_code: newCode, removed: removed
+            });
+        }
       },
 
 
@@ -2187,7 +2198,9 @@ if (typeof Def === 'undefined')
           lastIndex = regex.lastIndex;
         }
         result.push(this.getCodeForSingleItem_(str.slice(lastIndex)));
-        return result.join('');
+        // Return null for code if any segment of the token-separated input
+        // has a null code.
+        return result.some(c => c === null) ? null : result.join('');
       },
 
 
@@ -2197,7 +2210,12 @@ if (typeof Def === 'undefined')
        */
       getCodeForSingleItem_: function(item) {
         if (this.codesForSelectedItems_ !== undefined) { // Search
-          return this.codesForSelectedItems_[item];
+          if (this.codesForSelectedItems_[item]) {
+            return this.codesForSelectedItems_[item];
+          } else {
+            this.pendingQueriesForCode_.push(this.queryForCode_(item));
+            return null;
+          }
         } else { // Prefetch
           return this.getItemCode(item);
         }
