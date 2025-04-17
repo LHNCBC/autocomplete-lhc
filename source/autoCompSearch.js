@@ -102,6 +102,18 @@
        */
       showLoadingIndicator_: true,
 
+      /**
+       * Stores the codes for items user has selected in a token-separated
+       * input. Used only when options.tokens is used.
+       */
+      codesForSelectedItems_: {},
+
+      /**
+       * Pending queries for figuring out the codes of a token-separated input.
+       * Used only when options.tokens is used.
+       */
+      pendingQueriesForCode_: [],
+
 
       /**
        *  The constructor.  (See Prototype's Class.create method.)
@@ -485,12 +497,16 @@
        *  Runs the search function to get matching results.
        * @param searchStr the search string
        * @param requestedCount the requested number of results
+       * @param onComplete optional onComplete callback
        */
-      useSearchFn: function(searchStr, requestedCount) {
+      useSearchFn: function(searchStr, requestedCount, onComplete) {
         var self = this;
-        this.search(searchStr, this.getLoadCount(requestedCount))
+        return this.search(searchStr, this.getLoadCount(requestedCount))
           .then(function(results) {
-            self.onComplete({results, requestedCount, searchStr});
+            if (onComplete)
+              onComplete(results, searchStr);
+            else
+              self.onComplete({results, requestedCount, searchStr});
           },
           function(failReason) {
             console.log("FHIR search failed: "+failReason);
@@ -502,8 +518,9 @@
        *  Runs an AJAX search using the autocompleter's URL.
        * @param searchStr the search string
        * @param requestedCount the requested number of results
+       * @param usePromise true if using a Promise to wrap the XMLHttpRequest.
        */
-      urlSearch: function(searchStr, requestedCount) {
+      urlSearch: function(searchStr, requestedCount, usePromise = false) {
         var paramData = {};
         if (this.fhir) { // a FHIR query without a FHIR client
           paramData.filter = searchStr;
@@ -522,12 +539,16 @@
           params.authenticity_token = window._token;
         var options = {
           data: paramData,
-          dataType: 'json',
-          complete: this.options.onComplete
+          dataType: 'json'
+        };
+        if (usePromise) {
+          return Def.jqueryLite.ajaxAsPromise(this.url, options);
+        } else {
+          options.complete = this.options.onComplete;
+          this.lastAjaxRequest_ = Def.jqueryLite.ajax(this.url, options);
+          this.lastAjaxRequest_.requestParamData_ = paramData;
+          this.lastAjaxRequest_.requestedCount = requestedCount;
         }
-        this.lastAjaxRequest_ = Def.jqueryLite.ajax(this.url, options);
-        this.lastAjaxRequest_.requestParamData_ = paramData;
-        this.lastAjaxRequest_.requestedCount = requestedCount;
       },
 
 
@@ -1304,6 +1325,59 @@
 
         // Put the focus back into the field we just updated.
         this.element.focus();
+      },
+
+
+      /**
+       * Issues a query for the code of an item in the token-separated input.
+       * @param item a segment of a token-separated input
+       */
+      queryForCode_: function(item) {
+        if (this.search)
+          return this.useSearchFn(item, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD, this.queryForCodeOnComplete_);
+        else
+          return this.urlSearch(item, Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD, true)
+            .then((resultData) => {
+              this.queryForCodeOnComplete_(resultData, item);
+            });
+      },
+
+
+      /**
+       * Saves the code for an item in a token-separated input.
+       * Used as a callback for a search query in this.queryForCode_().
+       * @param resultData an XMLHttpRequest object
+       * @param item a segment of a token-separated input
+       */
+      queryForCodeOnComplete_: function(resultData, item) {
+        const usedSearchFn = !!resultData.results;
+        // Retrieve the response data, which is in JSON format.
+        var results = usedSearchFn ? resultData.results :
+          resultData.responseJSON || JSON.parse(resultData.responseText);
+
+        if (!this.fhir) {
+          this.itemCodes_ = results[1];
+          this.listExtraData_ = results[2];
+          this.itemCodeSystems_ = results[4];
+          this.rawList_ = results[3]; // rawList_ is used in list selection events
+        }
+        else {
+          this.listExtraData_ = null;
+          this.itemCodes_ = [];
+          this.itemCodeSystems_ = [];
+          this.rawList_ = [];
+          var items = results.expansion.contains;
+          if (items) {
+            for (var i=0, len=items.length; i<len; ++i) {
+              var expItem = items[i];
+              this.itemCodes_[i] = expItem.code;
+              this.itemCodeSystems_[i] = expItem.system;
+              this.rawList_[i] = [expItem.display];
+            }
+          }
+        }
+        this.createFieldVals(this.rawList_);
+        this.codesForSelectedItems_[item] = this.getItemCode(item);
       }
     };
     Object.assign(Def.Autocompleter.Search.prototype, tmp);

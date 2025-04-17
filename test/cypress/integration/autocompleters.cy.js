@@ -1,5 +1,6 @@
 import {TestPages} from '../support/testPages';
 import {createInputElement, createListWithHeadings, extractListVals} from '../support/testHelpers';
+import { default as po } from '../support/autocompPage.js';
 
 describe('autocompleters', function () {
   var listSelectionItemData_ = {};
@@ -767,4 +768,214 @@ describe('autocompleters', function () {
     });
   });
 
+});
+
+describe('combined item code with tokens', function () {
+  var listSelectionItemData_ = {};
+
+  beforeEach(function () {
+    cy.visit(TestPages.autocomp_atr);
+    cy.window().then(function (win) {
+      win.Def.Autocompleter.Event.observeListSelections(null, function (data) {
+        listSelectionItemData_ = data;
+      });
+    });
+  });
+
+  it('tests combined item code on attemptSelection', function () {
+    cy.window().then(function (win) {
+      var fe_other_list_field = win.document.getElementById('prefetch_cwe_tokens');
+      var fe_other_list_field_autoComp = fe_other_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_other_list_field_autoComp.setFieldVal(fe_other_list_field_autoComp.trimmedElemVal = '', false);
+      fe_other_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_other_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_other_list_field_autoComp.hasFocus = true;
+      fe_other_list_field_autoComp.getUpdatedChoices();
+      fe_other_list_field_autoComp.index = 1;
+      fe_other_list_field_autoComp.attemptSelection();
+      expect(fe_other_list_field_autoComp.element.value).to.equal('Asian');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('LA6156-9' === listSelectionItemData_.item_code, "item_code should be set for single code");
+    });
+    cy.window().then(function (win) {
+      var fe_other_list_field = win.document.getElementById('prefetch_cwe_tokens');
+      var fe_other_list_field_autoComp = fe_other_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_other_list_field_autoComp.setFieldVal(fe_other_list_field_autoComp.trimmedElemVal = 'Asian,', false);
+      fe_other_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_other_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_other_list_field_autoComp.hasFocus = true;
+      fe_other_list_field_autoComp.getUpdatedChoices();
+      fe_other_list_field_autoComp.index = 5;
+      fe_other_list_field_autoComp.attemptSelection();
+      expect(fe_other_list_field_autoComp.element.value).to.equal('Asian,White');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('LA6156-9,LA4457-3' === listSelectionItemData_.item_code, "item_code should be set for 2 codes combined");
+    });
+    cy.window().then(function (win) {
+      var fe_other_list_field = win.document.getElementById('prefetch_cwe_tokens');
+      var fe_other_list_field_autoComp = fe_other_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_other_list_field_autoComp.setFieldVal(fe_other_list_field_autoComp.trimmedElemVal = 'Asian,White,', false);
+      fe_other_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_other_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_other_list_field_autoComp.hasFocus = true;
+      fe_other_list_field_autoComp.getUpdatedChoices();
+      fe_other_list_field_autoComp.index = 6;
+      fe_other_list_field_autoComp.attemptSelection();
+      expect(fe_other_list_field_autoComp.element.value).to.equal('Asian,White,Unknown');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('LA6156-9,LA4457-3,LA4489-6' === listSelectionItemData_.item_code, "item_code should be set for 3 codes combined");
+    });
+  });
+
+  it('tests combined item code with multiple tokens on attemptSelection', function () {
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = '', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 2;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat' === listSelectionItemData_.item_code, "item_code should be set for single code");
+    });
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = 'katal/', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 5;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal/Ampere');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat/A' === listSelectionItemData_.item_code, "item_code should be set for 2 codes combined");
+    });
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = 'katal/Ampere.', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 9;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal/Ampere.tropical year');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat/A.a_t' === listSelectionItemData_.item_code, "item_code should be set for 3 codes combined");
+    });
+  });
+
+  it('tests combined item code with codes containing tokens on attemptSelection', function () {
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = '', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 4;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal per liter');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat/L' === listSelectionItemData_.item_code, "item_code should be set for single code");
+    });
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = 'katal per liter/', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 5;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal per liter/Ampere');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat/L/A' === listSelectionItemData_.item_code, "item_code should be set even if the code 'kat/L' contains the token '/'");
+    });
+  });
+
+  it('should return null for code if a segment of token-separated input has no code', function () {
+    cy.get('#prefetch_unit_tokens')
+      .type('bla/Ampere')
+      .blur();
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert(null === listSelectionItemData_.item_code, "item_code should be null");
+    });
+  });
+
+  it('tests combined item code on attemptSelection, Search autocomplete', function () {
+    cy.get('#search_cne_tokens').type('ar');
+    cy.wait(1);
+    po.searchResult(1).click();
+    cy.get('#search_cne_tokens').should('have.value', 'Arachnoiditis');
+    cy.window().then(function (win) {
+      assert('5529' === listSelectionItemData_.item_code, "item_code should be set for single code");
+    });
+    cy.get('#search_cne_tokens').type(',ar');
+    cy.wait(1);
+    po.searchResult(2).click();
+    cy.get('#search_cne_tokens').should('have.value', 'Arachnoiditis,Adult respiratory distress syndrome (ARDS)');
+    cy.window().then(function (win) {
+      assert('5529,2910' === listSelectionItemData_.item_code, "item_code should be set for 2 codes combined");
+    });
+    cy.get('#search_cne_tokens').type(',ar');
+    cy.wait(1);
+    po.searchResult(3).click();
+    cy.get('#search_cne_tokens').should('have.value', 'Arachnoiditis,Adult respiratory distress syndrome (ARDS),AIDS-related complex');
+    cy.window().then(function (win) {
+      assert('5529,2910,5398' === listSelectionItemData_.item_code, "item_code should be set for 3 codes combined");
+    });
+  });
+
+  it('tests pasting token-separated input, Search autocomplete', function () {
+    cy.get('#search_cne_tokens')
+      .invoke('val', 'Arachnoiditis,Androblastoma')
+      .trigger('blur');
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('5529,4077' === listSelectionItemData_.item_code, "item_code should be set for pasted token-separated input");
+    });
+  });
 });

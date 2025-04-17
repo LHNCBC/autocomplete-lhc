@@ -27,8 +27,10 @@ const mockData_ = {
         '"DIUREX MAX (Oral Pill)","J-MAX (Oral Liquid)","J-MAX XR (Oral Pill)"],'+
         'null,[["CHLORASEPTIC MAX SPRAY (Mucosal)"],["MAX-FREEZE (Topical)"],'+
         '["MAALOX MAX (Oral Liquid)"],["MAALOX MAX QUICK DISSOLVE (Chewable)"],'+
-        '["DIUREX MAX (Oral Pill)"],["J-MAX (Oral Liquid)"],["J-MAX XR (Oral Pill)"]]]'
-     },
+        '["DIUREX MAX (Oral Pill)"],["J-MAX (Oral Liquid)"],["J-MAX XR (Oral Pill)"]]]',
+      'Arachnoiditis' : '[1,["5529"],{"term_icd9_code":["322.9"]},[["Arachnoiditis"]],false]',
+      'Androblastoma' : '[1,["4077"],{"term_icd9_code":[""]},[["Androblastoma"]],false]',
+    },
     'full' : {
       'ar' :'[65,["5398","2910","154","4077","1051","4836","5529","3406","2119","3140","386","486","2713","1461","4716","615","5692","1610","2266","5652","945","5754","1446","1613","5060","5795","246","2125","5361","1171","4087","685","2709","4631","3040","4347","2636","5448","419","4804","371","3150","4778","5010","1322","4787","86","2232","3922","3052","4271","3971","3537","1087","34","106","204","4521","4477","2898","5545","5860","5868","4977","4656"],{"term_icd9_code":["042","518.82","704.01","","284.9","424.1","322.9","887.2","729.5","427.9","440.9","447.0","","747.60","","","","098.50","696.0","711.90","","","427.5","V45.01","433.10","","414.9","290.40","379.91","446.5","","35.20","","812.20","719.40","714.30","692.4","584.9","","","","403.90","747.0","","","099.3","440.1","799.1","","362.31","390","714.0","959.2","427.9","473.8","","446.7","446.5","524.60","414.00","274.0","","","","427.9"]},[["AIDS-related complex"],["Adult respiratory distress syndrome (ARDS)"],["Alopecia areata"],["Androblastoma"],["Anemia - refractory"],["Aortic insufficiency"],["Arachnoiditis"],["Arm amputation"],["Arm pain"],["Arrhythmia"],["Arteriosclerosis"],["Arteriovenous (AV) fistula"],["Arteriovenous fistula surgery"],["Arteriovenous malformation (AVM)"],["Arteriovenous shunt"],["Artery surgery"],["Arthritis"],["Arthritis - gonococcal"],["Arthritis - psoriatic"],["Arthritis - septic"],["Arthrocentesis"],["Arthroscopy"],["Cardiac arrest"],["Cardiac pacemaker"],["Carotid artery disease"],["Coronary artery angioplasty/stenting"],["Coronary artery disease (CAD)"],["Dementia - multi-infarction"],["Eye pain"],["Giant cell arteritis"],["Hand/arm surgery"],["Heart valve - mechanical"],["Hip arthroplasty - total"],["Humerus fracture"],["Joint pain (arthralgia)"],["Juvenile rheumatoid arthritis (JRA)"],["Keratosis - arsenical"],["Kidney failure (short-term renal failure)"],["Knee arthroplasty - total"],["Lyme arthritis"],["Myeloid maturation arrest"],["Nephrosclerosis - arteriolar"],["Patent ductus arteriosus (PDA)"],["Pulmonary artery - large"],["Pulmonary artery hypertension (PAH)"],["Reiter\'s syndrome"],["Renal artery stenosis"],["Respiratory arrest"],["Resuscitation after cardiac arrest"],["Retinal central artery occlusion"],["Rheumatic fever"],["Rheumatoid arthritis (RA)"],["Shoulder or upper arm injury"],["Sinus arrhythmia"],["Sinus tenderness"],["Spermatogenic arrest"],["Takayasu\'s arteritis"],["Temporal arteritis"],["Temporomandibular arthritis"],["Three vessel coronary artery disease"],["Tophus"],["Transposition of the great arteries (TGA)"],["Truncus arteriosus (TA)"],["Urinary sphincter - artificial"],["Ventricular arrhythmia"]],false]'
     }
@@ -153,61 +155,66 @@ const fhirMockData = { // url to count to response (any filter value)
   }
 };
 
+function mockAjax(url, options) {
+  // Keep track of the number of calls to this method, so we can detect in
+  // tests whether an AJAX request was sent or whether the cache was used.
+  ++Def.jqueryLite.ajax.ajaxCtr;
+
+  let params = options.data;
+  let responseJSON;
+
+  if (!params.filter) { // assume filter is present for FHIR requests (for testing)
+    const resultType = params.suggest
+      ? 'suggest'
+      : params.maxList === undefined || params.maxList < 100
+        ? 'partial'
+        : 'full';
+
+
+    // This is just for testing, so assume the right parameters.
+    const fd_id = url.match(/fd_id=(\w+)/)[1];
+    const terms = params.terms || params.field_val; // suggest uses field_val
+    const responseText = mockData_[fd_id][resultType][terms];
+    if (!responseText) {
+      if (params.suggest === '1')
+        responseJSON = [[], []];
+      else
+        responseJSON = [0, [], null, [], false];
+    } else {
+      responseJSON = JSON.parse(responseText);
+      // Add items from full data if the length of partial data is less than maxList
+      if (resultType === 'partial' && mockData_[fd_id].full && responseJSON[1].length < params.maxList) {
+        const fullData = JSON.parse(mockData_[fd_id].full[terms]);
+        const partialDataLength = responseJSON[1].length;
+        responseJSON[1] = responseJSON[1].concat(fullData[1].slice(partialDataLength, params.maxList));
+        responseJSON[3] = responseJSON[3].concat(fullData[3].slice(partialDataLength, params.maxList));
+      }
+    }
+  } else {
+    const count = params.count;
+    responseJSON = fhirMockData[url] ? {
+      ...fhirMockData[url],
+      expansion: {
+        ...fhirMockData[url].expansion,
+        contains: fhirMockData[url].expansion.contains.slice(0, count)
+      },
+    } : '';
+  }
+
+  let response = {};
+  response.request = this;
+  this.options = options;
+  response.status = 200;
+  response.responseText = JSON.stringify(responseJSON);
+  return response;
+}
+
 // Factory function for Def.jqueryLite.ajax where you can set the delay of
 // completing the ajax request. Used to mock delayed ajax calls in tests.
 Def.jqueryLite.ajaxFactory = function (delay) {
 // Mock the Ajax call.  We are only trying to test the JavaScript side here.
   Def.jqueryLite.ajax = function (url, options) {
-    // Keep track of the number of calls to this method, so we can detect in
-    // tests whether an AJAX request was sent or whether the cache was used.
-    ++Def.jqueryLite.ajax.ajaxCtr;
-
-    let params = options.data;
-    let responseJSON;
-
-    if (!params.filter) { // assume filter is present for FHIR requests (for testing)
-      const resultType = params.suggest
-        ? 'suggest'
-        : params.maxList === undefined || params.maxList < 100
-          ? 'partial'
-          : 'full';
-
-
-      // This is just for testing, so assume the right parameters.
-      const fd_id = url.match(/fd_id=(\w+)/)[1];
-      const terms = params.terms || params.field_val; // suggest uses field_val
-      const responseText = mockData_[fd_id][resultType][terms];
-      if (!responseText) {
-        if (params.suggest === '1')
-          responseJSON = [[], []];
-        else
-          responseJSON = [0, [], null, [], false];
-      } else {
-        responseJSON = JSON.parse(responseText);
-        // Add items from full data if the length of partial data is less than maxList
-        if (resultType === 'partial' && mockData_[fd_id].full && responseJSON[1].length < params.maxList) {
-          const fullData = JSON.parse(mockData_[fd_id].full[terms]);
-          const partialDataLength = responseJSON[1].length;
-          responseJSON[1] = responseJSON[1].concat(fullData[1].slice(partialDataLength, params.maxList));
-          responseJSON[3] = responseJSON[3].concat(fullData[3].slice(partialDataLength, params.maxList));
-        }
-      }
-    } else {
-      const count = params.count;
-      responseJSON = fhirMockData[url] ? {
-        ...fhirMockData[url],
-        expansion: {
-          ...fhirMockData[url].expansion,
-          contains: fhirMockData[url].expansion.contains.slice(0, count)
-        },
-      } : '';
-    }
-
-    let response = {};
-    response.request = this;
-    this.options = options;
-    response.status = 200;
-    response.responseText = JSON.stringify(responseJSON);
+    let response = mockAjax(url, options);
     const requestTimeout = setTimeout(function () {
       options.complete(response);
     }, delay);
@@ -217,6 +224,12 @@ Def.jqueryLite.ajaxFactory = function (delay) {
       ++Def.jqueryLite.ajax.abortCount;
     }
     return response;
+  };
+  Def.jqueryLite.ajaxAsPromise = function (url, options) {
+    return new Promise((resolve, reject) => {
+      let response = mockAjax(url, options);
+      resolve(response);
+    });
   };
   Def.jqueryLite.ajax.ajaxCtr = 0; // number of calls
   Def.jqueryLite.ajax.abortCount = 0; // number of abort calls

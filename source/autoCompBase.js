@@ -900,8 +900,9 @@ if (typeof Def === 'undefined')
         }
         if (itemText) {
           var hasCode = code !== null && code !== undefined;
-          if (hasCode)
+          if (hasCode) {
             this.selectedCodes_[itemText] = code;
+          }
           this.selectedItems_[itemText] = 1;
           var itemData;
           if (this.getItemData)
@@ -2151,14 +2152,73 @@ if (typeof Def === 'undefined')
           finalVal = this.domCache.get('elemVal');
         var inputMethod = this.clickSelectionInProgress_ ? 'clicked' :
           this.preFieldFillVal_ === null ? 'typed' : 'arrows';
-
         var usedList = inputMethod !== 'typed' && onList;
-        var newCode = this.getItemCode(finalVal);
 
-        Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
-          {input_method: inputMethod, val_typed_in: valTyped,
-           final_val: finalVal, used_list: usedList,
-           list: this.rawList_, on_list: onList, item_code: newCode, removed: removed});
+        var newCode = this.options.tokens ?
+          this.getTokenSeparatedCode_(finalVal) :
+          this.getItemCode(finalVal);
+        if (this.options.tokens && this.pendingQueriesForCode_ !== undefined && this.pendingQueriesForCode_.length) {
+          Promise.allSettled(this.pendingQueriesForCode_).then(() => {
+            var newCode = this.getTokenSeparatedCode_(finalVal);
+            Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
+              {input_method: inputMethod, val_typed_in: valTyped,
+                final_val: finalVal, used_list: usedList,
+                list: this.rawList_, on_list: onList, item_code: newCode, removed: removed});
+          });
+        } else {
+          Def.Autocompleter.Event.notifyObservers(this.element, 'LIST_SEL',
+            {
+              input_method: inputMethod, val_typed_in: valTyped,
+              final_val: finalVal, used_list: usedList,
+              list: this.rawList_, on_list: onList, item_code: newCode, removed: removed
+            });
+        }
+      },
+
+
+      /**
+       * Constructs the code for the token-separated input.
+       * The result consists of codes for each item, combined by the same tokens as
+       * in the input text.
+       * @params str the token-separated input string
+       */
+      getTokenSeparatedCode_: function(str) {
+        // Construct a regular expression that matches any of the tokens.
+        // Special characters in tokens are escaped to be treated literally.
+        const regex = new RegExp(`(${this.options.tokens.map(token => token.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')})`, 'g');
+        // The result variable will hold an array of codes and tokens in order.
+        const result = [];
+        let lastIndex = 0;
+        let match;
+        while ((match = regex.exec(str)) !== null) {
+          const item = str.slice(lastIndex, match.index);
+          const code = this.getCodeForSingleItem_(item);
+          result.push(code);
+          result.push(match[0]);
+          lastIndex = regex.lastIndex;
+        }
+        result.push(this.getCodeForSingleItem_(str.slice(lastIndex)));
+        // Return null for code if any segment of the token-separated input
+        // has a null code.
+        return result.some(c => c === null) ? null : result.join('');
+      },
+
+
+      /**
+       * Gets the code for a single item (no tokens).
+       * @param item text of an item which does not contain tokens
+       */
+      getCodeForSingleItem_: function(item) {
+        if (this.codesForSelectedItems_ !== undefined) { // Search
+          if (this.codesForSelectedItems_[item]) {
+            return this.codesForSelectedItems_[item];
+          } else {
+            this.pendingQueriesForCode_.push(this.queryForCode_(item));
+            return null;
+          }
+        } else { // Prefetch
+          return this.getItemCode(item);
+        }
       },
 
 
@@ -2744,6 +2804,11 @@ if (typeof Def === 'undefined')
             if (whitespace)
               newValue += whitespace[0];
             newFieldVal = newValue + selectedVal + currentVal.substr(bounds[1]);
+          }
+          if (this.codesForSelectedItems_ !== undefined) {
+            // For Search autocompleter, save the code for selected value, which will
+            // later be used to construct the code for the token-separated value.
+            this.codesForSelectedItems_[selectedVal] = this.getItemCode(selectedVal);
           }
         }
         this.setFieldVal(newFieldVal, false);
