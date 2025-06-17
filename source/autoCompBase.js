@@ -329,7 +329,7 @@ if (typeof Def === 'undefined')
       classInit: function() {
         if (!this.classInit_) {
           document.body.insertAdjacentHTML('beforeend',
-             '<div id="searchResults" class="form_auto_complete"> \
+             '<div id="lhc-tools-searchResults" class="form_auto_complete"> \
              <div id="completionOptionsScroller">\
              <span class="auto_complete" id="completionOptions"></span> \
              </div> \
@@ -411,7 +411,7 @@ if (typeof Def === 'undefined')
         }
         return spacerDiv;
       },
-      listContainer: function() {return $('searchResults')},
+      listContainer: function() {return $('lhc-tools-searchResults')},
       firstEntryWidth: function() {
         return Def.Autocompleter.listItemElements()[0].offsetWidth;
       },

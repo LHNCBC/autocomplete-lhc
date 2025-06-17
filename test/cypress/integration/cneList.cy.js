@@ -38,7 +38,7 @@ describe('CNE lists', function() {
     // Also confirm that there is one event sent for the field being cleared
     // when the initial value was not blank.
     cy.get(po.prefetchCNE).click();
-    cy.get('#searchResults li:first-child').click();
+    cy.get('#lhc-tools-searchResults li:first-child').click();
     // For that selection, there should have been one event sent.
     cy.window().its('callCount').should('eq', 3);
     // Tab away and refocus

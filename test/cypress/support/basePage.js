@@ -4,7 +4,7 @@ import { TestHelpers } from './testHelpers';
 export function BasePage() {
   this.__proto__ = TestHelpers.prototype;
 
-  var searchResID = 'searchResults';
+  var searchResID = 'lhc-tools-searchResults';
   var searchResSel = '#'+searchResID;
   this.searchResSel = searchResSel;
   this.allSearchRes = searchResSel + ' li';

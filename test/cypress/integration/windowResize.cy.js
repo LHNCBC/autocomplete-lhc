@@ -8,7 +8,7 @@ describe('window resize', function() {
     cy.get(po.searchResSel).should('be.visible');
     cy.window().then(win => {
      fieldPosition = win.document.getElementById(po.prefetchCNEFieldName).getBoundingClientRect();
-     listPosition = win.document.getElementById('searchResults').getBoundingClientRect();
+     listPosition = win.document.getElementById('lhc-tools-searchResults').getBoundingClientRect();
      // The answer list is positioned right under the field.
      expect(listPosition.top).to.equal(fieldPosition.bottom);
      expect(listPosition.left).to.equal(fieldPosition.left);
@@ -17,7 +17,7 @@ describe('window resize', function() {
     cy.viewport(500, 660);
     cy.window().should(win => {
       const newFieldPosition = win.document.getElementById(po.prefetchCNEFieldName).getBoundingClientRect();
-      const newListPosition = win.document.getElementById('searchResults').getBoundingClientRect();
+      const newListPosition = win.document.getElementById('lhc-tools-searchResults').getBoundingClientRect();
       // The field has moved.
       expect(newFieldPosition.top).not.to.equal(fieldPosition.top);
       expect(newFieldPosition.left).not.to.equal(fieldPosition.left);

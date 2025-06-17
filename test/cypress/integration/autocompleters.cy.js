@@ -597,7 +597,7 @@ describe('autocompleters', function () {
       for (var i = 0; i < 3 && !foundItem; ++i) foundItem = ('apples' === listItems[i].textContent);
       assert(!foundItem, 'found item in list after selection');
       // The list should still be visible (so the user can pick more items)
-      assert(win.document.querySelector('#searchResults').style.visibility !== 'hidden');
+      assert(win.document.querySelector('#lhc-tools-searchResults').style.visibility !== 'hidden');
 
       // Also select an item by clicking in the list
       win.Def.Event.simulate(listItems[0], 'mousedown');
@@ -617,7 +617,7 @@ describe('autocompleters', function () {
         foundItem = ('oranges and apples' === listItems[i].textContent);
       assert(!foundItem, 'found item in list after selection, 2');
       // The list should still be visible (so the user can pick more items)
-      assert(win.document.querySelector('#searchResults').style.visibility !== 'hidden',
+      assert(win.document.querySelector('#lhc-tools-searchResults').style.visibility !== 'hidden',
         'after click, list is hidden');
 
       // Unselect the first item
@@ -757,12 +757,12 @@ describe('autocompleters', function () {
     cy.get(myButton).click();
     cy.get(prefetchCNEOnModal).should('be.visible');
     cy.get(prefetchCNEOnModal).click();
-    cy.get('#searchResults').should('be.visible');
+    cy.get('#lhc-tools-searchResults').should('be.visible');
     cy.window().then(win => {
       // Verify that the search result list is placed right under the autocommpleter-lhc control.
       const autocompElement = win.document.getElementById(prefetchCNEOnModalFieldName);
       const autocompElementOffset = autocompElement.getBoundingClientRect();
-      const searchResultElement = win.document.getElementById("searchResults");
+      const searchResultElement = win.document.getElementById("lhc-tools-searchResults");
       const searchResultElementOffset = searchResultElement.getBoundingClientRect();
       expect(Math.abs(searchResultElementOffset.top - autocompElementOffset.bottom)).to.be.lessThan(1);
     });

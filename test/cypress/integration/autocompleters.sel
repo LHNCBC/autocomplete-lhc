@@ -75,7 +75,7 @@
 | type | fe_search_cwe | |
 | fireEvent | fe_search_cwe | focus |
 | typeText | fe_search_cwe | Knee Pain |
-| waitForVisible | searchResults |
+| waitForVisible | lhc-tools-searchResults |
 | keyDown | fe_search_cwe | \9 |
 | waitForExpression | javascript{storedVars['callbackData']['input_method']} | typed |
 | assertExpression | javascript{storedVars['callbackData']['val_typed_in']} | Knee Pain |
@@ -89,7 +89,7 @@
 | type | fe_search_cwe | |
 | fireEvent | fe_search_cwe | focus |
 | typeText | fe_search_cwe | knee |
-| waitForVisible | searchResults |
+| waitForVisible | lhc-tools-searchResults |
 | mouseDown | css=span#completionOptions > ul > li:first-child |
 | waitForExpression | javascript{storedVars['callbackData']['input_method']} | clicked |
 | assertExpression | javascript{storedVars['callbackData']['val_typed_in']} | knee |
@@ -128,7 +128,7 @@
 | type | fe_search_cwe | |
 | fireEvent | fe_search_cwe | focus |
 | typeKeys | fe_search_cwe | ab |
-| waitForVisible | searchResults | |
+| waitForVisible | lhc-tools-searchResults | |
 # down arrow (\40)
 | keyDown | fe_search_cwe | \40 |
 | waitForNotValue | fe_search_cwe | ab |

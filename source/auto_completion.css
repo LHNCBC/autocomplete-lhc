@@ -9,7 +9,7 @@
 /**
  *  Style for the section containing the search count and the results list.
  */
-#searchResults {
+#lhc-tools-searchResults {
   visibility: hidden;
   color: black;
   font-size: 100%;
