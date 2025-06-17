@@ -486,11 +486,11 @@
         if (totalCount > itemsShownCount + skippedSelected) {
           $('searchCount').innerHTML = itemsShownCount + ' of ' + totalCount +
             ' items total';
-          $('moreResults').style.display = 'block';
+          $('lhc-tools-moreResults').style.display = 'block';
           $('searchCount').style.display = 'block';
         }
         else {
-          $('moreResults').style.display = 'none';
+          $('lhc-tools-moreResults').style.display = 'none';
           $('searchCount').style.display = 'none';
         }
 
@@ -1062,7 +1062,7 @@
 
 
       /**
-       *  "Reads" the searchCount and moreResults divs via the ScreenReaderLog.
+       *  "Reads" the searchCount and lhc-tools-moreResults divs via the ScreenReaderLog.
        * @return true if the search count was read.
        */
       readSearchCount: function() {

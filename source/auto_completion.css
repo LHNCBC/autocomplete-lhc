@@ -36,7 +36,7 @@
   overflow: hidden;
 }
 
-#moreResults {
+#lhc-tools-moreResults {
   display: none;
   font-size: 90%;
   background-color: #FFF;
@@ -48,7 +48,7 @@
   cursor: pointer;
 }
 
-#moreResults:hover {
+#lhc-tools-moreResults:hover {
   text-decoration: underline;
 }
 

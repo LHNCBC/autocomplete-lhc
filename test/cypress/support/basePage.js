@@ -8,7 +8,7 @@ export function BasePage() {
   var searchResSel = '#'+searchResID;
   this.searchResSel = searchResSel;
   this.allSearchRes = searchResSel + ' li';
-  this.expandLink = '#moreResults';
+  this.expandLink = '#lhc-tools-moreResults';
   this.completionOptionsCSS = '#completionOptions';
   this.completionOptionsScrollerCSS = '#completionOptionsScroller';
 

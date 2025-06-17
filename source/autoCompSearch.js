@@ -275,14 +275,14 @@
           partialChars: 2,
           onHide: function(element, update) {
             $('searchCount').style.display = 'none';
-            $('moreResults').style.display = 'none';
+            $('lhc-tools-moreResults').style.display = 'none';
             Def.Autocompleter.Base.prototype.hideList.apply(this);
           }.bind(this),
 
           onShow: function(element, update) {
             // Make the search count display before adjusting the list position.
             $('searchCount').style.display='block';
-            $('moreResults').style.display = 'block';
+            $('lhc-tools-moreResults').style.display = 'block';
 
             Def.Autocompleter.Base.prototype.showList.apply(this);
           }.bind(this),
@@ -958,9 +958,9 @@
             // Show "see more" link depending on whether this was an autocompletion
             // event and whether, and vice-versa there are more items to see.
             if ((shownCount < totalCount || totalCount === null) && autocomp)
-              $('moreResults').style.display ='block';
+              $('lhc-tools-moreResults').style.display ='block';
             else {
-              $('moreResults').style.display ='none';
+              $('lhc-tools-moreResults').style.display ='none';
             }
 
             if (this.showLoadingIndicator_ && this.loadingAnnounced && totalCount === 0) {

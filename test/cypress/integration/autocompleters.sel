@@ -6,21 +6,21 @@
 # Bring up a list with a "see more" link
 | fireEvent | fe_search_cne | focus |
 | typeKeys | fe_search_cne | ar |
-| waitForVisible | moreResults | |
+| waitForVisible | lhc-tools-moreResults | |
 | assertExpression | javascript{storedVars['callbackCount']} | 0 |
 # Click on the "see more" link, and confirm the callback was called.
-| click | moreResults |
+| click | lhc-tools-moreResults |
 | waitForExpression | javascript{storedVars['callbackCount']} | 1 |
 # Bring the "see more" link back, and this time use control+return to activate it
-| waitForNotVisible | moreResults | |
+| waitForNotVisible | lhc-tools-moreResults | |
 | type | fe_search_cne | |
 | typeKeys | fe_search_cne | ar |
-| waitForVisible | moreResults | |
+| waitForVisible | lhc-tools-moreResults | |
 | controlKeyDown | | |
 | assertExpression | javascript{storedVars['callbackCount']} | 1 |
 | typeKeys | fe_search_cne | \13 |
 | controlKeyUp | | |
-| waitForNotVisible | moreResults | |
+| waitForNotVisible | lhc-tools-moreResults | |
 | waitForExpression | javascript{storedVars['callbackCount']} | 2 |
 
 # Now try the same tests on a prefetched list field.  The prefetched list fields
@@ -32,21 +32,21 @@
 # Focus the prefetched list field
 | fireEvent | fe_search_cne | blur |
 | fireEvent | race_or_ethnicity | focus |
-| waitForVisible | moreResults | |
+| waitForVisible | lhc-tools-moreResults | |
 | assertExpression | javascript{storedVars['callbackCount']} | 2 |
 # Click on "see more" and confirm the callback was called.
-| click | moreResults |
-| waitForNotVisible | moreResults | |
+| click | lhc-tools-moreResults |
+| waitForNotVisible | lhc-tools-moreResults | |
 | waitForExpression | javascript{storedVars['callbackCount']} | 3 |
 # Now bring the "see more" back and try again using control return
 | fireEvent | race_or_ethnicity | blur |
 | fireEvent | race_or_ethnicity | focus |
-| waitForVisible | moreResults | |
+| waitForVisible | lhc-tools-moreResults | |
 | controlKeyDown | | |
 | assertExpression | javascript{storedVars['callbackCount']} | 3 |
 | typeKeys | race_or_ethnicity | \13 |
 | controlKeyUp | | |
-| waitForNotVisible | moreResults | |
+| waitForNotVisible | lhc-tools-moreResults | |
 | waitForExpression | javascript{storedVars['callbackCount']} | 4 |
 # Reset the number of items needed for "see more" to its normal value
 | assertExpression | javascript{Def.Autocompleter.Base.MAX_ITEMS_BELOW_FIELD = 7} | 7 |
@@ -59,7 +59,7 @@
 | fireEvent | fe_search_cwe | focus |
 | typeText | fe_search_cwe | knee |
 # Select the first value using the down arrow (40 = down arrow)
-| waitForVisible | moreResults |
+| waitForVisible | lhc-tools-moreResults |
 | keyDown | fe_search_cwe | \40 |
 | keyDown | fe_search_cwe | \9 |
 | waitForExpression | javascript{storedVars['callbackData']['input_method']} | arrows |
