@@ -1024,7 +1024,7 @@
        */
       handleSeeMoreItems: function(event) {
         this.seeMoreItemsClicked_ = true;
-        $('searchHint').style.display='none'
+        $('lhc-tools-searchHint').style.display='none'
         this.listBelowField_ = false;
         this.getUpdatedChoices();
         this.posAnsList() ;

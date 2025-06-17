@@ -336,7 +336,7 @@ if (typeof Def === 'undefined')
              <div id="lhc-tools-moreResults">See more items (Ctl Ret)</div> \
              <div id="lhc-tools-searchCount">Search Results<!-- place holder for result count, \
               needed for height calculation--></div> \
-             <div id="searchHint">Search Hint<!--place holder--></div> \
+             <div id="lhc-tools-searchHint">Search Hint<!--place holder--></div> \
              </div>');
 
           document.querySelector('#lhc-tools-moreResults').addEventListener('mousedown', function(event) {
