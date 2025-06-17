@@ -484,14 +484,14 @@
 
         var itemsShownCount = itemsInList.length - headingsShown;
         if (totalCount > itemsShownCount + skippedSelected) {
-          $('searchCount').innerHTML = itemsShownCount + ' of ' + totalCount +
+          $('lhc-tools-searchCount').innerHTML = itemsShownCount + ' of ' + totalCount +
             ' items total';
           $('lhc-tools-moreResults').style.display = 'block';
-          $('searchCount').style.display = 'block';
+          $('lhc-tools-searchCount').style.display = 'block';
         }
         else {
           $('lhc-tools-moreResults').style.display = 'none';
-          $('searchCount').style.display = 'none';
+          $('lhc-tools-searchCount').style.display = 'none';
         }
 
         return instance.buildHTML(itemsInList, rawListIndexes, itemToHTMLData, suggestionIndex);
@@ -1062,7 +1062,7 @@
 
 
       /**
-       *  "Reads" the searchCount and lhc-tools-moreResults divs via the ScreenReaderLog.
+       *  "Reads" the lhc-tools-searchCount and lhc-tools-moreResults divs via the ScreenReaderLog.
        * @return true if the search count was read.
        */
       readSearchCount: function() {

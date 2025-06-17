@@ -194,7 +194,7 @@ export function BasePage() {
    * @param expectedMsg the expected text of the message
    */
   this.checkListCountMessage = function(expectedMsg) {
-    cy.get('#searchCount').invoke('text').should('match', new RegExp('^'+expectedMsg));
+    cy.get('#lhc-tools-searchCount').invoke('text').should('match', new RegExp('^'+expectedMsg));
   };
 
 

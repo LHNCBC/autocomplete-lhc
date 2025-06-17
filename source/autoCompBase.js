@@ -334,7 +334,7 @@ if (typeof Def === 'undefined')
              <span class="auto_complete" id="completionOptions"></span> \
              </div> \
              <div id="lhc-tools-moreResults">See more items (Ctl Ret)</div> \
-             <div id="searchCount">Search Results<!-- place holder for result count, \
+             <div id="lhc-tools-searchCount">Search Results<!-- place holder for result count, \
               needed for height calculation--></div> \
              <div id="searchHint">Search Hint<!--place holder--></div> \
              </div>');
@@ -2703,12 +2703,12 @@ if (typeof Def === 'undefined')
 
 
       /**
-       *  "Reads" the searchCount and lhc-tools-moreResults divs via the ScreenReaderLog.
+       *  "Reads" the lhc-tools-searchCount and lhc-tools-moreResults divs via the ScreenReaderLog.
        */
       readSearchCount: function() {
         var rtn = false;
-        if ($('searchCount').style.display !== 'none') {
-          Def.Autocompleter.screenReaderLog('Showing '+ $('searchCount').innerHTML+ '.');
+        if ($('lhc-tools-searchCount').style.display !== 'none') {
+          Def.Autocompleter.screenReaderLog('Showing '+ $('lhc-tools-searchCount').innerHTML+ '.');
           if ($('lhc-tools-moreResults').style.display !== 'none') {
             Def.Autocompleter.screenReaderLog('Pressing control+return will expand the list.');
           }
