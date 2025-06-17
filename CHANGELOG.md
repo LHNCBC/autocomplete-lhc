@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [19.4.0] - 2025-06-01
+### Changed
+- Added prefix "lhc-tools-" to search result DOM element IDs.
+
 ## [19.3.4] - 2025-03-18
 ### Changed
 - Return token separated item_code for token separated input.
