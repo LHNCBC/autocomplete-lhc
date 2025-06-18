@@ -3,7 +3,7 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
-## [19.4.0] - 2025-06-01
+## [20.0.0] - 2025-06-01
 ### Changed
 - Added prefix "lhc-tools-" to search result DOM element IDs.
 
