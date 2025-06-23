@@ -4,11 +4,11 @@ import { TestHelpers } from './testHelpers';
 export function BasePage() {
   this.__proto__ = TestHelpers.prototype;
 
-  var searchResID = 'searchResults';
+  var searchResID = 'lhc-tools-searchResults';
   var searchResSel = '#'+searchResID;
   this.searchResSel = searchResSel;
   this.allSearchRes = searchResSel + ' li';
-  this.expandLink = '#moreResults';
+  this.expandLink = '#lhc-tools-moreResults';
   this.completionOptionsCSS = '#completionOptions';
   this.completionOptionsScrollerCSS = '#completionOptionsScroller';
 
@@ -194,7 +194,7 @@ export function BasePage() {
    * @param expectedMsg the expected text of the message
    */
   this.checkListCountMessage = function(expectedMsg) {
-    cy.get('#searchCount').invoke('text').should('match', new RegExp('^'+expectedMsg));
+    cy.get('#lhc-tools-searchCount').invoke('text').should('match', new RegExp('^'+expectedMsg));
   };
 
 

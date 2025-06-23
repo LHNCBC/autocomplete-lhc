@@ -9,14 +9,14 @@
 /**
  *  Style for the section containing the search count and the results list.
  */
-#searchResults {
+#lhc-tools-searchResults {
   visibility: hidden;
   color: black;
   font-size: 100%;
   z-index: 1000;
 }
 
-#searchCount {
+#lhc-tools-searchCount {
   display: none;
   font-size: 90%;
   background-color: #E3E7EA;
@@ -25,7 +25,7 @@
   overflow: hidden;
 }
 
-#searchHint {
+#lhc-tools-searchHint {
   display: none;
   font-weight: normal;
   font-style: italic;
@@ -36,7 +36,7 @@
   overflow: hidden;
 }
 
-#moreResults {
+#lhc-tools-moreResults {
   display: none;
   font-size: 90%;
   background-color: #FFF;
@@ -48,7 +48,7 @@
   cursor: pointer;
 }
 
-#moreResults:hover {
+#lhc-tools-moreResults:hover {
   text-decoration: underline;
 }
 

@@ -329,17 +329,17 @@ if (typeof Def === 'undefined')
       classInit: function() {
         if (!this.classInit_) {
           document.body.insertAdjacentHTML('beforeend',
-             '<div id="searchResults" class="form_auto_complete"> \
+             '<div id="lhc-tools-searchResults" class="form_auto_complete"> \
              <div id="completionOptionsScroller">\
              <span class="auto_complete" id="completionOptions"></span> \
              </div> \
-             <div id="moreResults">See more items (Ctl Ret)</div> \
-             <div id="searchCount">Search Results<!-- place holder for result count, \
+             <div id="lhc-tools-moreResults">See more items (Ctl Ret)</div> \
+             <div id="lhc-tools-searchCount">Search Results<!-- place holder for result count, \
               needed for height calculation--></div> \
-             <div id="searchHint">Search Hint<!--place holder--></div> \
+             <div id="lhc-tools-searchHint">Search Hint<!--place holder--></div> \
              </div>');
 
-          document.querySelector('#moreResults').addEventListener('mousedown', function(event) {
+          document.querySelector('#lhc-tools-moreResults').addEventListener('mousedown', function(event) {
             var field = $(Def.Autocompleter.currentAutoCompField_);
             field.autocomp.handleSeeMoreItems(event);
             Def.Autocompleter.Event.notifyObservers(field, 'LIST_EXP',
@@ -411,7 +411,7 @@ if (typeof Def === 'undefined')
         }
         return spacerDiv;
       },
-      listContainer: function() {return $('searchResults')},
+      listContainer: function() {return $('lhc-tools-searchResults')},
       firstEntryWidth: function() {
         return Def.Autocompleter.listItemElements()[0].offsetWidth;
       },
@@ -2703,13 +2703,13 @@ if (typeof Def === 'undefined')
 
 
       /**
-       *  "Reads" the searchCount and moreResults divs via the ScreenReaderLog.
+       *  "Reads" the lhc-tools-searchCount and lhc-tools-moreResults divs via the ScreenReaderLog.
        */
       readSearchCount: function() {
         var rtn = false;
-        if ($('searchCount').style.display !== 'none') {
-          Def.Autocompleter.screenReaderLog('Showing '+ $('searchCount').innerHTML+ '.');
-          if ($('moreResults').style.display !== 'none') {
+        if ($('lhc-tools-searchCount').style.display !== 'none') {
+          Def.Autocompleter.screenReaderLog('Showing '+ $('lhc-tools-searchCount').innerHTML+ '.');
+          if ($('lhc-tools-moreResults').style.display !== 'none') {
             Def.Autocompleter.screenReaderLog('Pressing control+return will expand the list.');
           }
           rtn = true;

@@ -274,15 +274,15 @@
         options = Object.assign({
           partialChars: 2,
           onHide: function(element, update) {
-            $('searchCount').style.display = 'none';
-            $('moreResults').style.display = 'none';
+            $('lhc-tools-searchCount').style.display = 'none';
+            $('lhc-tools-moreResults').style.display = 'none';
             Def.Autocompleter.Base.prototype.hideList.apply(this);
           }.bind(this),
 
           onShow: function(element, update) {
             // Make the search count display before adjusting the list position.
-            $('searchCount').style.display='block';
-            $('moreResults').style.display = 'block';
+            $('lhc-tools-searchCount').style.display='block';
+            $('lhc-tools-moreResults').style.display = 'block';
 
             Def.Autocompleter.Base.prototype.showList.apply(this);
           }.bind(this),
@@ -782,7 +782,7 @@
        * @param responseLength (optional) the number of characters in the returned data
        */
       setSearchCountDiv: function(totalCount, shownCount, responseLength) {
-        var searchCountElem = $('searchCount');
+        var searchCountElem = $('lhc-tools-searchCount');
         var searchCountStr = '';
         if (totalCount > 0 || totalCount === null) {
           searchCountStr = shownCount + ' of ' +
@@ -815,7 +815,7 @@
 
           searchCountStr += resultInfo;
           searchCountElem.innerHTML = searchCountStr;
-          $('searchCount').style.display='block';
+          $('lhc-tools-searchCount').style.display='block';
         }
       },
 
@@ -958,9 +958,9 @@
             // Show "see more" link depending on whether this was an autocompletion
             // event and whether, and vice-versa there are more items to see.
             if ((shownCount < totalCount || totalCount === null) && autocomp)
-              $('moreResults').style.display ='block';
+              $('lhc-tools-moreResults').style.display ='block';
             else {
-              $('moreResults').style.display ='none';
+              $('lhc-tools-moreResults').style.display ='none';
             }
 
             if (this.showLoadingIndicator_ && this.loadingAnnounced && totalCount === 0) {
