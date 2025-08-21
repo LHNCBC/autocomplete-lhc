@@ -572,6 +572,11 @@ if (typeof Def === 'undefined')
        */
       processedFieldVal_: null,
 
+      /**
+       * A function to group a single code containing tokens in a token-separated input.
+       */
+      tokenGroupingFunction_: x => x,
+
 
       /**
        *  An initialization method for the base Def.Autocompleter class.
@@ -623,6 +628,8 @@ if (typeof Def === 'undefined')
        *     but leaves without picking an item, the list will check if what the field
        *     contains matches an item in the list and if so, will select it. This
        *     controls whether that matching is case-insensitive.</li>
+       *    <li>tokenGroupingFunction - (default: x => x) A function that groups a
+       *     single code containing tokens in a token-separated input.
        *  </ul>
        */
       defAutocompleterBaseInit: function(field, options) {
@@ -635,6 +642,9 @@ if (typeof Def === 'undefined')
         // for backward compatibility.
         if (options.wordBoundaryChars)
           options.tokens = options.wordBoundaryChars;
+
+        if (options.tokenGroupingFunction)
+          this.tokenGroupingFunction_ = options.tokenGroupingFunction;
 
         if (options['suggestionMode'] !== undefined)
           this.suggestionMode_ = options['suggestionMode'];
@@ -2192,12 +2202,24 @@ if (typeof Def === 'undefined')
         let match;
         while ((match = regex.exec(str)) !== null) {
           const item = str.slice(lastIndex, match.index);
-          const code = this.getCodeForSingleItem_(item);
+          let code = this.getCodeForSingleItem_(item);
+          // The unit display might not contain tokens but its code might.
+          // e.g. "ampere per meter" has code "A/m".
+          // Group the code for proper ordering of tokens.
+          // this.tokenGroupingFunction_ could be a function that wraps its input in parentheses.
+          // It doesn't need to be grouped if it's the first code in the whole input string.
+          if (lastIndex !== 0 && typeof code === 'string' && regex.test(code)) {
+            code = this.tokenGroupingFunction_(code);
+          }
           result.push(code);
           result.push(match[0]);
           lastIndex = regex.lastIndex;
         }
-        result.push(this.getCodeForSingleItem_(str.slice(lastIndex)));
+        let lastCode = this.getCodeForSingleItem_(str.slice(lastIndex));
+        if (lastIndex !== 0 && typeof lastCode === 'string' && regex.test(lastCode)) {
+          lastCode = this.tokenGroupingFunction_(lastCode);
+        }
+        result.push(lastCode);
         // Return null for code if any segment of the token-separated input
         // has a null code.
         return result.some(c => c === null) ? null : result.join('');
