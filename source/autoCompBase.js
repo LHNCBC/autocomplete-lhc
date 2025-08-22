@@ -2195,7 +2195,11 @@ if (typeof Def === 'undefined')
       getTokenSeparatedCode_: function(str) {
         // Construct a regular expression that matches any of the tokens.
         // Special characters in tokens are escaped to be treated literally.
-        const regex = new RegExp(`(${this.options.tokens.map(token => token.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')})`, 'g');
+        const pattern = `(${this.options.tokens.map(token => token.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')})`;
+        const regex = new RegExp(pattern, 'g');
+        // This Regex without the global flag will be used to simply test whether a single code contains tokens.
+        // We cannot reuse the same regex above due to its stateful behavior.
+        const regex2 = new RegExp(pattern);
         // The result variable will hold an array of codes and tokens in order.
         const result = [];
         let lastIndex = 0;
@@ -2208,7 +2212,7 @@ if (typeof Def === 'undefined')
           // Group the code for proper ordering of tokens.
           // this.tokenGroupingFunction_ could be a function that wraps its input in parentheses.
           // It doesn't need to be grouped if it's the first code in the whole input string.
-          if (lastIndex !== 0 && typeof code === 'string' && regex.test(code)) {
+          if (lastIndex !== 0 && (typeof code === 'string') && regex2.test(code)) {
             code = this.tokenGroupingFunction_(code);
           }
           result.push(code);
@@ -2216,7 +2220,7 @@ if (typeof Def === 'undefined')
           lastIndex = regex.lastIndex;
         }
         let lastCode = this.getCodeForSingleItem_(str.slice(lastIndex));
-        if (lastIndex !== 0 && typeof lastCode === 'string' && regex.test(lastCode)) {
+        if (lastIndex !== 0 && (typeof lastCode === 'string') && regex2.test(lastCode)) {
           lastCode = this.tokenGroupingFunction_(lastCode);
         }
         result.push(lastCode);
