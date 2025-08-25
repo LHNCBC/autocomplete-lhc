@@ -23,6 +23,7 @@ opts['autocomp']=true;
 var unitList = ["degree Kelvin", "degree Kelvin per Watt", "katal", "katal per kilogram", "katal per liter", "Ampere", "ampere per meter", "mean Gregorian year", "mean Julian year", "tropical year", "year"];
 opts.matchListValue = false;
 opts.wordBoundaryChars = ['/', '.'];
+// Wrap the code containing tokens with parentheses for property ordering in the final item_code.
 opts.tokenGroupingFunction = x => `(${x})`;
 var unit_prefetch_autoComp = new Def.Autocompleter.Prefetch('prefetch_unit_tokens', unitList, opts);
 // Show the item_code next to the field for easier testing.

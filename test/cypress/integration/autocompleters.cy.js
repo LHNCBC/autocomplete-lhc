@@ -935,6 +935,45 @@ describe('combined item code with tokens', function () {
     });
   });
 
+  it('tests options.tokenGroupingFunction on combined item code with codes containing tokens on attemptSelection', function () {
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = '', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 2;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat' === listSelectionItemData_.item_code, "item_code should be set for single code");
+    });
+    cy.window().then(function (win) {
+      var fe_unit_list_field = win.document.getElementById('prefetch_unit_tokens');
+      var fe_unit_list_field_autoComp = fe_unit_list_field.autocomp;
+      // If there is a match, selection should pick the default item.
+      fe_unit_list_field_autoComp.setFieldVal(fe_unit_list_field_autoComp.trimmedElemVal = 'katal/', false);
+      fe_unit_list_field_autoComp.setMatchStatusIndicator(false);
+      fe_unit_list_field_autoComp.setInvalidValIndicator(true);
+      // Set hasFocus so getUpdatedChoices will work
+      fe_unit_list_field_autoComp.hasFocus = true;
+      fe_unit_list_field_autoComp.getUpdatedChoices();
+      fe_unit_list_field_autoComp.index = 6;
+      fe_unit_list_field_autoComp.attemptSelection();
+      expect(fe_unit_list_field_autoComp.element.value).to.equal('katal/ampere per meter');
+    });
+    cy.wait(1);
+    cy.window().then(function (win) {
+      assert('kat/(A/m)' === listSelectionItemData_.item_code, "item_code should wrap the code in parentheses if it contains a token itself");
+    });
+  });
+
   it('should return null for code if a segment of token-separated input has no code', function () {
     cy.get('#prefetch_unit_tokens')
       .type('bla/Ampere')
