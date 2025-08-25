@@ -629,7 +629,7 @@ if (typeof Def === 'undefined')
        *     contains matches an item in the list and if so, will select it. This
        *     controls whether that matching is case-insensitive.</li>
        *    <li>tokenGroupingFunction - (default: x => x) A function that groups a
-       *     single code containing tokens in a token-separated input.
+       *     single code containing tokens in a token-separated input.</li>
        *  </ul>
        */
       defAutocompleterBaseInit: function(field, options) {
