@@ -3,6 +3,11 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [20.1.0] - 2025-08-25
+### Added
+- New option tokenGroupingFunction to group a single code containing tokens
+  in a token-separated input. The default of this function is to do nothing.
+
 ## [20.0.0] - 2025-06-01
 ### Changed
 - Added prefix "lhc-tools-" to search result DOM element IDs.
