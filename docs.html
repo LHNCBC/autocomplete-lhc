@@ -146,6 +146,8 @@
            but leaves without picking an item, the list will check if what the field
            contains matches an item in the list and if so, will select it. This
            controls whether that matching is case-insensitive.</li>
+          <li>tokenGroupingFunction - (default: x => x) A function that groups a
+           single code containing tokens in a token-separated input.</li>
         </ul>
 
         <h3 id="prefetch">Constructing a "prefetch" (non-AJAX) autocompleter</h3>
