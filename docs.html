@@ -151,7 +151,7 @@
            its code might, e.g. "ampere per meter" - "A/m". This might result in a wrong
            ordering of codes when it comes after another word boundary character in the
            final input. This "tokenGroupingFunction" function, applied on the code when
-           necessary, marks the code as a single unit.</li>
+           necessary, returns the code formatted as a single unit (e.g., by putting parentheses around it).</li>
         </ul>
 
         <h3 id="prefetch">Constructing a "prefetch" (non-AJAX) autocompleter</h3>
