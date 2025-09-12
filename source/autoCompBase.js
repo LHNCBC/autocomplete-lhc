@@ -572,6 +572,11 @@ if (typeof Def === 'undefined')
        */
       processedFieldVal_: null,
 
+      /**
+       * A function to group a single code containing tokens in a token-separated input.
+       */
+      tokenGroupingFunction_: x => x,
+
 
       /**
        *  An initialization method for the base Def.Autocompleter class.
@@ -623,6 +628,13 @@ if (typeof Def === 'undefined')
        *     but leaves without picking an item, the list will check if what the field
        *     contains matches an item in the list and if so, will select it. This
        *     controls whether that matching is case-insensitive.</li>
+       *    <li>tokenGroupingFunction - (default: x => x) Must be used with "wordBoundaryChars".
+       *     For a single unit, its display might not contain a word boundary character but
+       *     its code might, e.g. "ampere per meter" - "A/m". This might result in a wrong
+       *     ordering of codes when it comes after another word boundary character in the
+       *     final input. This "tokenGroupingFunction" function, applied on the code when
+       *     necessary, returns the code formatted as a single unit (e.g., by putting
+       *     parentheses around it).</li>
        *  </ul>
        */
       defAutocompleterBaseInit: function(field, options) {
@@ -635,6 +647,9 @@ if (typeof Def === 'undefined')
         // for backward compatibility.
         if (options.wordBoundaryChars)
           options.tokens = options.wordBoundaryChars;
+
+        if (options.tokenGroupingFunction)
+          this.tokenGroupingFunction_ = options.tokenGroupingFunction;
 
         if (options['suggestionMode'] !== undefined)
           this.suggestionMode_ = options['suggestionMode'];
@@ -2185,19 +2200,35 @@ if (typeof Def === 'undefined')
       getTokenSeparatedCode_: function(str) {
         // Construct a regular expression that matches any of the tokens.
         // Special characters in tokens are escaped to be treated literally.
-        const regex = new RegExp(`(${this.options.tokens.map(token => token.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')})`, 'g');
+        const pattern = `(${this.options.tokens.map(token => token.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|')})`;
+        const regex = new RegExp(pattern, 'g');
+        // This Regex without the global flag will be used to simply test whether a single code contains tokens.
+        // We cannot reuse the same regex above due to its stateful behavior.
+        const regex2 = new RegExp(pattern);
         // The result variable will hold an array of codes and tokens in order.
         const result = [];
         let lastIndex = 0;
         let match;
         while ((match = regex.exec(str)) !== null) {
           const item = str.slice(lastIndex, match.index);
-          const code = this.getCodeForSingleItem_(item);
+          let code = this.getCodeForSingleItem_(item);
+          // The unit display might not contain tokens but its code might.
+          // e.g. "ampere per meter" has code "A/m".
+          // Group the code for proper ordering of tokens.
+          // this.tokenGroupingFunction_ could be a function that wraps its input in parentheses.
+          // It doesn't need to be grouped if it's the first code in the whole input string.
+          if (lastIndex !== 0 && (typeof code === 'string') && regex2.test(code)) {
+            code = this.tokenGroupingFunction_(code);
+          }
           result.push(code);
           result.push(match[0]);
           lastIndex = regex.lastIndex;
         }
-        result.push(this.getCodeForSingleItem_(str.slice(lastIndex)));
+        let lastCode = this.getCodeForSingleItem_(str.slice(lastIndex));
+        if (lastIndex !== 0 && (typeof lastCode === 'string') && regex2.test(lastCode)) {
+          lastCode = this.tokenGroupingFunction_(lastCode);
+        }
+        result.push(lastCode);
         // Return null for code if any segment of the token-separated input
         // has a null code.
         return result.some(c => c === null) ? null : result.join('');
