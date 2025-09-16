@@ -146,6 +146,12 @@
            but leaves without picking an item, the list will check if what the field
            contains matches an item in the list and if so, will select it. This
            controls whether that matching is case-insensitive.</li>
+          <li>tokenGroupingFunction - (default: x => x) Must be used with "wordBoundaryChars".
+           For a single unit, its display might not contain a word boundary character but
+           its code might, e.g. "ampere per meter" - "A/m". This might result in a wrong
+           ordering of codes when it comes after another word boundary character in the
+           final input. This "tokenGroupingFunction" function, applied on the code when
+           necessary, returns the code formatted as a single unit (e.g., by putting parentheses around it).</li>
         </ul>
 
         <h3 id="prefetch">Constructing a "prefetch" (non-AJAX) autocompleter</h3>
