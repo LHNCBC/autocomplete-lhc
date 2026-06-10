@@ -17,9 +17,8 @@ tests.  The steps are:
 2) npm ci
 3) Add node_modules/.bin to your PATH.  Again, if you are on a Linux operating system, you should be able to re-run ```source bashrc.autocomp```.
 4) npm run build
-5) npm run update-webdriver # The need for this will go away when we remove our Protractor dependency.
-6) bower install # needed for the test pages
-7) npm run test
+5) bower install # needed for the test pages
+6) npm run test
 
 
 ## License and Disclaimer
