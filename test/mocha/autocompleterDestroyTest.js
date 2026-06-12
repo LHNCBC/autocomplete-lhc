@@ -129,7 +129,6 @@ describe('autocompleter destroy cleanup', function() {
       const clock = sinon.useFakeTimers();
       try {
         const ac = Object.create(Def.Autocompleter.Base.prototype);
-        ac.element = {removeEventListener: sinon.spy()};
         ac.elementEventListeners = {};
         ac.onObserverEvent = sinon.spy();
         ac.observer = setTimeout(function() { ac.onObserverEvent(); }, 1);
