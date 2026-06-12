@@ -144,6 +144,33 @@ describe('autocompleter destroy cleanup', function() {
       }
     });
 
+    it('removes registered element listeners during stopObservingEvents', function() {
+      const blurListener = function() {};
+      const secondBlurListener = function() {};
+      const keydownListener = function() {};
+      const ac = Object.create(Def.Autocompleter.Base.prototype);
+      ac.element = {
+        addEventListener: sinon.spy(),
+        removeEventListener: sinon.spy()
+      };
+      ac.elementEventListeners = {};
+
+      ac.addEventListenerToElement('blur', blurListener);
+      ac.addEventListenerToElement('blur', secondBlurListener);
+      ac.addEventListenerToElement('keydown', keydownListener);
+
+      ac.stopObservingEvents();
+
+      sinon.assert.calledWith(ac.element.removeEventListener,
+        'blur', blurListener);
+      sinon.assert.calledWith(ac.element.removeEventListener,
+        'blur', secondBlurListener);
+      sinon.assert.calledWith(ac.element.removeEventListener,
+        'keydown', keydownListener);
+      sinon.assert.callCount(ac.element.removeEventListener, 3);
+      assert.deepStrictEqual(ac.elementEventListeners, {});
+    });
+
     it('onObserverEvent exits safely after detach and clears observer state', function() {
       const ac = Object.create(Def.Autocompleter.Base.prototype);
       ac.element = null;
