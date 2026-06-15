@@ -356,8 +356,10 @@
           // Ajax.Request, the blur event occurs, but if I uncomment that and
           // comment out the onComplete code, it does not.)
           var button = document.getElementById(buttonID);
-          button.addEventListener('mousedown', this.buttonClick.bind(this));
-          button.addEventListener('keypress', this.buttonKeyPress.bind(this));
+          this.buttonMouseDownListener_ = this.buttonClick.bind(this);
+          this.buttonKeyPressListener_ = this.buttonKeyPress.bind(this);
+          button.addEventListener('mousedown', this.buttonMouseDownListener_);
+          button.addEventListener('keypress', this.buttonKeyPressListener_);
         }
         this.element.classList.add('search_field');
 
@@ -373,6 +375,9 @@
        * Overrides detachFromDOM() in autoCompBase.js.
        */
       detachFromDOM: function() {
+        if (!this.element)
+          return;
+
         // Remove the containing element with class 'loading-indicator-container',
         // if any.
         var fieldParent = this.element.parentElement;
@@ -381,6 +386,34 @@
           originalParent.replaceChild(this.element, fieldParent);
         }
         Def.Autocompleter.Search.superclass.detachFromDOM.apply(this);
+      },
+
+
+      /**
+       *  Detaches search-specific event listeners and pending work.
+       *  Overrides stopObservingEvents() in autoCompBase.js.
+       */
+      stopObservingEvents: function() {
+        Def.Autocompleter.Search.superclass.stopObservingEvents.apply(this);
+
+        if (this.buttonID) {
+          var button = document.getElementById(this.buttonID);
+          if (button) {
+            if (this.buttonMouseDownListener_)
+              button.removeEventListener('mousedown', this.buttonMouseDownListener_);
+            if (this.buttonKeyPressListener_)
+              button.removeEventListener('keypress', this.buttonKeyPressListener_);
+          }
+          this.buttonMouseDownListener_ = null;
+          this.buttonKeyPressListener_ = null;
+        }
+
+        if (this.lastAjaxRequest_) {
+          var request = this.lastAjaxRequest_;
+          this.lastAjaxRequest_ = null;
+          request.abort();
+        }
+        clearTimeout(this.loadingAnnouncerTimeout);
       },
 
 
@@ -864,7 +897,14 @@
        * @param fromCache whether "response" is from the cache (optional).
        */
       onComplete: function(resultData, fromCache) {
-        const requestedCount = resultData.requestedCount || this.lastAjaxRequest_.requestedCount;
+        if (!this.element)
+          return;
+
+        const requestedCount = resultData.requestedCount ||
+          (this.lastAjaxRequest_ && this.lastAjaxRequest_.requestedCount);
+        if (requestedCount === undefined)
+          return;
+
         var untrimmedFieldVal = this.getToken();
         this.trimmedElemVal = untrimmedFieldVal.trim(); // used in autoCompBase
         if (this.lastAjaxRequest_ === resultData) {
@@ -1215,8 +1255,10 @@
         clearTimeout(this.loadingAnnouncerTimeout);
         this.loadingAnnounced = false;
         this.loadingAnnouncerTimeout = setTimeout(() => {
-          Def.Autocompleter.screenReaderLog('A list is being loaded for the field.');
-          this.loadingAnnounced = true;
+          if (this.element) {
+            Def.Autocompleter.screenReaderLog('A list is being loaded for the field.');
+            this.loadingAnnounced = true;
+          }
         }, 1500);
       },
 
@@ -1226,7 +1268,7 @@
        *  not match the list.
        */
       findSuggestions: function() {
-        if (this.url) { // we also this to be initially undefined
+        if (this.element && this.url) { // we also this to be initially undefined
           var fieldVal = this.getSearchStr();
           var paramData = {
             field_val: fieldVal,
@@ -1251,6 +1293,9 @@
        * @param response the XMLHttpRequest object
        */
       onFindSuggestionComplete: function(response) {
+        if (!this.element)
+          return;
+
         if (response.status === 200) { // 200 is the "OK" status
           // Retrieve the response data, which is in JSON format.
           var responseData = response.responseJSON || JSON.parse(response.responseText);
@@ -1297,6 +1342,9 @@
        *  of the suggestion that was accepted.
        */
       acceptSuggestion: function(index) {
+        if (!this.element)
+          return;
+
         // We stored the last suggestion list data in suggestionList_.  Look
         // for "code".
         var codes = this.suggestionList_[0];

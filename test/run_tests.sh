@@ -32,6 +32,15 @@ then
   fi
 fi
 
+# The custom ALSA configuration file (alsa-null.conf) is designed to use the
+# "null" audio driver, which allows the tests to run without requiring actual
+# audio hardware. This is particularly useful in CI environments or on machines
+# without audio devices.
+if [ -z "$ALSA_CONFIG_PATH" ]
+then
+  export ALSA_CONFIG_PATH="$PWD/test/cypress/alsa-null.conf"
+fi
+
 # Now run the e2e tests
 cypress run
 code=$?

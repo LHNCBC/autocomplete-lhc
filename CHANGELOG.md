@@ -3,6 +3,18 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [20.1.1] - 2026-06-10
+### Fixed
+- Clean up destroyed autocompleters more completely, including hiding the shared
+  list, removing search button listeners, aborting pending search requests, and
+  ignoring delayed callbacks after detach.
+- Ignore late record data responses when the requester no longer belongs to the
+  field's current autocompleter, preventing stale data assignments after
+  reinitialization or destroy.
+
+### Changed
+- Removed the obsolete update-webdriver step from the README setup instructions.
+
 ## [20.1.0] - 2025-08-25
 ### Added
 - New option tokenGroupingFunction to group a single code containing tokens

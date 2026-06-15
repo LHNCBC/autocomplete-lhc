@@ -283,6 +283,17 @@ if (typeof Def === 'undefined')
 
 
       /**
+       * Returns true if this requester is still attached to the field's
+       * currently active autocompleter.
+       * @return {boolean}
+       */
+      isCurrentRequester: function() {
+        var autocomp = this.formField_ && this.formField_.autocomp;
+        return !!(autocomp && autocomp.recDataRequester_ === this);
+      },
+
+
+      /**
        *  This gets called when the data request comes back (after the user
        *  has made a selection from the list).
        * @param response the AJAX response object
@@ -295,6 +306,11 @@ if (typeof Def === 'undefined')
         // A, B, B returns, A returns.  This check keeps the output fields
         // in a consistent state with the triggering field.
         if (this.latestPendingAjaxRequest_ === response) {
+          if (!this.isCurrentRequester()) {
+            this.latestPendingAjaxRequest_ = null;
+            return;
+          }
+
           // Do nothing if the field value has changed since this
           this.lastFieldVal_ = Def.Autocompleter.getFieldVal(this.formField_);
           // The response text should be a JSON object for a data hash map.
@@ -316,6 +332,11 @@ if (typeof Def === 'undefined')
         // Do nothing if this is not the most recent request.
         // (See onDataReqComplete.)
         if (this.latestPendingAjaxRequest_ === response) {
+          if (!this.isCurrentRequester()) {
+            this.latestPendingAjaxRequest_ = null;
+            return;
+          }
+
           // The response text should be a JSON object for a data hash map.
           var dataHash = response.responseJSON || JSON.parse(response.responseText);
           this.lastDataHash_ = dataHash;
@@ -590,7 +611,7 @@ if (typeof Def === 'undefined')
               if (Array.isArray(val)) {
                 // Look for an autocompleter for the field.  For now,
                 // we assume a prefetched list autocompleter.
-                if (field.autocomp !== null) {
+                if (field.autocomp) {
                   // Now that lists carry codes with them, when setting the value
                   // for a list, it should normally have both a list of codes
                   // and a list of values.  However, we support the case where

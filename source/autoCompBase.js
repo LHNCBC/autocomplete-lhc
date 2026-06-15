@@ -1216,7 +1216,7 @@ if (typeof Def === 'undefined')
        *  Hides the list container.
        */
       hideList: function() {
-        if (Def.Autocompleter.currentAutoCompField_ === this.element.id) {
+        if (this.element && Def.Autocompleter.currentAutoCompField_ === this.element.id) {
           // Check whether the list is hidden.  By default (via CSS) it is hidden,
           // so if style.visibility is blank, it is hidden.
           var hidden = this.listContainer.style.visibility !== 'visible';
@@ -2379,8 +2379,10 @@ if (typeof Def === 'undefined')
             this.refocusInProgress_ = true;
             this.processedFieldVal_ = fieldVal;
             setTimeout(function() {
-              this.element.focus();
-              this.element.select(); // select the text
+              if (this.element) {
+                this.element.focus();
+                this.element.select(); // select the text
+              }
               // Clear refocusInProgress_, which onFocus also clears, because
               // onFocus isn't called if the field is still focused when focus()
               // is called above.  That happens when you hit return to select an
@@ -2758,6 +2760,7 @@ if (typeof Def === 'undefined')
       destroy: function() {
         //Def.Logger.logMessage(['in autoCompBase.destroy, this.element.id = ',
         //                       this.element.id]) ;
+        this.hideList();
         this.stopObservingEvents();
         this.removeAutocompleteLhcClasses();
         this.detachFromDOM();
@@ -2781,6 +2784,10 @@ if (typeof Def === 'undefined')
        *  This can be called to detach an autocompleter's event listeners.
        */
       stopObservingEvents: function() {
+        if (this.observer) {
+          clearTimeout(this.observer);
+          this.observer = null;
+        }
         for (const [key, value] of Object.entries(this.elementEventListeners)) {
           value.forEach(callback => {
             this.element.removeEventListener(key, callback);
@@ -2927,7 +2934,14 @@ if (typeof Def === 'undefined')
       },
 
 
+      /**
+       *  Handles the delayed observer event after the field value changes.
+       */
       onObserverEvent: function() {
+        this.observer = null;
+        if (!this.element)
+          return;
+
         this.domCache.invalidate('elemVal'); // presumably the field value changed
         this.changed = false;
         this.tokenBounds = null;
