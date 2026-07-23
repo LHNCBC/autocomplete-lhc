@@ -2391,9 +2391,15 @@ if (typeof Def === 'undefined')
             }.bind(this));
           }
           else {
+            const alreadySelected = this.selectedItems_[this.domCache.get('elemVal')] === 1;
             this.storeSelectedItem();
-            if (this.multiSelect_)
-              this.moveEntryToSelectedArea(); // resets processedFieldVal_
+            if (this.multiSelect_) {
+              if (alreadySelected)
+                // Do not add duplicate items to the selected area.  Clear the field value instead.
+                this.setFieldVal(this.processedFieldVal_ = '', false);
+              else
+                this.moveEntryToSelectedArea(); // resets processedFieldVal_
+            }
             else
               this.processedFieldVal_ = fieldVal;
 
