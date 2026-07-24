@@ -275,5 +275,25 @@ describe('multi-select lists', function() {
     cy.get(po.multiPrefetchHtml).click();
     cy.get(po.allSearchRes).should('have.length', 3);
   });
+
+  it('should not put duplicate values to the selected area', function () {
+    po.openTestPage();
+    // Add a non-list value
+    cy.get(po.multiPrefetchCWE).click().type('non-list val 1');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
+    // Add the same non-list value
+    cy.get(po.multiPrefetchCWE).click().type('non-list val 1');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
+    // The API getSelectedItems() should also return only one item, not two.
+    cy.get(po.multiPrefetchCWE)
+      .then(elem => {
+        return elem.get(0).autocomp.getSelectedItems();
+      })
+      .then(data => expect(data).to.deep.equal(['non-list val 1']));
+  });
 });
 
