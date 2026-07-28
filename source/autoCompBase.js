@@ -2391,14 +2391,17 @@ if (typeof Def === 'undefined')
             }.bind(this));
           }
           else {
+            const val = this.domCache.get('elemVal');
             const alreadySelected =
-              this.multiSelect_ && this.isSelected(this.domCache.get('elemVal'));
+              this.multiSelect_ && this.isSelected(val);
             if (!alreadySelected)
               this.storeSelectedItem();
             if (this.multiSelect_) {
-              if (alreadySelected)
+              if (alreadySelected) {
                 // Do not add duplicate items to the selected area.  Clear the field value instead.
                 this.setFieldVal(this.processedFieldVal_ = '', false);
+                Def.Autocompleter.screenReaderLog(val + ' is already selected.');
+              }
               else
                 this.moveEntryToSelectedArea(); // resets processedFieldVal_
             }
