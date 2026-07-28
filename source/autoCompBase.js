@@ -1035,7 +1035,7 @@ if (typeof Def === 'undefined')
        *  has already been selected (for multi-select lists).
        */
       isSelected: function(itemText) {
-        return this.selectedItems_ && this.selectedItems_[itemText] !== undefined;
+        return this.selectedItems_ && this.selectedItems_[itemText] === 1;
       },
 
 
