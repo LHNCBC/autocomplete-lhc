@@ -821,8 +821,8 @@ if (typeof Def === 'undefined')
        *  Initializes the stored selection data structures (to empty).
        */
       initStoredSelectionData: function () {
-        this.selectedCodes_ = {};
-        this.selectedItems_ = {};
+        this.selectedCodes_ = Object.create(null);
+        this.selectedItems_ = Object.create(null);
         this.selectedItemData_ = [];
       },
 
