@@ -294,6 +294,15 @@ describe('multi-select lists', function() {
         return elem.get(0).autocomp.getSelectedItems();
       })
       .then(data => expect(data).to.deep.equal(['non-list val 1']));
+    // getSelectedItemData() should likewise return only one entry.
+    cy.get(po.multiPrefetchCWE)
+      .then(elem => {
+        return elem.get(0).autocomp.getSelectedItemData();
+      })
+      .then(data => {
+        expect(data).to.have.length(1);
+        expect(data[0].text).to.equal('non-list val 1');
+      });
   });
 });
 
