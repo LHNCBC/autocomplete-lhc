@@ -275,5 +275,91 @@ describe('multi-select lists', function() {
     cy.get(po.multiPrefetchHtml).click();
     cy.get(po.allSearchRes).should('have.length', 3);
   });
+
+  it('should not put duplicate values to the selected area', function () {
+    po.openTestPage();
+    // Add a non-list value
+    cy.get(po.multiPrefetchCWE).click().type('non-list val 1');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
+    // Add the same non-list value
+    cy.get(po.multiPrefetchCWE).click().type('non-list val 1');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
+    // The API getSelectedItems() should also return only one item, not two.
+    cy.get(po.multiPrefetchCWE)
+      .then(elem => {
+        return elem.get(0).autocomp.getSelectedItems();
+      })
+      .then(data => expect(data).to.deep.equal(['non-list val 1']));
+    // getSelectedItemData() should likewise return only one entry.
+    cy.get(po.multiPrefetchCWE)
+      .then(elem => {
+        return elem.get(0).autocomp.getSelectedItemData();
+      })
+      .then(data => {
+        expect(data).to.have.length(1);
+        expect(data[0].text).to.equal('non-list val 1');
+      });
+  });
+
+  it('should be able to add special name "toString", but only once', function () {
+    po.openTestPage();
+    // 'toString' is a special name that is a property of all objects.
+    cy.get(po.multiPrefetchCWE).click().type('toString');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
+    // Add the same non-list value
+    cy.get(po.multiPrefetchCWE).click().type('toString');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
+    // The API getSelectedItems() should also return only one item, not two.
+    cy.get(po.multiPrefetchCWE)
+      .then(elem => {
+        return elem.get(0).autocomp.getSelectedItems();
+      })
+      .then(data => expect(data).to.deep.equal(['toString']));
+    // getSelectedItemData() should likewise return only one entry.
+    cy.get(po.multiPrefetchCWE)
+      .then(elem => {
+        return elem.get(0).autocomp.getSelectedItemData();
+      })
+      .then(data => {
+        expect(data).to.have.length(1);
+        expect(data[0].text).to.equal('toString');
+      });
+  });
+
+  it('should be able to add special name "__proto__", but only once', function () {
+    po.openTestPage();
+    cy.get(po.multiPrefetchCWE).click().type('__proto__');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
+    // Add the same non-list value
+    cy.get(po.multiPrefetchCWE).click().type('__proto__');
+    cy.get(po.nonField).click(); // shift focus from field
+    cy.get(po.multiPrefetchCWESelected).should('have.length', 1);
+    cy.get(po.multiPrefetchCWE).should('have.value', '');
+    // The API getSelectedItems() should also return only one item, not two.
+    cy.get(po.multiPrefetchCWE)
+      .then(elem => {
+        return elem.get(0).autocomp.getSelectedItems();
+      })
+      .then(data => expect(data).to.deep.equal(['__proto__']));
+    // getSelectedItemData() should likewise return only one entry.
+    cy.get(po.multiPrefetchCWE)
+      .then(elem => {
+        return elem.get(0).autocomp.getSelectedItemData();
+      })
+      .then(data => {
+        expect(data).to.have.length(1);
+        expect(data[0].text).to.equal('__proto__');
+      });
+  });
 });
 

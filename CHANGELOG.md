@@ -3,6 +3,10 @@
 This log documents significant changes for each release.  This project follows
 [Semantic Versioning](http://semver.org/).
 
+## [20.1.2] - 2026-07-24
+### Fixed
+- For a multi-select, do not add duplicate items to the selected area.
+
 ## [20.1.1] - 2026-06-10
 ### Fixed
 - Clean up destroyed autocompleters more completely, including hiding the shared

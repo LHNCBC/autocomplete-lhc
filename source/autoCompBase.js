@@ -821,8 +821,8 @@ if (typeof Def === 'undefined')
        *  Initializes the stored selection data structures (to empty).
        */
       initStoredSelectionData: function () {
-        this.selectedCodes_ = {};
-        this.selectedItems_ = {};
+        this.selectedCodes_ = Object.create(null);
+        this.selectedItems_ = Object.create(null);
         this.selectedItemData_ = [];
       },
 
@@ -1035,7 +1035,7 @@ if (typeof Def === 'undefined')
        *  has already been selected (for multi-select lists).
        */
       isSelected: function(itemText) {
-        return this.selectedItems_ && this.selectedItems_[itemText] !== undefined;
+        return this.selectedItems_ && this.selectedItems_[itemText] === 1;
       },
 
 
@@ -2391,9 +2391,20 @@ if (typeof Def === 'undefined')
             }.bind(this));
           }
           else {
-            this.storeSelectedItem();
-            if (this.multiSelect_)
-              this.moveEntryToSelectedArea(); // resets processedFieldVal_
+            const val = this.domCache.get('elemVal');
+            const alreadySelected =
+              this.multiSelect_ && this.isSelected(val);
+            if (!alreadySelected)
+              this.storeSelectedItem();
+            if (this.multiSelect_) {
+              if (alreadySelected) {
+                // Do not add duplicate items to the selected area.  Clear the field value instead.
+                this.setFieldVal(this.processedFieldVal_ = '', false);
+                Def.Autocompleter.screenReaderLog(val + ' is already selected.');
+              }
+              else
+                this.moveEntryToSelectedArea(); // resets processedFieldVal_
+            }
             else
               this.processedFieldVal_ = fieldVal;
 

@@ -212,6 +212,26 @@
 
 
       /**
+       *  Returns true if the given model array already contains an item whose
+       *  display value matches "val".  Used to avoid adding duplicate items to
+       *  the model for multi-select lists.  (This checks the model array
+       *  directly rather than the autocompleter's selection state, because the
+       *  base class stores the selection before the event fires for list items
+       *  but after it for off-list values.)
+       * @param selectedItems the model array of selected item objects
+       * @param prop the property on each model object holding the display value
+       * @param val the display value to look for
+       */
+      modelHasItem: function (selectedItems, prop, val) {
+        for (var i = 0, len = selectedItems.length; i < len; ++i) {
+          if (selectedItems[i][prop] === val)
+            return true;
+        }
+        return false;
+      },
+
+
+      /**
        *  Handles a prefetch list selection event.
        * @param eventData the data about the selection event.
        * @param itemTextToItem a hash from display strings to items
@@ -241,9 +261,10 @@
             }
           }
           else if (eventData.on_list || !this.acOptions.matchListValue) {
-            // (Add the new model item, but not if it is invalid)
+            // (Add the new model item, but not if it is invalid or a duplicate)
             var newModel = this.getPrefetchItemModelData(finalVal, itemTextToItem);
-            if (newModel) // could be null if the field value was empty
+            if (newModel && // could be null if the field value was empty
+                !this.modelHasItem(selectedItems, this.displayedProp, finalVal))
               selectedItems.push(newModel);
           }
         }
@@ -366,9 +387,10 @@
             }
           }
           else if (eventData.on_list || !this.acOptions.matchListValue) {
-            // (Add the new model item, but not if it is invalid)
+            // (Add the new model item, but not if it is invalid or a duplicate)
             var newModel = this.getSearchItemModelData(itemText, onList);
-            if (newModel) // could be null if the field value was empty
+            if (newModel && // could be null if the field value was empty
+                !this.modelHasItem(selectedItems, 'text', itemText))
               selectedItems.push(newModel);
           }
         }

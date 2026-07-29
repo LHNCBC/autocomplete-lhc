@@ -156,6 +156,48 @@ describe('directive', function() {
       cy.get(dp.multiSearchCWESelected).should('have.length', 2);
     });
 
+    it('should not add a duplicate non-list value to the model (prefetch CWE)',
+       function () {
+      dp.openDirectiveTestPage();
+      dp.checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal', null);
+      // Add a non-list value
+      cy.get(dp.multiPrefetchCWE).click().type('non-list val 1');
+      cy.get(dp.codeField).click(); // shift focus from field
+      dp.checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
+        [{text: 'non-list val 1', _notOnList: true}]);
+      cy.get(dp.multiPrefetchCWESelected).should('have.length', 1);
+      cy.get(dp.multiPrefetchCWE).should('have.value', '');
+      // Add the same non-list value again.  It should not be added a second
+      // time, to the selected area or to the model.
+      cy.get(dp.multiPrefetchCWE).click().type('non-list val 1');
+      cy.get(dp.codeField).click(); // shift focus from field
+      dp.checkModel(dp.multiPrefetchCWE, 'multiPrefetchCWEVal',
+        [{text: 'non-list val 1', _notOnList: true}]);
+      cy.get(dp.multiPrefetchCWESelected).should('have.length', 1);
+      cy.get(dp.multiPrefetchCWE).should('have.value', '');
+    });
+
+    it('should not add a duplicate non-list value to the model (search CWE)',
+       function () {
+      dp.openDirectiveTestPage();
+      dp.checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel, null);
+      // Add a non-list value
+      cy.get(dp.multiSearchCWE).click().type('non-list val 1');
+      cy.get(dp.codeField).click(); // shift focus from field
+      dp.checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
+        [{text: 'non-list val 1', _notOnList: true}]);
+      cy.get(dp.multiSearchCWESelected).should('have.length', 1);
+      cy.get(dp.multiSearchCWE).should('have.value', '');
+      // Add the same non-list value again.  It should not be added a second
+      // time, to the selected area or to the model.
+      cy.get(dp.multiSearchCWE).click().type('non-list val 1');
+      cy.get(dp.codeField).click(); // shift focus from field
+      dp.checkModel(dp.multiSearchCWE, dp.multiSearchCWEModel,
+        [{text: 'non-list val 1', _notOnList: true}]);
+      cy.get(dp.multiSearchCWESelected).should('have.length', 1);
+      cy.get(dp.multiSearchCWE).should('have.value', '');
+    });
+
     it('should not allow non-matching values in a CNE', function() {
       // Testing one particular case that is currently failing.
       dp.openDirectiveTestPage();
